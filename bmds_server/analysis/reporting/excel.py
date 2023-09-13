@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import pandas as pd
 from bmds.bmds3.sessions import BmdsSession
+from bmds.constants import Dtype
 
-if TYPE_CHECKING:
-    from ..models import Analysis
+from ..executor import AnalysisSession, MultiTumorSession
 
 
 def add_session(
@@ -47,11 +47,11 @@ def add_session(
         models.append(d)
 
 
-def summary_df(analysis: Analysis) -> pd.DataFrame:
+def summary_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
     dataset_data: dict[int, dict] = {}
     model_data = []
 
-    for session in analysis.get_sessions():
+    for session in sessions:
         if session.dataset_index not in dataset_data:
             dataset = session.frequentist.dataset if session.frequentist else session.bayesian
             d = dict(dataset_index=session.dataset_index)
@@ -81,23 +81,35 @@ def summary_df(analysis: Analysis) -> pd.DataFrame:
     return df3
 
 
-def params_df(analysis: Analysis) -> pd.DataFrame:
+def params_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
     data = []
-    for session in analysis.get_sessions():
+    for session in sessions:
         if session.frequentist:
             for model_index, model in enumerate(session.frequentist.models):
                 if model.has_results:
-                    data.extend(
-                        model.results.parameters.rows(
-                            extras=dict(
-                                dataset_index=session.dataset_index,
-                                option_index=session.option_index,
-                                analysis_type="frequentist",
-                                model_index=model_index,
-                                model_name=model.name(),
+                    if session.frequentist.dataset.dtype == Dtype.NESTED_DICHOTOMOUS:
+                        data.extend(
+                            model.results.parameter_rows(
+                                extras=dict(
+                                    dataset_index=session.dataset_index,
+                                    option_index=session.option_index,
+                                    model_index=model_index,
+                                    model_name=model.name(),
+                                )
                             )
                         )
-                    )
+                    else:
+                        data.extend(
+                            model.results.parameters.rows(
+                                extras=dict(
+                                    dataset_index=session.dataset_index,
+                                    option_index=session.option_index,
+                                    analysis_type="frequentist",
+                                    model_index=model_index,
+                                    model_name=model.name(),
+                                )
+                            )
+                        )
 
         if session.bayesian:
             for model_index, model in enumerate(session.bayesian.models):
@@ -116,12 +128,36 @@ def params_df(analysis: Analysis) -> pd.DataFrame:
     return pd.DataFrame(data=data)
 
 
-def dataset_df(analysis: Analysis) -> pd.DataFrame:
+def dataset_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
     data: list[dict] = []
     datasets: set = set()
-    for session in analysis.get_sessions():
+    for session in sessions:
         if session.dataset_index not in datasets:
             dataset = session.frequentist.dataset if session.frequentist else session.bayesian
             datasets.add(session.dataset_index)
             data.extend(dataset.rows(extras=dict(dataset_index=session.dataset_index)))
     return pd.DataFrame(data=data)
+
+
+def multitumor_summary_df(sessions: list[MultiTumorSession]) -> pd.DataFrame:
+    return pd.concat(
+        [
+            session.session.to_df(extras=dict(option_index=session.option_index))
+            for session in sessions
+        ]
+    )
+
+
+def multitumor_params_df(sessions: list[MultiTumorSession]) -> pd.DataFrame:
+    return pd.concat(
+        [
+            session.session.params_df(extras=dict(option_index=session.option_index))
+            for session in sessions
+        ]
+    )
+
+
+def multitumor_dataset_df(sessions: list[MultiTumorSession]) -> pd.DataFrame:
+    # if users run multiple option-sets, only print datasets first time
+    first = sessions[0].session
+    return first.datasets_df()

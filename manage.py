@@ -2,7 +2,7 @@
 TODO - remove this file
 
 This file should be removed when we can. Using a console_script named `manage` worked fine with
-Django 3.2 However, when upgrading to Django 4.0, we now get an error:
+Django 3.2 However, when upgrading to Django 4.2, we now get an error:
 
 $ manage runserver
 > Error while finding module specification for '__main__' (ValueError: __main__.__spec__ is None)

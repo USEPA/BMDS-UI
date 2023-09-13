@@ -17,27 +17,27 @@ class ScaledResidual extends Component {
                 <tbody>
                     <tr>
                         <td>Minimum scaled residual for dose group nearest the BMD</td>
-                        <td>{1}</td>
+                        <td>{this.props.model.results.scaled_residuals[0]}</td>
                     </tr>
                     <tr>
                         <td>Minimum ABS(scaled residual) for dose group nearest the BMD</td>
-                        <td>{1}</td>
+                        <td>{this.props.model.results.scaled_residuals[1]}</td>
                     </tr>
                     <tr>
                         <td>Average Scaled residual for dose group nearest the BMD</td>
-                        <td>{1}</td>
+                        <td>{this.props.model.results.scaled_residuals[2]}</td>
                     </tr>
                     <tr>
                         <td>Average ABS(scaled residual) for dose group nearest the BMD</td>
-                        <td>{1}</td>
+                        <td>{this.props.model.results.scaled_residuals[3]}</td>
                     </tr>
                     <tr>
                         <td>Maximum scaled residual for dose group nearest the BMD</td>
-                        <td>{1}</td>
+                        <td>{this.props.model.results.scaled_residuals[4]}</td>
                     </tr>
                     <tr>
                         <td>Maximum ABS(scaled residual) for dose group nearest the BMD</td>
-                        <td>{1}</td>
+                        <td>{this.props.model.results.scaled_residuals[5]}</td>
                     </tr>
                 </tbody>
             </table>

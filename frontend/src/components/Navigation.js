@@ -16,7 +16,8 @@ import Output from "./Output/Output";
 @observer
 class Navigation extends Component {
     render() {
-        const {mainStore} = this.props;
+        const {mainStore} = this.props,
+            {isMultitumor} = mainStore;
         return (
             <>
                 <ul className="nav nav-tabs d-flex mt-3">
@@ -35,11 +36,13 @@ class Navigation extends Component {
                             Output
                         </NavLink>
                     </li>
-                    <li className="nav-item">
-                        <NavLink className="nav-link" to="/logic">
-                            Logic
-                        </NavLink>
-                    </li>
+                    {isMultitumor ? null : (
+                        <li className="nav-item">
+                            <NavLink className="nav-link" to="/logic">
+                                Logic
+                            </NavLink>
+                        </li>
+                    )}
                     {mainStore.canEdit ? (
                         <li className="nav-item ml-auto mr-1">
                             <ShareActions />

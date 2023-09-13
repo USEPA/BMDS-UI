@@ -5,6 +5,24 @@ from bmds.bmds3.recommender import RecommenderSettings
 from django.core.management import call_command
 
 
+@pytest.fixture(scope="session")
+def data_path():
+    return Path(__file__).parent.absolute() / "data"
+
+
+@pytest.fixture(scope="session")
+def rewrite_data_files():
+    """
+    If you're making changes to datasets and it's expected that previously saved data will need to
+    be written, then you can set this flag to True and then all saved data will be rewritten.
+
+    Please review changes to ensure they're expected after modifying this flag.
+
+    A test exists in CI to ensure that this flag is set to False on commit.
+    """
+    return False
+
+
 @pytest.fixture(scope="session", autouse=True)
 def test_db(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
@@ -164,6 +182,138 @@ def nested_dichotomous_datasets():
         }
     ]
     # fmt: on
+
+
+# fmt:off
+@pytest.fixture
+def bmds_complete_nd():
+    return {
+        "bmds_version": "BMDS330",
+        "dataset_type": "ND",
+        "models": {
+            "frequentist_restricted": ["Nested Logistic"],
+            "frequentist_unrestricted": []
+        },
+        "options": [
+            {
+                "bmr_type": 1,
+                "bmr_value": 0.1,
+                "bootstrap_seed": 0,
+                "confidence_level": 0.95,
+                "bootstrap_iterations": 1000,
+                "litter_specific_covariate": 1
+            }
+        ],
+        "datasets": [
+            {
+                "doses": [
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    25, 25, 25, 25, 25, 25, 25, 25, 25,
+                    50, 50, 50, 50, 50, 50, 50, 50, 50
+                ],
+                "dtype": "ND",
+                "metadata": {
+                    "id": 0,
+                    "name": "Dataset #1",
+                    "dose_name": "Dose",
+                    "dose_units": "",
+                    "response_name": "Incidence",
+                    "response_units": ""
+                },
+                "litter_ns": [
+                    16, 9, 15, 14, 13, 9, 10, 14, 10, 11, 14,
+                    9, 14, 9, 13, 12, 10, 10, 11, 14,
+                    11, 11, 14, 11, 10, 11, 10, 15, 7,
+                ],
+                "incidences": [
+                    1, 1, 2, 3, 3, 0, 2, 2, 1, 2, 4,
+                    5, 6, 2, 6, 3, 1, 2, 4, 3,
+                    4, 5, 5, 4, 5, 4, 5, 6, 2,
+                ],
+                "litter_covariates": [
+                    16, 9, 15, 14, 13, 9, 10, 14, 10, 11, 14,
+                    9, 14, 9, 13, 12, 10, 10, 11, 14,
+                    11, 11, 14, 11, 10, 11, 10, 15, 7,
+                ]
+            }
+        ],
+        "dataset_options": [
+            {"enabled": True, "dataset_id": 0},
+        ],
+        "recommender": RecommenderSettings.build_default().dict(),
+    }
+    #fmt: on
+
+
+# fmt:off
+@pytest.fixture
+def bmds_complete_mt():
+    return {
+        "bmds_version": "BMDS330",
+        "dataset_type": "MT",
+        "models": {
+            "frequentist_restricted": ["Multistage"],
+            "frequentist_unrestricted": []
+        },
+        "options": [
+            {
+                "bmr_type": 1,
+                "bmr_value": 0.1,
+                "confidence_level": 0.95
+            }
+        ],
+        "datasets": [
+            {
+                "dtype": "D",
+                "doses": [0, 50, 100, 200, 400],
+                "ns": [20, 20, 20, 20, 20],
+                "incidences": [0, 1, 2, 10, 19],
+                "metadata": {
+                    "id": 0,
+                    "name": "Dataset #1",
+                    "dose_name": "Dose",
+                    "dose_units": "",
+                    "response_name": "Incidence",
+                    "response_units": ""
+                },
+            },
+            {
+                "dtype": "D",
+                "doses": [0, 50, 100, 200, 400],
+                "ns": [20, 20, 20, 20, 20],
+                "incidences": [0, 1, 2, 4, 11],
+                "metadata": {
+                    "id": 1,
+                    "name": "Dataset #2",
+                    "dose_name": "Dose",
+                    "dose_units": "",
+                    "response_name": "Incidence",
+                    "response_units": ""
+                },
+            },
+            {
+                "dtype": "D",
+                "doses": [0, 50, 100, 200, 400],
+                "ns": [20, 20, 20, 20, 20],
+                "incidences": [0, 2, 2, 6, 9],
+                "metadata": {
+                    "id": 2,
+                    "name": "Dataset #3",
+                    "dose_name": "Dose",
+                    "dose_units": "",
+                    "response_name": "Incidence",
+                    "response_units": ""
+                },
+            },
+        ],
+        "dataset_options": [
+            {"enabled": True, "dataset_id": 0, "degree": 3},
+            {"enabled": True, "dataset_id": 1, "degree": 0},
+            {"enabled": True, "dataset_id": 2, "degree": 0},
+        ],
+        "recommender": RecommenderSettings.build_default().dict(),
+    }
+    #fmt: on
 
 
 @pytest.fixture

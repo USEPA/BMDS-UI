@@ -99,8 +99,8 @@ class NestedDichotomousDataset(DatasetValidator):
 
 
 class MultiTumorDatasets(DatasetValidator):
-    dataset_options: conlist(DichotomousModelOptions, min_items=2, max_items=10)
-    datasets: conlist(DichotomousDatasetSchema, min_items=2, max_items=10)
+    dataset_options: conlist(DichotomousModelOptions, min_items=1, max_items=10)
+    datasets: conlist(DichotomousDatasetSchema, min_items=1, max_items=10)
 
 
 def validate_datasets(dataset_type: str, datasets: Any, datasetOptions: Any):

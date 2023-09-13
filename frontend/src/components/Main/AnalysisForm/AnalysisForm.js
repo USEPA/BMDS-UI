@@ -2,8 +2,6 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
-import * as mc from "@/constants/mainConstants";
-
 import Button from "../../common/Button";
 import Icon from "../../common/Icon";
 import SelectInput from "../../common/SelectInput";
@@ -86,17 +84,10 @@ class AnalysisForm extends Component {
                                     complete={mainStore.hasAtLeastOneModelSelected}
                                     message="At least one model is selected"
                                 />
-                                {mainStore.model_type === mc.MODEL_MULTI_TUMOR ? (
-                                    <RunChecklist
-                                        complete={mainStore.hasAtLeastTwoDatasetsSelected}
-                                        message="At least two datasets are selected"
-                                    />
-                                ) : (
-                                    <RunChecklist
-                                        complete={mainStore.hasAtLeastOneDatasetSelected}
-                                        message="At least one dataset is selected"
-                                    />
-                                )}
+                                <RunChecklist
+                                    complete={mainStore.hasAtLeastOneDatasetSelected}
+                                    message="At least one dataset is selected"
+                                />
                                 <RunChecklist
                                     complete={mainStore.hasAtLeastOneOptionSelected}
                                     message="At least one option is selected"

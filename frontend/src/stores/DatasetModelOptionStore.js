@@ -36,9 +36,10 @@ class DatasetModelOptionStore {
         this.options.push(option);
     }
     @action.bound updateDefaultDegree(dataset) {
-        const index = _.findIndex(this.options, d => d.dataset_id === dataset.metadata.id);
+        const index = _.findIndex(this.options, d => d.dataset_id === dataset.metadata.id),
+            dtype = this.getModelType;
         if (this.options[index].degree !== undefined) {
-            this.options[index].degree = getDefaultDegree(dataset);
+            this.options[index].degree = getDefaultDegree(dtype, dataset);
         }
     }
     @action.bound getDataset(option) {

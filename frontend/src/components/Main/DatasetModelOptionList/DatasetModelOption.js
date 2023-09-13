@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import {checkOrEmpty, getLabel} from "@/common";
+import {Dtype} from "@/constants/dataConstants";
 import {
     adverseDirectionOptions,
     allDegreeOptions,
@@ -12,6 +13,10 @@ import {
 import CheckboxInput from "../../common/CheckboxInput";
 import SelectInput from "../../common/SelectInput";
 
+const getDegreeText = (dtype, degree) => {
+    return degree === 0 && dtype == Dtype.MULTI_TUMOR ? "auto" : getLabel(degree, allDegreeOptions);
+};
+
 @observer
 class DatasetModelOption extends Component {
     render() {
@@ -19,6 +24,7 @@ class DatasetModelOption extends Component {
             option = store.options[datasetId],
             dataset = store.getDataset(option),
             {canEdit, updateOption} = store,
+            dtype = store.getModelType,
             hasDegree = option.degree !== undefined,
             hasAdverseDirection = option.adverse_direction !== undefined;
 
@@ -34,7 +40,7 @@ class DatasetModelOption extends Component {
                 {hasDegree ? (
                     <td>
                         <SelectInput
-                            choices={getDegreeOptions(dataset).map(option => {
+                            choices={getDegreeOptions(dtype, dataset).map(option => {
                                 return {value: option.value, text: option.label};
                             })}
                             onChange={value => updateOption(datasetId, "degree", parseInt(value))}
@@ -60,7 +66,7 @@ class DatasetModelOption extends Component {
             <tr>
                 <td className="text-center">{checkOrEmpty(option.enabled)}</td>
                 <td>{dataset.metadata.name}</td>
-                <td>{getLabel(option.degree, allDegreeOptions)}</td>
+                <td>{getDegreeText(dtype, option.degree)}</td>
                 {hasAdverseDirection ? (
                     <td>{getLabel(option.adverse_direction, adverseDirectionOptions)}</td>
                 ) : null}

@@ -10,7 +10,8 @@ import DatasetModelOption from "./DatasetModelOption";
 const maxDegreeText = `Studies have indicated that higher degree polynomial models are not
     warranted in that they generally do not sufficiently improve fit over simpler models
     (Nitcheva et al., 2007; PMC2040324).  Complex models also increase computer processing time
-    and the chance of model failure.`;
+    and the chance of model failure.`,
+    multiTumorDegreeText = `Degree used for each dataset. If set to auto (default), all degrees to N-1 are executed and the best-fitting is used. If a numeric value, only that degree will be modeled.`;
 
 @inject("dataOptionStore")
 @observer
@@ -42,6 +43,10 @@ class DatasetModelOptionList extends Component {
                         <tr className="bg-custom">
                             <th>Enabled</th>
                             <th>Dataset</th>
+                            <th>
+                                Degree
+                                <HelpTextPopover content={multiTumorDegreeText} />
+                            </th>
                         </tr>
                     ) : null}
                     {dtype == Dtype.DICHOTOMOUS ? (

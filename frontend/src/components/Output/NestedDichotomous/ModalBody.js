@@ -6,6 +6,7 @@ import {Col, Modal, Row} from "react-bootstrap";
 import BootstrapResults from "./BootstrapResults";
 import BootstrapRuns from "./BootstrapRuns";
 import LitterData from "./LitterData";
+import ModelParameters from "./ModelParameters";
 import ScaledResidual from "./ScaledResidual";
 
 @observer
@@ -23,6 +24,9 @@ class ModalBody extends Component {
                         <p>Borrow benchmark dose, model parameters, from other model</p>
                     </Col>
                 </Row>
+                <Col xs={6}>
+                    <ModelParameters model={model} />
+                </Col>
                 <Row>
                     <Col xs={6}>
                         <BootstrapResults model={model} />

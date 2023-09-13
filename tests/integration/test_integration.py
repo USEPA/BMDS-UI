@@ -54,7 +54,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         expect(page.locator("#decision-logic tbody tr")).to_have_count(4)
         expect(page.locator("#rule-table tbody tr")).to_have_count(20)
 
-        # TODO - add read-only views
+        # TODO - add read-only views in BMDS 23.3
 
     def test_dichotomous(self):
         page = self.page
@@ -117,4 +117,4 @@ class TestContinuousIntegration(PlaywrightTestCase):
         expect(page.locator("#decision-logic tbody tr")).to_have_count(4)
         expect(page.locator("#rule-table tbody tr")).to_have_count(18)
 
-        # TODO - add read-only views
+        # TODO - add read-only views in BMDS 23.3

@@ -4,10 +4,10 @@ import React, {Component} from "react";
 import {Col, Modal, Row} from "react-bootstrap";
 
 import * as dc from "@/constants/dataConstants";
-import {MODEL_NESTED_DICHOTOMOUS} from "@/constants/mainConstants";
 
 import Button from "../common/Button";
 import DoseResponsePlot from "../common/DoseResponsePlot";
+import MultitumorModalBody from "../Output/Multitumor/ModalBody";
 import NestedDichotomousModalBody from "../Output/NestedDichotomous/ModalBody";
 import CDFPlot from "./CDFPlot";
 import CDFTable from "./CDFTable";
@@ -148,22 +148,37 @@ ModelAverageBody.propTypes = {
 @inject("outputStore")
 @observer
 class ModelDetailModal extends Component {
+    getTitle() {
+        const {outputStore} = this.props,
+            model = outputStore.modalModel;
+        if (outputStore.isMultiTumor) {
+            return outputStore.drModelModalIsMA ? "MS Combo" : "TODO";
+        } else {
+            return outputStore.drModelModalIsMA ? "Model Average" : model.name;
+        }
+    }
+    getBody() {
+        const {outputStore} = this.props;
+        if (outputStore.isMultiTumor) {
+            return MultitumorModalBody;
+        } else if (outputStore.drModelModalIsMA) {
+            return ModelAverageBody;
+        } else if (outputStore.isNestedDichotomous) {
+            return NestedDichotomousModalBody;
+        } else {
+            return ModelBody;
+        }
+    }
     render() {
         const {outputStore} = this.props,
-            model = outputStore.modalModel,
-            isMA = outputStore.drModelModalIsMA;
+            model = outputStore.modalModel;
 
         if (!model) {
             return null;
         }
 
-        const name = isMA ? "Model Average" : model.name,
-            modelType = outputStore.getModelType,
-            Body = isMA
-                ? ModelAverageBody
-                : modelType === MODEL_NESTED_DICHOTOMOUS
-                ? NestedDichotomousModalBody
-                : ModelBody;
+        const name = this.getTitle(),
+            Body = this.getBody();
 
         return (
             <Modal

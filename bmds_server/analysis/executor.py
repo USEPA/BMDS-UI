@@ -3,9 +3,11 @@ from copy import deepcopy
 from typing import NamedTuple, Self
 
 import bmds
-import numpy as np
 from bmds.bmds3.constants import DistType
+from bmds.bmds3.models.multi_tumor import Multitumor, MultitumorBase
 from bmds.bmds3.sessions import BmdsSession
+from bmds.bmds3.types.nested_dichotomous import IntralitterCorrelation, LitterSpecificCovariate
+from bmds.constants import ModelClass
 
 from .schema import AnalysisSessionSchema
 from .transforms import (
@@ -31,7 +33,6 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Bmds
     bmds_version = inputs["bmds_version"]
     dataset_type = inputs["dataset_type"]
     recommendation_settings = inputs.get("recommender", None)
-
     session = bmds.BMDS.version(bmds_version)(
         dataset=dataset, recommendation_settings=recommendation_settings
     )
@@ -44,12 +45,7 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Bmds
             model_names = [model for model in model_names if model in lognormal_enabled]
 
         for model_name in model_names:
-            model_options = build_model_settings(
-                dataset_type,
-                prior_type,
-                options,
-                dataset_options,
-            )
+            model_options = build_model_settings(dataset_type, prior_type, options, dataset_options)
             if model_name in bmds.constants.VARIABLE_POLYNOMIAL:
                 min_degree = 2 if model_name in bmds.constants.M_Polynomial else 1
                 max_degree = (
@@ -62,6 +58,13 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Bmds
                     model_options = model_options.copy()
                     model_options.degree = degree
                     session.add_model(model_name, settings=model_options)
+            elif dataset_type == ModelClass.NESTED_DICHOTOMOUS:
+                # run all permutations of intralitter correlation and litter specific covariate
+                for ilc, lsc in itertools.product(IntralitterCorrelation, LitterSpecificCovariate):
+                    settings = model_options.copy()
+                    settings.intralitter_correlation = ilc
+                    settings.litter_specific_covariate = lsc
+                    session.add_model(model_name, settings=settings)
             else:
                 if model_name == bmds.constants.M_Linear:
                     # a linear model must have a degree of 1
@@ -111,7 +114,7 @@ class AnalysisSession(NamedTuple):
 
     All database state is decoupled from the execution engine, along with serialization and
     de-serialization methods.  Note that this is a custom BmdsSession implementation; the UI of
-    the bmds software allows you to effectively run multiple "indpendent" sessions at once;
+    the bmds software allows you to effectively run multiple "independent" sessions at once;
     for example, a frequentist model session with a bayesian model averaging session. This
     Session allows construction of these individual bmds sessions into a single analysis
     for presentation in the UI.
@@ -124,12 +127,6 @@ class AnalysisSession(NamedTuple):
 
     @classmethod
     def run(cls, inputs: dict, dataset_index: int, option_index: int) -> AnalysisSessionSchema:
-        # TODO - replace in BMDS 3.4
-        if inputs["dataset_type"] == bmds.constants.NESTED_DICHOTOMOUS:
-            return _mock_nested_dichotomous(inputs, dataset_index, option_index)
-        elif inputs["dataset_type"] == bmds.constants.MULTI_TUMOR:
-            return _mock_multitumor(inputs, dataset_index, option_index)
-
         session = cls.create(inputs, dataset_index, option_index)
         session.execute()
         return session.to_schema()
@@ -179,47 +176,64 @@ class AnalysisSession(NamedTuple):
         return self.to_schema().dict()
 
 
-def _mock_results(inputs: dict, dataset_index: int, option_index: int) -> dict:
-    # TODO - replace in BMDS 3.4
-    models = []
-    for model_name in itertools.chain(inputs["models"]["frequentist_restricted"]):
-        doses = np.array(inputs["datasets"][dataset_index]["doses"])
-        median = np.percentile(doses, 50)
-        models.append(
-            {
-                "name": model_name,
-                "results": {
-                    "bmd": median,
-                    "bmdl": 0.9 * median,
-                    "bmdu": 1.1 * median,
-                    "plotting": {"dr_x": [0, 10, 20], "dr_y": [0, 0.5, 1]},
-                },
-                "settings": {},
-                "model_class": {},
-            }
+class MultiTumorSession(NamedTuple):
+    """
+    This is the execution engine for running Multitumor modeling in BMDS.
+    """
+
+    option_index: int
+    session: MultitumorBase | None
+
+    @classmethod
+    def run(cls, inputs: dict, option_index: int) -> AnalysisSessionSchema:
+        session = cls.create(inputs, option_index)
+        session.execute()
+        return session.to_schema()
+
+    @classmethod
+    def create(cls, inputs: dict, option_index: int) -> Self:
+        datasets = [
+            build_dataset(ds)
+            for i, ds in enumerate(inputs["datasets"])
+            if inputs["dataset_options"][i]["enabled"] is True
+        ]
+        degrees = [
+            option["degree"] for option in inputs["dataset_options"] if option["enabled"] is True
+        ]
+        dataset_type = inputs["dataset_type"]
+        options = inputs["options"][option_index]
+        model_settings = build_model_settings(
+            dataset_type, PriorEnum.frequentist_restricted, options, {}
         )
 
-    return {
-        "metadata": {"dataset_index": dataset_index, "option_index": option_index},
-        "bayesian": None,
-        "frequentist": {
-            "models": models,
-            "dataset": inputs["datasets"][dataset_index],
-            "version": {},
-            "selected": {"notes": "", "model_index": None},
-            "recommender": None,
-            "model_average": None,
-        },
-    }
+        bmds_version = inputs["bmds_version"]
+        Multitumor = bmds.BMDS.multitumor(bmds_version)
+        session = Multitumor(datasets, degrees=degrees, model_settings=model_settings)
+        return cls(option_index=option_index, session=session)
+
+    def execute(self):
+        self.session.execute()
+
+    @classmethod
+    def deserialize(cls, data: dict) -> Self:
+        obj = AnalysisSessionSchema.parse_obj(data)
+        return cls(
+            option_index=obj.option_index,
+            session=Multitumor.from_serialized(obj.frequentist),
+        )
+
+    def to_schema(self) -> AnalysisSessionSchema:
+        return AnalysisSessionSchema(
+            dataset_index=-1, option_index=self.option_index, frequentist=self.session.to_dict()
+        )
+
+    def to_dict(self) -> dict:
+        return self.to_schema().dict()
 
 
-def _mock_nested_dichotomous(inputs: dict, dataset_index: int, option_index: int) -> dict:
-    # TODO - replace in BMDS 3.4
-    return _mock_results(inputs, dataset_index, option_index)
+Session = AnalysisSession | MultiTumorSession
 
 
-def _mock_multitumor(inputs: dict, dataset_index: int, option_index: int) -> dict:
-    # TODO - replace in BMDS 3.4
-    results = _mock_results(inputs, dataset_index, option_index)
-    results["frequentist"]["combined"] = deepcopy(results["frequentist"]["models"][0]["results"])
-    return results
+def deserialize(model_class: ModelClass, data: dict) -> Session:
+    Runner = MultiTumorSession if model_class is ModelClass.MULTI_TUMOR else AnalysisSession
+    return Runner.deserialize(data)

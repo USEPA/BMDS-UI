@@ -2,6 +2,7 @@ import _ from "lodash";
 import {action, computed, observable, toJS} from "mobx";
 
 import {getHeaders} from "@/common";
+import {MODEL_MULTI_TUMOR, MODEL_NESTED_DICHOTOMOUS} from "@/constants/mainConstants";
 import {maIndex, modelClasses} from "@/constants/outputConstants";
 import {
     bmaColor,
@@ -49,6 +50,14 @@ class OutputStore {
         return this.rootStore.mainStore.model_type;
     }
 
+    @computed get isMultiTumor() {
+        return this.getModelType === MODEL_MULTI_TUMOR;
+    }
+
+    @computed get isNestedDichotomous() {
+        return this.getModelType === MODEL_NESTED_DICHOTOMOUS;
+    }
+
     @computed get globalErrorMessage() {
         return this.rootStore.mainStore.errorMessage;
     }
@@ -81,8 +90,8 @@ class OutputStore {
 
     @computed get selectedFrequentist() {
         const output = this.selectedOutput;
-        if (output && output.frequentist) {
-            return output.frequentist;
+        if (output) {
+            return output.frequentist || output.session || null;
         }
         return null;
     }
@@ -110,9 +119,16 @@ class OutputStore {
         return this.rootStore.dataOptionStore.options[index];
     }
 
+    @computed get multitumorDegreeInputSettings() {
+        return this.rootStore.dataOptionStore.options
+            .filter(d => d.enabled)
+            .map(d => (d.degree === 0 ? "auto" : d.degree));
+    }
+
     @computed get recommendationEnabled() {
         return (
             this.selectedOutput.frequentist &&
+            this.selectedOutput.frequentist.recommender &&
             this.selectedOutput.frequentist.recommender.settings.enabled
         );
     }
@@ -146,6 +162,30 @@ class OutputStore {
         return null;
     }
 
+    @computed get selectedMultitumorModels() {
+        const results = this.selectedOutput.frequentist.results;
+        return results.selected_model_indexes.map((idx, i) => results.models[i][idx]);
+    }
+
+    @computed get multitumorActiveDatasetIndexes() {
+        // some datasets entered may not have been enabled during execution; this gives the adjusted
+        // indexes for the datasets which enabled during modeling
+        const idx = _.cloneDeep(this.rootStore.dataOptionStore.options)
+            .map((d, i) => {
+                d._idx = i;
+                return d;
+            })
+            .filter(d => d.enabled)
+            .map(d => d._idx);
+        return idx;
+    }
+
+    @computed get multitumorDatasets() {
+        return this.multitumorActiveDatasetIndexes.map(
+            idx => this.rootStore.dataStore.datasets[idx]
+        );
+    }
+
     // start modal methods
     getModel(index) {
         if (this.modalModelClass === modelClasses.frequentist) {
@@ -171,6 +211,18 @@ class OutputStore {
         ) {
             this.drModelModal = getDrBmdLine(model, hoverColor);
         }
+        this.showModelModal = true;
+    }
+
+    @action.bound showModalDetailMultitumor(i, j) {
+        const isMa = i === -1,
+            datasetIndexes = this.multitumorActiveDatasetIndexes;
+        this.modalModelClass = null;
+        this.modalModel = isMa
+            ? this.selectedFrequentist.results
+            : this.selectedFrequentist.results.models[i][j];
+        this.modalDataset = isMa ? null : this.rootStore.dataStore.datasets[datasetIndexes[i]];
+        this.drModelModalIsMA = isMa;
         this.showModelModal = true;
     }
 
@@ -226,7 +278,6 @@ class OutputStore {
         }
         return data;
     }
-
     @computed get drFrequentistPlotLayout() {
         // the main frequentist plot shown on the output page
         let layout = getDrLayout(
@@ -390,9 +441,13 @@ class OutputStore {
         Not @computed because it has a parameter, this is still observable; prevents caching;
         source: https://mobx.js.org/computeds-with-args.html
         */
-        const output = this.outputs[idx],
-            dataset = this.rootStore.dataStore.datasets[output.dataset_index];
+        const output = this.outputs[idx];
 
+        if (this.isMultiTumor) {
+            return `Option Set ${output.option_index + 1}`;
+        }
+
+        const dataset = this.rootStore.dataStore.datasets[output.dataset_index];
         if (this.rootStore.optionsStore.optionsList.length > 1) {
             return `${dataset.metadata.name}: Option Set ${output.option_index + 1}`;
         } else {

@@ -18,6 +18,7 @@ class ReportResponse(BaseModel):
     message: str | None
 
 
+# TODO - remove this stuff; it doesn't work with our current workflow
 class ReportCache(abc.ABC):
     """
     A cache designed for long-running report tasks.  The cache is designed for polling requests;

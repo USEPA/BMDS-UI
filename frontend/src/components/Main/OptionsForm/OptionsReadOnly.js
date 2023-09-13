@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import {getLabel} from "@/common";
-import {MODEL_CONTINUOUS, MODEL_DICHOTOMOUS} from "@/constants/mainConstants";
+import {MODEL_CONTINUOUS, MODEL_DICHOTOMOUS, MODEL_MULTI_TUMOR} from "@/constants/mainConstants";
 import {
     continuousBmrOptions,
     dichotomousBmrOptions,
@@ -24,7 +24,7 @@ const OptionsReadOnly = props => {
                     <td>{getLabel(options.dist_type, distTypeOptions)}</td>
                 </>
             ) : null}
-            {modelType === MODEL_DICHOTOMOUS ? (
+            {modelType === MODEL_DICHOTOMOUS || modelType === MODEL_MULTI_TUMOR ? (
                 <>
                     <td>{getLabel(options.bmr_type, dichotomousBmrOptions)}</td>
                     <td>{ff(options.bmr_value)}</td>

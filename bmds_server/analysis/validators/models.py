@@ -3,7 +3,7 @@ from typing import Any
 import bmds
 import numpy as np
 from django.core.exceptions import ValidationError
-from pydantic import BaseModel, confloat, root_validator, validator
+from pydantic import BaseModel, Field, root_validator, validator
 
 from ...common.validation import pydantic_validate
 
@@ -42,7 +42,7 @@ MultiTumorModelSchema = ModelTypeSchema(
 
 class BayesianModelSchema(BaseModel):
     model: str
-    prior_weight: confloat(ge=0, le=1)
+    prior_weight: float = Field(ge=0, le=1)
 
 
 class ModelListSchema(BaseModel):

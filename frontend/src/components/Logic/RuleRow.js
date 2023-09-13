@@ -5,7 +5,11 @@ import React, {Component} from "react";
 
 import {checkOrEmpty} from "@/common";
 import {BIN_NAMES, logicBinOptions, ruleLookups} from "@/constants/logicConstants";
-import {MODEL_CONTINUOUS, MODEL_DICHOTOMOUS} from "@/constants/mainConstants";
+import {
+    MODEL_CONTINUOUS,
+    MODEL_DICHOTOMOUS,
+    MODEL_NESTED_DICHOTOMOUS,
+} from "@/constants/mainConstants";
 
 import CheckboxInput from "../common/CheckboxInput";
 import FloatInput from "../common/FloatInput";
@@ -14,10 +18,12 @@ import SelectInput from "../common/SelectInput";
 const fieldMap = {
         [MODEL_CONTINUOUS]: "enabled_continuous",
         [MODEL_DICHOTOMOUS]: "enabled_dichotomous",
+        [MODEL_NESTED_DICHOTOMOUS]: "enabled_nested",
     },
     lookupMap = {
         [MODEL_CONTINUOUS]: "enabledContinuous",
         [MODEL_DICHOTOMOUS]: "enabledDichotomous",
+        [MODEL_NESTED_DICHOTOMOUS]: "enabledNested",
     };
 
 @observer
