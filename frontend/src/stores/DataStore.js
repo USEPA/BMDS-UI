@@ -268,7 +268,8 @@ class DataStore {
     }
 
     @computed get canAddNewDataset() {
-        return this.datasets.length < 6;
+        const maxItems = this.rootStore.mainStore.isDesktop ? 1000 : 6;
+        return this.datasets.length < maxItems;
     }
 
     @computed get hasSelectedDataset() {

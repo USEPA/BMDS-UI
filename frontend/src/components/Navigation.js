@@ -43,11 +43,13 @@ class Navigation extends Component {
                             </NavLink>
                         </li>
                     )}
-                    {mainStore.canEdit ? (
+                    {mainStore.canEdit && !mainStore.isDesktop ? (
                         <li className="nav-item ml-auto mr-1">
                             <ShareActions />
                         </li>
-                    ) : null}
+                    ) : (
+                        <span className="ml-auto"></span>
+                    )}
                     <li
                         className={mainStore.canEdit ? "nav-item" : "nav-item ml-auto"}
                         style={{position: "relative"}}>

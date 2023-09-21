@@ -42,6 +42,7 @@ class TestAnalysisDetail:
             "excelUrl": f"/api/v1/analysis/{pk}/excel/",
             "wordUrl": f"/api/v1/analysis/{pk}/word/",
             "future": False,
+            "is_desktop": False,
         }
 
         # write view should have edit context
@@ -55,6 +56,7 @@ class TestAnalysisDetail:
             "excelUrl": f"/api/v1/analysis/{pk}/excel/",
             "wordUrl": f"/api/v1/analysis/{pk}/word/",
             "future": False,
+            "is_desktop": False,
             "editSettings": {
                 "editKey": pw,
                 "viewUrl": f"http://testserver/analysis/{pk}/",

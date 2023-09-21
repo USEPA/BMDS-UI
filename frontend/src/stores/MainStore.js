@@ -284,6 +284,9 @@ class MainStore {
     @computed get isFuture() {
         return this.config.future;
     }
+    @computed get isDesktop() {
+        return this.config.is_desktop;
+    }
     @computed get getExecutionOutputs() {
         return this.executionOutputs;
     }

@@ -15,4 +15,6 @@ DATABASES["default"]["TEST"] = {"NAME": "bmds-server-test"}
 PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
 
 AUTH_PROVIDERS = {AuthProvider.django, AuthProvider.external}
+
 ALWAYS_SHOW_FUTURE = False
+IS_DESKTOP = False

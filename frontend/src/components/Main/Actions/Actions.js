@@ -56,7 +56,8 @@ class Actions extends Component {
                                     }}
                                 />
                             </div>
-                            {_.isNumber(config.editSettings.deletionDaysUntilDeletion) ? (
+                            {_.isNumber(config.editSettings.deletionDaysUntilDeletion) &&
+                            !mainStore.isDesktop ? (
                                 <>
                                     <a
                                         className="dropdown-item"
@@ -69,9 +70,11 @@ class Actions extends Component {
                                     </p>
                                 </>
                             ) : null}
-                            <a className="dropdown-item" href={config.editSettings.deleteUrl}>
-                                <Icon name="trash3-fill" text="Delete analysis" />
-                            </a>
+                            {!mainStore.isDesktop ? (
+                                <a className="dropdown-item" href={config.editSettings.deleteUrl}>
+                                    <Icon name="trash3-fill" text="Delete analysis" />
+                                </a>
+                            ) : null}
                             <div className="dropdown-divider"></div>
                         </>
                     ) : null}

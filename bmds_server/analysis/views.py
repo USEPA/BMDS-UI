@@ -83,6 +83,7 @@ class AnalysisDetail(DetailView):
             "wordUrl": self.object.get_word_url(),
             "future": settings.ALWAYS_SHOW_FUTURE
             or (self.request.user.is_staff and bool(self.request.GET.get("future"))),
+            "is_desktop": settings.IS_DESKTOP,
         }
         if self.can_edit:
             context["config"]["editSettings"] = {

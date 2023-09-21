@@ -13,4 +13,5 @@ def from_settings(request):
         CONTACT_US_EMAIL=settings.CONTACT_US_LINK,
         commit=settings.COMMIT,
         GTM_ID=settings.GTM_ID,
+        IS_DESKTOP=settings.IS_DESKTOP,
     )
