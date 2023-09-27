@@ -46,7 +46,13 @@ class DatasetTable extends Component {
     render() {
         const {dataset} = this.props,
             columnNames = columns[dataset.dtype],
-            width = `${100 / columnNames.length}%`;
+            width = `${100 / columnNames.length}%`,
+            isIndividual = dataset.dtype === Dtype.CONTINUOUS_INDIVIDUAL,
+            nRows = dataset.doses.length,
+            divStyle =
+                !isIndividual && nRows > 10
+                    ? {height: "50vh", overflowY: "auto", resize: "vertical"}
+                    : {};
 
         return (
             <>
@@ -54,26 +60,27 @@ class DatasetTable extends Component {
                     <label>Dataset Name:&nbsp;</label>
                     {dataset.metadata.name}
                 </div>
-
-                <table className="table table-sm table-bordered text-right">
-                    <colgroup>
-                        {columnNames.map((d, i) => (
-                            <col key={i} width={width} />
-                        ))}
-                    </colgroup>
-                    <thead className="bg-custom">
-                        <tr>
-                            {columnNames.map((column, i) => (
-                                <th key={i}>{columnHeaders[column]}</th>
+                <div style={divStyle}>
+                    <table className="table table-sm table-bordered text-right">
+                        <colgroup>
+                            {columnNames.map((d, i) => (
+                                <col key={i} width={width} />
                             ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {dataset.dtype === Dtype.CONTINUOUS_INDIVIDUAL
-                            ? individualDataRows(dataset)
-                            : dataRows(dataset, columnNames)}
-                    </tbody>
-                </table>
+                        </colgroup>
+                        <thead className="bg-custom">
+                            <tr>
+                                {columnNames.map((column, i) => (
+                                    <th key={i}>{columnHeaders[column]}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {isIndividual
+                                ? individualDataRows(dataset)
+                                : dataRows(dataset, columnNames)}
+                        </tbody>
+                    </table>
+                </div>
             </>
         );
     }

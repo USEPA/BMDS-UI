@@ -17,7 +17,7 @@ class ResultTable extends Component {
             return null;
         }
 
-        const colWidths = [11, 11, 11, 11, 11, 11, 11, 11, 11],
+        const colWidths = [15, 11, 11, 11, 11, 11, 30],
             {models} = selectedFrequentist;
 
         return (
@@ -37,14 +37,15 @@ class ResultTable extends Component {
                             <i>P</i>-Value
                         </th>
                         <th>AIC</th>
-                        <th>Unnormalized Log Posterior Probability</th>
-                        <th>Scaled Residual for Dose Group near BMD</th>
-                        <th>Scaled Residual for Control Dose Group</th>
+                        <th>Recommendation and Notes</th>
                     </tr>
                 </thead>
                 <tbody className="table-bordered">
                     {models.map((model, index) => (
-                        <tr key={index}>
+                        <tr
+                            key={index}
+                            onMouseEnter={() => store.drPlotAddHover(model)}
+                            onMouseLeave={store.drPlotRemoveHover}>
                             <td>
                                 <a
                                     id={`freq-result-${index}`}
@@ -58,12 +59,10 @@ class ResultTable extends Component {
                             </td>
                             <td>{ff(model.results.summary.bmdl)}</td>
                             <td>{ff(model.results.summary.bmd)}</td>
-                            <td>{model.results.summary.bmdu}</td>
+                            <td>{ff(model.results.summary.bmdu)}</td>
                             <td>{ff(model.results.combined_pvalue)}</td>
                             <td>{ff(model.results.summary.aic)}</td>
-                            <td>???</td>
-                            <td>???</td>
-                            <td>???</td>
+                            <td>TODO</td>
                         </tr>
                     ))}
                 </tbody>

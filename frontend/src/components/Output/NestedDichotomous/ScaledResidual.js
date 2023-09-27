@@ -2,46 +2,21 @@ import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
+import TwoColumnTable from "@/components/common/TwoColumnTable";
+
 @observer
 class ScaledResidual extends Component {
     render() {
-        return (
-            <table id="info-table" className="table table-sm table-bordered">
-                <thead>
-                    <tr className="bg-custom">
-                        <th colSpan="2" className="text-center">
-                            Scaled Residuals
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Minimum scaled residual for dose group nearest the BMD</td>
-                        <td>{this.props.model.results.scaled_residuals[0]}</td>
-                    </tr>
-                    <tr>
-                        <td>Minimum ABS(scaled residual) for dose group nearest the BMD</td>
-                        <td>{this.props.model.results.scaled_residuals[1]}</td>
-                    </tr>
-                    <tr>
-                        <td>Average Scaled residual for dose group nearest the BMD</td>
-                        <td>{this.props.model.results.scaled_residuals[2]}</td>
-                    </tr>
-                    <tr>
-                        <td>Average ABS(scaled residual) for dose group nearest the BMD</td>
-                        <td>{this.props.model.results.scaled_residuals[3]}</td>
-                    </tr>
-                    <tr>
-                        <td>Maximum scaled residual for dose group nearest the BMD</td>
-                        <td>{this.props.model.results.scaled_residuals[4]}</td>
-                    </tr>
-                    <tr>
-                        <td>Maximum ABS(scaled residual) for dose group nearest the BMD</td>
-                        <td>{this.props.model.results.scaled_residuals[5]}</td>
-                    </tr>
-                </tbody>
-            </table>
-        );
+        const residuals = this.props.model.results.scaled_residuals,
+            data = [
+                ["Minimum scaled residual for dose group nearest the BMD", residuals[0]],
+                ["Minimum ABS(scaled residual) for dose group nearest the BMD", residuals[1]],
+                ["Average Scaled residual for dose group nearest the BMD", residuals[2]],
+                ["Average ABS(scaled residual) for dose group nearest the BMD", residuals[3]],
+                ["Maximum scaled residual for dose group nearest the BMD", residuals[4]],
+                ["Maximum ABS(scaled residual) for dose group nearest the BMD", residuals[5]],
+            ];
+        return <TwoColumnTable label="Scaled Residuals" data={data} colwidths={[70, 30]} />;
     }
 }
 ScaledResidual.propTypes = {

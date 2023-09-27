@@ -9,17 +9,26 @@ import {ff} from "@/utils/formatters";
 class LitterData extends Component {
     render() {
         const litter = this.props.model.results.litter,
-            temp_rslt_len = _.size(litter.lsc);
+            n = _.size(litter.lsc);
         return (
             <table className="table table-sm table-bordered">
+                <colgroup>
+                    <col width="14%" />
+                    <col width="15%" />
+                    <col width="14%" />
+                    <col width="14%" />
+                    <col width="14%" />
+                    <col width="14%" />
+                    <col width="15%" />
+                </colgroup>
                 <thead>
                     <tr className="bg-custom">
                         <th colSpan="7">Litter Data</th>
                     </tr>
                     <tr>
                         <th>Dose</th>
-                        <th>Lit. Spec. Cov.</th>
-                        <th>Est. Prob.</th>
+                        <th>Litter Specific Covariance</th>
+                        <th>Estimated Probability</th>
                         <th>Liter Size</th>
                         <th>Expected</th>
                         <th>Observed</th>
@@ -27,7 +36,7 @@ class LitterData extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {_.range(temp_rslt_len).map(i => {
+                    {_.range(n).map(i => {
                         return (
                             <tr key={i}>
                                 <td>{litter.dose[i]}</td>
@@ -36,7 +45,7 @@ class LitterData extends Component {
                                 <td>{litter.litter_size[i]}</td>
                                 <td>{ff(litter.expected[i])}</td>
                                 <td>{litter.observed[i]}</td>
-                                <td>{ff(litter.sr[i])}</td>
+                                <td>{ff(litter.scaled_residuals[i])}</td>
                             </tr>
                         );
                     })}

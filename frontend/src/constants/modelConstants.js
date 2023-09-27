@@ -63,8 +63,8 @@ const modelsList = {
             bayesian: modelsList.D,
         },
         [MODEL_NESTED_DICHOTOMOUS]: {
-            frequentist_restricted: ["Nested Logistic", "NCTR"],
-            frequentist_unrestricted: ["Nested Logistic", "NCTR"],
+            frequentist_restricted: ["Nested Logistic"],
+            frequentist_unrestricted: ["Nested Logistic"],
         },
 
         [MODEL_MULTI_TUMOR]: {
@@ -75,6 +75,10 @@ const modelsList = {
     isLognormal = function(disttype) {
         return disttype == 3;
     },
-    hasDegrees = new Set(["Multistage", "Polynomial"]);
+    hasDegrees = new Set(["Multistage", "Polynomial"]),
+    getNameFromDegrees = function(model) {
+        const degree = model.parameters.names.length - 1;
+        return `Multistage ${degree}°`;
+    };
 
-export {allModelOptions, hasDegrees, isLognormal, models, modelsList};
+export {allModelOptions, getNameFromDegrees, hasDegrees, isLognormal, models, modelsList};

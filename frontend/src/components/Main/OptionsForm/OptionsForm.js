@@ -92,9 +92,11 @@ const OptionsForm = props => {
                                     props.idx
                                 )
                             }
-                            choices={litterSpecificCovariateOptions.map(option => {
-                                return {value: option.value, text: option.label};
-                            })}
+                            choices={litterSpecificCovariateOptions
+                                .filter(d => d.value > 0)
+                                .map(option => {
+                                    return {value: option.value, text: option.label};
+                                })}
                         />
                     </td>
                     <td>

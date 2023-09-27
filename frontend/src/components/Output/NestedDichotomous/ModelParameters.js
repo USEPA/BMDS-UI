@@ -13,9 +13,7 @@ class ModelParameters extends Component {
             <table id="info-table" className="table table-sm table-bordered">
                 <thead>
                     <tr className="bg-custom">
-                        <th colSpan="2" className="text-center">
-                            Model Parameters
-                        </th>
+                        <th colSpan="2">Model Parameters</th>
                     </tr>
                 </thead>
                 <tbody>

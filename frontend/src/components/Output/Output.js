@@ -12,6 +12,7 @@ import ModelDetailModal from "../IndividualModel/ModelDetailModal";
 import BayesianResultTable from "./BayesianResultTable";
 import FrequentistResultTable from "./FrequentistResultTable";
 import MultitumorDatasetTable from "./Multitumor/DatasetTable";
+import MultitumorPlot from "./Multitumor/MultitumorPlot";
 import MultitumorResultTable from "./Multitumor/ResultTable";
 import NestedDichotomousResultTable from "./NestedDichotomous/ResultTable";
 import OptionSetTable from "./OptionSetTable";
@@ -80,7 +81,7 @@ class Output extends Component {
         }
 
         return (
-            <div className="container-fluid">
+            <div className="container-fluid mb-3">
                 <div className="row">
                     {outputStore.outputs.length > 1 ? (
                         <div className="col-lg-2">
@@ -96,14 +97,14 @@ class Output extends Component {
                             />
                         </div>
                     ) : null}
-                    <div className="col-lg-5">
+                    <div className="col-lg-6">
                         {outputStore.isMultiTumor ? (
                             <MultitumorDatasetTable />
                         ) : (
                             <DatasetTable dataset={outputStore.selectedDataset} />
                         )}
                     </div>
-                    <div className="col-lg-5">
+                    <div className="col-lg-4">
                         <OptionSetTable />
                     </div>
                 </div>
@@ -113,6 +114,7 @@ class Output extends Component {
                             <div className="col-lg-12">
                                 <h4>Model Results</h4>
                                 <MultitumorResultTable />
+                                <MultitumorPlot />
                             </div>
                         </div>
                     ) : (

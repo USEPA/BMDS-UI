@@ -3,6 +3,7 @@ import {action, computed, observable, toJS} from "mobx";
 
 import {getHeaders} from "@/common";
 import {MODEL_MULTI_TUMOR, MODEL_NESTED_DICHOTOMOUS} from "@/constants/mainConstants";
+import {getNameFromDegrees} from "@/constants/modelConstants";
 import {maIndex, modelClasses} from "@/constants/outputConstants";
 import {
     bmaColor,
@@ -186,6 +187,20 @@ class OutputStore {
         );
     }
 
+    @computed get modalName() {
+        const model = this.modalModel;
+        if (this.isMultiTumor) {
+            if (this.drModelModalIsMA) {
+                return "MS Combo";
+            } else {
+                const dataset = this.modalDataset;
+                return `${dataset.metadata.name} - ${getNameFromDegrees(model)}`;
+            }
+        } else {
+            return this.drModelModalIsMA ? "Model Average" : model.name;
+        }
+    }
+
     // start modal methods
     getModel(index) {
         if (this.modalModelClass === modelClasses.frequentist) {
@@ -222,6 +237,9 @@ class OutputStore {
             ? this.selectedFrequentist.results
             : this.selectedFrequentist.results.models[i][j];
         this.modalDataset = isMa ? null : this.rootStore.dataStore.datasets[datasetIndexes[i]];
+        this.modalOptionSet = isMa
+            ? null
+            : this.rootStore.dataOptionStore.options[datasetIndexes[i]];
         this.drModelModalIsMA = isMa;
         this.showModelModal = true;
     }
@@ -332,6 +350,22 @@ class OutputStore {
         if (this.drModelSelected) {
             data.push(...this.drModelSelected);
         }
+        return data;
+    }
+
+    @computed get drIndividualMultitumorPlotLayout() {
+        // a single model, shown in the modal
+        return getDrLayout(this.modalDataset, this.modalModel, null, null);
+    }
+
+    @computed get drIndividualMultitumorPlotData() {
+        // a single model, shown in the modal
+        const model = this.modalModel,
+            modelMock = {name: getNameFromDegrees(model), results: _.cloneDeep(model)},
+            data = [
+                getDrDatasetPlotData(this.modalDataset),
+                ...getDrBmdLine(modelMock, hoverColor),
+            ];
         return data;
     }
 

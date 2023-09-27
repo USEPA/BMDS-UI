@@ -110,7 +110,7 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = os.getenv("TIME_ZONE", "US/Eastern")
 USE_TZ = True
 
-ALWAYS_SHOW_FUTURE = False
+ALWAYS_SHOW_FUTURE = bool(os.environ.get("ALWAYS_SHOW_FUTURE_MODE", "False") == "True")
 
 EMAIL_SUBJECT_PREFIX = f"[{PROJECT_NAME}] "
 DEFAULT_FROM_EMAIL = f"admin@{PROJECT_NAME}.com"

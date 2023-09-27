@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.11-slim-bullseye
 
 RUN groupadd -g 555 -r app && \
     useradd -u 555 -r -g app app
@@ -42,5 +42,5 @@ USER app
 
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
-RUN ldd /usr/local/lib/python3.11/site-packages/bmds/bin/BMDS330/libDRBMD.so && \
+RUN ldd /usr/local/lib/python3.11/site-packages/bmds/bmdscore.cpython-311-x86_64-linux-gnu.so && \
     python /app/test.py

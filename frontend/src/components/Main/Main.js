@@ -2,7 +2,6 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
-import Button from "../common/Button";
 import AnalysisForm from "./AnalysisForm/AnalysisForm";
 import AnalysisFormReadOnly from "./AnalysisForm/AnalysisFormReadOnly";
 import DatasetModelOptionList from "./DatasetModelOptionList/DatasetModelOptionList";
@@ -24,13 +23,6 @@ class Main extends Component {
                     <div>{mainStore.getDatasetLength ? <DatasetModelOptionList /> : null}</div>
                 </div>
                 <div className="col-lg-8">
-                    {mainStore.canEdit ? (
-                        <Button
-                            className="btn btn-sm btn-warning"
-                            onClick={mainStore.resetModelSelection}
-                            text="Reset Model Selection"
-                        />
-                    ) : null}
                     <ModelsCheckBoxList />
                     <OptionsFormList />
                 </div>

@@ -149,13 +149,8 @@ ModelAverageBody.propTypes = {
 @observer
 class ModelDetailModal extends Component {
     getTitle() {
-        const {outputStore} = this.props,
-            model = outputStore.modalModel;
-        if (outputStore.isMultiTumor) {
-            return outputStore.drModelModalIsMA ? "MS Combo" : "TODO";
-        } else {
-            return outputStore.drModelModalIsMA ? "Model Average" : model.name;
-        }
+        const {outputStore} = this.props;
+        return outputStore.modalName;
     }
     getBody() {
         const {outputStore} = this.props;

@@ -300,15 +300,9 @@ class MainStore {
         return _.find(mc.modelTypes, {value: this.model_type}).name;
     }
     @computed get getModelTypeChoices() {
-        let choices = mc.modelTypes.map((item, i) => {
+        return mc.modelTypes.map((item, i) => {
             return {value: item.value, text: item.name};
         });
-        if (!this.isFuture) {
-            return choices.filter(
-                d => d.value != mc.MODEL_NESTED_DICHOTOMOUS && d.value != mc.MODEL_MULTI_TUMOR
-            );
-        }
-        return choices;
     }
 
     @computed get getModels() {

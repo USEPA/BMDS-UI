@@ -50,8 +50,13 @@ export const options = {
         {value: 3, label: "Lognormal"},
     ],
     litterSpecificCovariateOptions = [
-        {value: 0, label: "Overall Mean"},
-        {value: 1, label: "Control Group Mean"},
+        {value: 0, label: "Unused"},
+        {value: 1, label: "Overall Mean"},
+        {value: 2, label: "Control Group Mean"},
+    ],
+    intralitterCorrelation = [
+        {value: 0, label: "Zero"},
+        {value: 1, label: "Estimate"},
     ],
     backgroundOptions = [
         {value: 0, label: "Zero"},

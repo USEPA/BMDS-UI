@@ -24,7 +24,20 @@ const doseResponseLayout = {
             },
         },
     },
-    getResponse = dataset => {
+    hexToRgbA = (hex, alpha) => {
+        var c;
+        if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+            c = hex.substring(1).split("");
+            if (c.length == 3) {
+                c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+            }
+            c = "0x" + c.join("");
+            return "rgba(" + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(",") + `,${alpha})`;
+        }
+        throw new Error("Bad Hex");
+    };
+
+export const getResponse = dataset => {
         let incidences, ns;
 
         switch (dataset.dtype) {
@@ -44,20 +57,7 @@ const doseResponseLayout = {
                 throw `Unknown dtype: ${dataset.dtype}`;
         }
     },
-    hexToRgbA = (hex, alpha) => {
-        var c;
-        if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
-            c = hex.substring(1).split("");
-            if (c.length == 3) {
-                c = [c[0], c[0], c[1], c[1], c[2], c[2]];
-            }
-            c = "0x" + c.join("");
-            return "rgba(" + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(",") + `,${alpha})`;
-        }
-        throw new Error("Bad Hex");
-    };
-
-export const getDoseLabel = function(dataset) {
+    getDoseLabel = function(dataset) {
         let label = dataset.metadata.dose_name;
         if (dataset.metadata.dose_units) {
             label = `${label} (${dataset.metadata.dose_units})`;

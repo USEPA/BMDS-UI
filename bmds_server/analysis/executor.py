@@ -60,10 +60,14 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Bmds
                     session.add_model(model_name, settings=model_options)
             elif dataset_type == ModelClass.NESTED_DICHOTOMOUS:
                 # run all permutations of intralitter correlation and litter specific covariate
-                for ilc, lsc in itertools.product(IntralitterCorrelation, LitterSpecificCovariate):
+                for ilc, lsc_on in itertools.product(IntralitterCorrelation, [True, False]):
                     settings = model_options.copy()
                     settings.intralitter_correlation = ilc
-                    settings.litter_specific_covariate = lsc
+                    settings.litter_specific_covariate = (
+                        settings.litter_specific_covariate
+                        if lsc_on
+                        else LitterSpecificCovariate.Unused
+                    )
                     session.add_model(model_name, settings=settings)
             else:
                 if model_name == bmds.constants.M_Linear:
