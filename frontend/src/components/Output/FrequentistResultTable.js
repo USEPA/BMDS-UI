@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import {BIN_LABELS} from "@/constants/logicConstants";
-import {MODEL_MULTI_TUMOR} from "@/constants/mainConstants";
 import {getPValue, modelClasses, priorClass} from "@/constants/outputConstants";
 import {fractionalFormatter} from "@/utils/formatters";
 import {ff} from "@/utils/formatters";
@@ -128,62 +127,128 @@ FrequentistRowSet.propTypes = {
     colSpan: PropTypes.number.isRequired,
 };
 
+class ModelNameTd extends Component {
+    render() {
+        const {store, data, rowIcon, modelClasses} = this.props;
+        return (
+            <td>
+                <a
+                    id={`freq-result-${data.index}`}
+                    href="#"
+                    onClick={e => {
+                        e.preventDefault();
+                        store.showModalDetail(modelClasses.frequentist, data.index);
+                    }}>
+                    {data.model.name}
+                    {rowIcon}
+                </a>
+            </td>
+        );
+    }
+}
+ModelNameTd.propTypes = {
+    store: PropTypes.object.isRequired,
+    data: PropTypes.object.isRequired,
+    rowIcon: PropTypes.string.isRequired,
+    modelClasses: PropTypes.object.isRequired,
+};
+
+class RecommendationTd extends Component {
+    render() {
+        const {store, data, selectedFrequentist} = this.props;
+
+        if (!store.recommendationEnabled) {
+            return null;
+        }
+
+        const {name} = data.model,
+            popoverTitle = `${name}: ${getModelBinLabel(selectedFrequentist, data.index)}`,
+            popoverContent =
+                getModelBinText(selectedFrequentist, data.index)
+                    .toString()
+                    .split(",")
+                    .join("<br/>") || "<i>No notes.</i>";
+
+        return store.showInlineNotes ? (
+            <td>
+                <u>{getModelBinLabel(selectedFrequentist, data.index)}</u>
+                <br />
+                {getRecommenderText(selectedFrequentist, data.index)}
+            </td>
+        ) : (
+            <Popover element="td" title={popoverTitle} content={popoverContent}>
+                <u>{getModelBinLabel(selectedFrequentist, data.index)}</u>
+            </Popover>
+        );
+    }
+}
+RecommendationTd.propTypes = {
+    store: PropTypes.object.isRequired,
+    data: PropTypes.object.isRequired,
+    selectedFrequentist: PropTypes.object.isRequired,
+};
+
 @observer
 class FrequentistRow extends Component {
     render() {
         const {store, data, dataset, selectedFrequentist, footnotes} = this.props,
-            {name} = data.model,
             fns = footnotes.filter(d => d.index == data.index),
             rowClass = fns.length > 0 ? fns[fns.length - 1].class : "",
             rowIcon = fns.map(d => d.icon).join(""),
-            popoverTitle = store.recommendationEnabled
-                ? `${name}: ${getModelBinLabel(selectedFrequentist, data.index)}`
-                : null,
-            popoverContent = store.recommendationEnabled
-                ? getModelBinText(selectedFrequentist, data.index)
-                      .toString()
-                      .split(",")
-                      .join("<br/>") || "<i>No notes.</i>"
-                : null;
+            {results} = data.model;
 
+        if (store.isNestedDichotomous) {
+            return (
+                <tr
+                    key={data.index}
+                    onMouseEnter={() => store.drPlotAddHover(data.model)}
+                    onMouseLeave={store.drPlotRemoveHover}
+                    className={rowClass}>
+                    <ModelNameTd
+                        store={store}
+                        data={data}
+                        rowIcon={rowIcon}
+                        modelClasses={modelClasses}
+                    />
+                    <td>{ff(results.summary.bmdl)}</td>
+                    <td>{ff(results.summary.bmd)}</td>
+                    <td>{ff(results.summary.bmdu)}</td>
+                    <td>{ff(results.combined_pvalue)}</td>
+                    <td>{ff(results.summary.aic)}</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <RecommendationTd
+                        store={store}
+                        data={data}
+                        selectedFrequentist={selectedFrequentist}
+                    />
+                </tr>
+            );
+        }
         return (
             <tr
                 key={data.index}
                 onMouseEnter={() => store.drPlotAddHover(data.model)}
                 onMouseLeave={store.drPlotRemoveHover}
                 className={rowClass}>
-                <td>
-                    <a
-                        id={`freq-result-${data.index}`}
-                        href="#"
-                        onClick={e => {
-                            e.preventDefault();
-                            store.showModalDetail(modelClasses.frequentist, data.index);
-                        }}>
-                        {data.model.name}
-                        {rowIcon}
-                    </a>
-                </td>
-                <td>{ff(data.model.results.bmdl)}</td>
-                <td>{ff(data.model.results.bmd)}</td>
-                <td>{ff(data.model.results.bmdu)}</td>
-                <td>{fractionalFormatter(getPValue(dataset.dtype, data.model.results))}</td>
-                <td>{ff(data.model.results.fit.aic)}</td>
-                <td>{ff(data.model.results.gof.roi)}</td>
-                <td>{ff(data.model.results.gof.residual[0])}</td>
-                {store.recommendationEnabled ? (
-                    store.showInlineNotes ? (
-                        <td>
-                            <u>{getModelBinLabel(selectedFrequentist, data.index)}</u>
-                            <br />
-                            {getRecommenderText(selectedFrequentist, data.index)}
-                        </td>
-                    ) : (
-                        <Popover element="td" title={popoverTitle} content={popoverContent}>
-                            <u>{getModelBinLabel(selectedFrequentist, data.index)}</u>
-                        </Popover>
-                    )
-                ) : null}
+                <ModelNameTd
+                    store={store}
+                    data={data}
+                    rowIcon={rowIcon}
+                    modelClasses={modelClasses}
+                />
+                <td>{ff(results.bmdl)}</td>
+                <td>{ff(results.bmd)}</td>
+                <td>{ff(results.bmdu)}</td>
+                <td>{fractionalFormatter(getPValue(dataset.dtype, results))}</td>
+                <td>{ff(results.fit.aic)}</td>
+                <td>{ff(results.gof.roi)}</td>
+                <td>{ff(results.gof.residual[0])}</td>
+                <RecommendationTd
+                    store={store}
+                    data={data}
+                    selectedFrequentist={selectedFrequentist}
+                />
             </tr>
         );
     }
@@ -202,20 +267,18 @@ class FrequentistResultTable extends Component {
     render() {
         const store = this.props.outputStore,
             dataset = store.selectedDataset,
-            {selectedFrequentist} = store,
-            modelType = store.getModelType;
+            {selectedFrequentist, isNestedDichotomous} = store;
 
         if (!selectedFrequentist) {
             return null;
         }
 
-        if (modelType === MODEL_MULTI_TUMOR) {
-            return <p>Add multi tumor results table here ...</p>;
-        }
-
         const {models} = selectedFrequentist,
             restrictedModels = _.chain(models)
                 .map((model, index) => {
+                    if (isNestedDichotomous) {
+                        return model.settings.restricted ? {model, index} : null;
+                    }
                     if (model.settings.priors.prior_class === priorClass.frequentist_restricted) {
                         return {model, index};
                     }
@@ -225,6 +288,9 @@ class FrequentistResultTable extends Component {
                 .value(),
             unrestrictedModels = _.chain(models)
                 .map((model, index) => {
+                    if (isNestedDichotomous) {
+                        return !model.settings.restricted ? {model, index} : null;
+                    }
                     if (model.settings.priors.prior_class === priorClass.frequentist_unrestricted) {
                         return {model, index};
                     }
