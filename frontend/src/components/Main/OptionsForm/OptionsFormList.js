@@ -74,7 +74,7 @@ class OptionsFormList extends Component {
                                     {optionsStore.canEdit ? (
                                         <th>
                                             <Button
-                                                title="Can add up to 6 option sets"
+                                                title="Maximum number of option sets reached."
                                                 className="btn btn-primary"
                                                 disabled={!optionsStore.canAddNewOption}
                                                 onClick={optionsStore.addOptions}
@@ -112,7 +112,8 @@ class OptionsFormList extends Component {
                         </table>
                         {optionsStore.canAddNewOption ? null : (
                             <p className="text-danger">
-                                Can have a maximum of 6 option sets per analysis.
+                                Can have a maximum of {optionsStore.maxItems} option sets per
+                                analysis.
                             </p>
                         )}
                     </form>

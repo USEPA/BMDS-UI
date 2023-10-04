@@ -8,10 +8,13 @@ from bmds.datasets import (
     DichotomousDatasetSchema,
     NestedDichotomousDatasetSchema,
 )
+from django.conf import settings
 from django.core.exceptions import ValidationError
-from pydantic import BaseModel, conlist, root_validator
+from pydantic import BaseModel, Field, root_validator
 
 from ...common.validation import pydantic_validate
+
+max_items = 1000 if settings.IS_DESKTOP else 10
 
 
 class MaxDegree(IntEnum):
@@ -80,27 +83,26 @@ class MaxNestedDichotomousDatasetSchema(NestedDichotomousDatasetSchema):
 
 
 class DichotomousDatasets(DatasetValidator):
-    dataset_options: conlist(DichotomousModelOptions, min_items=1, max_items=10)
-    datasets: conlist(MaxDichotomousDatasetSchema, min_items=1, max_items=10)
+    dataset_options: list[DichotomousModelOptions] = Field(min_items=1, max_items=max_items)
+    datasets: list[MaxDichotomousDatasetSchema] = Field(min_items=1, max_items=max_items)
 
 
 class ContinuousDatasets(DatasetValidator):
-    dataset_options: conlist(ContinuousModelOptions, min_items=1, max_items=10)
-    datasets: conlist(
-        MaxContinuousDatasetSchema | MaxContinuousIndividualDatasetSchema,
+    dataset_options: list[ContinuousModelOptions] = Field(min_items=1, max_items=max_items)
+    datasets: list[MaxContinuousDatasetSchema | MaxContinuousIndividualDatasetSchema] = Field(
         min_items=1,
-        max_items=10,
+        max_items=max_items,
     )
 
 
 class NestedDichotomousDataset(DatasetValidator):
-    dataset_options: conlist(NestedDichotomousModelOptions, min_items=1, max_items=10)
-    datasets: conlist(MaxNestedDichotomousDatasetSchema, min_items=1, max_items=10)
+    dataset_options: list[NestedDichotomousModelOptions] = Field(min_items=1, max_items=max_items)
+    datasets: list[MaxNestedDichotomousDatasetSchema] = Field(min_items=1, max_items=max_items)
 
 
 class MultiTumorDatasets(DatasetValidator):
-    dataset_options: conlist(DichotomousModelOptions, min_items=1, max_items=10)
-    datasets: conlist(DichotomousDatasetSchema, min_items=1, max_items=10)
+    dataset_options: list[DichotomousModelOptions] = Field(min_items=1, max_items=max_items)
+    datasets: list[DichotomousDatasetSchema] = Field(min_items=1, max_items=max_items)
 
 
 def validate_datasets(dataset_type: str, datasets: Any, datasetOptions: Any):

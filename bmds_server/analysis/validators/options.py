@@ -5,10 +5,13 @@ from bmds.bmds3.constants import DistType
 from bmds.bmds3.types.continuous import ContinuousRiskType
 from bmds.bmds3.types.dichotomous import DichotomousRiskType
 from bmds.bmds3.types.nested_dichotomous import LitterSpecificCovariate
+from django.conf import settings
 from django.core.exceptions import ValidationError
-from pydantic import BaseModel, Field, conlist
+from pydantic import BaseModel, Field
 
 from ...common.validation import pydantic_validate
+
+max_items = 1000 if settings.IS_DESKTOP else 6
 
 
 class DichotomousOption(BaseModel):
@@ -35,15 +38,15 @@ class NestedDichotomousOption(BaseModel):
 
 
 class DichotomousOptions(BaseModel):
-    options: conlist(DichotomousOption, min_items=1, max_items=10)
+    options: list[DichotomousOption] = Field(min_items=1, max_items=max_items)
 
 
 class ContinuousOptions(BaseModel):
-    options: conlist(ContinuousOption, min_items=1, max_items=10)
+    options: list[ContinuousOption] = Field(min_items=1, max_items=max_items)
 
 
 class NestedDichotomousOptions(BaseModel):
-    options: conlist(NestedDichotomousOption, min_items=1, max_items=3)
+    options: list[NestedDichotomousOption] = Field(min_items=1, max_items=max_items)
 
 
 def validate_options(dataset_type: str, data: Any):
