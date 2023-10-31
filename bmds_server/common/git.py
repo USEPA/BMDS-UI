@@ -17,10 +17,10 @@ class Commit(BaseModel):
             A Commit instance
         """
         cmd = "git log -1 --format=%H"
-        sha = subprocess.check_output(cmd.split(), cwd=cwd).decode().strip()[:8]
+        sha = subprocess.check_output(cmd.split(), cwd=cwd).decode().strip()[:8]  # noqa: S603
         cmd = "git show -s --format=%ct"
         dt = datetime.fromtimestamp(
-            int(subprocess.check_output(cmd.split(), cwd=cwd).decode().strip())
+            int(subprocess.check_output(cmd.split(), cwd=cwd).decode().strip())  # noqa: S603
         )
         return cls(sha=sha, dt=dt)
 
