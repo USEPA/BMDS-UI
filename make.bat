@@ -33,7 +33,7 @@ echo.  format-js    fix javascript formatting issues where possible
 goto :eof
 
 :sync-dev
-python -m pip install -U pip
+python -m pip install -U pip --trusted-host=pypi.org --trusted-host=files.pythonhosted.org
 pip install -r requirements/dev.txt --trusted-host=pypi.org --trusted-host=files.pythonhosted.org
 yarn --cwd frontend
 manage.py migrate

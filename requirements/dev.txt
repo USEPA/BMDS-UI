@@ -1,24 +1,24 @@
 -r base.txt
 
 # debug
-django-debug-toolbar==4.0.0
-django_extensions==3.2.1
-django-browser-reload==1.11.0
+django-debug-toolbar==4.2.0
+django_extensions==3.2.3
+django-browser-reload==1.12.0
 
 # docs
-mkdocs-material==9.0.6
+mkdocs-material==9.4.7
 
 # tests
-pytest==7.4.0
-pytest-django==4.5.2
-vcrpy==4.2.1
-  urllib3~=1.26.16
+pytest==7.4.3
+pytest-django==4.6.0
+vcrpy==5.1.0
+  urllib3==2.0.6
 pytest-vcr==1.0.2
-coverage==7.3.0
+coverage==7.3.2
 
 # integration tests
-playwright==1.29.1
-pytest-playwright==0.3.0
+playwright==1.39.0
+pytest-playwright==0.4.3
 
 # lint and formatting tools
 ruff~=0.1.3

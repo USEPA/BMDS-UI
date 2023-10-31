@@ -42,7 +42,12 @@ module.exports = {
         publicPath: "/static/bundles/",
     },
 
-    plugins: [new BundleTracker({filename: "../bmds_server/webpack-stats.json"})],
+    plugins: [
+        new BundleTracker({
+            path: path.resolve(__dirname, "../bmds_server"),
+            filename: "webpack-stats.json",
+        }),
+    ],
 
     resolve: {
         roots: [path.join(__dirname, "src")],

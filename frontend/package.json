@@ -45,10 +45,10 @@
     "prettier": "^1.19.1",
     "rimraf": "^2.4.3",
     "style-loader": "^0.19.0",
-    "webpack": "^5.74.0",
-    "webpack-bundle-tracker": "^1.8.0",
-    "webpack-cli": "^4.7.2",
-    "webpack-dev-middleware": "^5.0.0"
+    "webpack": "^5.88.1",
+    "webpack-bundle-tracker": "^2.0.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-middleware": "^6.1.1"
   },
   "dependencies": {
     "bootstrap": "^4.6.2",
@@ -58,7 +58,7 @@
     "lodash": "^4.17.21",
     "mobx": "^5.15.7",
     "mobx-react": "^6.3.1",
-    "plotly.js": "^1.58.4",
+    "plotly.js": "2.27.0",
     "popper.js": "^1.16.1",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",

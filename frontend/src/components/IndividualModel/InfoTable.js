@@ -16,7 +16,7 @@ class InfoTable extends Component {
                 ["Model", model.name],
                 ["Equation", model.model_class.model_form_str],
             ];
-        return <TwoColumnTable data={data} label="Info" />;
+        return <TwoColumnTable id="info-table" data={data} label="Info" />;
     }
 }
 InfoTable.propTypes = {

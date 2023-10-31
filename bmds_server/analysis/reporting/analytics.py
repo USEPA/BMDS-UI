@@ -175,7 +175,7 @@ def datasets() -> dict:
             df.frequentist,
             columns=df.bayesian,
             values=df.counts,
-            aggfunc=sum,
+            aggfunc="sum",
             margins=True,
             margins_name="Total",
         )

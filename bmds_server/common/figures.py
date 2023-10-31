@@ -45,7 +45,7 @@ def punchcard(df: pd.DataFrame, color_scale: str = "viridis") -> Figure:
     df.loc[:, "y"] = df.day.dt.day_of_week  # Monday=0, Sunday=6
 
     piv = (
-        df.pivot_table(index="y", columns="xlabel", values="count", aggfunc=sum)
+        df.pivot_table(index="y", columns="xlabel", values="count", aggfunc="sum")
         .fillna(0)
         .astype(int)
     )
