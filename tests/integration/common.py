@@ -11,7 +11,7 @@ if RUN_INTEGRATION:
     os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 
-@pytest.mark.skipif(not RUN_INTEGRATION, reason="integration test")
+@pytest.mark.skipif(not RUN_INTEGRATION, reason=f"RUN_INTEGRATION is {RUN_INTEGRATION}")
 class PlaywrightTestCase(StaticLiveServerTestCase, TestCase):
     """
     We use a single class that inherits from both StaticLiveServerTestCase and TestCase

@@ -74,7 +74,7 @@ class OptionsFormList extends Component {
                                     {optionsStore.canEdit ? (
                                         <th>
                                             <Button
-                                                title="Maximum number of option sets reached."
+                                                title="Add option set."
                                                 className="btn btn-primary"
                                                 disabled={!optionsStore.canAddNewOption}
                                                 onClick={optionsStore.addOptions}
