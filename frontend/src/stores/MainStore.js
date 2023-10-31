@@ -12,12 +12,11 @@ class MainStore {
     }
 
     @observable config = {};
-    @observable models = {};
 
     @observable analysis_name = "";
     @observable analysis_description = "";
-    @observable model_type = mc.MODEL_CONTINUOUS;
-    @observable errorMessage = "";
+    @observable model_type = null;
+    @observable errorMessage = null;
     @observable errorData = null;
     @observable hasEditSettings = false;
     @observable executionOutputs = null;
@@ -36,6 +35,11 @@ class MainStore {
     }
     @action.bound changeDatasetType(value) {
         this.model_type = value;
+        // word export options setting
+        if (this.isMultiTumorOrNestedDichotomous) {
+            this.changeReportOptions("datasetFormatLong", false);
+            this.changeReportOptions("allModels", true);
+        }
         this.rootStore.modelsStore.setDefaultsByDatasetType(true);
         this.rootStore.optionsStore.setDefaultsByDatasetType(true);
         this.rootStore.dataStore.setDefaultsByDatasetType();
@@ -71,8 +75,12 @@ class MainStore {
             },
         };
     }
-    @computed get isMultitumor() {
+    @computed get isMultiTumor() {
         return this.model_type === mc.MODEL_MULTI_TUMOR;
+    }
+
+    @computed get isMultiTumorOrNestedDichotomous() {
+        return this.model_type === "ND" || this.model_type === "MT";
     }
 
     @action.bound
@@ -337,10 +345,6 @@ class MainStore {
         return _.isArray(this.executionOutputs);
     }
 
-    @computed get isMultiTumor() {
-        return this.model_type === mc.MODEL_MULTI_TUMOR;
-    }
-
     // *** TOAST ***
     @observable toastVisible = false;
     @observable toastHeader = "";
@@ -388,7 +392,7 @@ class MainStore {
     }
     // *** END TOAST ***
 
-    // *** REPORT OPTIONS ***
+    // *** DEFAULT REPORT OPTIONS ***
     @observable wordReportOptions = {
         datasetFormatLong: true,
         allModels: false,

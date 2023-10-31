@@ -18,6 +18,7 @@ class WordReportOptionsModal extends Component {
             submitWordReportRequest,
             closeWordReportOptionModal,
             wordReportOptions,
+            isMultiTumorOrNestedDichotomous,
         } = this.props.mainStore;
         return (
             <Modal
@@ -39,20 +40,25 @@ class WordReportOptionsModal extends Component {
                                 please be patient.
                             </p>
                         </div>
-                        <div className="col-md-4">
-                            <LabelInput label="Long dataset format" htmlFor="datasetFormatLong" />
-                            <br />
-                            <CheckboxInput
-                                id="datasetFormatLong"
-                                checked={wordReportOptions.datasetFormatLong}
-                                onChange={v => changeReportOptions("datasetFormatLong", v)}
-                            />
-                            <p className="text-muted">
-                                Print the dataset table in a long format (good for Excel or
-                                additional data analysis), or a narrow format, which is more concise
-                                for a narrative report.
-                            </p>
-                        </div>
+                        {isMultiTumorOrNestedDichotomous ? null : (
+                            <div className="col-md-4">
+                                <LabelInput
+                                    label="Long dataset format"
+                                    htmlFor="datasetFormatLong"
+                                />
+                                <br />
+                                <CheckboxInput
+                                    id="datasetFormatLong"
+                                    checked={wordReportOptions.datasetFormatLong}
+                                    onChange={v => changeReportOptions("datasetFormatLong", v)}
+                                />
+                                <p className="text-muted">
+                                    Print the dataset table in a long format (good for Excel or
+                                    additional data analysis), or a narrow format, which is more
+                                    concise for a narrative report.
+                                </p>
+                            </div>
+                        )}
                         <div className="col-md-4">
                             <LabelInput label="Include all models" htmlFor="allModels" />
                             <br />
@@ -68,21 +74,23 @@ class WordReportOptionsModal extends Component {
                                 models which were executed will be included.
                             </p>
                         </div>
-                        <div className="col-md-4">
-                            <LabelInput label="Include BMD CDF Table" htmlFor="bmdCdfTable" />
-                            <br />
-                            <CheckboxInput
-                                id="bmdCdfTable"
-                                checked={wordReportOptions.bmdCdfTable}
-                                onChange={v => changeReportOptions("bmdCdfTable", v)}
-                            />
-                            <p className="text-muted">
-                                Include the BMD cumulative distribution function (CDF) table for
-                                each model. This is a large table and makes the report considerably
-                                longer, but may be necessary for some downstream analysis of
-                                results.
-                            </p>
-                        </div>
+                        {isMultiTumorOrNestedDichotomous ? null : (
+                            <div className="col-md-4">
+                                <LabelInput label="Include BMD CDF Table" htmlFor="bmdCdfTable" />
+                                <br />
+                                <CheckboxInput
+                                    id="bmdCdfTable"
+                                    checked={wordReportOptions.bmdCdfTable}
+                                    onChange={v => changeReportOptions("bmdCdfTable", v)}
+                                />
+                                <p className="text-muted">
+                                    Include the BMD cumulative distribution function (CDF) table for
+                                    each model. This is a large table and makes the report
+                                    considerably longer, but may be necessary for some downstream
+                                    analysis of results.
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </Modal.Body>
                 <Modal.Footer>

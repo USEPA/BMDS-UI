@@ -17,7 +17,7 @@ import Output from "./Output/Output";
 class Navigation extends Component {
     render() {
         const {mainStore} = this.props,
-            {isMultitumor} = mainStore;
+            {isMultiTumor} = mainStore;
         return (
             <>
                 <ul className="nav nav-tabs d-flex mt-3">
@@ -36,7 +36,7 @@ class Navigation extends Component {
                             Output
                         </NavLink>
                     </li>
-                    {isMultitumor ? null : (
+                    {isMultiTumor ? null : (
                         <li className="nav-item">
                             <NavLink className="nav-link" to="/logic">
                                 Logic

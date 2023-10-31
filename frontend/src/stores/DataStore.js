@@ -270,7 +270,7 @@ class DataStore {
     @computed get maxItems() {
         return this.rootStore.mainStore.isDesktop
             ? 1000
-            : this.rootStore.mainStore.isMultitumor
+            : this.rootStore.mainStore.isMultiTumor
             ? 10
             : 6;
     }
