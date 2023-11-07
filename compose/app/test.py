@@ -6,4 +6,4 @@ dataset = bmds.DichotomousDataset(
 )
 model = Logistic(dataset=dataset)
 result = model.execute()
-print(result.dict())  # noqa: T201
+print(result.model_dump())  # noqa: T201

@@ -14,7 +14,7 @@ from bmds_server.analysis.validators import datasets
 def _missing_field(err, missing_field: str):
     data = json.loads(err.value.message)
     assert data[0]["loc"] == [missing_field]
-    assert data[0]["msg"] == "field required"
+    assert data[0]["msg"] == "Field required"
 
 
 class TestInputValidation:
@@ -198,63 +198,47 @@ class TestModelValidation:
         logprobit = bmds.constants.M_LogProbit
 
         # test success
-        assert (
-            validators.validate_models(
-                dtype,
-                {"frequentist_restricted": [logprobit]},
-            )
-            is None
-        )
+        validators.validate_models(dtype, {"frequentist_restricted": [logprobit]})
 
         # assert wrong model type
+        data = {"frequentist_restricted": [bmds.constants.M_Power]}
         with pytest.raises(ValidationError) as err:
-            validators.validate_models(
-                dtype,
-                {"frequentist_restricted": [bmds.constants.M_Power]},
-            )
+            validators.validate_models(dtype, data)
         assert "Invalid model(s) in frequentist_restricted: Power" in str(err)
 
         # assert duplicates model type
+        data = {"frequentist_restricted": [logprobit, logprobit]}
         with pytest.raises(ValidationError) as err:
-            validators.validate_models(
-                dtype,
-                {"frequentist_restricted": [logprobit, logprobit]},
-            )
+            validators.validate_models(dtype, data)
         assert "Models in frequentist_restricted are not unique" in str(err)
 
         # assert empty
+        data = {"frequentist_restricted": []}
         with pytest.raises(ValidationError) as err:
-            validators.validate_models(
-                dtype,
-                {"frequentist_restricted": []},
-            )
+            validators.validate_models(dtype, data)
         assert "At least one model must be selected" in str(err)
 
         # assert bayesian duplicates
+        data = {
+            "bayesian": [
+                {"model": probit, "prior_weight": 0.3},
+                {"model": logprobit, "prior_weight": 0.4},
+                {"model": logprobit, "prior_weight": 0.3},
+            ]
+        }
         with pytest.raises(ValidationError) as err:
-            validators.validate_models(
-                dtype,
-                {
-                    "bayesian": [
-                        {"model": probit, "prior_weight": 0.3},
-                        {"model": logprobit, "prior_weight": 0.4},
-                        {"model": logprobit, "prior_weight": 0.3},
-                    ]
-                },
-            )
+            validators.validate_models(dtype, data)
         assert "Models in bayesian are not unique" in str(err)
 
         # assert bayesian prior_weight sum
+        data = {
+            "bayesian": [
+                {"model": probit, "prior_weight": 0.5},
+                {"model": logprobit, "prior_weight": 0.49},
+            ]
+        }
         with pytest.raises(ValidationError) as err:
-            validators.validate_models(
-                dtype,
-                {
-                    "bayesian": [
-                        {"model": probit, "prior_weight": 0.5},
-                        {"model": logprobit, "prior_weight": 0.49},
-                    ]
-                },
-            )
+            validators.validate_models(dtype, data)
         assert "Prior weight in bayesian does not sum to 1" in str(err.value)
 
     def test_bmds3_continuous(self):
@@ -333,7 +317,7 @@ class TestOptionSetValidation:
         data = []
         with pytest.raises(ValidationError) as err:
             validators.validate_options(bmds.constants.DICHOTOMOUS, data)
-        assert "ensure this value has at least 1 items" in str(err)
+        assert "List should have at least 1 item" in str(err)
 
     def test_continuous(self):
         # test success
@@ -352,7 +336,7 @@ class TestOptionSetValidation:
         data = []
         with pytest.raises(ValidationError) as err:
             validators.validate_options(bmds.constants.CONTINUOUS, data)
-        assert "ensure this value has at least 1 items" in str(err)
+        assert "List should have at least 1 item" in str(err)
 
 
 class TestDatasetValidation:

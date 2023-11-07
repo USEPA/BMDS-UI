@@ -7,6 +7,12 @@ from rest_framework.test import APIClient
 from bmds_server.analysis.models import Analysis
 
 
+def check_error(response: dict, type: str, loc: list, msg: str):
+    assert response["type"] == type
+    assert response["loc"] == loc
+    assert response["msg"] == msg
+
+
 @pytest.mark.django_db
 class TestAnalysisViewSet:
     def test_auth(self, bmds3_complete_continuous):
@@ -89,28 +95,21 @@ class TestAnalysisViewSet:
             "editKey": analysis.password,
             "data": {"bmds_version": "BMDS330", "dataset_type": "C"},
         }
-        response = client.patch(
-            url,
-            payload,
-            format="json",
-        )
+        response = client.patch(url, payload, format="json")
         assert response.status_code == 400
-        assert json.loads(response.json()[0])[0] == {
-            "loc": ["datasets"],
-            "msg": "field required",
-            "type": "value_error.missing",
-        }
+        check_error(
+            json.loads(response.json()[0])[0],
+            type="missing",
+            loc=["datasets"],
+            msg="Field required",
+        )
 
         payload = {
             "editKey": analysis.password,
             "data": {"bmds_version": "BMDS330", "dataset_type": "C"},
             "partial": True,
         }
-        response = client.patch(
-            url,
-            payload,
-            format="json",
-        )
+        response = client.patch(url, payload, format="json")
         assert response.status_code == 200
         assert response.json()["inputs"] == payload["data"]
 
@@ -119,29 +118,22 @@ class TestAnalysisViewSet:
             "dataset_type": "C",
             "models": {"frequentist_restricted": ["ZZZ"]},
         }
-        response = client.patch(
-            url,
-            payload,
-            format="json",
-        )
+        response = client.patch(url, payload, format="json")
         assert response.status_code == 400
-        assert json.loads(response.json()[0])[0] == {
-            "loc": ["__root__"],
-            "msg": "Invalid model(s) in frequentist_restricted: ZZZ",
-            "type": "value_error",
-        }
+        check_error(
+            json.loads(response.json()[0])[0],
+            type="value_error",
+            loc=[],
+            msg="Value error, Invalid model(s) in frequentist_restricted: ZZZ",
+        )
 
         payload["data"] = {
             "bmds_version": "BMDS330",
             "dataset_type": "C",
             "models": {"frequentist_restricted": ["Power"]},
-            "recommender": RecommenderSettings.build_default().dict(),
+            "recommender": RecommenderSettings.build_default().model_dump(),
         }
-        response = client.patch(
-            url,
-            payload,
-            format="json",
-        )
+        response = client.patch(url, payload, format="json")
         assert response.status_code == 200
         assert response.json()["inputs"] == payload["data"]
 

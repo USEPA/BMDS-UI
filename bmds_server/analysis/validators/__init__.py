@@ -1,4 +1,3 @@
-import bmds
 from bmds.bmds3.recommender import RecommenderSettings
 
 from ...common.validation import pydantic_validate
@@ -22,7 +21,6 @@ def validate_input(data: dict, partial: bool = False) -> None:
     """
     # check session
     validate_session(data, partial=partial)
-    bmds_version = data["bmds_version"]
     dataset_type = data["dataset_type"]
 
     # check dataset schema
@@ -37,7 +35,7 @@ def validate_input(data: dict, partial: bool = False) -> None:
         validate_models(dataset_type, models)
 
     options = data.get("options")
-    if options or (partial is False and bmds_version in bmds.constants.BMDS_THREES):
+    if options or partial is False:
         validate_options(dataset_type, data.get("options"))
 
     recommender = data.get("recommender")

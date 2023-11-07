@@ -58,8 +58,8 @@ def build_model_settings(
     elif dataset_type == bmds.constants.NESTED_DICHOTOMOUS:
         is_restricted = prior_class == PriorClass.frequentist_restricted
         return NestedDichotomousModelSettings(
-            bmr_type=options["bmr_value"],
-            bmr=options["bmr_type"],
+            bmr_type=options["bmr_type"],
+            bmr=options["bmr_value"],
             alpha=round(1.0 - options["confidence_level"], 3),
             litter_specific_covariate=options["litter_specific_covariate"],
             restricted=is_restricted,
@@ -90,7 +90,7 @@ def build_dataset(dataset: dict[str, list[float]]) -> bmds.datasets.DatasetType:
         schema = bmds.datasets.NestedDichotomousDatasetSchema
     else:
         raise ValueError(f"Unknown dataset type: {dataset_type}")
-    return schema.parse_obj(dataset).deserialize()
+    return schema.model_validate(dataset).deserialize()
 
 
 def remap_exponential(models: list[str]) -> list[str]:

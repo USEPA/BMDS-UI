@@ -304,9 +304,9 @@ class Analysis(models.Model):
             analysis_id=str(self.id),
             bmds_server_version=settings.COMMIT.sha,
             bmds_python_version=bmds_python_version,
-            outputs=[output.dict() for output in outputs],
+            outputs=[output.model_dump(by_alias=True) for output in outputs],
         )
-        self.outputs = analysis_output.dict()
+        self.outputs = analysis_output.model_dump(by_alias=True)
         self.errors = [output.error for output in outputs if output.error]
         self.ended = now()
         self.deletion_date = get_deletion_date()
@@ -336,7 +336,7 @@ class Analysis(models.Model):
             "models": {},
             "dataset_options": [],
             "options": [],
-            "recommender": RecommenderSettings.build_default().dict(),
+            "recommender": RecommenderSettings.build_default().model_dump(),
         }
 
     def renew(self):
@@ -345,7 +345,7 @@ class Analysis(models.Model):
     def get_bmds_version(self) -> VersionSchema | None:
         if not self.is_finished or self.has_errors:
             return None
-        return AnalysisOutput.parse_obj(self.outputs).bmds_python_version
+        return AnalysisOutput.model_validate(self.outputs).bmds_python_version
 
     @property
     def deletion_date_str(self) -> str | None:

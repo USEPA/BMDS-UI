@@ -55,13 +55,13 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Bmds
                 )
                 degrees = list(range(min_degree, max(min(max_degree, 9), 2)))
                 for degree in degrees:
-                    model_options = model_options.copy()
+                    model_options = model_options.model_copy()
                     model_options.degree = degree
                     session.add_model(model_name, settings=model_options)
             elif dataset_type == ModelClass.NESTED_DICHOTOMOUS:
                 # run all permutations of intralitter correlation and litter specific covariate
                 for ilc, lsc_on in itertools.product(IntralitterCorrelation, [True, False]):
-                    settings = model_options.copy()
+                    settings = model_options.model_copy()
                     settings.intralitter_correlation = ilc
                     settings.litter_specific_covariate = (
                         settings.litter_specific_covariate
@@ -149,7 +149,7 @@ class AnalysisSession(NamedTuple):
 
     @classmethod
     def deserialize(cls, data: dict) -> Self:
-        obj = AnalysisSessionSchema.parse_obj(data)
+        obj = AnalysisSessionSchema.model_validate(data)
         return cls(
             dataset_index=obj.dataset_index,
             option_index=obj.option_index,
@@ -177,7 +177,7 @@ class AnalysisSession(NamedTuple):
         )
 
     def to_dict(self) -> dict:
-        return self.to_schema().dict()
+        return self.to_schema().model_dump(by_alias=True)
 
 
 class MultiTumorSession(NamedTuple):
@@ -220,7 +220,7 @@ class MultiTumorSession(NamedTuple):
 
     @classmethod
     def deserialize(cls, data: dict) -> Self:
-        obj = AnalysisSessionSchema.parse_obj(data)
+        obj = AnalysisSessionSchema.model_validate(data)
         return cls(
             option_index=obj.option_index,
             session=Multitumor.from_serialized(obj.frequentist),
@@ -232,7 +232,7 @@ class MultiTumorSession(NamedTuple):
         )
 
     def to_dict(self) -> dict:
-        return self.to_schema().dict()
+        return self.to_schema().model_dump(by_alias=True)
 
 
 Session = AnalysisSession | MultiTumorSession

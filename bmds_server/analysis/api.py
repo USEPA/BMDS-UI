@@ -133,7 +133,7 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             data = renderers.BinaryFile(data=response.content, filename=instance.slug)
             return Response(data)
 
-        return Response(response.dict(), content_type="application/json")
+        return Response(response.model_dump(), content_type="application/json")
 
     @action(detail=True, renderer_classes=(renderers.DocxRenderer,))
     def word(self, request, *args, **kwargs):
@@ -155,7 +155,7 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             data = add_update_url(instance, response.content, uri) if edit else response.content
             return Response(renderers.BinaryFile(data=data, filename=instance.slug))
 
-        return Response(response.dict(), content_type="application/json")
+        return Response(response.model_dump(), content_type="application/json")
 
 
 @api_view(["POST"])

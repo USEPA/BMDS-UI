@@ -215,7 +215,7 @@ DAYS_TO_KEEP_ANALYSES = 180
 # commit information
 def get_git_commit() -> Commit:
     if GIT_COMMIT_FILE.exists():
-        return Commit.parse_file(GIT_COMMIT_FILE)
+        return Commit.model_validate_json(GIT_COMMIT_FILE.read_text())
     try:
         return Commit.current(str(ROOT_DIR))
     except (CalledProcessError, FileNotFoundError):

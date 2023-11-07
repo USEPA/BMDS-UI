@@ -21,6 +21,6 @@ def pydantic_validate(data: Any, model: type[T]) -> T:
         BaseModel: Instance of class, if successful.
     """
     try:
-        return model.parse_obj(data)
+        return model.model_validate(data)
     except PydanticValidationError as err:
         raise ValidationError(err.json())

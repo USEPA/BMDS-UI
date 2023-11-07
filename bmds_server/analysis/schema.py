@@ -4,8 +4,7 @@ from io import StringIO
 import pandas as pd
 from bmds.bmds3.types.sessions import VersionSchema
 from bmds.datasets.transforms.polyk import calculate
-from pydantic import BaseModel, Field, validator
-from pydantic.schema import schema as pyschema
+from pydantic import BaseModel, Field, field_validator
 from rest_framework.schemas.openapi import SchemaGenerator
 
 from .validators import AnalysisSelectedSchema
@@ -32,7 +31,7 @@ class AnalysisOutput(BaseModel):
     analysis_id: str
     analysis_schema_version: str = "1.1"
     bmds_server_version: str
-    bmds_python_version: VersionSchema | None
+    bmds_python_version: VersionSchema | None = None
     outputs: list[AnalysisSessionSchema]
 
 
@@ -42,7 +41,8 @@ class PolyKInput(BaseModel):
     power: float = Field(default=3, ge=0, le=5)
     duration: float | None = Field(default=None, gt=0, le=10000)
 
-    @validator("dataset")
+    @field_validator("dataset")
+    @classmethod
     def check_dataset(cls, value):
         if len(value) > 100_000:
             raise ValueError("Dataset too large")
@@ -81,9 +81,10 @@ class PolyKInput(BaseModel):
 
 
 def add_schemas(schema: dict, models: list):
-    additions = pyschema(models, ref_prefix="#/components/schemas/")
-    for key, value in additions["definitions"].items():
-        schema["components"]["schemas"][key] = value
+    for model in models:
+        schema["components"]["schemas"][model.__name__] = model.model_json_schema(
+            ref_template=f"#/components/schemas/{model}"
+        )
 
 
 def add_schema_to_path(schema: dict, path: str, verb: str, name: str):

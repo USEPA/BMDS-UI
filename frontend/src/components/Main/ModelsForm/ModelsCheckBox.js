@@ -45,19 +45,19 @@ const isModelChecked = function(models, type, model) {
         );
     }),
     CheckBoxTd = observer(props => {
-        const {store, type, model, disabled} = props;
-
+        const {store, type, model, disabled} = props,
+            id = `${type}-${model}`;
         return store.canEdit ? (
-            <td>
+            <td key={id}>
                 <CheckboxInput
-                    id={type + "-" + model}
+                    id={id}
                     disabled={disabled}
                     onChange={value => store.setModelSelection(type, model, value)}
                     checked={isModelChecked(store.models, type, model)}
                 />
             </td>
         ) : (
-            <td>{checkOrEmpty(isModelChecked(store.models, type, model))}</td>
+            <td key={id}>{checkOrEmpty(isModelChecked(store.models, type, model))}</td>
         );
     }),
     multistageHelpText = `All Multistage model polynomial degrees will be run up to a maximum

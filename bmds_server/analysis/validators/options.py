@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 
 from ...common.validation import pydantic_validate
 
-max_items = 1000 if settings.IS_DESKTOP else 6
+max_length = 1000 if settings.IS_DESKTOP else 6
 
 
 class DichotomousOption(BaseModel):
@@ -38,15 +38,15 @@ class NestedDichotomousOption(BaseModel):
 
 
 class DichotomousOptions(BaseModel):
-    options: list[DichotomousOption] = Field(min_items=1, max_items=max_items)
+    options: list[DichotomousOption] = Field(min_length=1, max_length=max_length)
 
 
 class ContinuousOptions(BaseModel):
-    options: list[ContinuousOption] = Field(min_items=1, max_items=max_items)
+    options: list[ContinuousOption] = Field(min_length=1, max_length=max_length)
 
 
 class NestedDichotomousOptions(BaseModel):
-    options: list[NestedDichotomousOption] = Field(min_items=1, max_items=max_items)
+    options: list[NestedDichotomousOption] = Field(min_length=1, max_length=max_length)
 
 
 def validate_options(dataset_type: str, data: Any):
