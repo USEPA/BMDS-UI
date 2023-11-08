@@ -13,6 +13,7 @@ class Summary extends Component {
                 ["BMD", ff(model.bmd)],
                 ["BMDL", ff(model.bmdl)],
                 ["BMDU", ff(model.bmdu)],
+                ["Slope Factor", ff(model.slope_factor)],
                 ["AIC", ff(model.fit.aic)],
                 [
                     <span key="0">
@@ -22,7 +23,6 @@ class Summary extends Component {
                 ],
                 ["Overall DOF", ff(model.gof.df)],
                 ["Chi²", ff(model.fit.chisq)][("Log Likelihood", ff(model.fit.loglikelihood))],
-                ["Slope Factor", "TODO"],
             ];
         return <TwoColumnTable data={data} label="Summary" />;
     }

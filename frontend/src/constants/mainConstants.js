@@ -8,5 +8,5 @@ export const VERSION_330 = "BMDS330",
         {name: "Continuous", value: MODEL_CONTINUOUS},
         {name: "Dichotomous", value: MODEL_DICHOTOMOUS},
         {name: "Nested Dichotomous", value: MODEL_NESTED_DICHOTOMOUS},
-        {name: "Multi-tumor", value: MODEL_MULTI_TUMOR},
+        {name: "Multistage Cancer / Multitumor", value: MODEL_MULTI_TUMOR},
     ];

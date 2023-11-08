@@ -245,7 +245,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
             page.locator('a:has-text("Output")').click()
 
             # check one result
-            page.get_by_role("link", name="Multi-tumor (MS Combo)").click()
+            page.get_by_role("link", name="Multistage Cancer / Multitumor").click()
             expect(page.get_by_role("dialog")).to_contain_text("MS Combo")
             page.locator("#close-modal").click()
 

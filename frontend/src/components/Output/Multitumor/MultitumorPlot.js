@@ -4,14 +4,14 @@ import React, {Component} from "react";
 
 import DoseResponsePlot from "@/components/common/DoseResponsePlot";
 import {getNameFromDegrees} from "@/constants/modelConstants";
-import {colorCodes, getDrLayout, getResponse} from "@/constants/plotting";
+import {colorCodes, getBmdDiamond, getDrLayout, getResponse} from "@/constants/plotting";
 
 const getLayout = function(datasets) {
     let layout;
     datasets.forEach(dataset => {
         if (layout === undefined) {
             layout = getDrLayout(dataset);
-            layout.title.text = "Multitumor (MS Combo)";
+            layout.title.text = "Multitumor";
             layout.yaxis.range = [0, 1];
         } else {
             const revised = getDrLayout(dataset);
@@ -27,7 +27,8 @@ const getLayout = function(datasets) {
 };
 
 const getData = function(ma, datasets, models) {
-    let data = [];
+    const data = [],
+        bmd_y = ma.bmdl * ma.slope_factor;
 
     // add individual datasets
     datasets.forEach((dataset, index) => {
@@ -61,17 +62,21 @@ const getData = function(ma, datasets, models) {
         });
     });
 
-    // add slope factor
-    data.push({
-        x: [0, ma.bmd],
-        y: [0, ma.bmd * ma.slope_factor],
-        name: "Cancer Slope Factor",
-        line: {
-            width: 5,
-            color: "black",
-            dash: "dot",
-        },
-    });
+    if (ma.bmdl) {
+        // add slope factor
+        data.push({
+            x: [0, ma.bmdl],
+            y: [0, bmd_y],
+            name: "Cancer Slope Factor",
+            legendgroup: "Cancer Slope Factor",
+            line: {
+                width: 5,
+                color: "#000000",
+                dash: "dot",
+            },
+        });
+        data.push(getBmdDiamond("Cancer Slope Factor", ma.bmd, ma.bmdl, ma.bmdu, bmd_y, "#000000"));
+    }
 
     return data;
 };

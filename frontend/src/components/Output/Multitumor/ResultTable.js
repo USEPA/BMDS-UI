@@ -16,7 +16,7 @@ class ResultTable extends Component {
         if (!selectedFrequentist) {
             return null;
         }
-        const colWidths = [15, 15, 10, 10, 10, 10, 10, 10],
+        const colWidths = [15, 15, 8, 8, 8, 8, 8, 8, 11, 11],
             {results} = selectedFrequentist,
             {multitumorDatasets} = store,
             indexes = results.selected_model_indexes,
@@ -41,6 +41,8 @@ class ResultTable extends Component {
                             <i>P</i>-Value
                         </th>
                         <th>AIC</th>
+                        <th>Scaled Residual for Dose Group near BMD</th>
+                        <th>Scaled Residual for Control Dose Group</th>
                     </tr>
                 </thead>
                 <tbody className="table-bordered">
@@ -54,7 +56,7 @@ class ResultTable extends Component {
                                         e.preventDefault();
                                         store.showModalDetailMultitumor(-1, -1);
                                     }}>
-                                    Multi-tumor (MS Combo)
+                                    Multitumor
                                 </a>
                             </td>
                             <td>-</td>
@@ -62,6 +64,8 @@ class ResultTable extends Component {
                             <td>{ff(results.bmd)}</td>
                             <td>{ff(results.bmdu)}</td>
                             <td>{ff(results.slope_factor)}</td>
+                            <td>-</td>
+                            <td>-</td>
                             <td>-</td>
                             <td>-</td>
                         </tr>
@@ -94,9 +98,11 @@ class ResultTable extends Component {
                                             <td>{ff(model.bmdl)}</td>
                                             <td>{ff(model.bmd)}</td>
                                             <td>{ff(model.bmdu)}</td>
-                                            <td>TODO</td>
+                                            <td>{ff(model.slope_factor)}</td>
                                             <td>{ff(model.gof.p_value)}</td>
                                             <td>{ff(model.fit.aic)}</td>
+                                            <td>{ff(model.gof.roi)}</td>
+                                            <td>{ff(model.gof.residual[0])}</td>
                                         </tr>
                                     );
                                 })

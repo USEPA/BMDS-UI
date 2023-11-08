@@ -143,108 +143,97 @@ export const getResponse = dataset => {
             name: "Response",
         };
     },
+    getBmdDiamond = function(name, bmd, bmdl, bmdu, bmd_y, hexColor) {
+        const hasBmd = bmd > 0;
+
+        // prettier-ignore
+        const template = `<b>${name}</b><br />BMD: ${ff(bmd)}<br />BMDL: ${ff(bmdl)}<br />BMDU: ${ff(bmdu)}<br />BMR: ${ff(bmd_y)}<extra></extra>`;
+
+        if (hasBmd) {
+            return {
+                x: [bmd],
+                y: [bmd_y],
+                mode: "markers",
+                type: "scatter",
+                hoverinfo: "x",
+                hovertemplate: template,
+                marker: {
+                    color: hexColor,
+                    size: 16,
+                    symbol: "diamond-tall",
+                    line: {
+                        color: "white",
+                        width: 2,
+                    },
+                },
+                legendgroup: name,
+                showlegend: false,
+                error_x: {
+                    array: [bmdu > 0 ? bmdu - bmd : 0],
+                    arrayminus: [bmdl > 0 ? bmd - bmdl : 0],
+                    color: hexToRgbA(hexColor, 0.6),
+                    thickness: 12,
+                    width: 0,
+                },
+            };
+        }
+    },
     getDrBmdLine = function(model, hexColor) {
         // https://plotly.com/python/marker-style/
         // https://plotly.com/javascript/reference/scatter/
-        const hasBmd = model.results.bmd > 0,
-            hasBmdl = model.results.bmdl > 0,
-            hasBmdu = model.results.bmdu > 0,
-            data = [
-                {
-                    x: model.results.plotting.dr_x,
-                    y: model.results.plotting.dr_y,
-                    mode: "lines",
-                    name: model.name,
-                    hoverinfo: "y",
-                    line: {
-                        color: hexToRgbA(hexColor, 0.8),
-                        width: 4,
-                        opacity: 0.5,
-                    },
-                    legendgroup: model.name,
-                },
-            ];
-
-        if (hasBmd) {
-            // prettier-ignore
-            const template = `<b>${model.name}</b><br />BMD: ${ff(model.results.bmd)}<br />BMDL: ${ff(model.results.bmdl)}<br />BMDU: ${ff(model.results.bmdu)}<br />BMR: ${ff(model.results.plotting.bmd_y)}<extra></extra>`;
-
-            data.push({
-                x: [model.results.bmd],
-                y: [model.results.plotting.bmd_y],
-                mode: "markers",
-                type: "scatter",
-                hoverinfo: "x",
-                hovertemplate: template,
-                marker: {
-                    color: hexColor,
-                    size: 16,
-                    symbol: "diamond-tall",
-                    line: {
-                        color: "white",
-                        width: 2,
-                    },
+        const data = [
+            {
+                x: model.results.plotting.dr_x,
+                y: model.results.plotting.dr_y,
+                mode: "lines",
+                name: model.name,
+                hoverinfo: "y",
+                line: {
+                    color: hexToRgbA(hexColor, 0.8),
+                    width: 4,
+                    opacity: 0.5,
                 },
                 legendgroup: model.name,
-                showlegend: false,
-                error_x: {
-                    array: [hasBmdu ? model.results.bmdu - model.results.bmd : 0],
-                    arrayminus: [hasBmdl ? model.results.bmd - model.results.bmdl : 0],
-                    color: hexToRgbA(hexColor, 0.6),
-                    thickness: 12,
-                    width: 0,
-                },
-            });
-        }
+            },
+        ];
 
+        const diamond = getBmdDiamond(
+            model.name,
+            model.results.bmd,
+            model.results.bmdl,
+            model.results.bmdu,
+            model.results.plotting.bmd_y,
+            hexColor
+        );
+        if (diamond) {
+            data.push(diamond);
+        }
         return data;
     },
     getBayesianBMDLine = function(model, hexColor) {
-        const hasBmd = model.results.bmd > 0,
-            hasBmdl = model.results.bmdl > 0,
-            hasBmdu = model.results.bmdu > 0,
-            data = [
-                {
-                    x: model.results.dr_x,
-                    y: model.results.dr_y,
-                    name: "Model average",
-                    legendgroup: "BMA",
-                    line: {
-                        width: 6,
-                        color: hexColor,
-                    },
-                },
-            ];
-
-        if (hasBmd) {
-            // prettier-ignore
-            const template = `<b>Model Average</b><br />BMD: ${ff(model.results.bmd)}<br />BMDL: ${ff(model.results.bmdl)}<br />BMDU: ${ff(model.results.bmdu)}<br />BMR: ${ff(model.results.bmd_y)}<extra></extra>`;
-            data.push({
-                x: [model.results.bmd],
-                y: [model.results.bmd_y],
-                mode: "markers",
-                type: "scatter",
-                hoverinfo: "x",
-                hovertemplate: template,
-                marker: {
+        const data = [
+            {
+                x: model.results.dr_x,
+                y: model.results.dr_y,
+                name: "Model Average",
+                legendgroup: "Model Average",
+                line: {
+                    width: 6,
                     color: hexColor,
-                    size: 16,
-                    symbol: "diamond-tall",
-                    line: {
-                        color: "white",
-                        width: 2,
-                    },
                 },
-                legendgroup: "BMA",
-                showlegend: false,
-                error_x: {
-                    array: [hasBmdu ? model.results.bmdu - model.results.bmd : 0],
-                    arrayminus: [hasBmdl ? model.results.bmd - model.results.bmdl : 0],
-                    color: hexToRgbA(hexColor, 0.6),
-                    thickness: 12,
-                    width: 0,
-                },
-            });
+            },
+        ];
+
+        const diamond = getBmdDiamond(
+            "Model Average",
+            model.results.bmd,
+            model.results.bmdl,
+            model.results.bmdu,
+            model.results.bmd_y,
+            hexColor
+        );
+        if (diamond) {
+            data.push(diamond);
         }
 
         return data;
