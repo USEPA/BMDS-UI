@@ -164,7 +164,7 @@ class AboutModal extends Component {
                                 "Kissling et al. (2008)"
                             )}
                             , the authors note that the poly-3 adjustment has not been validated for
-                            carcinogenicity studies longer than years, consistent with the
+                            carcinogenicity studies longer than two years, consistent with the
                             conclusion of the Portier et al. (1986) analysis that acknowledges that
                             “animals used in historical control data base were generally sacrificed
                             if they lived to 109 weeks…. Thus, the application of these models
