@@ -3,10 +3,12 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import {columnHeaders, columns} from "@/constants/dataConstants";
+import {MODEL_MULTI_TUMOR} from "@/constants/mainConstants";
 
 import Button from "../common/Button";
 import ErrorMessage from "../common/ErrorMessage";
 import FloatInput from "../common/FloatInput";
+import Icon from "../common/Icon";
 import TextInput from "../common/TextInput";
 import TabularDatasetModal from "./TabularDatasetModal";
 
@@ -72,7 +74,6 @@ class DatasetForm extends Component {
                         </div>
                     </div>
                 </div>
-
                 <div className="form-group row mx-0">
                     <label htmlFor="doseName" className="col-md-2 px-0">
                         Dose name
@@ -93,7 +94,6 @@ class DatasetForm extends Component {
                         />
                     </div>
                 </div>
-
                 <div className="form-group row mx-0">
                     <label htmlFor="doseUnits" className="col-md-2 px-0">
                         Dose units
@@ -156,14 +156,23 @@ class DatasetForm extends Component {
                         })}
                     </tbody>
                 </table>
-                <p>
+                <div className="d-flex ">
                     <Button
                         className="btn btn-link"
                         onClick={dataStore.loadExampleData}
                         icon="layer-forward"
                         text="Load an example dataset"
                     />
-                </p>
+                    {dataStore.rootStore.mainStore.model_type == MODEL_MULTI_TUMOR ? (
+                        <a
+                            className="ml-auto"
+                            href="/transforms/polyk/"
+                            target="_blank"
+                            rel="noopener noreferrer">
+                            <Icon name="calculator" text="Poly K Adjustment" />
+                        </a>
+                    ) : null}
+                </div>
                 <TabularDatasetModal />
             </div>
         );
