@@ -11,8 +11,11 @@ class ClipboardButton extends Component {
         this.ref = React.createRef();
     }
     componentDidMount() {
-        const {textToCopy} = this.props;
+        const {textToCopy, onCopy} = this.props;
         this.clipboardEvent = new Clipboard(this.ref.current, {text: () => textToCopy});
+        if (onCopy) {
+            this.clipboardEvent.on("success", onCopy);
+        }
     }
     componentWillUnmount() {
         this.clipboardEvent.destroy();
@@ -35,6 +38,7 @@ ClipboardButton.propTypes = {
     text: PropTypes.string.isRequired,
     textToCopy: PropTypes.string.isRequired,
     className: PropTypes.string.isRequired,
+    onCopy: PropTypes.func,
 };
 ClipboardButton.defaultProps = {
     text: "",
