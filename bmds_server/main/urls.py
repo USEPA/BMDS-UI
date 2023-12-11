@@ -7,7 +7,7 @@ from rest_framework.routers import SimpleRouter
 from rest_framework.schemas import get_schema_view
 
 from ..analysis import schema, views
-from ..analysis.api import AnalysisViewset, polyk_transform
+from ..analysis.api import AnalysisViewset, PolyKViewset
 from ..common import views as common_views
 from ..common.api import HealthcheckViewset
 from .constants import AuthProvider
@@ -18,6 +18,8 @@ healthcheck_url = (
 
 router = SimpleRouter()
 router.register("analysis", AnalysisViewset, basename="analysis")
+if settings.INCLUDE_BETA_FEATURES:
+    router.register("polyk", PolyKViewset, basename="polyk")
 router.register(healthcheck_url, HealthcheckViewset, basename="healthcheck")
 
 edit_pattern = "analysis/<uuid:pk>/<str:password>/"
@@ -46,7 +48,6 @@ urlpatterns = [
 
 if settings.INCLUDE_BETA_FEATURES:
     urlpatterns += [
-        path("api/v1/polyk/", polyk_transform, name="polyk"),
         path("transforms/polyk/", views.PolyKAdjustment.as_view(), name="polyk"),
     ]
 

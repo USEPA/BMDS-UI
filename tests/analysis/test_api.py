@@ -1,7 +1,11 @@
 import json
+from io import BytesIO
 
+import docx
+import pandas as pd
 import pytest
 from bmds.bmds3.recommender import RecommenderSettings
+from django.urls import reverse
 from rest_framework.test import APIClient
 
 from bmds_server.analysis.models import Analysis
@@ -242,3 +246,32 @@ class TestAnalysisViewSet:
         assert response.status_code == 200
         value = response.data["outputs"]["outputs"][0]["frequentist"]["selected"]
         assert value == {"model_index": None, "notes": "no notes"}
+
+
+@pytest.mark.django_db
+class TestPolyKViewSet:
+    def test_create(self, polyk_dataset):
+        client = APIClient()
+        url = reverse("api:polyk-list")
+        response = client.post(url, polyk_dataset, format="json")
+        assert response.status_code == 200
+        assert list(response.json().keys()) == ["df", "df2"]
+
+    def test_excel(self, polyk_dataset):
+        client = APIClient()
+        url = reverse("api:polyk-excel")
+        response = client.post(url, polyk_dataset, format="json")
+        assert response.status_code == 200
+        # ensure that response is a valid workbook with two worksheets
+        data = pd.read_excel(response.content, sheet_name=["adjusted", "summary"])
+        assert isinstance(data["adjusted"], pd.DataFrame)
+        assert isinstance(data["summary"], pd.DataFrame)
+
+    def test_word(self, polyk_dataset):
+        client = APIClient()
+        url = reverse("api:polyk-word")
+        response = client.post(url, polyk_dataset, format="json")
+        assert response.status_code == 200
+        # assert docx loads
+        doc = docx.Document(BytesIO(response.content))
+        assert isinstance(doc, docx.document.Document)

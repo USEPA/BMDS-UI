@@ -1,15 +1,18 @@
+from bmds.datasets.transforms.polyk import PolyKAdjustment
 from django.core.exceptions import ValidationError
 from rest_framework import exceptions, mixins, viewsets
-from rest_framework.decorators import action, api_view
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..common import renderers
+from ..common.renderers import BinaryFile
+from ..common.serializers import UnusedSerializer
 from ..common.task_cache import ReportStatus
 from ..common.utils import get_bool
 from ..common.validation import pydantic_validate
 from . import models, schema, serializers, validators
 from .reporting.cache import DocxReportCache, ExcelReportCache
-from .reporting.docx import add_update_url
+from .reporting.docx import add_update_url, build_polyk_docx
 
 
 class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -158,11 +161,35 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         return Response(response.model_dump(), content_type="application/json")
 
 
-@api_view(["POST"])
-def polyk_transform(request):
-    try:
-        settings = pydantic_validate(request.data, schema.PolyKInput)
-    except ValidationError as err:
-        raise exceptions.ValidationError(err.message)
-    (df, df2) = settings.calculate()
-    return Response({"df": df.to_dict(orient="list"), "df2": df2.to_dict(orient="list")})
+class PolyKViewset(viewsets.GenericViewSet):
+    queryset = models.Analysis.objects.none()
+    serializer_class = UnusedSerializer
+
+    def _run_analysis(self, request) -> PolyKAdjustment:
+        try:
+            settings = pydantic_validate(request.data, schema.PolyKInput)
+        except ValidationError as err:
+            raise exceptions.ValidationError(err.message)
+        return settings.calculate()
+
+    def create(self, request, *args, **kwargs):
+        analysis = self._run_analysis(request)
+        return Response(
+            {
+                "df": analysis.adjusted_data.to_dict(orient="list"),
+                "df2": analysis.summary.to_dict(orient="list"),
+            }
+        )
+
+    @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
+    def excel(self, request, *args, **kwargs):
+        analysis = self._run_analysis(request)
+        data = BinaryFile(analysis.to_excel(), "polyk-adjustment")
+        return Response(data)
+
+    @action(detail=False, methods=["POST"], renderer_classes=(renderers.DocxRenderer,))
+    def word(self, request, *args, **kwargs):
+        analysis = self._run_analysis(request)
+        f = build_polyk_docx(analysis)
+        data = BinaryFile(f, "polyk-adjustment")
+        return Response(data)

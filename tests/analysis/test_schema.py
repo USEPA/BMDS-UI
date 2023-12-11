@@ -9,9 +9,9 @@ from bmds_server.analysis.schema import PolyKInput
 class TestPolyKInput:
     def test_calculate(self, polyk_dataset):
         analysis = PolyKInput.model_validate(polyk_dataset)
-        df1, df2 = analysis.calculate()
-        assert df1.shape == (200, 4)
-        assert df2.shape == (4, 6)
+        result = analysis.calculate()
+        assert result.adjusted_data.shape == (200, 4)
+        assert result.summary.shape == (4, 6)
 
     def test_validate_dataset(self, polyk_dataset):
         # confirm success

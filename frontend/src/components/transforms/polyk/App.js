@@ -2,6 +2,8 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
+import Button from "@/components/common/Button";
+
 import AboutModal from "./AboutModal";
 import InputForm from "./InputForm";
 import OutputTabs from "./OutputTabs";
@@ -10,7 +12,13 @@ import OutputTabs from "./OutputTabs";
 @observer
 class App extends Component {
     render() {
-        const {outputs, showAboutModal, setAboutModal} = this.props.store;
+        const {
+            outputs,
+            showAboutModal,
+            setAboutModal,
+            downloadExcel,
+            downloadWord,
+        } = this.props.store;
         return (
             <div className="container py-3">
                 <div className="d-flex justify-content-between">
@@ -35,7 +43,34 @@ class App extends Component {
                 <InputForm />
                 {outputs ? (
                     <>
-                        <h3 className="pt-3">Results</h3>
+                        <div className="d-flex">
+                            <h3 className="pt-3">Results</h3>
+                            <div className="dropdown ml-auto align-self-start">
+                                <Button
+                                    text="Actions&nbsp;"
+                                    className="btn btn-primary dropdown-toggle"
+                                    type="button"
+                                    id="bmdSessionActions"
+                                    dataToggle="dropdown"
+                                    hasPopup={true}
+                                />
+                                <div className="dropdown-menu dropdown-menu-right">
+                                    <span className="dropdown-header">Reporting</span>
+                                    <Button
+                                        className="dropdown-item"
+                                        onClick={() => downloadExcel()}
+                                        icon="file-excel"
+                                        text="Download data"
+                                    />
+                                    <Button
+                                        className="dropdown-item"
+                                        onClick={() => downloadWord()}
+                                        icon="file-word"
+                                        text="Download report"
+                                    />
+                                </div>
+                            </div>
+                        </div>
                         <OutputTabs />
                     </>
                 ) : null}

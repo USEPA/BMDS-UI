@@ -3,7 +3,7 @@ from io import StringIO
 
 import pandas as pd
 from bmds.bmds3.types.sessions import VersionSchema
-from bmds.datasets.transforms.polyk import calculate
+from bmds.datasets.transforms.polyk import PolyKAdjustment
 from pydantic import BaseModel, Field, field_validator
 from rest_framework.schemas.openapi import SchemaGenerator
 
@@ -68,16 +68,16 @@ class PolyKInput(BaseModel):
 
         return value
 
-    def calculate(self) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def calculate(self) -> PolyKAdjustment:
         input_df = pd.read_csv(StringIO(self.dataset)).sort_values(["dose", "day"])
-        (df1, df2) = calculate(
+        return PolyKAdjustment(
             doses=input_df.dose.tolist(),
             day=input_df.day.tolist(),
             has_tumor=input_df.has_tumor.tolist(),
             k=self.power,
             max_day=self.duration,
+            dose_units=self.dose_units,
         )
-        return (df1, df2)
 
 
 def add_schemas(schema: dict, models: list):

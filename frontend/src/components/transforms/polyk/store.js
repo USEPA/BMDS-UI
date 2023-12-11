@@ -1,8 +1,15 @@
 import {saveAs} from "file-saver";
-import {action, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 
 import {getHeaders} from "../../../common";
 import {exampleData} from "./data";
+
+const getBlob = function(response, defaultName) {
+    const header = response.headers.get("Content-Disposition"),
+        match = header.match(/filename="(.*)"/),
+        filename = match ? match[1] : defaultName;
+    return response.blob().then(blob => ({blob, filename}));
+};
 
 class Store {
     constructor(token) {
@@ -34,12 +41,7 @@ class Store {
     async submit() {
         const url = "/api/v1/polyk/";
         this.error = null;
-        await fetch(url, {
-            method: "POST",
-            mode: "cors",
-            headers: getHeaders(this.token),
-            body: JSON.stringify(this.settings),
-        })
+        await fetch(url, this.submissionRequest)
             .then(response => {
                 if (response.ok) {
                     response.json().then(data => {
@@ -67,6 +69,29 @@ class Store {
                 this.error = true;
                 console.error(error);
             });
+    }
+
+    @computed get submissionRequest() {
+        return {
+            method: "POST",
+            mode: "cors",
+            headers: getHeaders(this.token),
+            body: JSON.stringify(this.settings),
+        };
+    }
+
+    @action.bound async downloadExcel() {
+        const url = "/api/v1/polyk/excel/";
+        await fetch(url, this.submissionRequest)
+            .then(response => getBlob(response, "polyk.xlsx"))
+            .then(({blob, filename}) => saveAs(blob, filename));
+    }
+
+    @action.bound async downloadWord() {
+        const url = "/api/v1/polyk/word/";
+        await fetch(url, this.submissionRequest)
+            .then(response => getBlob(response, "polyk.docx"))
+            .then(({blob, filename}) => saveAs(blob, filename));
     }
 
     @action.bound
