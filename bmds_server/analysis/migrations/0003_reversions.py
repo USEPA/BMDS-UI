@@ -3,7 +3,8 @@ from django.db import migrations
 
 
 def make_revisions(apps, schema_editor):
-    call_command("createinitialrevisions")
+    # disable; broken w/ migration 0004
+    pass
 
 
 def remove_revisions(apps, schema_editor):

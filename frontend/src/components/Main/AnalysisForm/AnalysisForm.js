@@ -8,6 +8,7 @@ import SelectInput from "../../common/SelectInput";
 import Spinner from "../../common/Spinner";
 import TextAreaInput from "../../common/TextAreaInput";
 import TextInput from "../../common/TextInput";
+import CollectionList from "./CollectionList";
 
 @observer
 class RunChecklist extends Component {
@@ -43,6 +44,7 @@ class AnalysisForm extends Component {
                             value={mainStore.analysis_name}
                             onChange={mainStore.changeAnalysisName}
                         />
+                        <CollectionList />
                     </div>
                     <div className="form-group">
                         <TextAreaInput

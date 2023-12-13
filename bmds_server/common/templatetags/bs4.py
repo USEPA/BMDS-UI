@@ -1,10 +1,12 @@
 """
 Twitter Bootstrap 4 - helper methods
 """
+from datetime import datetime
 from textwrap import dedent
 from uuid import uuid4
 
 from django import template
+from django.utils import timezone
 from django.utils.html import escapejs
 from django.utils.safestring import mark_safe
 from plotly.graph_objs._figure import Figure
@@ -58,3 +60,13 @@ def plotly(fig: Figure) -> str | None:
     </script>"""
         )
     )
+
+
+@register.simple_tag()
+def table_time(now: datetime, timestamp: datetime):
+    if timestamp.date() == now.date():
+        return timezone.localtime(timestamp).strftime("%I:%M %p")
+    elif timestamp.year == now.year:
+        return timezone.localtime(timestamp).strftime("%b %d")
+    else:
+        return timezone.localtime(timestamp).strftime("%m/%d/%y")

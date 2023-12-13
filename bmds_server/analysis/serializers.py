@@ -3,11 +3,18 @@ from rest_framework import serializers
 from . import models, validators
 
 
+class CollectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Collection
+        fields = ("id", "name")
+
+
 class AnalysisSerializer(serializers.ModelSerializer):
     is_executing = serializers.BooleanField(read_only=True)
     is_finished = serializers.BooleanField(read_only=True)
     has_errors = serializers.BooleanField(read_only=True)
     inputs_valid = serializers.BooleanField(read_only=True)
+    collections = CollectionSerializer(many=True)
     api_url = serializers.URLField(source="get_api_url", read_only=True)
     excel_url = serializers.URLField(source="get_excel_url", read_only=True)
     word_url = serializers.URLField(source="get_word_url", read_only=True)
@@ -19,6 +26,7 @@ class AnalysisSerializer(serializers.ModelSerializer):
             "inputs",
             "errors",
             "outputs",
+            "collections",
             "is_executing",
             "is_finished",
             "has_errors",
@@ -29,11 +37,13 @@ class AnalysisSerializer(serializers.ModelSerializer):
             "created",
             "started",
             "ended",
+            "starred",
         )
         read_only_fields = (
             "id",
             "errors",
             "outputs",
+            "collections",
             "is_executing",
             "is_finished",
             "has_errors",

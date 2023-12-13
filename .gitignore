@@ -20,7 +20,7 @@ venv/
 # files
 *.log
 *.py[cod]
-*.sqlite3
+*.sqlite3*
 *log
 .coverage
 .env

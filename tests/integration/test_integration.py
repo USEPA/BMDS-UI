@@ -244,9 +244,14 @@ class TestContinuousIntegration(PlaywrightTestCase):
             # view output summary tables
             page.locator('a:has-text("Output")').click()
 
-            # check one result
-            page.get_by_role("link", name="Multistage Cancer / Multitumor").click()
+            # check one result (multitumor)
+            page.get_by_role("link", name="Multitumor").click()
             expect(page.get_by_role("dialog")).to_contain_text("MS Combo")
+            page.locator("#close-modal").click()
+
+            # check one result (individual)
+            page.get_by_role("link", name="Multistage 1°*").click()
+            expect(page.get_by_role("dialog")).to_contain_text("Multistage 1°")
             page.locator("#close-modal").click()
 
             # Read-only

@@ -61,12 +61,15 @@ class TestAnalysisDetail:
                 "editKey": pw,
                 "viewUrl": f"http://testserver/analysis/{pk}/",
                 "editUrl": f"http://testserver/analysis/{pk}/{pw}/",
+                "starUrl": "http://testserver/api/v1/analysis/cc3ca355-a57a-4fba-9dc3-99657562df68/star/",
+                "collectionUrl": "http://testserver/api/v1/analysis/cc3ca355-a57a-4fba-9dc3-99657562df68/collections/",
                 "patchInputUrl": f"/api/v1/analysis/{pk}/patch-inputs/",
                 "renewUrl": f"http://testserver/analysis/{pk}/{pw}/renew/",
                 "deleteUrl": f"http://testserver/analysis/{pk}/{pw}/delete/",
                 "executeUrl": f"/api/v1/analysis/{pk}/execute/",
                 "executeResetUrl": f"/api/v1/analysis/{pk}/execute-reset/",
                 "deleteDateStr": "June 14, 2022",
+                "collections": [],
             },
         }
 

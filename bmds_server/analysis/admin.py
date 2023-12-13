@@ -47,3 +47,8 @@ class AnalysisAdmin(VersionAdmin):
 class Content(VersionAdmin):
     list_display = ("id", "content_type", "subject", "created", "last_updated")
     list_filter = ("content_type",)
+
+
+@admin.register(models.Collection)
+class CollectionAdmin(VersionAdmin):
+    pass

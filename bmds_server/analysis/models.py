@@ -47,9 +47,12 @@ class Analysis(models.Model):
     outputs = models.JSONField(default=dict, blank=True)
     errors = models.JSONField(default=dict, blank=True)
     created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(null=True, auto_now=True)
     started = models.DateTimeField(null=True, blank=True)
     ended = models.DateTimeField(null=True, blank=True)
     deletion_date = models.DateTimeField(null=True, blank=True, default=get_deletion_date)
+    starred = models.BooleanField(default=False)
+    collections = models.ManyToManyField("analysis.Collection", related_name="analyses", blank=True)
 
     class Meta:
         verbose_name_plural = "Analyses"
@@ -109,6 +112,12 @@ class Analysis(models.Model):
 
     def get_word_url(self):
         return reverse("api:analysis-word", args=(str(self.id),))
+
+    def get_star_url(self):
+        return reverse("api:analysis-star", args=(str(self.id),))
+
+    def get_collections_url(self):
+        return reverse("api:analysis-collections", args=(str(self.id),))
 
     def inputs_valid(self) -> bool:
         try:
@@ -358,6 +367,25 @@ class Analysis(models.Model):
         if self.deletion_date is None:
             return None
         return (self.deletion_date - now()).days
+
+    @property
+    def timestamp(self):
+        return self.last_updated or self.ended or self.created
+
+
+@reversion.register()
+class Collection(models.Model):
+    name = models.CharField(max_length=128)
+    description = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def opts(cls):
+        return list(cls.objects.values("id", "name").order_by("name"))
 
 
 class ContentType(models.IntegerChoices):
