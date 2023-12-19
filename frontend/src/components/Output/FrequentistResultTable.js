@@ -326,8 +326,8 @@ class FrequentistResultTable extends Component {
                             <i>P</i>-Value
                         </th>
                         <th>AIC</th>
-                        <th>Scaled Residual at Control</th>
-                        <th>Scaled Residual near BMD</th>
+                        <th>Scaled Residual for Dose Group near BMD</th>
+                        <th>Scaled Residual for Control Dose Group</th>
                         {store.recommendationEnabled ? (
                             <th>
                                 <Button

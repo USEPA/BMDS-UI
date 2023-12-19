@@ -37,7 +37,7 @@ class OptionsFormList extends Component {
                                             <th>BMR Type</th>
                                             <th>BMRF</th>
                                             <th>Tail Probability</th>
-                                            <th>Confidence Level (one-sided)</th>
+                                            <th>Confidence Level</th>
                                             <th>
                                                 Distribution +<br />
                                                 Variance&nbsp;
