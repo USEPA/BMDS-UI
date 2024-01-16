@@ -10,6 +10,7 @@ class OptionsStore {
     }
 
     @observable optionsList = [];
+
     @computed get canEdit() {
         return this.rootStore.mainStore.canEdit;
     }
@@ -18,11 +19,13 @@ class OptionsStore {
         if (this.optionsList.length === 0 || force) {
             const option = _.cloneDeep(constant.options[this.getModelType]);
             this.optionsList = [option];
+            this.optionsList[0].bootstrap_seed = Math.ceil(Math.random() * 1000);
         }
     }
 
     @action.bound addOptions() {
         const option = _.cloneDeep(constant.options[this.getModelType]);
+        option.bootstrap_seed = Math.ceil(Math.random() * 1000);
         this.optionsList.push(option);
         this.rootStore.mainStore.setInputsChangedFlag();
     }
@@ -40,6 +43,7 @@ class OptionsStore {
         this.optionsList.splice(val, 1);
         this.rootStore.mainStore.setInputsChangedFlag();
     }
+
     @action.bound setOptions(options) {
         this.optionsList = options;
         this.setDefaultsByDatasetType();
@@ -48,6 +52,7 @@ class OptionsStore {
     @computed get getModelType() {
         return this.rootStore.mainStore.model_type;
     }
+
     @computed get maxItems() {
         return this.rootStore.mainStore.isDesktop
             ? 1000
@@ -55,6 +60,7 @@ class OptionsStore {
             ? 3
             : 6;
     }
+
     @computed get canAddNewOption() {
         return this.optionsList.length < this.maxItems;
     }
