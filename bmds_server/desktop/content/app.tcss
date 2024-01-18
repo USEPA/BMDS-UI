@@ -15,6 +15,19 @@ Button.btn-auto {
     height: auto;
 }
 
+Button.btn-config{
+    width:5;
+    height:3;
+    margin:-1 -1 -1 -1;
+    padding:0;
+    border: none;
+}
+
+.zzz{
+    height: 100%
+}
+
+
 .save {
     background: $primary 50%;
 }
@@ -84,9 +97,9 @@ Button.btn-auto {
 }
 
 Input.-valid {
-    border: tall $success 60%;
+    border: ascii $success 60%;
 }
 
 Input.-valid:focus {
-    border: tall $success;
+    border: ascii $success;
 }

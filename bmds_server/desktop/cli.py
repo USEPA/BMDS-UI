@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 from collections.abc import Iterable
 from contextlib import redirect_stderr, redirect_stdout
 from importlib.metadata import version
@@ -16,8 +17,15 @@ from django.core.management import call_command
 from pydantic import BaseModel, Field
 from textual import on
 from textual.app import App, ComposeResult
-from textual.containers import Container, Horizontal, ScrollableContainer, Vertical
-from textual.validation import ValidationResult, Validator
+from textual.containers import (
+    Container,
+    Grid,
+    Horizontal,
+    ScrollableContainer,
+    Vertical,
+)
+from textual.reactive import reactive
+from textual.validation import Failure, Function, ValidationResult, Validator
 from textual.widgets import (
     Button,
     ContentSwitcher,
@@ -28,6 +36,7 @@ from textual.widgets import (
     Label,
     Log,
     Markdown,
+    Pretty,
     Rule,
     Static,
     TabbedContent,
@@ -48,13 +57,23 @@ def data_folder() -> Path:
     return path
 
 
-class CustomValidator(Validator):
+class FNValidator(Validator):
+    # def describe_failure(self, failure: Failure) -> str | None:
+    #     return super().describe_failure(failure)
+
     def validate(self, value: str) -> ValidationResult:
-        # """TODO"""
-        # if self.value:
-        return self.success()
-        # else:
-        #     return self.failure("message")
+        if self.is_valid_fn(value):
+            return self.success()
+        else:
+            return self.failure("Invalid Character in filename")
+
+    @staticmethod
+    def is_valid_fn(value: str) -> bool:
+        # Only allow alphanumeric characters and '_'
+        if re.fullmatch(r"^\w+", value) is not None:
+            return True
+        else:
+            return False
 
 
 class DesktopConfig(BaseModel):
@@ -67,6 +86,9 @@ class DesktopConfig(BaseModel):
     # on_mount : set defaults?
     # watch/message handle to update
     # only in memory, how save?
+    # like JSON, use pydantic to validate JSON
+    # or .ini configparser
+    # yeah configparser ini like ecotox ascii dl
 
 
 class LogApp:
@@ -185,15 +207,8 @@ class AppRunner:
 class ConfigTree(DirectoryTree):
     """Directory Tree on Config tab"""
 
-    _name = "Directory Tree"
-    _next_callbacks = []
-    _running = []
-    # _classes = ["dir_tree"]
-
-    def __init__(self, id, path):
-        self._id = id
-        self.path = path
-        super().__init__(self.path)
+    def __init__(self, **kw):
+        super().__init__(**kw)
 
     def filter_paths(self, paths: Iterable[Path]) -> Iterable[Path]:
         # Filter for folders & sqlite3 db's
@@ -202,55 +217,82 @@ class ConfigTree(DirectoryTree):
         ]
 
 
-class ConfigTab(Static):
-    DEFAULT_PATH: ClassVar = ["./"]
-    TABS: ClassVar = ["dir-container", "fn-container"]
+class DirectoryContainer(Container):
+    """Directory"""
 
-    directory_tree = ConfigTree(id="config-tree", path=DEFAULT_PATH[0])
+    # long_path = long/foo/path/to/thing/bar
+    # n_path = long_path.split("/") # <-- check pathlib? for dir sep
+    # n_path.pop()  # rm last
+    # "/".join(n_path) # join back into path
+
+    DEFAULT_PATH = reactive(default=str(data_folder()) + "/")
     s_d = Static(str(data_folder()), classes="selected-disp")
-    dir_container = Container(id="dir-container", classes="dir-container")
 
-    fn_container = Container(id="fn-container", classes="fn-container")
-    fn_input = Input(
-        placeholder="I'm an input box!",
-        id="set-filename",
-        classes="set-filename",
-        validators=[CustomValidator()],
-    )
+    def compose(self) -> ComposeResult:
+        yield Button("<<", id="path-parent")
+        yield Label("Selected Folder:")
+        yield self.s_d
+        yield ConfigTree(id="config-tree", path=Path(self.DEFAULT_PATH), classes="zzz")
+        with Horizontal(classes="save-btns"):
+            yield Button("save", id="save-dir-btn", classes="btn-auto save")
 
-    def on_button_pressed(self, event: Button.Pressed) -> None:
-        if event.button.id in self.TABS:
-            self.query_one(ContentSwitcher).current = event.button.id
+    def on_directory_tree_directory_selected(self, DirectorySelected):
+        self.s_d.update(rf"{DirectorySelected.path!s}")
+
+
+class FileNameContainer(Container):
+    """Filename"""
+
+    @on(Input.Changed, "#set-filename")
+    def show_invalid_reasons(self, event: Input.Changed) -> None:
+        # Updating the UI to show the reasons why validation failed
+        if not event.validation_result.is_valid:
+            self.query_one(Pretty).update(event.validation_result.failure_descriptions)
         else:
-            self.notify(
-                f"{event.button.id}",
-                title="notification title",
-                severity="information",
-            )
+            self.query_one(Pretty).update([])
+
+    def compose(self) -> ComposeResult:
+        yield Label("Current Filename:")
+        yield Static("CURRENT_FILENAME")
+        yield Label("Validation Status:")
+        yield Pretty([])
+        yield Input(
+            placeholder="Enter filename here...",
+            id="set-filename",
+            classes="set-filename",
+            validators=[
+                FNValidator(),
+            ],
+        )
+        with Horizontal(classes="save-btns"):
+            yield Button("save", id="save-fn-btn", classes="btn-auto save")
+
+
+class ConfigTab(Static):
+    # Content Switch
+    @on(Button.Pressed, "#dir-container,#fn-container")
+    def container_btn_press(self, event: Button.Pressed) -> None:
+        self.query_one(ContentSwitcher).current = event.button.id
+
+    # save button
+    @on(Button.Pressed, "#save-dir-btn,#save-fn-btn")
+    def zzz_btn(self, event: Button.Pressed) -> None:
+        self.notify(
+            f"{event.button.id}",
+            title="notification title",
+            severity="information",
+        )
 
     def compose(self) -> ComposeResult:
         with Horizontal(classes="config-tab"):
             with Vertical(classes="config-btns"):
-                yield Button("Change Directory", id="dir-container")
+                yield Button("Directory", id="dir-container", classes="btn-config")
                 yield Button("Change DB/Filename", id="fn-container")
             yield Rule(orientation="vertical")
 
             with ContentSwitcher(initial="dir-container"):
-                with self.dir_container:
-                    yield Label("Selected Folder:")
-                    yield self.s_d
-                    yield self.directory_tree
-                    with Horizontal(classes="save-btns"):
-                        yield Button("save", id="save-dir-btn", classes="btn-auto save")
-                with self.fn_container:
-                    yield Label("Current Filename:")
-                    yield Static("I'm the filename!")
-                    yield self.fn_input
-                    with Horizontal(classes="save-btns"):
-                        yield Button("save", id="save-fn-btn", classes="btn-auto save")
-
-    def on_directory_tree_directory_selected(self, DirectorySelected):
-        self.s_d.update(rf"{get_app_home()!s}\{DirectorySelected.path!s}")
+                yield DirectoryContainer(id="dir-container", classes="dir-container")
+                yield FileNameContainer(id="fn-container", classes="fn-container")
 
     # on_mount():
     # set change dir btn to active?
