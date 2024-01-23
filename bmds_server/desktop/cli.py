@@ -1,3 +1,4 @@
+import configparser
 import logging
 import os
 import re
@@ -5,7 +6,7 @@ from collections.abc import Iterable
 from contextlib import redirect_stderr, redirect_stdout
 from importlib.metadata import version
 from io import StringIO
-from pathlib import Path
+from pathlib import Path, PurePath
 from threading import Thread
 from time import sleep
 from typing import ClassVar
@@ -25,6 +26,7 @@ from textual.containers import (
     Vertical,
 )
 from textual.reactive import reactive
+from textual.screen import ModalScreen
 from textual.validation import Failure, Function, ValidationResult, Validator
 from textual.widgets import (
     Button,
@@ -48,13 +50,51 @@ from ..main.constants import get_app_home
 
 logger = logging.getLogger(__name__)
 
-ROOT = Path(__file__).parent
+APP_ROOT = Path(__file__).parent
 
 
-def data_folder() -> Path:
-    path = get_app_home()
-    path.mkdir(parents=True, exist_ok=True)
-    return path
+def load_config():
+    config = configparser.ConfigParser()
+    config.read(Path(APP_ROOT / "config.ini"))
+    return config
+
+
+def get_data_folder() -> Path:
+    # Set default directory by OS
+    config = load_config()
+    if config["desktop"]["directory"] == "default":
+        path = get_app_home()
+        path.mkdir(parents=True, exist_ok=True)
+        return path
+    else:
+        return config["desktop"]["directory"]
+
+
+def get_project_filename() -> str:
+    # file <-> db <-> project
+    config = load_config()
+    if config["desktop"]["file_name"] == "default":
+        return "bmds.sqlite3"
+    else:
+        return config["desktop"]["file_name"]
+
+
+class QuitModal(ModalScreen):
+    """Screen with a dialog to quit."""
+
+    def compose(self) -> ComposeResult:
+        yield Grid(
+            Label("Are you sure you want to quit?", id="modal-quit-question"),
+            Button("Quit", variant="error", id="btn-modal-quit"),
+            Button("Cancel", variant="primary", id="btn-modal-cancel"),
+            id="quit-modal",
+        )
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "btn-modal-quit":
+            self.app.exit()
+        else:
+            self.app.pop_screen()
 
 
 class FNValidator(Validator):
@@ -65,30 +105,24 @@ class FNValidator(Validator):
         if self.is_valid_fn(value):
             return self.success()
         else:
-            return self.failure("Invalid Character in filename")
+            return self.failure("Invalid character in filename.")
 
     @staticmethod
     def is_valid_fn(value: str) -> bool:
-        # Only allow alphanumeric characters and '_'
-        if re.fullmatch(r"^\w+", value) is not None:
+        # No .
+        # \A(?!(?:COM[0-9]|CON|LPT[0-9]|NUL|PRN|AUX|com[0-9]|con|lpt[0-9]|nul|prn|aux)|\s|[\.]{2,})[^\\\/:*"?<>|]{1,254}(?<![\s\.])\z
+        if re.match(r"^[a-zA-Z0-9\-\s]+$", value) is not None:
             return True
         else:
             return False
 
 
 class DesktopConfig(BaseModel):
-    path: str = Field(default_factory=lambda: str(data_folder()))
+    # configparser r/w
+    path: str = Field(default_factory=lambda: str(get_data_folder()))
+    project: str = Field(default_factory=lambda: str(get_project_filename()))
     host: str = "127.0.0.1"
     port: int = 5555
-
-    # make reactive?
-
-    # on_mount : set defaults?
-    # watch/message handle to update
-    # only in memory, how save?
-    # like JSON, use pydantic to validate JSON
-    # or .ini configparser
-    # yeah configparser ini like ecotox ascii dl
 
 
 class LogApp:
@@ -181,13 +215,19 @@ class AppRunner:
         self.thread: AppThread | None = None
 
     def toggle(self):
-        host = self.app.config.host
-        port = self.app.config.port
+        # host = self.app.config.host
+        # port = self.app.config.port
+
+        host = DesktopConfig().host
+        port = DesktopConfig().port
+
         self.started = not self.started
         self.widget.label = self.LABEL[self.started]
         if self.started:
-            os.environ["BMDS_HOME"] = self.app.config.path
-            os.environ["BMDS_DB"] = str(Path(self.app.config.path) / "bmds.sqlite3")
+            os.environ["BMDS_HOME"] = DesktopConfig().path
+            os.environ["BMDS_DB"] = str(
+                Path(DesktopConfig().path) / DesktopConfig().project
+            )
             self.thread = AppThread(
                 stream=self.app.log_app.stream,
                 host=host,
@@ -220,52 +260,137 @@ class ConfigTree(DirectoryTree):
 class DirectoryContainer(Container):
     """Directory"""
 
-    # long_path = long/foo/path/to/thing/bar
-    # n_path = long_path.split("/") # <-- check pathlib? for dir sep
-    # n_path.pop()  # rm last
-    # "/".join(n_path) # join back into path
+    # TODO: Directions/Help Text
 
-    DEFAULT_PATH = reactive(default=str(data_folder()) + "/")
-    s_d = Static(str(data_folder()), classes="selected-disp")
+    # .parent button?
+
+    @on(Button.Pressed, "#btn-save-dir")
+    def zzz_btn(self, event: Button.Pressed) -> None:
+        foo = self.query_one("#selected-disp").renderable.__str__()
+        if Path(foo).is_dir():
+            self.save_dir(self.query_one("#selected-disp").renderable)
+        if Path(foo).is_file():
+            # Select different project/db
+            self.save_file(
+                PurePath(self.query_one("#selected-disp").renderable.__str__()).name
+            )
 
     def compose(self) -> ComposeResult:
-        yield Button("<<", id="path-parent")
+        yield Button("<<", id="path-parent-btn")
         yield Label("Selected Folder:")
-        yield self.s_d
-        yield ConfigTree(id="config-tree", path=Path(self.DEFAULT_PATH), classes="zzz")
+        yield Static(
+            str(get_data_folder()), id="selected-disp", classes="selected-disp"
+        )
+        yield ConfigTree(
+            id="config-tree", path=Path(get_data_folder()), classes="config-tree"
+        )
         with Horizontal(classes="save-btns"):
-            yield Button("save", id="save-dir-btn", classes="btn-auto save")
+            yield Button("Select Directory / DB", id="btn-save-dir", classes="save")
 
     def on_directory_tree_directory_selected(self, DirectorySelected):
-        self.s_d.update(rf"{DirectorySelected.path!s}")
+        self.query_one("#selected-disp").update(rf"{DirectorySelected.path!s}")
+
+    def on_directory_tree_file_selected(self, FileSelected):
+        self.query_one("#selected-disp").update(rf"{FileSelected.path!s}")
+
+    def save_dir(self, directory):
+        config = load_config()
+        config["desktop"]["directory"] = str(directory)
+
+        try:
+            with open(Path(APP_ROOT / "config.ini"), "w") as configfile:
+                config.write(configfile)
+            self.notify(
+                "New project directory selected.",
+                title="Directory Updated",
+                severity="information",
+            )
+            self.query_one(ConfigTree).reload()
+        except Exception as e:
+            self.notify(
+                f"{e}",
+                title="ERROR",
+                severity="error",
+            )
+
+    def save_file(self, file_name):
+        config = load_config()
+        config["desktop"]["file_name"] = str(file_name)
+
+        try:
+            with open(Path(APP_ROOT / "config.ini"), "w") as configfile:
+                config.write(configfile)
+            self.notify(
+                f"{file_name} project selected.",
+                title="Data Source Updated",
+                severity="information",
+            )
+            self.query_one(ConfigTree).reload()
+        except Exception as e:
+            self.notify(
+                f"{e}",
+                title="ERROR",
+                severity="error",
+            )
 
 
 class FileNameContainer(Container):
     """Filename"""
 
-    @on(Input.Changed, "#set-filename")
+    #  CURRENT_FILENAME
+    @on(Button.Pressed, "#btn-save-fn")
+    def zzz_btn(self, event: Button.Pressed) -> None:
+        self.create_project()
+
+    @on(Input.Changed, "#input-filename")
     def show_invalid_reasons(self, event: Input.Changed) -> None:
-        # Updating the UI to show the reasons why validation failed
+        # Update UI to show the reasons why validation failed
         if not event.validation_result.is_valid:
             self.query_one(Pretty).update(event.validation_result.failure_descriptions)
+            # do name saving stuff
         else:
             self.query_one(Pretty).update([])
 
     def compose(self) -> ComposeResult:
+        # disable button until valid
         yield Label("Current Filename:")
-        yield Static("CURRENT_FILENAME")
+        yield Static(get_project_filename())
         yield Label("Validation Status:")
+        # TODO: other kind of display that doesnt show an empty list?
         yield Pretty([])
         yield Input(
             placeholder="Enter filename here...",
-            id="set-filename",
-            classes="set-filename",
+            id="input-filename",
+            classes="input-filename",
             validators=[
                 FNValidator(),
             ],
         )
         with Horizontal(classes="save-btns"):
-            yield Button("save", id="save-fn-btn", classes="btn-auto save")
+            yield Button("save", id="btn-save-fn", classes="btn-auto save")
+
+    def create_project(self):
+        zzz = self.query_one(Input).value
+        zzz = zzz + ".sqlite3"
+
+        config = load_config()
+        config["desktop"]["file_name"] = str(zzz)
+
+        try:
+            with open(Path(APP_ROOT / "config.ini"), "w") as configfile:
+                config.write(configfile)
+            # update current filename
+            self.notify(
+                "New project created.",
+                title="Project Created",
+                severity="information",
+            )
+        except Exception as e:
+            self.notify(
+                f"{e}",
+                title="ERROR",
+                severity="error",
+            )
 
 
 class ConfigTab(Static):
@@ -274,28 +399,20 @@ class ConfigTab(Static):
     def container_btn_press(self, event: Button.Pressed) -> None:
         self.query_one(ContentSwitcher).current = event.button.id
 
-    # save button
-    @on(Button.Pressed, "#save-dir-btn,#save-fn-btn")
-    def zzz_btn(self, event: Button.Pressed) -> None:
-        self.notify(
-            f"{event.button.id}",
-            title="notification title",
-            severity="information",
-        )
-
     def compose(self) -> ComposeResult:
         with Horizontal(classes="config-tab"):
             with Vertical(classes="config-btns"):
-                yield Button("Directory", id="dir-container", classes="btn-config")
-                yield Button("Change DB/Filename", id="fn-container")
+                yield Button(
+                    "Change Directory / Project", id="dir-container", classes="btn-auto"
+                )
+                yield Button(
+                    "Create New Project", id="fn-container", classes="btn-auto"
+                )
             yield Rule(orientation="vertical")
 
             with ContentSwitcher(initial="dir-container"):
                 yield DirectoryContainer(id="dir-container", classes="dir-container")
                 yield FileNameContainer(id="fn-container", classes="fn-container")
-
-    # on_mount():
-    # set change dir btn to active?
 
 
 class BmdsTabs(Static):
@@ -305,15 +422,17 @@ class BmdsTabs(Static):
 
     def compose(self) -> ComposeResult:
         with TabbedContent(id="tabs"):
-            with TabPane("Application", classes="app"):
+            with TabPane("Application", id="app", classes="app"):
                 yield Container(
                     self._app.runner.widget,
                 )
                 yield Container(
-                    Label(f"[b]Data folder:[/b]\n  {self._app.config.path}"),
-                    Label(f"[b]Port:[/b]\n  {self._app.config.port}"),
-                    Label(f"[b]Host:[/b]\n  {self._app.config.host}"),
+                    Label("", id="folder"),
+                    Label("", id="project"),
+                    Label(f"[b]Port:[/b]\n  {DesktopConfig().port}", id="port"),
+                    Label(f"[b]Host:[/b]\n  {DesktopConfig().host}", id="host"),
                     classes="app-box",
+                    id="app-box",
                 )
 
             with TabPane("Logging"):
@@ -321,6 +440,13 @@ class BmdsTabs(Static):
 
             with TabPane("Config"):
                 yield ConfigTab()
+
+    @on(TabbedContent.TabActivated, "#tabs", tab="#app")
+    def switch_to_app(self) -> None:
+        self.query_one("#folder").update(f"[b]Data folder:[/b]\n  {get_data_folder()}")
+        self.query_one("#project").update(
+            f"[b]Data/Project:[/b]\n  {get_project_filename()}"
+        )
 
 
 class BmdsDesktop(App):
@@ -335,7 +461,7 @@ class BmdsDesktop(App):
     CSS_PATH = "content/app.tcss"
 
     def __init__(self, **kw):
-        self.config = DesktopConfig()
+        # self.config = DesktopConfig()
         self.log_app = LogApp(self)
         self.runner = AppRunner(self)
         self.tabs = BmdsTabs(self)
@@ -344,8 +470,8 @@ class BmdsDesktop(App):
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
         yield Header()
-        with Container(classes="main"):
-            yield Markdown((ROOT / "content/top.md").read_text())
+        with ScrollableContainer(classes="main"):
+            yield Markdown((APP_ROOT / "content/top.md").read_text())
             yield self.tabs
         yield Footer()
 
@@ -355,7 +481,7 @@ class BmdsDesktop(App):
 
     def action_quit(self):
         """Exit the application."""
-        self.exit()
+        self.push_screen(QuitModal())
 
     def action_toggle_dark(self):
         """An action to toggle dark mode."""

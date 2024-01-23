@@ -2,7 +2,7 @@
     overflow-y: scroll;
 }
 
-Button {
+#runner-button {
     width: 30;
     height: 5;
     margin: 1;
@@ -23,17 +23,22 @@ Button.btn-config{
     border: none;
 }
 
-.zzz{
-    height: 100%
-}
-
-
 .save {
     background: $primary 50%;
 }
 
 .cancel {
     background: $secondary 50%;
+}
+
+.config-btns {
+    align: center top;
+    width: auto;
+}
+
+
+.save-btns {
+    align: center top;
 }
 
 #log {
@@ -65,31 +70,28 @@ Button.btn-config{
 
 .dir-container {
     margin: 1;
-    border: double grey;
-    width: 70;
-    height: 30;
+    /* border: double grey;
+     width: 70;
+    height: 30; */
     overflow: auto;
     background: $panel;
 }
 
-
 .fn-container {
     margin: 1;
-    border: double grey;
-    width: 70;
-    height: 30;
+    /* border: double grey; */
+    /* width: 70; */
+    /* height: 30; */
+    overflow: auto;
     background: $panel;
 }
 
-.config-btns {
-    align: center top;
-    width: auto;
+.config-tree {
+    margin: 1 1 1 1;
+    height: 4fr;
 }
 
 
-.save-btns {
-    align: center top;
-}
 
 .selected-disp {
     border: ascii gray;
@@ -102,4 +104,30 @@ Input.-valid {
 
 Input.-valid:focus {
     border: ascii $success;
+}
+
+QuitModal {
+    align: center middle;
+}
+
+#quit-modal {
+    grid-size: 2;
+    grid-gutter: 1 2;
+    grid-rows: 1fr 3;
+    padding: 0 1;
+    width: 37;
+    height: 11;
+    border: thick $background 80%;
+    background: $surface;
+}
+
+#modal-quit-question {
+    column-span: 2;
+    height: 1fr;
+    width: 1fr;
+    content-align: center middle;
+}
+
+.input-filename {
+    width: 1fr;
 }
