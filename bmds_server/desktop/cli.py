@@ -97,6 +97,25 @@ class QuitModal(ModalScreen):
             self.app.pop_screen()
 
 
+class UpdateModal(ModalScreen):
+    """Screen with a dialog to check for updates."""
+
+    def compose(self) -> ComposeResult:
+        yield Grid(
+            Label(
+                f"Check for Updates: {version('bmds_server')}", id="modal-update-lbl"
+            ),
+            Button("Cancel", variant="primary", id="btn-update-cancel"),
+            id="update-modal",
+        )
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        # if event.button.id == "btn-modal-quit":
+        #     self.app.exit()
+        # else:
+        self.app.pop_screen()
+
+
 class FNValidator(Validator):
     # def describe_failure(self, failure: Failure) -> str | None:
     #     return super().describe_failure(failure)
@@ -276,7 +295,7 @@ class DirectoryContainer(Container):
             )
 
     def compose(self) -> ComposeResult:
-        yield Button("<<", id="path-parent-btn")
+        # yield Button("<<", id="path-parent-btn")
         yield Label("Selected Folder:")
         yield Static(
             str(get_data_folder()), id="selected-disp", classes="selected-disp"
@@ -370,6 +389,7 @@ class FileNameContainer(Container):
             yield Button("save", id="btn-save-fn", classes="btn-auto save")
 
     def create_project(self):
+        # TODO: update project filename
         zzz = self.query_one(Input).value
         zzz = zzz + ".sqlite3"
 
@@ -381,7 +401,7 @@ class FileNameContainer(Container):
                 config.write(configfile)
             # update current filename
             self.notify(
-                "New project created.",
+                f"{zzz} : project created.",
                 title="Project Created",
                 severity="information",
             )
@@ -457,6 +477,7 @@ class BmdsDesktop(App):
         ("q", "quit", "Quit"),
         ("d", "toggle_dark", "Toggle dark mode"),
         ("s", "key_start", "Start/Stop BMDS Desktop"),
+        ("u", "update_check", "Check for Updates"),
     ]
     CSS_PATH = "content/app.tcss"
 
@@ -490,6 +511,9 @@ class BmdsDesktop(App):
     def action_key_start(self):
         # didnt work with "shift+s" ??
         self.runner.toggle()
+
+    def action_update_check(self):
+        self.push_screen(UpdateModal())
 
     def on_mount(self) -> None:
         self.log_app.start()
