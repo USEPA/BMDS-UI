@@ -34,6 +34,13 @@ RunChecklist.propTypes = {
 class AnalysisForm extends Component {
     render() {
         const {mainStore} = this.props;
+        const trim_error = function(error) {
+            console.log(error[0]);
+            var t_2 = error[0].slice(error[0].indexOf("Error"));
+            var t_3 = t_2.slice(t_2.indexOf(")") + 2);
+            return t_3;
+        };
+
         return (
             <div>
                 <form className="bg-custom p-3 mt-2">
@@ -65,7 +72,9 @@ class AnalysisForm extends Component {
                     </div>
 
                     {mainStore.errorMessage ? (
-                        <div className="alert alert-danger">{mainStore.errorMessage}</div>
+                        <div className="alert alert-danger">
+                            {trim_error(mainStore.errorMessage)}
+                        </div>
                     ) : null}
                     <div id="controlPanel" className="card bg-light">
                         {mainStore.isExecuting ? (
