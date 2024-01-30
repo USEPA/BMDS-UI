@@ -27,6 +27,7 @@ jobs:
         repository: USEPA/bmds-private
         path: venv
         ref: next
+        token: ${{ secrets.USEPA_BMDS_PRIVATE_PAT }}
     - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
@@ -147,6 +148,7 @@ jobs:
         repository: USEPA/bmds-private
         path: venv
         ref: next
+        token: ${{ secrets.USEPA_BMDS_PRIVATE_PAT }}
     - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
