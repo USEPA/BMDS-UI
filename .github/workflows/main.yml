@@ -24,10 +24,9 @@ jobs:
     - name: Checkout bmds@next
       uses: actions/checkout@v3
       with:
-        repository: shapiromatron/bmds
+        repository: USEPA/bmds-private
         path: venv
         ref: next
-        lfs: true
     - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
@@ -145,10 +144,9 @@ jobs:
     - name: Checkout bmds@next
       uses: actions/checkout@v3
       with:
-        repository: shapiromatron/bmds
+        repository: USEPA/bmds-private
         path: venv
         ref: next
-        lfs: true
     - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
