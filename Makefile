@@ -56,6 +56,11 @@ test-integration-debug:  ## Run integration tests in debug mode (requires npm ru
 	@playwright install --with-deps chromium
 	@INTEGRATION_TESTS=1 PWDEBUG=1 py.test -sv tests/integration/
 
+coverage: ## Run test coverage
+	coverage run -m pytest
+	coverage html -d coverage_report
+	$(BROWSER) coverage_report/index.html
+
 docs: ## Build documentation
 	cd docs; mkdocs build --strict
 
