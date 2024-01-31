@@ -2,7 +2,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
-import {ParseError} from "../../../utils/parsers";
+import {parseError} from "../../../utils/parsers";
 import Button from "../../common/Button";
 import Icon from "../../common/Icon";
 import SelectInput from "../../common/SelectInput";
@@ -35,7 +35,6 @@ RunChecklist.propTypes = {
 class AnalysisForm extends Component {
     render() {
         const {mainStore} = this.props;
-
         return (
             <div>
                 <form className="bg-custom p-3 mt-2">
@@ -68,7 +67,7 @@ class AnalysisForm extends Component {
 
                     {mainStore.errorMessage ? (
                         <div className="alert alert-danger">
-                            {ParseError(mainStore.errorMessage)}
+                            {parseError(mainStore.errorMessage)}
                         </div>
                     ) : null}
                     <div id="controlPanel" className="card bg-light">
