@@ -1,8 +1,17 @@
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
 
-import {MODEL_CONTINUOUS} from "@/constants/mainConstants";
+import {MODEL_CONTINUOUS, MODEL_NESTED_DICHOTOMOUS} from "@/constants/mainConstants";
 import * as constant from "@/constants/optionsConstants";
+
+const createOption = modelType => {
+    const option = _.cloneDeep(constant.options[modelType]);
+    if (modelType == MODEL_NESTED_DICHOTOMOUS) {
+        // set seed to random number
+        option.bootstrap_seed = Math.ceil(Math.random() * 1000);
+    }
+    return option;
+};
 
 class OptionsStore {
     constructor(rootStore) {
@@ -17,16 +26,12 @@ class OptionsStore {
 
     @action.bound setDefaultsByDatasetType(force) {
         if (this.optionsList.length === 0 || force) {
-            const option = _.cloneDeep(constant.options[this.getModelType]);
-            this.optionsList = [option];
-            this.optionsList[0].bootstrap_seed = Math.ceil(Math.random() * 1000);
+            this.optionsList = [createOption(this.getModelType)];
         }
     }
 
     @action.bound addOptions() {
-        const option = _.cloneDeep(constant.options[this.getModelType]);
-        option.bootstrap_seed = Math.ceil(Math.random() * 1000);
-        this.optionsList.push(option);
+        this.optionsList.push(createOption(this.getModelType));
         this.rootStore.mainStore.setInputsChangedFlag();
     }
 
