@@ -100,6 +100,7 @@ class QuitModal(ModalScreen):
 class UpdateModal(ModalScreen):
     """Screen with a dialog to check for updates."""
 
+    # TODO: check for udates
     def compose(self) -> ComposeResult:
         yield Grid(
             Label(
@@ -115,20 +116,47 @@ class UpdateModal(ModalScreen):
 
 
 class FNValidator(Validator):
-    # def describe_failure(self, failure: Failure) -> str | None:
-    #     return super().describe_failure(failure)
+    """Validate Name"""
+
+    def __init__(self, cls):
+        self.cls = cls
 
     def validate(self, value: str) -> ValidationResult:
-        if self.is_valid_fn(value):
+        if self.is_valid(value):
+            t = self.cls.query_one("#btn-save-fn")
+            t.disabled = False
             return self.success()
+
         else:
             return self.failure("Invalid character in filename.")
 
     @staticmethod
-    def is_valid_fn(value: str) -> bool:
-        # No .
+    def is_valid(value: str) -> bool:
+        # not very strict, more complex regex shown
         # \A(?!(?:COM[0-9]|CON|LPT[0-9]|NUL|PRN|AUX|com[0-9]|con|lpt[0-9]|nul|prn|aux)|\s|[\.]{2,})[^\\\/:*"?<>|]{1,254}(?<![\s\.])\z
         if re.match(r"^[a-zA-Z0-9\-\s]+$", value) is not None:
+            return True
+        else:
+            return False
+
+
+class FLValidator(Validator):
+    """Validate Length"""
+
+    def __init__(self, cls):
+        self.cls = cls
+
+    def validate(self, value: str) -> ValidationResult:
+        if self.is_valid(value):
+            t = self.cls.query_one("#btn-save-fn")
+            t.disabled = False
+            return self.success()
+        else:
+            return self.failure("Filename must be longer than two characters.")
+
+    @staticmethod
+    def is_valid(value: str) -> bool:
+        if len(value) >= 2:
             return True
         else:
             return False
@@ -239,7 +267,7 @@ class AppRunner:
         if self.started:
             os.environ["BMDS_HOME"] = self.app.config.path
             os.environ["BMDS_DB"] = str(
-                Path(self.app.config.path) / self.app.config.project
+                Path(get_data_folder()) / get_project_filename()
             )
             self.thread = AppThread(
                 stream=self.app.log_app.stream,
@@ -277,15 +305,19 @@ class DirectoryContainer(Container):
 
     # .parent button?
 
+    def reload(self):
+        self.query_one(ConfigTree).reload()
+
     @on(Button.Pressed, "#btn-save-dir")
     def update_config_btn(self, event: Button.Pressed) -> None:
         foo = self.query_one("#selected-disp").renderable.__str__()
         if Path(foo).is_dir():
-            self.save_dir(self.query_one("#selected-disp").renderable)
+            self.change_config(self.query_one("#selected-disp").renderable, kind="dir")
         if Path(foo).is_file():
             # Select different project/db
-            self.save_file(
-                PurePath(self.query_one("#selected-disp").renderable.__str__()).name
+            self.change_config(
+                PurePath(self.query_one("#selected-disp").renderable.__str__()).name,
+                kind="file",
             )
 
     def compose(self) -> ComposeResult:
@@ -306,39 +338,32 @@ class DirectoryContainer(Container):
     def on_directory_tree_file_selected(self, FileSelected):
         self.query_one("#selected-disp").update(rf"{FileSelected.path!s}")
 
-    def save_dir(self, directory):
+    def change_config(self, value, kind):
         config = load_config()
-        config["desktop"]["directory"] = str(directory)
 
         try:
-            with open(Path(APP_ROOT / "config.ini"), "w") as configfile:
-                config.write(configfile)
-            self.notify(
-                "New project directory selected.",
-                title="Directory Updated",
-                severity="information",
-            )
-            self.query_one(ConfigTree).reload()
-        except Exception as e:
-            self.notify(
-                f"{e}",
-                title="ERROR",
-                severity="error",
-            )
+            if kind == "dir":
+                config["desktop"]["directory"] = str(value)
+                with open(Path(APP_ROOT / "config.ini"), "w") as configfile:
+                    config.write(configfile)
+                self.notify(
+                    "New project directory selected.",
+                    title="Directory Updated",
+                    severity="information",
+                )
 
-    def save_file(self, file_name):
-        config = load_config()
-        config["desktop"]["file_name"] = str(file_name)
+            else:
+                config["desktop"]["file_name"] = str(value)
 
-        try:
-            with open(Path(APP_ROOT / "config.ini"), "w") as configfile:
-                config.write(configfile)
-            self.notify(
-                f"{file_name} project selected.",
-                title="Data Source Updated",
-                severity="information",
-            )
+                with open(Path(APP_ROOT / "config.ini"), "w") as configfile:
+                    config.write(configfile)
+                self.notify(
+                    f"{value} project selected.",
+                    title="Data Source Updated",
+                    severity="information",
+                )
             self.query_one(ConfigTree).reload()
+
         except Exception as e:
             self.notify(
                 f"{e}",
@@ -350,10 +375,10 @@ class DirectoryContainer(Container):
 class FileNameContainer(Container):
     """Filename"""
 
-    # TODO: clear input on save
-    # TODO: update current filename on save
-    # TODO: when input is empty, clear validation result?
-    # TODO: prevent empty
+    # TODO: fix input validation/clear it after save
+    # TODO: when input is empty, clear validation result
+
+    # TODO: db not being selected/run right
 
     @on(Button.Pressed, "#btn-save-fn")
     def create_project_btn(self, event: Button.Pressed) -> None:
@@ -361,44 +386,47 @@ class FileNameContainer(Container):
 
     @on(Input.Changed, "#input-filename")
     def show_invalid_reasons(self, event: Input.Changed) -> None:
-        if not event.validation_result.is_valid:
-            # Update UI to show the reasons why validation failed
-            self.query_one(Pretty).update(event.validation_result.failure_descriptions)
-        # else:
-        #     self.query_one(Pretty).update([])
+        if event.validation_result:
+            if not event.validation_result.is_valid:
+                # Update UI to show the reasons why validation failed
+                self.query_one("#fn-validation-rtn").update(
+                    event.validation_result.failure_descriptions[0]
+                )
+            else:
+                self.query_one("#fn-validation-rtn").update("")
 
     def compose(self) -> ComposeResult:
-        # disable button until valid
         yield Label("Current Filename:")
-        yield Static(get_project_filename())
-        yield Label("Validation Status:")
-        # TODO: other kind of display that doesnt show an empty list?
-        yield Pretty([])
+        yield Static(get_project_filename(), id="disp-fn")
+        yield Static("Validation Status:")
+        yield Label("", id="fn-validation-rtn")
         yield Input(
             placeholder="Enter filename here...",
             id="input-filename",
             classes="input-filename",
             validators=[
-                FNValidator(),
+                FNValidator(self),
+                FLValidator(self),
             ],
+            # validate_on=["submitted"],
         )
         with Horizontal(classes="save-btns"):
-            yield Button("save", id="btn-save-fn", classes="btn-auto save")
+            yield Button(
+                "save", id="btn-save-fn", classes="btn-auto save", disabled=True
+            )
 
     def create_project(self):
-        # TODO: update project filename
-        zzz = self.query_one(Input).value
-        zzz = zzz + ".sqlite3"
-
+        db_name = self.query_one(Input).value + ".sqlite3"
         config = load_config()
-        config["desktop"]["file_name"] = str(zzz)
+        config["desktop"]["file_name"] = str(db_name)
 
         try:
             with open(Path(APP_ROOT / "config.ini"), "w") as configfile:
                 config.write(configfile)
-            # update current filename
+            self.query_one("#disp-fn").update(get_project_filename())
+            self.query_one("#input-filename").clear()
             self.notify(
-                f"{zzz} : project created.",
+                f"{db_name} : project created.",
                 title="Project Created",
                 severity="information",
             )
@@ -411,10 +439,13 @@ class FileNameContainer(Container):
 
 
 class ConfigTab(Static):
+    """Configuration Tab"""
+
     # Content Switch
     @on(Button.Pressed, "#dir-container,#fn-container")
     def container_btn_press(self, event: Button.Pressed) -> None:
         self.query_one(ContentSwitcher).current = event.button.id
+        self.query_one(DirectoryContainer).reload()
 
     def compose(self) -> ComposeResult:
         with Horizontal(classes="config-tab"):
@@ -433,6 +464,8 @@ class ConfigTab(Static):
 
 
 class BmdsTabs(Static):
+    """All Tabs"""
+
     def __init__(self, _app: "BmdsDesktop", **kw):
         self._app = _app
         super().__init__(**kw)
@@ -455,7 +488,7 @@ class BmdsTabs(Static):
             with TabPane("Logging"):
                 yield self._app.log_app.widget
 
-            with TabPane("Config"):
+            with TabPane("Config", id="config"):
                 yield ConfigTab()
 
     @on(TabbedContent.TabActivated, "#tabs", tab="#app")
@@ -464,6 +497,10 @@ class BmdsTabs(Static):
         self.query_one("#project").update(
             f"[b]Data/Project:[/b]\n  {get_project_filename()}"
         )
+
+    @on(TabbedContent.TabActivated, "#tabs", tab="#config")
+    def switch_to_config(self) -> None:
+        self.query_one(ConfigTree).reload()
 
 
 class BmdsDesktop(App):
