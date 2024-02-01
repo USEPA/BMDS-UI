@@ -110,10 +110,8 @@ class UpdateModal(ModalScreen):
         )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        # if event.button.id == "btn-modal-quit":
-        #     self.app.exit()
-        # else:
-        self.app.pop_screen()
+        if event.button.id == "btn-update-cancel":
+            self.app.pop_screen()
 
 
 class FNValidator(Validator):
@@ -234,18 +232,14 @@ class AppRunner:
         self.thread: AppThread | None = None
 
     def toggle(self):
-        # host = self.app.config.host
-        # port = self.app.config.port
-
-        host = DesktopConfig().host
-        port = DesktopConfig().port
-
+        host = self.app.config.host
+        port = self.app.config.port
         self.started = not self.started
         self.widget.label = self.LABEL[self.started]
         if self.started:
-            os.environ["BMDS_HOME"] = DesktopConfig().path
+            os.environ["BMDS_HOME"] = self.app.config.path
             os.environ["BMDS_DB"] = str(
-                Path(DesktopConfig().path) / DesktopConfig().project
+                Path(self.app.config.path) / self.app.config.project
             )
             self.thread = AppThread(
                 stream=self.app.log_app.stream,
@@ -284,7 +278,7 @@ class DirectoryContainer(Container):
     # .parent button?
 
     @on(Button.Pressed, "#btn-save-dir")
-    def zzz_btn(self, event: Button.Pressed) -> None:
+    def update_config_btn(self, event: Button.Pressed) -> None:
         foo = self.query_one("#selected-disp").renderable.__str__()
         if Path(foo).is_dir():
             self.save_dir(self.query_one("#selected-disp").renderable)
@@ -356,19 +350,22 @@ class DirectoryContainer(Container):
 class FileNameContainer(Container):
     """Filename"""
 
-    #  CURRENT_FILENAME
+    # TODO: clear input on save
+    # TODO: update current filename on save
+    # TODO: when input is empty, clear validation result?
+    # TODO: prevent empty
+
     @on(Button.Pressed, "#btn-save-fn")
-    def zzz_btn(self, event: Button.Pressed) -> None:
+    def create_project_btn(self, event: Button.Pressed) -> None:
         self.create_project()
 
     @on(Input.Changed, "#input-filename")
     def show_invalid_reasons(self, event: Input.Changed) -> None:
-        # Update UI to show the reasons why validation failed
         if not event.validation_result.is_valid:
+            # Update UI to show the reasons why validation failed
             self.query_one(Pretty).update(event.validation_result.failure_descriptions)
-            # do name saving stuff
-        else:
-            self.query_one(Pretty).update([])
+        # else:
+        #     self.query_one(Pretty).update([])
 
     def compose(self) -> ComposeResult:
         # disable button until valid
@@ -449,8 +446,8 @@ class BmdsTabs(Static):
                 yield Container(
                     Label("", id="folder"),
                     Label("", id="project"),
-                    Label(f"[b]Port:[/b]\n  {DesktopConfig().port}", id="port"),
-                    Label(f"[b]Host:[/b]\n  {DesktopConfig().host}", id="host"),
+                    Label(f"[b]Port:[/b]\n  {self._app.config.port}", id="port"),
+                    Label(f"[b]Host:[/b]\n  {self._app.config.host}", id="host"),
                     classes="app-box",
                     id="app-box",
                 )
@@ -482,7 +479,7 @@ class BmdsDesktop(App):
     CSS_PATH = "content/app.tcss"
 
     def __init__(self, **kw):
-        # self.config = DesktopConfig()
+        self.config = DesktopConfig()
         self.log_app = LogApp(self)
         self.runner = AppRunner(self)
         self.tabs = BmdsTabs(self)
