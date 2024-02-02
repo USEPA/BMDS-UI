@@ -25,9 +25,8 @@ from textual.containers import (
     ScrollableContainer,
     Vertical,
 )
-from textual.reactive import reactive
 from textual.screen import ModalScreen
-from textual.validation import Failure, Function, ValidationResult, Validator
+from textual.validation import ValidationResult, Validator
 from textual.widgets import (
     Button,
     ContentSwitcher,
@@ -38,7 +37,6 @@ from textual.widgets import (
     Label,
     Log,
     Markdown,
-    Pretty,
     Rule,
     Static,
     TabbedContent,
@@ -115,6 +113,8 @@ class UpdateModal(ModalScreen):
             self.app.pop_screen()
 
 
+# TODO: use merge? /src/textual/validation.merge
+# TODO: default Input type text min length instead?
 class FNValidator(Validator):
     """Validate Name"""
 
@@ -132,7 +132,7 @@ class FNValidator(Validator):
 
     @staticmethod
     def is_valid(value: str) -> bool:
-        # not very strict, more complex regex shown
+        # not very strict, more complex regex
         # \A(?!(?:COM[0-9]|CON|LPT[0-9]|NUL|PRN|AUX|com[0-9]|con|lpt[0-9]|nul|prn|aux)|\s|[\.]{2,})[^\\\/:*"?<>|]{1,254}(?<![\s\.])\z
         if re.match(r"^[a-zA-Z0-9\-\s]+$", value) is not None:
             return True
@@ -265,10 +265,8 @@ class AppRunner:
         self.started = not self.started
         self.widget.label = self.LABEL[self.started]
         if self.started:
-            os.environ["BMDS_HOME"] = self.app.config.path
-            os.environ["BMDS_DB"] = str(
-                Path(get_data_folder()) / get_project_filename()
-            )
+            # os.environ["BMDS_HOME"] = self.app.config.path
+            # os.environ["BMDS_DB"] = str(Path(get_data_folder()) / fn)
             self.thread = AppThread(
                 stream=self.app.log_app.stream,
                 host=host,
@@ -408,7 +406,6 @@ class FileNameContainer(Container):
                 FNValidator(self),
                 FLValidator(self),
             ],
-            # validate_on=["submitted"],
         )
         with Horizontal(classes="save-btns"):
             yield Button(
@@ -534,6 +531,9 @@ class BmdsDesktop(App):
     def toggle_runner(self):
         self.runner.toggle()
 
+    def action_key_start(self):
+        self.runner.toggle()
+
     def action_quit(self):
         """Exit the application."""
         self.push_screen(QuitModal())
@@ -542,11 +542,8 @@ class BmdsDesktop(App):
         """An action to toggle dark mode."""
         self.dark = not self.dark
 
-    def action_key_start(self):
-        # didnt work with "shift+s" ??
-        self.runner.toggle()
-
     def action_update_check(self):
+        """Check for updates"""
         self.push_screen(UpdateModal())
 
     def on_mount(self) -> None:
