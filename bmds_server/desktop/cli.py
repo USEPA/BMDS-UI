@@ -400,8 +400,10 @@ class FileNameContainer(Container):
         db_name = self.query_one(Input).value + ".sqlite3"
         config = load_config()
         config["desktop"]["file_name"] = str(db_name)
+        cf = Path(get_data_folder()) / db_name
 
         try:
+            cf.touch()
             with open(Path(APP_ROOT / "config.ini"), "w") as configfile:
                 config.write(configfile)
             self.query_one("#disp-fn").update(get_project_filename())
