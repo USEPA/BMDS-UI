@@ -26,7 +26,7 @@ from textual.containers import (
     Vertical,
 )
 from textual.screen import ModalScreen
-from textual.validation import ValidationResult, Validator
+from textual.validation import Length, ValidationResult, Validator
 from textual.widgets import (
     Button,
     ContentSwitcher,
@@ -98,12 +98,18 @@ class QuitModal(ModalScreen):
 class UpdateModal(ModalScreen):
     """Screen with a dialog to check for updates."""
 
+    @on(Button.Pressed, "#btn-update-download")
+    def get_update(self):
+        # do something here to download/go to site?
+        ...
+
     # TODO: check for udates
     def compose(self) -> ComposeResult:
         yield Grid(
             Label(
                 f"Check for Updates: {version('bmds_server')}", id="modal-update-lbl"
             ),
+            # Button("Cancel", variant="primary", id="btn-update-download"),
             Button("Cancel", variant="primary", id="btn-update-cancel"),
             id="update-modal",
         )
@@ -113,18 +119,18 @@ class UpdateModal(ModalScreen):
             self.app.pop_screen()
 
 
-# TODO: use merge? /src/textual/validation.merge
-# TODO: default Input type text min length instead?
 class FNValidator(Validator):
     """Validate Name"""
+
+    # not use Regex() validator cause of button active/disabled?
 
     def __init__(self, cls):
         self.cls = cls
 
     def validate(self, value: str) -> ValidationResult:
         if self.is_valid(value):
-            t = self.cls.query_one("#btn-save-fn")
-            t.disabled = False
+            btn = self.cls.query_one("#btn-save-fn")
+            btn.disabled = False
             return self.success()
 
         else:
@@ -140,30 +146,7 @@ class FNValidator(Validator):
             return False
 
 
-class FLValidator(Validator):
-    """Validate Length"""
-
-    def __init__(self, cls):
-        self.cls = cls
-
-    def validate(self, value: str) -> ValidationResult:
-        if self.is_valid(value):
-            t = self.cls.query_one("#btn-save-fn")
-            t.disabled = False
-            return self.success()
-        else:
-            return self.failure("Filename must be longer than two characters.")
-
-    @staticmethod
-    def is_valid(value: str) -> bool:
-        if len(value) >= 2:
-            return True
-        else:
-            return False
-
-
 class DesktopConfig(BaseModel):
-    # configparser r/w
     path: str = Field(default_factory=lambda: str(get_data_folder()))
     project: str = Field(default_factory=lambda: str(get_project_filename()))
     host: str = "127.0.0.1"
@@ -265,8 +248,10 @@ class AppRunner:
         self.started = not self.started
         self.widget.label = self.LABEL[self.started]
         if self.started:
-            # os.environ["BMDS_HOME"] = self.app.config.path
-            # os.environ["BMDS_DB"] = str(Path(get_data_folder()) / fn)
+            os.environ["BMDS_HOME"] = self.app.config.path
+            os.environ["BMDS_DB"] = str(
+                Path(get_data_folder()) / get_project_filename()
+            )
             self.thread = AppThread(
                 stream=self.app.log_app.stream,
                 host=host,
@@ -301,28 +286,31 @@ class DirectoryContainer(Container):
 
     # TODO: Directions/Help Text
 
-    # .parent button?
-
     def reload(self):
         self.query_one(ConfigTree).reload()
 
+    @on(Button.Pressed, "#btn-path-parent")
+    def btn_path_parent(self):
+        # move up one dir, reload tree
+        ...
+
     @on(Button.Pressed, "#btn-save-dir")
-    def update_config_btn(self, event: Button.Pressed) -> None:
-        foo = self.query_one("#selected-disp").renderable.__str__()
-        if Path(foo).is_dir():
-            self.change_config(self.query_one("#selected-disp").renderable, kind="dir")
-        if Path(foo).is_file():
+    def btn_update_config(self, event: Button.Pressed) -> None:
+        _selected = self.query_one("#disp-selected").renderable.__str__()
+        if Path(_selected).is_dir():
+            self.change_config(self.query_one("#disp-selected").renderable, kind="dir")
+        if Path(_selected).is_file():
             # Select different project/db
             self.change_config(
-                PurePath(self.query_one("#selected-disp").renderable.__str__()).name,
+                PurePath(self.query_one("#disp-selected").renderable.__str__()).name,
                 kind="file",
             )
 
     def compose(self) -> ComposeResult:
-        # yield Button("<<", id="path-parent-btn")
+        yield Button("<<", id="btn-path-parent")
         yield Label("Selected Folder:")
         yield Static(
-            str(get_data_folder()), id="selected-disp", classes="selected-disp"
+            str(get_data_folder()), id="disp-selected", classes="disp-selected"
         )
         yield ConfigTree(
             id="config-tree", path=Path(get_data_folder()), classes="config-tree"
@@ -331,10 +319,10 @@ class DirectoryContainer(Container):
             yield Button("Select Directory / DB", id="btn-save-dir", classes="save")
 
     def on_directory_tree_directory_selected(self, DirectorySelected):
-        self.query_one("#selected-disp").update(rf"{DirectorySelected.path!s}")
+        self.query_one("#disp-selected").update(rf"{DirectorySelected.path!s}")
 
     def on_directory_tree_file_selected(self, FileSelected):
-        self.query_one("#selected-disp").update(rf"{FileSelected.path!s}")
+        self.query_one("#disp-selected").update(rf"{FileSelected.path!s}")
 
     def change_config(self, value, kind):
         config = load_config()
@@ -342,24 +330,17 @@ class DirectoryContainer(Container):
         try:
             if kind == "dir":
                 config["desktop"]["directory"] = str(value)
-                with open(Path(APP_ROOT / "config.ini"), "w") as configfile:
-                    config.write(configfile)
-                self.notify(
-                    "New project directory selected.",
-                    title="Directory Updated",
-                    severity="information",
-                )
-
+                msg = ["New project directory selected.", "Directory Updated"]
             else:
                 config["desktop"]["file_name"] = str(value)
-
-                with open(Path(APP_ROOT / "config.ini"), "w") as configfile:
-                    config.write(configfile)
-                self.notify(
-                    f"{value} project selected.",
-                    title="Data Source Updated",
-                    severity="information",
-                )
+                msg = [f"{value} project selected.", "Data Source Updated"]
+            with open(Path(APP_ROOT / "config.ini"), "w") as configfile:
+                config.write(configfile)
+            self.notify(
+                f"{msg[0]}",
+                title=f"{msg[1]}",
+                severity="information",
+            )
             self.query_one(ConfigTree).reload()
 
         except Exception as e:
@@ -379,7 +360,7 @@ class FileNameContainer(Container):
     # TODO: db not being selected/run right
 
     @on(Button.Pressed, "#btn-save-fn")
-    def create_project_btn(self, event: Button.Pressed) -> None:
+    def btn_create_project(self, event: Button.Pressed) -> None:
         self.create_project()
 
     @on(Input.Changed, "#input-filename")
@@ -387,24 +368,27 @@ class FileNameContainer(Container):
         if event.validation_result:
             if not event.validation_result.is_valid:
                 # Update UI to show the reasons why validation failed
-                self.query_one("#fn-validation-rtn").update(
+                self.query_one("#disp-fn-validation").update(
                     event.validation_result.failure_descriptions[0]
                 )
             else:
-                self.query_one("#fn-validation-rtn").update("")
+                self.query_one("#disp-fn-validation").update("")
 
     def compose(self) -> ComposeResult:
         yield Label("Current Filename:")
         yield Static(get_project_filename(), id="disp-fn")
         yield Static("Validation Status:")
-        yield Label("", id="fn-validation-rtn")
+        yield Label("", id="disp-fn-validation")
         yield Input(
             placeholder="Enter filename here...",
             id="input-filename",
             classes="input-filename",
             validators=[
                 FNValidator(self),
-                FLValidator(self),
+                Length(
+                    minimum=2,
+                    failure_description="Filename must be two or more characters.",
+                ),
             ],
         )
         with Horizontal(classes="save-btns"):
@@ -440,7 +424,7 @@ class ConfigTab(Static):
 
     # Content Switch
     @on(Button.Pressed, "#dir-container,#fn-container")
-    def container_btn_press(self, event: Button.Pressed) -> None:
+    def btn_container_switch(self, event: Button.Pressed) -> None:
         self.query_one(ContentSwitcher).current = event.button.id
         self.query_one(DirectoryContainer).reload()
 
