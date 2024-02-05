@@ -9,6 +9,7 @@
 bmds_server/static/bundles/
 build/
 /data/
+coverage_report/
 dist/
 docs/site/
 node_modules/
