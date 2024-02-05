@@ -106,9 +106,7 @@ class UpdateModal(ModalScreen):
     # TODO: check for udates
     def compose(self) -> ComposeResult:
         yield Grid(
-            Label(
-                f"Check for Updates: {version('bmds_server')}", id="modal-update-lbl"
-            ),
+            Label(f"Check for Updates: {version('bmds_server')}", id="modal-update-lbl"),
             # Button("Cancel", variant="primary", id="btn-update-download"),
             Button("Cancel", variant="primary", id="btn-update-cancel"),
             id="update-modal",
@@ -237,9 +235,7 @@ class AppRunner:
     def __init__(self, app: "BmdsDesktop"):
         self.app = app
         self.started = False
-        self.widget = Button(
-            label=self.LABEL[self.started], id="runner-button", variant="primary"
-        )
+        self.widget = Button(label=self.LABEL[self.started], id="runner-button", variant="primary")
         self.thread: AppThread | None = None
 
     def toggle(self):
@@ -249,9 +245,7 @@ class AppRunner:
         self.widget.label = self.LABEL[self.started]
         if self.started:
             os.environ["BMDS_HOME"] = self.app.config.path
-            os.environ["BMDS_DB"] = str(
-                Path(get_data_folder()) / get_project_filename()
-            )
+            os.environ["BMDS_DB"] = str(Path(get_data_folder()) / get_project_filename())
             self.thread = AppThread(
                 stream=self.app.log_app.stream,
                 host=host,
@@ -276,9 +270,7 @@ class ConfigTree(DirectoryTree):
 
     def filter_paths(self, paths: Iterable[Path]) -> Iterable[Path]:
         # Filter for folders & sqlite3 db's
-        return [
-            path for path in paths if path.is_dir() or path.name.endswith(".sqlite3")
-        ]
+        return [path for path in paths if path.is_dir() or path.name.endswith(".sqlite3")]
 
 
 class DirectoryContainer(Container):
@@ -309,12 +301,8 @@ class DirectoryContainer(Container):
     def compose(self) -> ComposeResult:
         yield Button("<<", id="btn-path-parent")
         yield Label("Selected Folder:")
-        yield Static(
-            str(get_data_folder()), id="disp-selected", classes="disp-selected"
-        )
-        yield ConfigTree(
-            id="config-tree", path=Path(get_data_folder()), classes="config-tree"
-        )
+        yield Static(str(get_data_folder()), id="disp-selected", classes="disp-selected")
+        yield ConfigTree(id="config-tree", path=Path(get_data_folder()), classes="config-tree")
         with Horizontal(classes="save-btns"):
             yield Button("Select Directory / DB", id="btn-save-dir", classes="save")
 
@@ -392,9 +380,7 @@ class FileNameContainer(Container):
             ],
         )
         with Horizontal(classes="save-btns"):
-            yield Button(
-                "save", id="btn-save-fn", classes="btn-auto save", disabled=True
-            )
+            yield Button("save", id="btn-save-fn", classes="btn-auto save", disabled=True)
 
     def create_project(self):
         db_name = self.query_one(Input).value + ".sqlite3"
@@ -433,12 +419,8 @@ class ConfigTab(Static):
     def compose(self) -> ComposeResult:
         with Horizontal(classes="config-tab"):
             with Vertical(classes="config-btns"):
-                yield Button(
-                    "Change Directory / Project", id="dir-container", classes="btn-auto"
-                )
-                yield Button(
-                    "Create New Project", id="fn-container", classes="btn-auto"
-                )
+                yield Button("Change Directory / Project", id="dir-container", classes="btn-auto")
+                yield Button("Create New Project", id="fn-container", classes="btn-auto")
             yield Rule(orientation="vertical")
 
             with ContentSwitcher(initial="dir-container"):
@@ -477,9 +459,7 @@ class BmdsTabs(Static):
     @on(TabbedContent.TabActivated, "#tabs", tab="#app")
     def switch_to_app(self) -> None:
         self.query_one("#folder").update(f"[b]Data folder:[/b]\n  {get_data_folder()}")
-        self.query_one("#project").update(
-            f"[b]Data/Project:[/b]\n  {get_project_filename()}"
-        )
+        self.query_one("#project").update(f"[b]Data/Project:[/b]\n  {get_project_filename()}")
 
     @on(TabbedContent.TabActivated, "#tabs", tab="#config")
     def switch_to_config(self) -> None:
