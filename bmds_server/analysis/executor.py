@@ -3,11 +3,10 @@ from copy import deepcopy
 from typing import NamedTuple, Self
 
 import bmds
-from bmds.bmds3.constants import DistType
-from bmds.bmds3.models.multi_tumor import Multitumor, MultitumorBase
-from bmds.bmds3.sessions import BmdsSession
-from bmds.bmds3.types.nested_dichotomous import IntralitterCorrelation, LitterSpecificCovariate
-from bmds.constants import ModelClass
+from bmds.constants import DistType, ModelClass
+from bmds.models.multi_tumor import Multitumor, MultitumorBase
+from bmds.sessions import BmdsSession
+from bmds.types.nested_dichotomous import IntralitterCorrelation, LitterSpecificCovariate
 
 from .schema import AnalysisSessionSchema
 from .transforms import (

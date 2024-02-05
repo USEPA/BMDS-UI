@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from bmds.bmds3.recommender import RecommenderSettings
+from bmds.recommender import RecommenderSettings
 from django.core.management import call_command
 
 
@@ -38,7 +38,9 @@ def vcr_config():
 
 @pytest.fixture(scope="module")
 def vcr_cassette_dir(request):
-    cassette_dir = Path(__file__).parent.absolute() / "cassettes" / request.module.__name__
+    cassette_dir = (
+        Path(__file__).parent.absolute() / "cassettes" / request.module.__name__
+    )
     return str(cassette_dir)
 
 

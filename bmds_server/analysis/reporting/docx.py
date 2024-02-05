@@ -5,9 +5,8 @@ from typing import TYPE_CHECKING
 
 import docx
 from bmds import __version__
-from bmds.bmds3.reporting import write_setting_p
 from bmds.datasets.transforms.polyk import PolyKAdjustment
-from bmds.reporting.styling import Report
+from bmds.reporting.styling import Report, write_setting_p
 from django.conf import settings
 from django.utils.timezone import now
 
@@ -58,14 +57,20 @@ def build_docx(
 
     bmds_version = analysis.get_bmds_version()
     if bmds_version:
-        write_setting_p(report, "BMDS version: ", f"{bmds_version.pretty} ({bmds_version.dll})")
+        write_setting_p(
+            report, "BMDS version: ", f"{bmds_version.pretty} ({bmds_version.dll})"
+        )
 
     write_setting_p(report, "BMDS Online version: ", str(settings.COMMIT))
 
     if not analysis.is_finished:
-        report.document.add_paragraph("Execution is incomplete; no report could be generated")
+        report.document.add_paragraph(
+            "Execution is incomplete; no report could be generated"
+        )
     elif analysis.has_errors:
-        report.document.add_paragraph("Execution generated errors; no report can be generated")
+        report.document.add_paragraph(
+            "Execution generated errors; no report can be generated"
+        )
     else:
         batch = analysis.to_batch()
         batch.to_docx(
