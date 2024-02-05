@@ -411,7 +411,7 @@ class ConfigTab(Static):
     """Configuration Tab"""
 
     # Content Switch
-    @on(Button.Pressed, "#dir-container,#fn-container")
+    @on(Button.Pressed, "#btn-dir-container,#btn-fn-container")
     def btn_container_switch(self, event: Button.Pressed) -> None:
         self.query_one(ContentSwitcher).current = event.button.id
         self.query_one(DirectoryContainer).reload()
@@ -419,8 +419,12 @@ class ConfigTab(Static):
     def compose(self) -> ComposeResult:
         with Horizontal(classes="config-tab"):
             with Vertical(classes="config-btns"):
-                yield Button("Change Directory / Project", id="dir-container", classes="btn-auto")
-                yield Button("Create New Project", id="fn-container", classes="btn-auto")
+                yield Button(
+                    "Change Directory / Project",
+                    id="btn-dir-container",
+                    classes="btn-auto",
+                )
+                yield Button("Create New Project", id="btn-fn-container", classes="btn-auto")
             yield Rule(orientation="vertical")
 
             with ContentSwitcher(initial="dir-container"):
