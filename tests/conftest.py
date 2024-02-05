@@ -38,9 +38,7 @@ def vcr_config():
 
 @pytest.fixture(scope="module")
 def vcr_cassette_dir(request):
-    cassette_dir = (
-        Path(__file__).parent.absolute() / "cassettes" / request.module.__name__
-    )
+    cassette_dir = Path(__file__).parent.absolute() / "cassettes" / request.module.__name__
     return str(cassette_dir)
 
 
