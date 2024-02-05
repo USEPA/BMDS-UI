@@ -67,3 +67,10 @@ a.dropdown-toggle:not([href])::after {
 .popover-header {
   margin-top: 0;
 }
+
+/* desktop analysis list */
+.analysis-list td {
+  border-left: 0px;
+  border-right: 0px;
+  border-color: #dddddd
+}

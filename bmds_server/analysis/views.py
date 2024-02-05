@@ -1,24 +1,31 @@
+from typing import ClassVar
+
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
+from django.db.models.query import QuerySet
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.template import RequestContext, Template
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, DeleteView, DetailView, RedirectView, TemplateView
+from django.utils.timezone import now
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    RedirectView,
+    TemplateView,
+    UpdateView,
+)
 
 from . import forms, models
 from .reporting.analytics import get_cached_analytics
 from .utils import get_citation
 
 
-class Home(CreateView):
-    model = models.Analysis
-    form_class = forms.CreateAnalysisForm
+class Home(TemplateView):
     template_name = "analysis/home.html"
-
-    def get_success_url(self):
-        return self.object.get_edit_url()
 
     def _render_template(self, extra):
         context = RequestContext(self.request, extra)
@@ -27,10 +34,55 @@ class Home(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["days_to_keep_analyses"] = settings.DAYS_TO_KEEP_ANALYSES
-        context["citation"] = get_citation()
+        context.update(
+            days_to_keep_analyses=settings.DAYS_TO_KEEP_ANALYSES,
+            citation=get_citation(),
+        )
         context["page"] = self._render_template(context)
         return context
+
+
+class DesktopHome(ListView):
+    template_name = "analysis/desktop_home.html"
+    model = models.Analysis
+    queryset = (
+        models.Analysis.objects.defer("outputs", "errors")
+        .all()
+        .order_by("-last_updated", "-created")
+    )
+    paginate_by = 20
+
+    def get_queryset(self) -> QuerySet:
+        qs = super().get_queryset()
+        if q := self.request.GET.get("q"):
+            qs = qs.filter(inputs__analysis_name__icontains=q)
+        if self.request.GET.get("starred"):
+            qs = qs.filter(starred=True)
+        if c := self.request.GET.get("collection"):
+            if c.isnumeric():
+                qs = qs.filter(collections=c)
+        return qs.prefetch_related("collections")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        collection = self.request.GET.get("collection", "")
+        context.update(
+            q=self.request.GET.get("q", ""),
+            starred=len(self.request.GET.get("starred", "")) > 0,
+            collection=int(collection) if collection.isnumeric() else "",
+            collections=models.Collection.opts(),
+            now=now(),
+        )
+        return context
+
+
+class AnalysisCreate(CreateView):
+    model = models.Analysis
+    form_class = forms.CreateAnalysisForm
+    http_method_names: ClassVar[list[str]] = ["post"]
+
+    def get_success_url(self):
+        return self.object.get_edit_url()
 
 
 class AnalysisHistory(TemplateView):
@@ -91,6 +143,8 @@ class AnalysisDetail(DetailView):
                 "editKey": self.object.password,
                 "viewUrl": self.request.build_absolute_uri(self.object.get_absolute_url()),
                 "editUrl": self.request.build_absolute_uri(self.object.get_edit_url()),
+                "starUrl": self.request.build_absolute_uri(self.object.get_star_url()),
+                "collectionUrl": self.request.build_absolute_uri(self.object.get_collections_url()),
                 "renewUrl": self.request.build_absolute_uri(self.object.get_renew_url()),
                 "deleteUrl": self.request.build_absolute_uri(self.object.get_delete_url()),
                 "patchInputUrl": self.object.get_api_patch_inputs_url(),
@@ -98,6 +152,7 @@ class AnalysisDetail(DetailView):
                 "executeResetUrl": self.object.get_api_execute_reset_url(),
                 "deleteDateStr": self.object.deletion_date_str,
                 "deletionDaysUntilDeletion": self.object.days_until_deletion,
+                "collections": models.Collection.opts(),
             }
         return context
 
@@ -125,3 +180,26 @@ class AnalysisDelete(DeleteView):
 
 class PolyKAdjustment(TemplateView):
     template_name: str = "analysis/polyk.html"
+
+
+class CollectionList(ListView):
+    model = models.Collection
+    queryset = models.Collection.objects.all().order_by("name")
+    paginate_by = 1000
+
+
+class CollectionCreate(CreateView):
+    model = models.Collection
+    form_class = forms.CollectionForm
+    success_url = reverse_lazy("collection_list")
+
+
+class CollectionUpdate(UpdateView):
+    model = models.Collection
+    form_class = forms.CollectionForm
+    success_url = reverse_lazy("collection_list")
+
+
+class CollectionDelete(DeleteView):
+    model = models.Collection
+    success_url = reverse_lazy("collection_list")

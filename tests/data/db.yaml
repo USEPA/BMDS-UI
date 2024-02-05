@@ -5089,7 +5089,7 @@
         R, or Java. To take\n                    advantage of automation, use the
         <a href=\"/api/v1/\">API</a>,\n                    and see the <a href=\"http://bmds-server.readthedocs.io/en/latest/quickstart.html\">quickstart</a>
         section.\n                </li>\n            </ul>\n        </div>\n    </div>\n
-        \   <div class=\"col-md-4\">\n        <form method=\"post\">\n            {%
+        \   <div class=\"col-md-4\">\n        <form  action=\"{% url 'analysis_create' %}\" method=\"post\">\n            {%
         csrf_token %}\n            <label for=\"id_id\">Create a new analysis:</label>\n
         \           <button type=\"submit\" class=\"btn btn-primary btn-block mb-1\">Create
         a new BMDS analysis</button>\n            <p class=\"text-muted\">Analyses

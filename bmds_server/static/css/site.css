@@ -120,3 +120,14 @@ input[type=number] {
 .bi-lg {
   font-size: 1.2rem;
 }
+
+.starred {
+  color: orange;
+}
+.starred:hover {
+  color: darkorange;
+}
+
+.stretched-link-parent {
+  transform: rotate(0);
+}

@@ -14,12 +14,10 @@ ROOT_DIR = Path(__file__).parents[3].resolve()
 
 # data paths
 PUBLIC_DATA_ROOT = Path(os.environ.get("PUBLIC_DATA_ROOT", ROOT_DIR / "public"))
-PRIVATE_DATA_ROOT = Path(os.environ.get("PRIVATE_DATA_ROOT", ROOT_DIR / "private"))
 LOGS_PATH = Path(os.environ.get("LOGS_PATH", ROOT_DIR / "logs"))
 
 # make sure these paths exist
 PUBLIC_DATA_ROOT.mkdir(exist_ok=True, parents=False)
-PRIVATE_DATA_ROOT.mkdir(exist_ok=True, parents=False)
 LOGS_PATH.mkdir(exist_ok=True, parents=False)
 
 SKIN = SkinStyle.Base

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% load bs4 %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-8">
+
+    <div class="d-flex">
+      <h3>Analyses</h3>
+      <form action="{% url 'analysis_create' %}" method="post" class="ml-auto align-self-start flex-shrink-0">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary"><span class="bi bi-plus-square-fill mr-1"></span>Create analysis</button>
+      </form>
+    </div>
+
+    <form method="get" class="form-row align-items-center bg-light py-3">
+      <div class="col-auto">
+        <input class="form-control" name="q" value="{{q}}" type="text" placeholder="Search" />
+      </div>
+      <div class="col-auto">
+        <select class="form-control custom-select" name="collection" id="id_collection">
+          <option>--- Collection ---</option>
+          {% for c in collections %}
+            <option value="{{c.id}}" {% if collection == c.id %}selected {% endif %}>{{c.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <div class="custom-control custom-switch">
+          <input type="checkbox" class="custom-control-input" id="starred" {{starred|yesno:"checked,,"}} name="starred">
+          <label class="custom-control-label" for="starred">Starred</label>
+        </div>
+      </div>
+      <div class="ml-auto">
+        <a href="." class="btn btn-secondary mr-3">Reset</a>
+        <button type="submit" class="btn btn-primary px-3">
+          <span class="bi bi-search mr-1"></span>Search
+        </button>
+      </div>
+    </form>
+
+    {% with objects=object_list %}
+    {% if objects %}
+      <table class="table table-hover table-sm analysis-list">
+        <colgroup>
+          <col width="40px" />
+          <col />
+          <col width="100px" />
+        </colgroup>
+        <tbody>
+          {% for object in objects %}
+          <tr class="stretched-link-parent" >
+            <td class="text-center"><span class="starred bi {{object.starred|yesno:'bi-star-fill,bi-star'}}"></span></td>
+            <td>
+              {% for collection in object.collections.all %}<span class="mr-1 badge badge-info">{{collection}}</span>{% endfor %}
+              <a class="text-dark stretched-link" href="{{object.get_edit_url}}">{{object}}</a>
+            </td>
+            <td>{% table_time now object.timestamp %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% include "includes/pagination.html" %}
+    {% else %}
+      <p class="text-muted">No analyses found.</p>
+    {% endif %}
+    {% endwith %}
+  </div>
+  <div class="col-lg-4">
+    <div class="card pane mt-4">
+      <div class="card-header bg-dark">
+        <h4 class="mb-0 text-white text-center">Support</h4>
+      </div>
+      <div class="card-body p-3">
+        <ul class="mb-0">
+          <li><a href="{% url 'collection_list' %}">Collections</a></li>
+          <li><a href="https://www.epa.gov/bmds" target="_blank" rel="noopener noreferrer">BMDS Home Page</a></li>
+          <li><a href="https://www.epa.gov/bmds/how-modeling-dichotomous-data-bmds-online" target="_blank" rel="noopener noreferrer">BMDS Online Tutorial</a></li>
+          <li><a href="https://www.epa.gov/bmds/benchmark-dose-software-bmds-version-32-download" target="_blank" rel="noopener noreferrer">BMDS Downloads</a></li>
+          <li><a href="https://ecomments.epa.gov/bmds/" target="_blank" rel="noopener noreferrer">BMDS Support</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="card pane mt-4">
+      <div class="card-header bg-dark">
+        <h4 class="mb-0 text-white text-center">Disclaimer</h4>
+      </div>
+      <div class="card-body">
+      <p class="mb-0">This software/application has been approved for release by the U.S. Environmental Protection Agency (USEPA). Although the software has been subjected to rigorous review, the USEPA reserves the right to update the software as needed pursuant to further analysis and review. No warranty, expressed or implied, is made by the USEPA or the U.S. Government as to the functionality of the software and related material nor shall the fact of release constitute any such warranty. Furthermore, the software is released on condition that neither the USEPA nor the U.S. Government shall be held liable for any damages resulting from its authorized or unauthorized use.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

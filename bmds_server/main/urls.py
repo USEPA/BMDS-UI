@@ -27,11 +27,16 @@ api_paths = path("api/v1/", include((router.urls, "analysis"), namespace="api"))
 
 urlpatterns = [
     # home
-    path("", views.Home.as_view(), name="home"),
+    path(
+        "",
+        views.DesktopHome.as_view() if settings.IS_DESKTOP else views.Home.as_view(),
+        name="home",
+    ),
     path("history/", views.AnalysisHistory.as_view(), name="analysis_history"),
     # api
     api_paths,
     # analysis
+    path("analysis/create/", views.AnalysisCreate.as_view(), name="analysis_create"),
     path("analysis/<uuid:pk>/", views.AnalysisDetail.as_view(), name="analysis"),
     path(edit_pattern, views.AnalysisDetail.as_view(), name="analysis_edit"),
     path(f"{edit_pattern}renew/", views.AnalysisRenew.as_view(), name="analysis_renew"),
@@ -45,6 +50,22 @@ urlpatterns = [
     path("user/login/", common_views.AppLoginView.as_view(), name="login"),
     path("user/logout/", common_views.AppLogoutView.as_view(), name="logout"),
 ]
+
+if settings.IS_DESKTOP:
+    urlpatterns += [
+        path("collection/", views.CollectionList.as_view(), name="collection_list"),
+        path("collection/create/", views.CollectionCreate.as_view(), name="collection_create"),
+        path(
+            "collection/<int:pk>/update/",
+            views.CollectionUpdate.as_view(),
+            name="collection_update",
+        ),
+        path(
+            "collection/<int:pk>/delete/",
+            views.CollectionDelete.as_view(),
+            name="collection_delete",
+        ),
+    ]
 
 if settings.INCLUDE_BETA_FEATURES:
     urlpatterns += [

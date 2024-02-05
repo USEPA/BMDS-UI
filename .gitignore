@@ -9,6 +9,7 @@
 bmds_server/static/bundles/
 build/
 /data/
+coverage_report/
 dist/
 docs/site/
 node_modules/
@@ -20,7 +21,7 @@ venv/
 # files
 *.log
 *.py[cod]
-*.sqlite3
+*.sqlite3*
 *log
 .coverage
 .env

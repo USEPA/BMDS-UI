@@ -5,6 +5,7 @@ import React, {Component} from "react";
 
 import Button from "../../common/Button";
 import Icon from "../../common/Icon";
+import CollectionForm from "./CollectionForm";
 
 const getDeletionDateText = function(editSettings) {
     const date = editSettings.deleteDateStr,
@@ -106,6 +107,13 @@ class Actions extends Component {
                     ) : (
                         <p className="text-muted pl-4 mb-0">Please save and execute analysis.</p>
                     )}
+                    {mainStore.isDesktop ? (
+                        <>
+                            <div className="dropdown-divider"></div>
+                            <span className="dropdown-header">Collections</span>
+                            <CollectionForm />
+                        </>
+                    ) : null}
                 </div>
             </div>
         );
