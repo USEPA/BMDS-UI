@@ -43,6 +43,8 @@ from textual.widgets import (
 )
 from whitenoise import WhiteNoise
 
+from bmds_server.main.settings.desktop import DATABASES
+
 from ..main.constants import get_app_home
 
 logger = logging.getLogger(__name__)
@@ -59,7 +61,6 @@ def load_config():
 
 def get_data_folder() -> Path:
     """Sets default folder based on OS or gets custom value from config."""
-
     config = load_config()
     if config["desktop"]["directory"] == "default":
         path = get_app_home()
@@ -121,7 +122,7 @@ class UpdateModal(ModalScreen):
 
 
 class DesktopConfig(BaseModel):
-    # TODO: some form of up to date 'global config'?
+    # TODO: use settings.desktop instead?
     path: str = Field(default_factory=lambda: str(get_data_folder()))
     project: str = Field(default_factory=lambda: str(get_project_filename()))
     host: str = "127.0.0.1"
@@ -220,9 +221,11 @@ class AppRunner:
         port = self.app.config.port
         self.started = not self.started
         self.widget.label = self.LABEL[self.started]
+        db_settings = str(Path(get_data_folder()) / get_project_filename())
         if self.started:
             os.environ["BMDS_HOME"] = self.app.config.path
-            os.environ["BMDS_DB"] = str(Path(get_data_folder()) / get_project_filename())
+            os.environ["BMDS_DB"] = db_settings
+            DATABASES["default"]["NAME"] = db_settings
             self.thread = AppThread(
                 stream=self.app.log_app.stream,
                 host=host,
@@ -254,6 +257,7 @@ class DirectoryContainer(Container):
     """Directory"""
 
     # TODO: Directions/Help Text?
+    # TODO: also show current db name at top?
 
     def reload(self):
         self.query_one(ConfigTree).reload()
@@ -268,6 +272,7 @@ class DirectoryContainer(Container):
     def btn_update_config(self, event: Button.Pressed) -> None:
         _selected = self.query_one("#disp-selected").renderable.__str__()
         if Path(_selected).is_dir():
+            # Select a different folder for projects/db's
             self.change_config(self.query_one("#disp-selected").renderable, kind="dir")
         if Path(_selected).is_file():
             # Select different project/db
@@ -320,10 +325,8 @@ class DirectoryContainer(Container):
 class FileNameContainer(Container):
     """Filename"""
 
-    # TODO: fix input validation/clear it after save
-    # TODO: when input is empty, clear validation result
+    # TODO: fix input validation/clear it after save?
 
-    # TODO: db not being selected/run right
     # TODO: check if file exists before creating new one
 
     @on(Button.Pressed, "#btn-save-fn")
@@ -332,9 +335,9 @@ class FileNameContainer(Container):
 
     @on(Input.Changed, "#input-filename")
     def show_invalid_reasons(self, event: Input.Changed) -> None:
+        """Update UI to show the reasons why validation failed"""
         if event.validation_result:
             if not event.validation_result.is_valid:
-                # Update UI to show the reasons why validation failed
                 self.query_one("#btn-save-fn").disabled = True
                 self.query_one("#disp-fn-validation").update(
                     event.validation_result.failure_descriptions[0]
@@ -354,9 +357,10 @@ class FileNameContainer(Container):
             classes="input-filename",
             validators=[
                 Length(
-                    minimum=2,
-                    failure_description="Filename must be two or more characters.",
+                    minimum=1,
+                    failure_description="Filename must be one or more characters.",
                 ),
+                # TODO: more permissive regex?
                 Regex(
                     regex=r"^[a-zA-Z0-9_\-\s]+$",
                     failure_description="Invalid character in filename.",
@@ -378,8 +382,7 @@ class FileNameContainer(Container):
                 config.write(configfile)
             self.query_one("#disp-fn").update(get_project_filename())
             self.query_one("#input-filename").clear()
-            self.query_one("#disp-fn-validation").update("zzzz")
-
+            self.query_one("#disp-fn-validation").update("")
             self.notify(
                 f"{db_name} : project created.",
                 title="Project Created",
@@ -396,9 +399,9 @@ class FileNameContainer(Container):
 class ConfigTab(Static):
     """Configuration Tab"""
 
-    # Content Switch
     @on(Button.Pressed, "#dir-container,#fn-container")
     def btn_container_switch(self, event: Button.Pressed) -> None:
+        # Content Switch
         self.query_one(ContentSwitcher).current = event.button.id
         self.query_one(DirectoryContainer).reload()
 
