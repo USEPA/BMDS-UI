@@ -2,8 +2,8 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
-import {parseError} from "../../../utils/parsers";
 import Button from "../../common/Button";
+import ErrorMessage from "../../common/ErrorMessage";
 import Icon from "../../common/Icon";
 import SelectInput from "../../common/SelectInput";
 import Spinner from "../../common/Spinner";
@@ -64,12 +64,7 @@ class AnalysisForm extends Component {
                             choices={mainStore.getModelTypeChoices}
                         />
                     </div>
-
-                    {mainStore.errorMessage ? (
-                        <div className="alert alert-danger">
-                            {parseError(mainStore.errorMessage)}
-                        </div>
-                    ) : null}
+                    <ErrorMessage error={mainStore.errorMessage} />
                     <div id="controlPanel" className="card bg-light">
                         {mainStore.isExecuting ? (
                             <div className="card-body">
