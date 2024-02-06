@@ -1,7 +1,6 @@
 import configparser
 import logging
 import os
-import re
 from collections.abc import Iterable
 from contextlib import redirect_stderr, redirect_stdout
 from importlib.metadata import version
@@ -26,7 +25,7 @@ from textual.containers import (
     Vertical,
 )
 from textual.screen import ModalScreen
-from textual.validation import Length, ValidationResult, Validator
+from textual.validation import Length, Regex
 from textual.widgets import (
     Button,
     ContentSwitcher,
@@ -52,13 +51,15 @@ APP_ROOT = Path(__file__).parent
 
 
 def load_config():
+    """Load config file."""
     config = configparser.ConfigParser()
     config.read(Path(APP_ROOT / "config.ini"))
     return config
 
 
 def get_data_folder() -> Path:
-    # Set default directory by OS
+    """Sets default folder based on OS or gets custom value from config."""
+
     config = load_config()
     if config["desktop"]["directory"] == "default":
         path = get_app_home()
@@ -69,6 +70,7 @@ def get_data_folder() -> Path:
 
 
 def get_project_filename() -> str:
+    """Sets default db name or gets custom value from config."""
     # file <-> db <-> project
     config = load_config()
     if config["desktop"]["file_name"] == "default":
@@ -78,7 +80,7 @@ def get_project_filename() -> str:
 
 
 class QuitModal(ModalScreen):
-    """Screen with a dialog to quit."""
+    """Modal with a dialog to quit."""
 
     def compose(self) -> ComposeResult:
         yield Grid(
@@ -96,18 +98,19 @@ class QuitModal(ModalScreen):
 
 
 class UpdateModal(ModalScreen):
-    """Screen with a dialog to check for updates."""
+    """Modal with a dialog to check for updates."""
+
+    # TODO: check for udates
 
     @on(Button.Pressed, "#btn-update-download")
     def get_update(self):
         # do something here to download/go to site?
         ...
 
-    # TODO: check for udates
     def compose(self) -> ComposeResult:
         yield Grid(
             Label(f"Check for Updates: {version('bmds_server')}", id="modal-update-lbl"),
-            # Button("Cancel", variant="primary", id="btn-update-download"),
+            # Button("Get Updates", variant="primary", id="btn-update-download"),
             Button("Cancel", variant="primary", id="btn-update-cancel"),
             id="update-modal",
         )
@@ -117,34 +120,8 @@ class UpdateModal(ModalScreen):
             self.app.pop_screen()
 
 
-class FNValidator(Validator):
-    """Validate Name"""
-
-    # not use Regex() validator cause of button active/disabled?
-
-    def __init__(self, cls):
-        self.cls = cls
-
-    def validate(self, value: str) -> ValidationResult:
-        if self.is_valid(value):
-            btn = self.cls.query_one("#btn-save-fn")
-            btn.disabled = False
-            return self.success()
-
-        else:
-            return self.failure("Invalid character in filename.")
-
-    @staticmethod
-    def is_valid(value: str) -> bool:
-        # not very strict, more complex regex
-        # \A(?!(?:COM[0-9]|CON|LPT[0-9]|NUL|PRN|AUX|com[0-9]|con|lpt[0-9]|nul|prn|aux)|\s|[\.]{2,})[^\\\/:*"?<>|]{1,254}(?<![\s\.])\z
-        if re.match(r"^[a-zA-Z0-9\-\s]+$", value) is not None:
-            return True
-        else:
-            return False
-
-
 class DesktopConfig(BaseModel):
+    # TODO: some form of up to date 'global config'?
     path: str = Field(default_factory=lambda: str(get_data_folder()))
     project: str = Field(default_factory=lambda: str(get_project_filename()))
     host: str = "127.0.0.1"
@@ -276,13 +253,14 @@ class ConfigTree(DirectoryTree):
 class DirectoryContainer(Container):
     """Directory"""
 
-    # TODO: Directions/Help Text
+    # TODO: Directions/Help Text?
 
     def reload(self):
         self.query_one(ConfigTree).reload()
 
     @on(Button.Pressed, "#btn-path-parent")
     def btn_path_parent(self):
+        # TODO: this button
         # move up one dir, reload tree
         ...
 
@@ -346,6 +324,7 @@ class FileNameContainer(Container):
     # TODO: when input is empty, clear validation result
 
     # TODO: db not being selected/run right
+    # TODO: check if file exists before creating new one
 
     @on(Button.Pressed, "#btn-save-fn")
     def btn_create_project(self, event: Button.Pressed) -> None:
@@ -356,11 +335,13 @@ class FileNameContainer(Container):
         if event.validation_result:
             if not event.validation_result.is_valid:
                 # Update UI to show the reasons why validation failed
+                self.query_one("#btn-save-fn").disabled = True
                 self.query_one("#disp-fn-validation").update(
                     event.validation_result.failure_descriptions[0]
                 )
             else:
                 self.query_one("#disp-fn-validation").update("")
+                self.query_one("#btn-save-fn").disabled = False
 
     def compose(self) -> ComposeResult:
         yield Label("Current Filename:")
@@ -372,10 +353,13 @@ class FileNameContainer(Container):
             id="input-filename",
             classes="input-filename",
             validators=[
-                FNValidator(self),
                 Length(
                     minimum=2,
                     failure_description="Filename must be two or more characters.",
+                ),
+                Regex(
+                    regex=r"^[a-zA-Z0-9_\-\s]+$",
+                    failure_description="Invalid character in filename.",
                 ),
             ],
         )
@@ -394,6 +378,8 @@ class FileNameContainer(Container):
                 config.write(configfile)
             self.query_one("#disp-fn").update(get_project_filename())
             self.query_one("#input-filename").clear()
+            self.query_one("#disp-fn-validation").update("zzzz")
+
             self.notify(
                 f"{db_name} : project created.",
                 title="Project Created",
@@ -411,7 +397,7 @@ class ConfigTab(Static):
     """Configuration Tab"""
 
     # Content Switch
-    @on(Button.Pressed, "#btn-dir-container,#btn-fn-container")
+    @on(Button.Pressed, "#dir-container,#fn-container")
     def btn_container_switch(self, event: Button.Pressed) -> None:
         self.query_one(ContentSwitcher).current = event.button.id
         self.query_one(DirectoryContainer).reload()
@@ -421,10 +407,10 @@ class ConfigTab(Static):
             with Vertical(classes="config-btns"):
                 yield Button(
                     "Change Directory / Project",
-                    id="btn-dir-container",
+                    id="dir-container",
                     classes="btn-auto",
                 )
-                yield Button("Create New Project", id="btn-fn-container", classes="btn-auto")
+                yield Button("Create New Project", id="fn-container", classes="btn-auto")
             yield Rule(orientation="vertical")
 
             with ContentSwitcher(initial="dir-container"):
