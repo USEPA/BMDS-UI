@@ -3,8 +3,9 @@ import _ from "lodash";
 import {action, computed, observable, toJS} from "mobx";
 import slugify from "slugify";
 
-import {getHeaders, parseErrors, simulateClick} from "@/common";
+import {getHeaders, simulateClick} from "@/common";
 import * as mc from "@/constants/mainConstants";
+import {parseServerErrors} from "@/utils/parsers";
 
 class MainStore {
     constructor(rootStore) {
@@ -101,9 +102,9 @@ class MainStore {
                     response.json().then(data => this.updateModelStateFromApi(data));
                 } else {
                     response.json().then(errorText => {
-                        const {errors, textErrors} = parseErrors(errorText);
-                        this.errorMessage = textErrors.join(", ");
-                        this.errorData = errors;
+                        const error = parseServerErrors(errorText);
+                        this.errorMessage = error.message;
+                        this.errorData = error.data;
                     });
                 }
             })
@@ -227,8 +228,9 @@ class MainStore {
         this.analysisSavedAndValidated = false;
     }
     @action.bound updateModelStateFromApi(data) {
-        if (data.errors.length > 0) {
-            this.errorMessage = data.errors;
+        const errors = parseServerErrors(data.errors);
+        if (errors) {
+            this.errorMessage = errors.message;
             this.isUpdateComplete = true;
         }
 
