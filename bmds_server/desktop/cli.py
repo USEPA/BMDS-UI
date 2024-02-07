@@ -410,7 +410,7 @@ class ConfigTab(Static):
     @on(Button.Pressed, "#btn-dir-container,#btn-fn-container")
     def btn_container_switch(self, event: Button.Pressed) -> None:
         # Content Switch
-        self.query_one(ContentSwitcher).current = event.button.id
+        self.query_one(ContentSwitcher).current = ("-").join(event.button.id.split("-")[1::])
         self.query_one(DirectoryContainer).reload()
 
     def compose(self) -> ComposeResult:
