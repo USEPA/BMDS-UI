@@ -85,10 +85,10 @@ class QuitModal(ModalScreen):
 
     def compose(self) -> ComposeResult:
         yield Grid(
-            Label("Are you sure you want to quit?", id="modal-quit-question"),
+            Label("Are you sure you want to quit?", classes="modal-label"),
             Button("Quit", variant="error", id="btn-modal-quit"),
             Button("Cancel", variant="primary", id="btn-modal-cancel"),
-            id="quit-modal",
+            classes="modal-grid",
         )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -110,10 +110,18 @@ class UpdateModal(ModalScreen):
 
     def compose(self) -> ComposeResult:
         yield Grid(
-            Label(f"Check for Updates: {version('bmds_server')}", id="modal-update-lbl"),
-            # Button("Get Updates", variant="primary", id="btn-update-download"),
+            Label(
+                f"Check for Updates: {version('bmds_server')}",
+                classes="modal-label",
+            ),
+            Button(
+                "Get Updates",
+                variant="primary",
+                id="btn-update-download",
+                disabled=True,
+            ),
             Button("Cancel", variant="primary", id="btn-update-cancel"),
-            id="update-modal",
+            classes="modal-grid",
         )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -270,24 +278,21 @@ class DirectoryContainer(Container):
 
     @on(Button.Pressed, "#btn-save-dir")
     def btn_update_config(self, event: Button.Pressed) -> None:
-        _selected = self.query_one("#disp-selected").renderable.__str__()
-        if Path(_selected).is_dir():
+        selected = self.query_one("#disp-selected").renderable.__str__()
+        if Path(selected).is_dir():
             # Select a different folder for projects/db's
-            self.change_config(self.query_one("#disp-selected").renderable, kind="dir")
-        if Path(_selected).is_file():
+            self.change_config(selected, kind="dir")
+        if Path(selected).is_file():
             # Select different project/db
-            self.change_config(
-                PurePath(self.query_one("#disp-selected").renderable.__str__()).name,
-                kind="file",
-            )
+            self.change_config(PurePath(selected).name, kind="file")
 
     def compose(self) -> ComposeResult:
         yield Button("<<", id="btn-path-parent")
         yield Label("Selected Folder:")
         yield Static(str(get_data_folder()), id="disp-selected", classes="disp-selected")
         yield ConfigTree(id="config-tree", path=Path(get_data_folder()), classes="config-tree")
-        with Horizontal(classes="save-btns"):
-            yield Button("Select Directory / DB", id="btn-save-dir", classes="save")
+        with Horizontal(classes="center-top"):
+            yield Button("Select Directory / DB", id="btn-save-dir", classes="btn-auto save")
 
     def on_directory_tree_directory_selected(self, DirectorySelected):
         self.query_one("#disp-selected").update(rf"{DirectorySelected.path!s}")
@@ -324,8 +329,6 @@ class DirectoryContainer(Container):
 
 class FileNameContainer(Container):
     """Filename"""
-
-    # TODO: fix input validation/clear it after save?
 
     # TODO: check if file exists before creating new one
 
@@ -367,22 +370,27 @@ class FileNameContainer(Container):
                 ),
             ],
         )
-        with Horizontal(classes="save-btns"):
+        with Horizontal(classes="center-top"):
             yield Button("save", id="btn-save-fn", classes="btn-auto save", disabled=True)
 
     def create_project(self):
-        db_name = self.query_one(Input).value + ".sqlite3"
+        input = self.query_one("#input-filename")
+        db_name = input.value + ".sqlite3"
+        cf = Path(get_data_folder()) / db_name
         config = load_config()
         config["desktop"]["file_name"] = str(db_name)
-        cf = Path(get_data_folder()) / db_name
 
         try:
-            cf.touch()
             with open(Path(APP_ROOT / "config.ini"), "w") as configfile:
                 config.write(configfile)
+            cf.touch()
             self.query_one("#disp-fn").update(get_project_filename())
-            self.query_one("#input-filename").clear()
-            self.query_one("#disp-fn-validation").update("")
+            # Stop on input changed validation
+            with input.prevent(Input.Changed):
+                input.clear()
+            input.set_class(False, "-valid")
+            input.set_class(False, "-invalid")
+            self.query_one("#btn-save-fn").disabled = True
             self.notify(
                 f"{db_name} : project created.",
                 title="Project Created",
@@ -399,21 +407,21 @@ class FileNameContainer(Container):
 class ConfigTab(Static):
     """Configuration Tab"""
 
-    @on(Button.Pressed, "#dir-container,#fn-container")
+    @on(Button.Pressed, "#btn-dir-container,#btn-fn-container")
     def btn_container_switch(self, event: Button.Pressed) -> None:
         # Content Switch
         self.query_one(ContentSwitcher).current = event.button.id
         self.query_one(DirectoryContainer).reload()
 
     def compose(self) -> ComposeResult:
-        with Horizontal(classes="config-tab"):
-            with Vertical(classes="config-btns"):
+        with Horizontal():
+            with Vertical(classes="config-switch"):
                 yield Button(
-                    "Change Directory / Project",
-                    id="dir-container",
+                    "Directory / Project",
+                    id="btn-dir-container",
                     classes="btn-auto",
                 )
-                yield Button("Create New Project", id="fn-container", classes="btn-auto")
+                yield Button("Create New Project", id="btn-fn-container", classes="btn-auto")
             yield Rule(orientation="vertical")
 
             with ContentSwitcher(initial="dir-container"):
@@ -439,8 +447,7 @@ class BmdsTabs(Static):
                     Label("", id="project"),
                     Label(f"[b]Port:[/b]\n  {self._app.config.port}", id="port"),
                     Label(f"[b]Host:[/b]\n  {self._app.config.host}", id="host"),
-                    classes="app-box",
-                    id="app-box",
+                    classes="app-info-box",
                 )
 
             with TabPane("Logging"):
@@ -495,7 +502,7 @@ class BmdsDesktop(App):
 
     def action_quit(self):
         """Exit the application."""
-        self.push_screen(QuitModal())
+        self.push_screen(QuitModal(classes="modal-window"))
 
     def action_toggle_dark(self):
         """An action to toggle dark mode."""
@@ -503,7 +510,7 @@ class BmdsDesktop(App):
 
     def action_update_check(self):
         """Check for updates"""
-        self.push_screen(UpdateModal())
+        self.push_screen(UpdateModal(classes="modal-window"))
 
     def on_mount(self) -> None:
         self.log_app.start()

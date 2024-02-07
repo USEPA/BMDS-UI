@@ -48,4 +48,4 @@ async def test_tab_navigation_keyboard():
         btn_fn = app.query_one("#btn-fn-container")
         assert btn_fn.label.__str__() == "Create New Project"
         btn_dir = app.query_one("#btn-dir-container")
-        assert btn_dir.label.__str__() == "Change Directory / Project"
+        assert btn_dir.label.__str__() == "Directory / Project"

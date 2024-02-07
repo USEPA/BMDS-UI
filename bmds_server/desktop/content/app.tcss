@@ -15,12 +15,16 @@ Button.btn-auto {
     height: auto;
 }
 
-Button.btn-config{
-    width:5;
-    height:3;
-    margin:-1 -1 -1 -1;
-    padding:0;
+Button.btn-config {
+    width: 5;
+    height: 3;
+    margin: -1 -1 -1 -1;
+    padding: 0;
     border: none;
+}
+
+.center-top {
+    align: center top;
 }
 
 .save {
@@ -31,30 +35,23 @@ Button.btn-config{
     background: $secondary 50%;
 }
 
-.config-btns {
+.config-switch {
     align: center top;
     width: auto;
-}
-
-
-.save-btns {
-    align: center top;
-}
-
-#log {
-    height: 15;
 }
 
 #tabs {
     margin: 0 5;
     background: $boost;
+    height: 30;
+
 }
 
 .app {
     layout: horizontal;
 }
 
-.app-box {
+.app-info-box {
     padding: 0 1;
     margin: 1;
     border: double grey;
@@ -63,26 +60,7 @@ Button.btn-config{
     overflow: auto;
 }
 
-.config-tab {
-    /*  */
-    height: 40;
-}
-
-.dir-container {
-    margin: 1;
-    /* border: double grey;
-     width: 70;
-    height: 30; */
-    overflow: auto;
-    background: $panel;
-}
-
-.fn-container {
-    margin: 1;
-    /* border: double grey; */
-    /* width: 70; */
-    /* height: 30; */
-    overflow: auto;
+.dir-container, .fn-container {
     background: $panel;
 }
 
@@ -91,9 +69,7 @@ Button.btn-config{
     height: 4fr;
 }
 
-
-
-.selected-disp {
+.disp-selected {
     border: ascii gray;
     background: $boost;
 }
@@ -106,11 +82,11 @@ Input.-valid:focus {
     border: ascii $success;
 }
 
-QuitModal {
+.modal-window{
     align: center middle;
 }
 
-#quit-modal {
+.modal-grid {
     grid-size: 2;
     grid-gutter: 1 2;
     grid-rows: 1fr 3;
@@ -121,33 +97,7 @@ QuitModal {
     background: $surface;
 }
 
-#modal-quit-question {
-    column-span: 2;
-    height: 1fr;
-    width: 1fr;
-    content-align: center middle;
-}
-
-.input-filename {
-    width: 1fr;
-}
-
-UpdateModal {
-    align: center middle;
-}
-
-#update-modal {
-    grid-size: 2;
-    grid-gutter: 1 2;
-    grid-rows: 1fr 3;
-    padding: 0 1;
-    width: 37;
-    height: 11;
-    border: thick $background 80%;
-    background: $surface;
-}
-
-#modal-update-lbl {
+.modal-label {
     column-span: 2;
     height: 1fr;
     width: 1fr;
