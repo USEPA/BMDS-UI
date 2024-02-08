@@ -8,12 +8,12 @@ import {ff} from "@/utils/formatters";
 
 /* eslint-disable */
 const hdr_c_normal = [
-        "Dose", "N", "Sample Mean", "Model fitted Mean",
+        "Dose", "N", "Sample Mean", "Model Fitted Mean",
         "Sample SD", "Model MLE", "Scaled Residual",
     ],
     hdr_c_lognormal = [
         "Dose", "N", "Sample Mean", "Approximate Sample Median", "Estimated Median",
-        "Sample SD", "Approximate Sample GSD", "Model fitted GSD", "Scaled Residual",
+        "Sample SD", "Approximate Sample GSD", "Model Fitted GSD", "Scaled Residual",
     ],
     hdr_d = [ "Dose", "N", "Observed", "Expected", "Estimated Probability", "Scaled Residual"];
 /* eslint-enable */
@@ -22,8 +22,11 @@ const hdr_c_normal = [
 class GoodnessFit extends Component {
     getHeaders(dtype, settings) {
         if (dtype == Dtype.CONTINUOUS || dtype == Dtype.CONTINUOUS_INDIVIDUAL) {
-            const headers = isLognormal(settings.disttype) ? hdr_c_lognormal : hdr_c_normal;
-            return [headers, [10, 10, 10, 12, 12, 12, 10, 12, 12]];
+            const headers = isLognormal(settings.disttype) ? hdr_c_lognormal : hdr_c_normal,
+                colWidths = isLognormal(settings.disttype)
+                    ? [10, 10, 10, 12, 12, 12, 10, 12, 12]
+                    : [1, 1, 1, 1, 1, 1, 1];
+            return [headers, colWidths];
         }
         if (dtype == Dtype.DICHOTOMOUS) {
             return [hdr_d, [17, 16, 16, 17, 17, 17]];

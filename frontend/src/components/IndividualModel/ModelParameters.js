@@ -15,15 +15,13 @@ class ModelParameters extends Component {
         return (
             <table className="table table-sm table-bordered text-right col-l-1">
                 <colgroup>
-                    <col width="20%" />
-                    <col width="20%" />
-                    <col width="20%" />
-                    <col width="20%" />
-                    <col width="20%" />
+                    <col width="34%" />
+                    <col width="33%" />
+                    <col width="33%" />
                 </colgroup>
                 <thead>
                     <tr className="bg-custom">
-                        <th colSpan="5">Model Parameters</th>
+                        <th colSpan="3">Model Parameters</th>
                     </tr>
                     <tr>
                         <th>Variable</th>
