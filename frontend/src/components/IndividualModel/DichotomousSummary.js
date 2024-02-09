@@ -39,7 +39,7 @@ class DichotomousSummary extends Component {
                         <td>{ff(results.fit.aic)}</td>
                     </tr>
                     <tr>
-                        <td>Log Likelihood</td>
+                        <td>-2* Log(Likelihood Ratio)</td>
                         <td>{ff(results.fit.loglikelihood)}</td>
                     </tr>
                     <tr>

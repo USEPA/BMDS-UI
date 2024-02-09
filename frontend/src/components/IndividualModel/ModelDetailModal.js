@@ -82,7 +82,7 @@ class ModelBody extends Component {
                 ) : null}
                 {isContinuous ? (
                     <Row>
-                        <Col xl={6}>
+                        <Col xl={8}>
                             <ContinuousDeviance store={outputStore} />
                             <ContinuousTestOfInterest store={outputStore} />
                         </Col>

@@ -38,7 +38,7 @@ class MsComboSummary extends Component {
                 ["Combined Log-Likelihood", ff(results.ll)],
                 ["Combined Log-Likelihood Constant", ff(results.ll_constant)],
             ];
-        return <TwoColumnTable data={data} label={label} />;
+        return <TwoColumnTable data={data} label={label} colwidths={[40, 60]} />;
     }
 }
 MsComboSummary.propTypes = {
