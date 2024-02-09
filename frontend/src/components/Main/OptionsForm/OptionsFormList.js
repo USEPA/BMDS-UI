@@ -38,7 +38,7 @@ class OptionsFormList extends Component {
                                             <th>BMRF</th>
                                             {/* zzz #3 add hybrid check here too */}
                                             <th>Tail Probability</th>
-                                            <th>Confidence Level (one-sided)</th>
+                                            <th>Confidence Level (one sided)</th>
                                             <th>
                                                 Distribution +<br />
                                                 Variance&nbsp;
@@ -51,14 +51,14 @@ class OptionsFormList extends Component {
                                         <>
                                             <th>Risk Type</th>
                                             <th>BMR</th>
-                                            <th>Confidence Level</th>
+                                            <th>Confidence Level (one sided)</th>
                                         </>
                                     ) : null}
                                     {modelType === MODEL_NESTED_DICHOTOMOUS ? (
                                         <>
                                             <th>Risk Type</th>
                                             <th>BMR</th>
-                                            <th>Confidence Level</th>
+                                            <th>Confidence Level (one sided)</th>
                                             <th>
                                                 Litter Specific
                                                 <br />

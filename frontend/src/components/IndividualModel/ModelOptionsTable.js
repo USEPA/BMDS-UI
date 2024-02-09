@@ -39,7 +39,7 @@ class ModelOptionsTable extends Component {
             data = [
                 ["BMR Type", getLabel(model.settings.bmr_type, dichotomousBmrOptions)],
                 ["BMR", ff(model.settings.bmr)],
-                ["Confidence Level", ff(1 - model.settings.alpha)],
+                ["Confidence Level (one sided)", ff(1 - model.settings.alpha)],
                 hasDegrees.has(model.model_class.verbose)
                     ? ["Degree", ff(model.settings.degree)]
                     : null,
@@ -53,7 +53,7 @@ class ModelOptionsTable extends Component {
                 ["BMRF", ff(model.settings.bmr)],
                 ["Distribution Type", getLabel(model.settings.disttype, distTypeOptions)],
                 ["Direction", model.settings.is_increasing ? "Up" : "Down"],
-                ["Confidence Level", 1 - ff(model.settings.alpha)],
+                ["Confidence Level (one sided)", 1 - ff(model.settings.alpha)],
                 // zzz #3 check hybrid
                 ["Tail Probability", ff(model.settings.tail_prob)],
                 hasDegrees.has(model.model_class.verbose)
@@ -67,7 +67,7 @@ class ModelOptionsTable extends Component {
             data = [
                 ["BMR Type", getLabel(model.settings.bmr_type, dichotomousBmrOptions)],
                 ["BMR", ff(model.settings.bmr)],
-                ["Confidence Level", ff(1 - model.settings.alpha)],
+                ["Confidence Level (one sided)", ff(1 - model.settings.alpha)],
                 ["Bootstrap Seed", model.settings.bootstrap_seed],
                 ["Bootstrap Iterations", model.settings.bootstrap_iterations],
                 [

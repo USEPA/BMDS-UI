@@ -16,7 +16,7 @@ class MsComboInfo extends Component {
                 ["Model", "Multitumor"],
                 ["Risk Type", getLabel(options.bmr_type, dichotomousBmrOptions)],
                 ["BMR", ff(options.bmr_value)],
-                ["Confidence Level", ff(options.confidence_level)],
+                ["Confidence Level (one sided)", ff(options.confidence_level)],
             ];
         return <TwoColumnTable data={data} label={label} />;
     }

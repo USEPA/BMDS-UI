@@ -36,13 +36,13 @@ class OptionSetTable extends Component {
                 ],
                 // zzz #3 hybrid check
                 ["Tail Probability", ff(selectedModelOptions.tail_probability)],
-                ["Confidence Level (one-sided)", ff(selectedModelOptions.confidence_level)],
+                ["Confidence Level (one sided)", ff(selectedModelOptions.confidence_level)],
             ];
         } else if (getModelType === MODEL_DICHOTOMOUS) {
             rows = [
                 ["BMR Type", getLabel(selectedModelOptions.bmr_type, dichotomousBmrOptions)],
                 ["BMR", ff(selectedModelOptions.bmr_value)],
-                ["Confidence Level", ff(selectedModelOptions.confidence_level)],
+                ["Confidence Level (one sided)", ff(selectedModelOptions.confidence_level)],
                 [
                     "Maximum Multistage Degree",
                     getLabel(selectedDatasetOptions.degree, allDegreeOptions),
@@ -52,7 +52,7 @@ class OptionSetTable extends Component {
             rows = [
                 ["BMR Type", getLabel(selectedModelOptions.bmr_type, dichotomousBmrOptions)],
                 ["BMR", ff(selectedModelOptions.bmr_value)],
-                ["Confidence Level", ff(selectedModelOptions.confidence_level)],
+                ["Confidence Level (one sided)", ff(selectedModelOptions.confidence_level)],
                 ["Bootstrap Seed", selectedModelOptions.bootstrap_seed],
                 ["Bootstrap Iterations", selectedModelOptions.bootstrap_iterations],
                 [
@@ -67,7 +67,7 @@ class OptionSetTable extends Component {
             rows = [
                 ["BMR Type", getLabel(selectedModelOptions.bmr_type, dichotomousBmrOptions)],
                 ["BMR", ff(selectedModelOptions.bmr_value)],
-                ["Confidence Level", ff(selectedModelOptions.confidence_level)],
+                ["Confidence Level (one sided)", ff(selectedModelOptions.confidence_level)],
                 ["Degree Setting", outputStore.multitumorDegreeInputSettings.join(", ")],
             ];
         } else {

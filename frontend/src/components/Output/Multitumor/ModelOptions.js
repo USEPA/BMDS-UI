@@ -18,7 +18,7 @@ class ModelOptions extends Component {
             data = [
                 ["Risk Type", getLabel(options.bmr_type, dichotomousBmrOptions)],
                 ["BMR", ff(options.bmr_value)],
-                ["Confidence Level", ff(options.confidence_level)],
+                ["Confidence Level (one sided)", ff(options.confidence_level)],
                 ["Degree", degree],
             ];
         return <TwoColumnTable data={data} label="Model Options" />;
