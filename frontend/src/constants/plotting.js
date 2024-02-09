@@ -112,7 +112,7 @@ export const getResponse = dataset => {
     },
     getCdfLayout = function(dataset) {
         let layout = _.cloneDeep(doseResponseLayout);
-        layout.title.text = "BMD Cumulative distribution function";
+        layout.title.text = "BMD Cumulative Distribution Function";
         layout.xaxis.title.text = getDoseLabel(dataset);
         layout.yaxis.title.text = "Cumulative Probability";
         layout.yaxis.range = [0, 1];
