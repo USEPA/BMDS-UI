@@ -23,7 +23,8 @@ class OptionsFormList extends Component {
             modelType = optionsStore.getModelType,
             optionsList = toJS(optionsStore.optionsList),
             distTypeHelpText =
-                "If lognormal is selected, only the Exponential and Hill models can be executed. Other models will be removed during the execution process and will not be shown in the outputs.";
+                "If lognormal is selected, only the Exponential and Hill models can be executed. Other models will be removed during the execution process and will not be shown in the outputs.",
+            tailProbabilityHelpText = "Only used for Hybrid models.";
         return (
             <div>
                 <div className="panel panel-default">
@@ -36,8 +37,13 @@ class OptionsFormList extends Component {
                                         <>
                                             <th>BMR Type</th>
                                             <th>BMRF</th>
-                                            <th>Tail Probability</th>
-                                            <th>Confidence Level</th>
+                                            <th>
+                                                Tail Probability
+                                                <HelpTextPopover
+                                                    content={tailProbabilityHelpText}
+                                                />
+                                            </th>
+                                            <th>Confidence Level (one sided)</th>
                                             <th>
                                                 Distribution +<br />
                                                 Variance&nbsp;
@@ -50,14 +56,14 @@ class OptionsFormList extends Component {
                                         <>
                                             <th>Risk Type</th>
                                             <th>BMR</th>
-                                            <th>Confidence Level</th>
+                                            <th>Confidence Level (one sided)</th>
                                         </>
                                     ) : null}
                                     {modelType === MODEL_NESTED_DICHOTOMOUS ? (
                                         <>
                                             <th>Risk Type</th>
                                             <th>BMR</th>
-                                            <th>Confidence Level</th>
+                                            <th>Confidence Level (one sided)</th>
                                             <th>
                                                 Litter Specific
                                                 <br />

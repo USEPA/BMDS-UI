@@ -6,6 +6,7 @@ import {getLabel} from "@/common";
 import TwoColumnTable from "@/components/common/TwoColumnTable";
 import {Dtype} from "@/constants/dataConstants";
 import {hasDegrees} from "@/constants/modelConstants";
+import {isHybridBmr} from "@/constants/optionsConstants";
 import {
     continuousBmrOptions,
     dichotomousBmrOptions,
@@ -39,7 +40,7 @@ class ModelOptionsTable extends Component {
             data = [
                 ["BMR Type", getLabel(model.settings.bmr_type, dichotomousBmrOptions)],
                 ["BMR", ff(model.settings.bmr)],
-                ["Confidence Level", ff(1 - model.settings.alpha)],
+                ["Confidence Level (one sided)", ff(1 - model.settings.alpha)],
                 hasDegrees.has(model.model_class.verbose)
                     ? ["Degree", ff(model.settings.degree)]
                     : null,
@@ -53,8 +54,10 @@ class ModelOptionsTable extends Component {
                 ["BMRF", ff(model.settings.bmr)],
                 ["Distribution Type", getLabel(model.settings.disttype, distTypeOptions)],
                 ["Direction", model.settings.is_increasing ? "Up" : "Down"],
-                ["Confidence Level", 1 - ff(model.settings.alpha)],
-                ["Tail Probability", ff(model.settings.tail_prob)],
+                ["Confidence Level (one sided)", 1 - ff(model.settings.alpha)],
+                isHybridBmr(model.settings.bmr_type)
+                    ? ["Tail Probability", ff(model.settings.tail_prob)]
+                    : null,
                 hasDegrees.has(model.model_class.verbose)
                     ? ["Degree", ff(model.settings.degree)]
                     : null,
@@ -66,7 +69,7 @@ class ModelOptionsTable extends Component {
             data = [
                 ["BMR Type", getLabel(model.settings.bmr_type, dichotomousBmrOptions)],
                 ["BMR", ff(model.settings.bmr)],
-                ["Confidence Level", ff(1 - model.settings.alpha)],
+                ["Confidence Level (one sided)", ff(1 - model.settings.alpha)],
                 ["Bootstrap Seed", model.settings.bootstrap_seed],
                 ["Bootstrap Iterations", model.settings.bootstrap_iterations],
                 [

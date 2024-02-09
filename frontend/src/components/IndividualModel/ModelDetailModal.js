@@ -69,7 +69,7 @@ class ModelBody extends Component {
                     </Col>
                 </Row>
                 <Row>
-                    <Col xl={isDichotomous ? 8 : 10}>
+                    <Col xl={isDichotomous ? 8 : 12}>
                         <GoodnessFit store={outputStore} />
                     </Col>
                 </Row>
@@ -82,7 +82,7 @@ class ModelBody extends Component {
                 ) : null}
                 {isContinuous ? (
                     <Row>
-                        <Col xl={6}>
+                        <Col xl={8}>
                             <ContinuousDeviance store={outputStore} />
                             <ContinuousTestOfInterest store={outputStore} />
                         </Col>
