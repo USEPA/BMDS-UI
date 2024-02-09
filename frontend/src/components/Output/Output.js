@@ -81,7 +81,7 @@ class Output extends Component {
 
         return (
             <div className="container-fluid mb-3">
-                <div className="row">
+                <div className="row py-2">
                     {outputStore.outputs.length > 1 ? (
                         <div className="col-lg-2">
                             <SelectInput
@@ -117,7 +117,7 @@ class Output extends Component {
                             </div>
                         </div>
                     ) : (
-                        <div className="row">
+                        <div className="row py-2">
                             <div className="col-lg-8">
                                 <h4>Maximum Likelihood Approach Model Results</h4>
                                 <FrequentistResultTable />
@@ -134,7 +134,7 @@ class Output extends Component {
                     )
                 ) : null}
                 {selectedBayesian ? (
-                    <div className="row">
+                    <div className="row py-2">
                         <div className="col-lg-12">
                             <h4>Bayesian Model Results</h4>
                             <BayesianResultTable />
@@ -150,7 +150,7 @@ class Output extends Component {
                 ) : null}
 
                 {isFuture && !outputStore.isMultiTumor ? (
-                    <div className="row">
+                    <div className="row py-2">
                         {selectedFrequentist ? (
                             <div className="col col-lg-6">
                                 <DoseResponsePlot
