@@ -136,7 +136,7 @@ export const RULES = Object.freeze({
             enabledNested: true,
         },
         [RULES.ROI_LARGE]: {
-            name: "Abs(Residual of interest) too large",
+            name: "|Residual near BMD| too large",
             notes: val => `|Residual Near BMD| > ${val}`,
             hasThreshold: true,
             enabledContinuous: true,
@@ -144,7 +144,7 @@ export const RULES = Object.freeze({
             enabledNested: true,
         },
         [RULES.WARNINGS]: {
-            name: "BMDS model Warning",
+            name: "BMDS model warning",
             notes: val => "BMD output file included warning",
             hasThreshold: false,
             enabledContinuous: false,
@@ -200,7 +200,7 @@ export const RULES = Object.freeze({
             enabledNested: true,
         },
         [RULES.CONTROL_RESIDUAL_HIGH]: {
-            name: "Abs(Residual at control) too large",
+            name: "|Residual at control| too large",
             notes: val => `|Residual at control| > ${val}`,
             hasThreshold: true,
             enabledContinuous: true,

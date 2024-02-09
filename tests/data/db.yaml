@@ -1615,7 +1615,7 @@
                 - Control stdev. fit greater than threshold (2.312 > 1.5)
                 '1':
                 - Goodness of fit p-value less than threshold (0 < 0.1)
-                - Abs(Residual of interest) greater than threshold (2.246 > 2.0)
+                - '|Residual near BMD| greater than threshold (2.246 > 2.0)'
                 - Variance test failed (Test 2 p-value 2 < 0.05)
                 - Incorrect variance model (p-value 2 = 0), constant variance selected
                 '2': []
@@ -7068,7 +7068,7 @@
       true}]}, "results": {"recommended_model_index": null, "recommended_model_variable":
       null, "model_bin": [1], "model_notes": [{"0": ["Control stdev. fit greater than
       threshold (2.312 > 1.5)"], "1": ["Goodness of fit p-value less than threshold
-      (0 < 0.1)", "Abs(Residual of interest) greater than threshold (2.246 > 2.0)",
+      (0 < 0.1)", "|Residual near BMD| greater than threshold (2.246 > 2.0)",
       "Constant variance test failed (p-value 2 < 0.05)", "Incorrect variance model
       (p-value 2 = 0), constant variance selected"], "2": []}]}}, "selected": {"model_index":
       null, "notes": ""}}, "bayesian": null}]}, "errors": [], "created": "2021-11-15T18:42:28.857Z",
@@ -7343,7 +7343,7 @@
       true}]}, "results": {"recommended_model_index": null, "recommended_model_variable":
       null, "model_bin": [1], "model_notes": [{"0": ["Control stdev. fit greater than
       threshold (2.312 > 1.5)"], "1": ["Goodness of fit p-value less than threshold
-      (0 < 0.1)", "Abs(Residual of interest) greater than threshold (2.246 > 2.0)",
+      (0 < 0.1)", "|Residual near BMD| greater than threshold (2.246 > 2.0)",
       "Constant variance test failed (p-value 2 < 0.05)", "Incorrect variance model
       (p-value 2 = 0), constant variance selected"], "2": []}]}}, "selected": {"model_index":
       null, "notes": "No best fitting model selected"}}, "bayesian": null}], "analysis_id":
