@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -35,9 +36,9 @@ class OptionSetTable extends Component {
                     "Maximum Polynomial Degree",
                     getLabel(selectedDatasetOptions.degree, allDegreeOptions),
                 ],
-                isHybridBmr(selectedModelOptions.bmr_type)?
-                    ["Tail Probability", ff(selectedModelOptions.tail_probability)]:
-                    null,
+                isHybridBmr(selectedModelOptions.bmr_type)
+                    ? ["Tail Probability", ff(selectedModelOptions.tail_probability)]
+                    : null,
                 ["Confidence Level (one sided)", ff(selectedModelOptions.confidence_level)],
             ];
         } else if (getModelType === MODEL_DICHOTOMOUS) {
@@ -86,14 +87,16 @@ class OptionSetTable extends Component {
                         <col width="40%" />
                     </colgroup>
                     <tbody>
-                        {rows.filter(d=>!_.isNull(d)).map((d, i) => {
-                            return (
-                                <tr key={i}>
-                                    <th className="bg-custom">{d[0]}</th>
-                                    <td>{d[1]}</td>
-                                </tr>
-                            );
-                        })}
+                        {rows
+                            .filter(d => !_.isNull(d))
+                            .map((d, i) => {
+                                return (
+                                    <tr key={i}>
+                                        <th className="bg-custom">{d[0]}</th>
+                                        <td>{d[1]}</td>
+                                    </tr>
+                                );
+                            })}
                     </tbody>
                 </table>
             </>

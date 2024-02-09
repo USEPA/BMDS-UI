@@ -42,8 +42,13 @@ class GoodnessFit extends Component {
             useFF = dtype === Dtype.CONTINUOUS_INDIVIDUAL;
         return {
             headers: [
-                "Dose", "N", "Sample Mean", "Model Fitted Mean",
-                "Sample SD", "Model Fitted SD", "Scaled Residual",
+                "Dose",
+                "N",
+                "Sample Mean",
+                "Model Fitted Mean",
+                "Sample SD",
+                "Model Fitted SD",
+                "Scaled Residual",
             ],
             colwidths: [1, 1, 1, 1, 1, 1, 1],
             data: dataset.doses.map((dose, i) => {
@@ -67,8 +72,15 @@ class GoodnessFit extends Component {
             useFF = dtype === Dtype.CONTINUOUS_INDIVIDUAL;
         return {
             headers: [
-                "Dose", "N", "Sample Mean", "Approximate Sample Median", "Model Fitted Median",
-                "Sample SD", "Approximate Sample GSD", "Model Fitted GSD", "Scaled Residual",
+                "Dose",
+                "N",
+                "Sample Mean",
+                "Approximate Sample Median",
+                "Model Fitted Median",
+                "Sample SD",
+                "Approximate Sample GSD",
+                "Model Fitted GSD",
+                "Scaled Residual",
             ],
             colwidths: [10, 10, 10, 12, 12, 12, 10, 12, 12],
             data: dataset.doses.map((dose, i) => {
@@ -96,31 +108,38 @@ class GoodnessFit extends Component {
         if (dtype == Dtype.DICHOTOMOUS) {
             data = this.getDichotomousData();
         } else {
-            if (isLognormal(settings.disttype)){
-                data = this.getContinuousLognormalData(dtype)
+            if (isLognormal(settings.disttype)) {
+                data = this.getContinuousLognormalData(dtype);
             } else {
-                data = this.getContinuousNormalData(dtype)
+                data = this.getContinuousNormalData(dtype);
             }
         }
-        console.log(data)
         return (
             <table className="table table-sm table-bordered text-right">
                 <colgroup>
-                    {data.colwidths.map((d, i) => <col key={i} width={`${d}%`} />)}
+                    {data.colwidths.map((d, i) => (
+                        <col key={i} width={`${d}%`} />
+                    ))}
                 </colgroup>
                 <thead>
                     <tr className="bg-custom text-left">
                         <th colSpan={data.headers.length}>Goodness of Fit</th>
                     </tr>
                     <tr>
-                        {data.headers.map((d, i) => <th key={i}>{d}</th>)}
+                        {data.headers.map((d, i) => (
+                            <th key={i}>{d}</th>
+                        ))}
                     </tr>
                 </thead>
                 <tbody>
-                    {data.data.map((row, i)=>{
-                        return <tr key={i}>
-                            {row.map((cell,j) => <td key={j}>{cell}</td>)}
-                        </tr>
+                    {data.data.map((row, i) => {
+                        return (
+                            <tr key={i}>
+                                {row.map((cell, j) => (
+                                    <td key={j}>{cell}</td>
+                                ))}
+                            </tr>
+                        );
                     })}
                 </tbody>
             </table>

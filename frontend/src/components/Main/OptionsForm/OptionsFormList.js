@@ -10,7 +10,6 @@ import {
     MODEL_NESTED_DICHOTOMOUS,
 } from "@/constants/mainConstants";
 
-import {isHybridBmr} from "@/constants/optionsConstants";
 import Button from "../../common/Button";
 import HelpTextPopover from "../../common/HelpTextPopover";
 import OptionsForm from "./OptionsForm";
@@ -40,7 +39,9 @@ class OptionsFormList extends Component {
                                             <th>BMRF</th>
                                             <th>
                                                 Tail Probability
-                                                <HelpTextPopover content={tailProbabilityHelpText} />
+                                                <HelpTextPopover
+                                                    content={tailProbabilityHelpText}
+                                                />
                                             </th>
                                             <th>Confidence Level (one sided)</th>
                                             <th>
