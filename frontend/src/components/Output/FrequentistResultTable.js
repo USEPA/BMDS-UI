@@ -242,8 +242,8 @@ class FrequentistRow extends Component {
                 <td>{ff(results.bmdu)}</td>
                 <td>{fractionalFormatter(getPValue(dataset.dtype, results))}</td>
                 <td>{ff(results.fit.aic)}</td>
-                <td>{ff(results.gof.roi)}</td>
                 <td>{ff(results.gof.residual[0])}</td>
+                <td>{ff(results.gof.roi)}</td>
                 <RecommendationTd
                     store={store}
                     data={data}

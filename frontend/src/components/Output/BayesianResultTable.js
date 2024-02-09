@@ -63,8 +63,8 @@ class BayesianResultTable extends Component {
                                 <td>{ff(model.results.bmd)}</td>
                                 <td>{ff(model.results.bmdu)}</td>
                                 <td>{ff(model.results.fit.bic_equiv)}</td>
-                                <td>{ff(model.results.gof.roi)}</td>
                                 <td>{ff(model.results.gof.residual[0])}</td>
+                                <td>{ff(model.results.gof.roi)}</td>
                             </tr>
                         );
                     })}

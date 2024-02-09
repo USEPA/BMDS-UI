@@ -41,8 +41,8 @@ class ResultTable extends Component {
                             <i>P</i>-Value
                         </th>
                         <th>AIC</th>
-                        <th>Scaled Residual for Dose Group near BMD</th>
-                        <th>Scaled Residual for Control Dose Group</th>
+                        <th>Scaled Residual at Control</th>
+                        <th>Scaled Residual near BMD</th>
                     </tr>
                 </thead>
                 <tbody className="table-bordered">
@@ -101,8 +101,8 @@ class ResultTable extends Component {
                                             <td>{ff(model.slope_factor)}</td>
                                             <td>{ff(model.gof.p_value)}</td>
                                             <td>{ff(model.fit.aic)}</td>
-                                            <td>{ff(model.gof.roi)}</td>
                                             <td>{ff(model.gof.residual[0])}</td>
+                                            <td>{ff(model.gof.roi)}</td>
                                         </tr>
                                     );
                                 })
