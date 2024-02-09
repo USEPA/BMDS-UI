@@ -69,7 +69,7 @@ class ModelBody extends Component {
                     </Col>
                 </Row>
                 <Row>
-                    <Col xl={isDichotomous ? 8 : 10}>
+                    <Col xl={isDichotomous ? 8 : 12}>
                         <GoodnessFit store={outputStore} />
                     </Col>
                 </Row>
