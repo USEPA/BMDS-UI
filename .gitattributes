@@ -1,7 +1,7 @@
 # https://docs.github.com/en/github/using-git/configuring-git-to-handle-line-endings
 # fix line endings
 * text=auto
-*.js text eol=lf
+
 # ignore paths from language statistics:
 # https://github.com/github/linguist#using-gitattributes
 bmds_server/static/vendor/* linguist-vendored
