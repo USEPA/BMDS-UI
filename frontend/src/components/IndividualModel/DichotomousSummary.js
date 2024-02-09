@@ -18,7 +18,7 @@ class DichotomousSummary extends Component {
                 </colgroup>
                 <thead>
                     <tr className="bg-custom">
-                        <th colSpan="2">Summary</th>
+                        <th colSpan="2">Modeling Summary</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,7 +39,7 @@ class DichotomousSummary extends Component {
                         <td>{ff(results.fit.aic)}</td>
                     </tr>
                     <tr>
-                        <td>Log Likelihood</td>
+                        <td>-2* Log(Likelihood Ratio)</td>
                         <td>{ff(results.fit.loglikelihood)}</td>
                     </tr>
                     <tr>
@@ -49,7 +49,7 @@ class DichotomousSummary extends Component {
                         <td>{fourDecimalFormatter(results.gof.p_value)}</td>
                     </tr>
                     <tr>
-                        <td>Overall DOF</td>
+                        <td>Overall d.f.</td>
                         <td>{ff(results.gof.df)}</td>
                     </tr>
                     <tr>

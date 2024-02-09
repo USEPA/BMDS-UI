@@ -36,8 +36,8 @@ class BayesianResultTable extends Component {
                         <th>BMD</th>
                         <th>BMDU</th>
                         <th>Unnormalized Log Posterior Probability</th>
-                        <th>Scaled Residual for Dose Group near BMD</th>
-                        <th>Scaled Residual for Control Dose Group</th>
+                        <th>Scaled Residual at Control</th>
+                        <th>Scaled Residual near BMD</th>
                     </tr>
                 </thead>
                 <tbody className="table-bordered">
@@ -63,8 +63,8 @@ class BayesianResultTable extends Component {
                                 <td>{ff(model.results.bmd)}</td>
                                 <td>{ff(model.results.bmdu)}</td>
                                 <td>{ff(model.results.fit.bic_equiv)}</td>
-                                <td>{ff(model.results.gof.roi)}</td>
                                 <td>{ff(model.results.gof.residual[0])}</td>
+                                <td>{ff(model.results.gof.roi)}</td>
                             </tr>
                         );
                     })}

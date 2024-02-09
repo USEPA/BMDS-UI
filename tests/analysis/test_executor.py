@@ -169,17 +169,17 @@ class TestAnalysisSession:
         session = AnalysisSession.create(data, 0, 0)
         assert len(session.frequentist.models) == 5
         names = [model.name() for model in session.frequentist.models]
-        assert names == ["ExponentialM3", "ExponentialM5", "Hill", "Linear", "Power"]
+        assert names == ["Exponential 3", "Exponential 5", "Hill", "Linear", "Power"]
 
         data["options"][0]["dist_type"] = 2
         session = AnalysisSession.create(data, 0, 0)
         assert len(session.frequentist.models) == 5
         names = [model.name() for model in session.frequentist.models]
-        assert names == ["ExponentialM3", "ExponentialM5", "Hill", "Linear", "Power"]
+        assert names == ["Exponential 3", "Exponential 5", "Hill", "Linear", "Power"]
 
         # lognormal
         data["options"][0]["dist_type"] = 3
         session = AnalysisSession.create(data, 0, 0)
         assert len(session.frequentist.models) == 2
         names = [model.name() for model in session.frequentist.models]
-        assert names == ["ExponentialM3", "ExponentialM5"]
+        assert names == ["Exponential 3", "Exponential 5"]
