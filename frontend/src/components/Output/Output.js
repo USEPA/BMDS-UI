@@ -119,7 +119,7 @@ class Output extends Component {
                     ) : (
                         <div className="row">
                             <div className="col-lg-8">
-                                <h4>Frequentist Model Results</h4>
+                                <h4>Maximum Likelihood Approach Model Results</h4>
                                 <FrequentistResultTable />
                                 {canEdit ? <SelectModel /> : null}
                             </div>
