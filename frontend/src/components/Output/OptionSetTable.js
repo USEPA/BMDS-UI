@@ -11,6 +11,7 @@ import {
     distTypeOptions,
     litterSpecificCovariateOptions,
 } from "@/constants/optionsConstants";
+import {isHybridBmr} from "@/constants/optionsConstants";
 import {ff} from "@/utils/formatters";
 
 @inject("outputStore")
@@ -34,8 +35,9 @@ class OptionSetTable extends Component {
                     "Maximum Polynomial Degree",
                     getLabel(selectedDatasetOptions.degree, allDegreeOptions),
                 ],
-                // zzz #3 hybrid check
-                ["Tail Probability", ff(selectedModelOptions.tail_probability)],
+                isHybridBmr(selectedModelOptions.bmr_type)?
+                    ["Tail Probability", ff(selectedModelOptions.tail_probability)]:
+                    null,
                 ["Confidence Level (one sided)", ff(selectedModelOptions.confidence_level)],
             ];
         } else if (getModelType === MODEL_DICHOTOMOUS) {
@@ -84,7 +86,7 @@ class OptionSetTable extends Component {
                         <col width="40%" />
                     </colgroup>
                     <tbody>
-                        {rows.map((d, i) => {
+                        {rows.filter(d=>!_.isNull(d)).map((d, i) => {
                             return (
                                 <tr key={i}>
                                     <th className="bg-custom">{d[0]}</th>

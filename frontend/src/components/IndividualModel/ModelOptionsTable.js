@@ -6,6 +6,7 @@ import {getLabel} from "@/common";
 import TwoColumnTable from "@/components/common/TwoColumnTable";
 import {Dtype} from "@/constants/dataConstants";
 import {hasDegrees} from "@/constants/modelConstants";
+import {isHybridBmr} from "@/constants/optionsConstants";
 import {
     continuousBmrOptions,
     dichotomousBmrOptions,
@@ -54,8 +55,9 @@ class ModelOptionsTable extends Component {
                 ["Distribution Type", getLabel(model.settings.disttype, distTypeOptions)],
                 ["Direction", model.settings.is_increasing ? "Up" : "Down"],
                 ["Confidence Level (one sided)", 1 - ff(model.settings.alpha)],
-                // zzz #3 check hybrid
-                ["Tail Probability", ff(model.settings.tail_prob)],
+                isHybridBmr(model.settings.bmr_type)?
+                    ["Tail Probability", ff(model.settings.tail_prob)]:
+                    null,
                 hasDegrees.has(model.model_class.verbose)
                     ? ["Degree", ff(model.settings.degree)]
                     : null,
