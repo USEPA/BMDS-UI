@@ -29,7 +29,6 @@ MsComboInfo.propTypes = {
 class MsComboSummary extends Component {
     render() {
         const {results} = this.props,
-            label = "Summary",
             data = [
                 ["BMD", ff(results.bmd)],
                 ["BMDL", ff(results.bmdl)],
@@ -38,7 +37,7 @@ class MsComboSummary extends Component {
                 ["Combined Log-Likelihood", ff(results.ll)],
                 ["Combined Log-Likelihood Constant", ff(results.ll_constant)],
             ];
-        return <TwoColumnTable data={data} label={label} colwidths={[40, 60]} />;
+        return <TwoColumnTable data={data} label={"Modeling Summary"} colwidths={[40, 60]} />;
     }
 }
 MsComboSummary.propTypes = {

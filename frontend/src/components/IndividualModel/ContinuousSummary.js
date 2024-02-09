@@ -19,7 +19,7 @@ class ContinuousSummary extends Component {
                 </colgroup>
                 <thead>
                     <tr className="bg-custom">
-                        <th colSpan="2">Model Summary</th>
+                        <th colSpan="2">Modeling Summary</th>
                     </tr>
                 </thead>
                 <tbody>

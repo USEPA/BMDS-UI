@@ -28,7 +28,7 @@ class Summary extends Component {
                     ff(results.summary.chi_squared),
                 ],
             ];
-        return <TwoColumnTable label="Summary" data={data} />;
+        return <TwoColumnTable label="Modeling Summary" data={data} />;
     }
 }
 Summary.propTypes = {

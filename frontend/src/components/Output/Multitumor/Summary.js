@@ -25,7 +25,7 @@ class Summary extends Component {
                 ["Chi²", ff(model.fit.chisq)],
                 ["-2* Log(Likelihood Ratio)", ff(model.fit.loglikelihood)],
             ];
-        return <TwoColumnTable data={data} label="Summary" />;
+        return <TwoColumnTable data={data} label="Modeling Summary" />;
     }
 }
 
