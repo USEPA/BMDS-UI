@@ -27,7 +27,7 @@ class AnalysisOfDeviance extends Component {
                         <th>-2* Log(Likelihood Ratio)</th>
                         <th># Parameters</th>
                         <th>Deviance</th>
-                        <th>Test DOF</th>
+                        <th>Test d.f.</th>
                         <th>
                             <i>P</i>-Value
                         </th>

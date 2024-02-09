@@ -20,7 +20,7 @@ class Summary extends Component {
                     </span>,
                     ff(results.combined_pvalue),
                 ],
-                ["D.O.F.", ff(results.dof)],
+                ["d.f.", ff(results.dof)],
                 [
                     <span key={1}>
                         Chi<sup>2</sup>

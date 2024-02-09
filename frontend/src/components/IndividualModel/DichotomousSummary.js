@@ -49,7 +49,7 @@ class DichotomousSummary extends Component {
                         <td>{fourDecimalFormatter(results.gof.p_value)}</td>
                     </tr>
                     <tr>
-                        <td>Overall DOF</td>
+                        <td>Overall d.f.</td>
                         <td>{ff(results.gof.df)}</td>
                     </tr>
                     <tr>

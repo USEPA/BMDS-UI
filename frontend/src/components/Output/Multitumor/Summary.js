@@ -21,7 +21,7 @@ class Summary extends Component {
                     </span>,
                     fourDecimalFormatter(model.gof.p_value),
                 ],
-                ["Overall DOF", ff(model.gof.df)],
+                ["Overall d.f.", ff(model.gof.df)],
                 ["Chi²", ff(model.fit.chisq)],
                 ["-2* Log(Likelihood Ratio)", ff(model.fit.loglikelihood)],
             ];

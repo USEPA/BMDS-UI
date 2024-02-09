@@ -30,7 +30,7 @@ class ContinuousTestOfInterest extends Component {
                             LLR
                             <HelpTextPopover title="LLR" content="2 * Log(Likelihood Ratio)" />
                         </th>
-                        <th>Test DOF</th>
+                        <th>Test d.f.</th>
                         <th>
                             <i>P</i>-Value
                         </th>
