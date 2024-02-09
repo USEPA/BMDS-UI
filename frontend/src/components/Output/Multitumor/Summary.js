@@ -22,7 +22,8 @@ class Summary extends Component {
                     fourDecimalFormatter(model.gof.p_value),
                 ],
                 ["Overall DOF", ff(model.gof.df)],
-                ["Chi²", ff(model.fit.chisq)][("Log Likelihood", ff(model.fit.loglikelihood))],
+                ["Chi²", ff(model.fit.chisq)],
+                ["-2* Log(Likelihood Ratio)", ff(model.fit.loglikelihood)],
             ];
         return <TwoColumnTable data={data} label="Summary" />;
     }
