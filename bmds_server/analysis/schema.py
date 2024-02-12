@@ -2,8 +2,8 @@ import re
 from io import StringIO
 
 import pandas as pd
-from bmds.bmds3.types.sessions import VersionSchema
 from bmds.datasets.transforms.polyk import PolyKAdjustment
+from bmds.types.sessions import VersionSchema
 from pydantic import BaseModel, Field, field_validator
 from rest_framework.schemas.openapi import SchemaGenerator
 
