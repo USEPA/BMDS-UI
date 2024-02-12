@@ -15,6 +15,11 @@ header.l-header * {
   transition-timing-function: unset;
 }
 
+/* resize EPA header menu items */
+.l-header__nav .menu__item > .menu__link {
+  font-size: 0.91rem !important;
+}
+
 /* usa-banner */
 .usa-banner__button[aria-expanded=true]::after {
   -webkit-mask: url(/static/vendor/uswds/3.1.0/img/usa-icons/expand_less.svg) no-repeat center/contain;
