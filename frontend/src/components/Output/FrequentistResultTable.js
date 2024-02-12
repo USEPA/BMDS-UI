@@ -242,8 +242,8 @@ class FrequentistRow extends Component {
                 <td>{ff(results.bmdu)}</td>
                 <td>{fractionalFormatter(getPValue(dataset.dtype, results))}</td>
                 <td>{ff(results.fit.aic)}</td>
-                <td>{ff(results.gof.roi)}</td>
                 <td>{ff(results.gof.residual[0])}</td>
+                <td>{ff(results.gof.roi)}</td>
                 <RecommendationTd
                     store={store}
                     data={data}
@@ -326,8 +326,8 @@ class FrequentistResultTable extends Component {
                             <i>P</i>-Value
                         </th>
                         <th>AIC</th>
-                        <th>Scaled Residual for Dose Group near BMD</th>
-                        <th>Scaled Residual for Control Dose Group</th>
+                        <th>Scaled Residual at Control</th>
+                        <th>Scaled Residual near BMD</th>
                         {store.recommendationEnabled ? (
                             <th>
                                 <Button

@@ -5,7 +5,11 @@ const ErrorMessage = ({error}) => {
     if (!error) {
         return null;
     }
-    return <p className="text-danger mb-1">{error}</p>;
+    return (
+        <div className="alert alert-danger mb-3">
+            <pre className="text-wrap mb-0">{error}</pre>
+        </div>
+    );
 };
 ErrorMessage.propTypes = {
     error: PropTypes.string,

@@ -204,7 +204,7 @@ class DataStore {
 
     @computed get selectedDatasetErrorText() {
         const data = this.selectedDatasetErrors;
-        return _.isArray(data) ? data.map(el => el.msg).join(", ") : "";
+        return this.selectedDatasetErrors ? _.uniq(data.map(el => el.msg)).join("\n") : "";
     }
 
     @computed get getMappedArray() {

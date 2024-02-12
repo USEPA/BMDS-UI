@@ -12,7 +12,7 @@ class BootstrapResult extends Component {
             data = [
                 ["# Iterations", settings.bootstrap_iterations],
                 ["Bootstrap Seed", ff(settings.bootstrap_seed)],
-                ["Log-likelihood", ff(results.ll)],
+                ["-2* Log(Likelihood Ratio)", ff(results.ll)],
                 ["Observed Chi-square", ff(results.obs_chi_sq)],
                 [
                     <span key={0}>
@@ -21,7 +21,7 @@ class BootstrapResult extends Component {
                     ff(results.combined_pvalue),
                 ],
             ];
-        return <TwoColumnTable data={data} label="Bootstrap Results" />;
+        return <TwoColumnTable data={data} label="Bootstrap Results" colwidths={[40, 60]} />;
     }
 }
 BootstrapResult.propTypes = {

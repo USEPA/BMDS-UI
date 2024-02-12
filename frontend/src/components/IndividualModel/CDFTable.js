@@ -11,12 +11,16 @@ class CDFTable extends Component {
         const {bmd_dist} = this.props;
         return (
             <table className="table table-sm table-bordered text-right">
+                <colgroup>
+                    <col width="50%" />
+                    <col width="50%" />
+                </colgroup>
                 <thead>
                     <tr className="bg-custom text-left">
                         <th colSpan="2">CDF</th>
                     </tr>
                     <tr>
-                        <th>Percentile</th>
+                        <th>Cumulative Probability</th>
                         <th>BMD</th>
                     </tr>
                 </thead>
