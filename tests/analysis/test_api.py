@@ -4,7 +4,7 @@ from io import BytesIO
 import docx
 import pandas as pd
 import pytest
-from bmds.bmds3.recommender import RecommenderSettings
+from bmds.recommender import RecommenderSettings
 from django.urls import reverse
 from rest_framework.test import APIClient
 

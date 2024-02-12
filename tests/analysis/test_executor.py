@@ -1,7 +1,7 @@
 from copy import deepcopy
 
-from bmds.bmds3.constants import ContinuousModelIds, DichotomousModelIds
-from bmds.bmds3.types.priors import PriorClass
+from bmds.constants import ContinuousModelIds, DichotomousModelIds
+from bmds.types.priors import PriorClass
 
 from bmds_server.analysis.executor import AnalysisSession
 
