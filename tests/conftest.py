@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from bmds.bmds3.recommender import RecommenderSettings
+from bmds.recommender import RecommenderSettings
 from django.core.management import call_command
 
 

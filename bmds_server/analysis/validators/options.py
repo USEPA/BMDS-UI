@@ -1,10 +1,10 @@
 from typing import Any
 
 import bmds
-from bmds.bmds3.constants import DistType
-from bmds.bmds3.types.continuous import ContinuousRiskType
-from bmds.bmds3.types.dichotomous import DichotomousRiskType
-from bmds.bmds3.types.nested_dichotomous import LitterSpecificCovariate
+from bmds.constants import DistType
+from bmds.types.continuous import ContinuousRiskType
+from bmds.types.dichotomous import DichotomousRiskType
+from bmds.types.nested_dichotomous import LitterSpecificCovariate
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from pydantic import BaseModel, Field
