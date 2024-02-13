@@ -15,7 +15,7 @@ class CDFTable extends Component {
                     <col width="50%" />
                     <col width="50%" />
                 </colgroup>
-                <thead>
+                <thead className="sticky-top">
                     <tr className="bg-custom text-left">
                         <th colSpan="2">CDF</th>
                     </tr>
