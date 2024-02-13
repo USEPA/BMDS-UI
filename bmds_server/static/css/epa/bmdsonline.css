@@ -1,10 +1,10 @@
-/* Global */
-:focus {
+/* disable big blue border in main content */
+#main-content :focus {
   outline: none !important;
 }
 
-/* this will overwrite transitions from epa/style.css */
-header.l-header * {
+/* disable global transitions */
+* {
   -webkit-transition-duration: unset;
   transition-duration: unset;
   -webkit-transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform;
@@ -15,23 +15,18 @@ header.l-header * {
   transition-timing-function: unset;
 }
 
-/* resize EPA header menu items */
+/* EPA header menu items */
 .l-header__nav .menu__item > .menu__link {
   font-size: 0.91rem !important;
 }
 
-/* usa-banner */
+/* usa-banner flag icon */
 .usa-banner__button[aria-expanded=true]::after {
   -webkit-mask: url(/static/vendor/uswds/3.1.0/img/usa-icons/expand_less.svg) no-repeat center/contain;
 }
 
 .usa-banner__button[aria-expanded=false]::after {
   -webkit-mask: url(/static/vendor/uswds/3.1.0/img/usa-icons/expand_more.svg) no-repeat center/contain;
-}
-
-/* override environment banner position */
-.env-banner {
-  margin: 0 10% 0 70%;
 }
 
 /* Background fill */
@@ -51,7 +46,7 @@ table td {
   border-radius: 0;
 }
 
-.card.pane>.card-header {
+.card.pane > .card-header {
   border-color: #5b616b;
   background-color: #5b616b;
   border-radius: 0;
