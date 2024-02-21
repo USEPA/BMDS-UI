@@ -1,4 +1,4 @@
-.PHONY: build clean clean-test clean-pyc clean-build docs docs-serve loc help lint lint-py lint-js format format-py format-js sync-dev
+.PHONY: build clean clean-test clean-pyc clean-build docs loc help lint lint-py lint-js format format-py format-js sync-dev
 .DEFAULT_GOAL := help
 
 define BROWSER_PYSCRIPT
@@ -62,10 +62,7 @@ coverage: ## Run test coverage
 	$(BROWSER) coverage_report/index.html
 
 docs: ## Build documentation
-	cd docs; mkdocs build --strict
-
-docs-serve: ## Serve documentation for writing
-	cd docs; mkdocs serve -a localhost:8050
+	cd docs; make html
 
 loc: ## Generate lines of code report
 	@cloc \
