@@ -4,7 +4,6 @@ if "%~1" == "" goto :help
 if /I %1 == help goto :help
 if /I %1 == sync-dev goto :sync-dev
 if /I %1 == docs goto :docs
-if /I %1 == docs-serve goto :docs-serve
 if /I %1 == test goto :test
 if /I %1 == lint goto :lint
 if /I %1 == format goto :format
@@ -20,7 +19,6 @@ goto :help
 echo.Please use `make ^<target^>` where ^<target^> is one of
 echo.  sync-dev     sync dev environment after code checkout
 echo.  docs         make documentation
-echo.  docs-serve   serve documentation for writing
 echo.  test         perform both test-py and test-js
 echo.  test-py      run python tests
 echo.  test-js      run javascript tests
@@ -40,11 +38,9 @@ manage.py migrate
 goto :eof
 
 :docs
-mkdocs build -f docs/mkdocs.yml --strict
-goto :eof
-
-:docs-serve
-mkdocs serve -f docs/mkdocs.yml -a localhost:8050
+cd docs
+sphinx-build -b html source build
+cd ..
 goto :eof
 
 :lint
