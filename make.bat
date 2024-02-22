@@ -4,6 +4,7 @@ if "%~1" == "" goto :help
 if /I %1 == help goto :help
 if /I %1 == sync-dev goto :sync-dev
 if /I %1 == docs goto :docs
+if /I %1 == docs-pdf goto :docs-pdf
 if /I %1 == test goto :test
 if /I %1 == lint goto :lint
 if /I %1 == format goto :format
@@ -18,7 +19,8 @@ goto :help
 :help
 echo.Please use `make ^<target^>` where ^<target^> is one of
 echo.  sync-dev     sync dev environment after code checkout
-echo.  docs         make documentation
+echo.  docs         make documentation (html)
+echo.  docs-pdf     make documentation (pdf)
 echo.  test         perform both test-py and test-js
 echo.  test-py      run python tests
 echo.  test-js      run javascript tests
@@ -41,6 +43,10 @@ goto :eof
 cd docs
 sphinx-build -b html source build
 cd ..
+goto :eof
+
+:docs-pdf
+sphinx-build -M latexpdf docs/source docs/build/latex
 goto :eof
 
 :lint
