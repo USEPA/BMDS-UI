@@ -40,9 +40,7 @@ manage.py migrate
 goto :eof
 
 :docs
-cd docs
-sphinx-build -b html source build
-cd ..
+sphinx-build -b html docs/source docs/build
 goto :eof
 
 :docs-pdf
