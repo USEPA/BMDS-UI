@@ -98,22 +98,86 @@ class GoodnessFit extends Component {
             }),
         };
     }
+
+    getMultitumorData(dtype, settings) {
+        /* eslint-disable */
+        const hdr_c_normal = [
+            "Dose", "Size", "Observed Mean", "Calculated Mean", "Estimated Mean",
+            "Observed SD", "Calculated SD", "Estimated SD", "Scaled Residual",
+        ],
+        hdr_c_lognormal = [
+            "Dose", "Size", "Observed Mean", "Calculated Median", "Estimated Median",
+            "Observed SD", "Calculated GSD", "Estimated GSD", "Scaled Residual",
+        ],
+        hdr_d = [ "Dose", "Size", "Observed", "Expected", "Estimated Probability", "Scaled Residual"],
+        /* eslint-enable */
+            {store} = this.props,
+            gof = store.modalModel.gof,
+            dataset = store.modalDataset ? store.modalDataset : store.selectedDataset;
+
+        if (dtype == Dtype.CONTINUOUS || dtype == Dtype.CONTINUOUS_INDIVIDUAL) {
+            const headers = isLognormal(settings.disttype) ? hdr_c_lognormal : hdr_c_normal;
+
+            return {
+                headers,
+                colwidths: [10, 10, 10, 12, 12, 12, 10, 12, 12],
+                data: dataset.doses.map((dose, i) => {
+                    return [
+                        dose,
+                        gof.size[i],
+                        dtype === Dtype.CONTINUOUS_INDIVIDUAL
+                            ? ff(gof.obs_mean[i])
+                            : gof.obs_mean[i],
+                        ff(gof.calc_mean[i]),
+                        ff(gof.est_mean[i]),
+                        dtype === Dtype.CONTINUOUS_INDIVIDUAL ? ff(gof.obs_sd[i]) : gof.obs_sd[i],
+                        ff(gof.calc_sd[i]),
+                        ff(gof.est_sd[i]),
+                        ff(gof.residual[i]),
+                    ];
+                }),
+            };
+        }
+        if (dtype == Dtype.DICHOTOMOUS) {
+            return {
+                headers: hdr_d,
+                colwidths: [17, 16, 16, 17, 17, 17],
+                data: dataset.doses.map((dose, i) => {
+                    return [
+                        dose,
+                        dataset.ns[i],
+                        dataset.incidences[i],
+                        ff(gof.expected[i]),
+                        ff(gof.expected[i] / dataset.ns[i]),
+                        ff(gof.residual[i]),
+                    ];
+                }),
+            };
+        }
+    }
+
     render() {
         const {store} = this.props,
             settings = store.modalModel.settings,
-            dataset = store.selectedDataset,
+            // if modalDataset, means MT then do other table?
+            // is there a better way to detect MT?
+            dataset = store.modalDataset ? store.modalDataset : store.selectedDataset,
             {dtype} = dataset;
-
         let data;
-        if (dtype == Dtype.DICHOTOMOUS) {
-            data = this.getDichotomousData();
+        if (store.modalDataset) {
+            data = this.getMultitumorData(dtype, settings);
         } else {
-            if (isLognormal(settings.disttype)) {
-                data = this.getContinuousLognormalData(dtype);
+            if (dtype == Dtype.DICHOTOMOUS) {
+                data = this.getDichotomousData();
             } else {
-                data = this.getContinuousNormalData(dtype);
+                if (isLognormal(settings.disttype)) {
+                    data = this.getContinuousLognormalData(dtype);
+                } else {
+                    data = this.getContinuousNormalData(dtype);
+                }
             }
         }
+
         return (
             <table className="table table-sm table-bordered text-right">
                 <colgroup>

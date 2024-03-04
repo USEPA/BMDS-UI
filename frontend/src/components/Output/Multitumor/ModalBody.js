@@ -4,9 +4,9 @@ import React, {Component} from "react";
 import {Col, Modal, Row} from "react-bootstrap";
 
 import DoseResponsePlot from "../../common/DoseResponsePlot";
+import GoodnessFit from "../../IndividualModel/GoodnessFit";
 import ModelParameters from "../../IndividualModel/ModelParameters";
 import AnalysisOfDeviance from "./AnalysisOfDeviance";
-import GoodnessFit from "./GoodnessFit";
 import InfoTable from "./InfoTable";
 import ModelOptions from "./ModelOptions";
 import {MsComboInfo, MsComboSummary} from "./MsCombo";
