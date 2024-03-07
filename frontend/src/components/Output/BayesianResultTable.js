@@ -3,6 +3,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
+import LongFloatPopover from "@/components/common/LongFloatPopover";
 import {maIndex, modelClasses} from "@/constants/outputConstants";
 import {ff, fractionalFormatter} from "@/utils/formatters";
 
@@ -59,9 +60,18 @@ class BayesianResultTable extends Component {
                                 <td>
                                     {ma ? fractionalFormatter(ma.results.posteriors[index]) : "-"}
                                 </td>
-                                <td>{ff(model.results.bmdl)}</td>
-                                <td>{ff(model.results.bmd)}</td>
-                                <td>{ff(model.results.bmdu)}</td>
+                                <td>
+                                    {ff(model.results.bmdl)}
+                                    <LongFloatPopover content={`${model.results.bmdl}`} />
+                                </td>
+                                <td>
+                                    {ff(model.results.bmd)}
+                                    <LongFloatPopover content={`${model.results.bmd}`} />
+                                </td>
+                                <td>
+                                    {ff(model.results.bmdu)}
+                                    <LongFloatPopover content={`${model.results.bmdu}`} />
+                                </td>
                                 <td>{ff(model.results.fit.bic_equiv)}</td>
                                 <td>{ff(model.results.gof.residual[0])}</td>
                                 <td>{ff(model.results.gof.roi)}</td>

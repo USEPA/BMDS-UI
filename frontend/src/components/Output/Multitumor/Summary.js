@@ -10,11 +10,11 @@ class Summary extends Component {
     render() {
         const {model} = this.props,
             data = [
-                ["BMD", ff(model.bmd)],
-                ["BMDL", ff(model.bmdl)],
-                ["BMDU", ff(model.bmdu)],
+                ["BMD", ff(model.bmd), model.bmd],
+                ["BMDL", ff(model.bmdl), model.bmdl],
+                ["BMDU", ff(model.bmdu), model.bmdu],
                 ["Slope Factor", ff(model.slope_factor)],
-                ["AIC", ff(model.fit.aic)],
+                ["AIC", ff(model.fit.aic), model.fit.aic],
                 [
                     <span key="0">
                         <i>P</i>-Value

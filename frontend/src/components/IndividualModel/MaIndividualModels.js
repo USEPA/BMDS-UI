@@ -2,6 +2,7 @@ import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
+import LongFloatPopover from "@/components/common/LongFloatPopover";
 import {ff} from "@/utils/formatters";
 
 @observer
@@ -38,9 +39,18 @@ class MaIndividualModels extends Component {
                                 <td>{model.name}</td>
                                 <td>{ff(model_average.results.priors[i])}</td>
                                 <td>{ff(model_average.results.posteriors[i])}</td>
-                                <td>{ff(model.results.bmdl)}</td>
-                                <td>{ff(model.results.bmd)}</td>
-                                <td>{ff(model.results.bmdu)}</td>
+                                <td>
+                                    {ff(model.results.bmdl)}
+                                    <LongFloatPopover content={`${model.results.bmdl}`} />
+                                </td>
+                                <td>
+                                    {ff(model.results.bmd)}
+                                    <LongFloatPopover content={`${model.results.bmd}`} />
+                                </td>
+                                <td>
+                                    {ff(model.results.bmdu)}
+                                    <LongFloatPopover content={`${model.results.bmd}`} />
+                                </td>
                             </tr>
                         );
                     })}

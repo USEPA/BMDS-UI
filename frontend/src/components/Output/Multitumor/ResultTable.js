@@ -3,6 +3,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
+import LongFloatPopover from "@/components/common/LongFloatPopover";
 import {getNameFromDegrees} from "@/constants/modelConstants";
 import {ff} from "@/utils/formatters";
 
@@ -60,9 +61,18 @@ class ResultTable extends Component {
                                 </a>
                             </td>
                             <td>-</td>
-                            <td>{ff(results.bmdl)}</td>
-                            <td>{ff(results.bmd)}</td>
-                            <td>{ff(results.bmdu)}</td>
+                            <td>
+                                {ff(results.bmdl)}
+                                <LongFloatPopover content={`${results.bmdl}`} />
+                            </td>
+                            <td>
+                                {ff(results.bmd)}
+                                <LongFloatPopover content={`${results.bmd}`} />
+                            </td>
+                            <td>
+                                {ff(results.bmdu)}
+                                <LongFloatPopover content={`${results.bmdu}`} />
+                            </td>
                             <td>{ff(results.slope_factor)}</td>
                             <td>-</td>
                             <td>-</td>
@@ -95,12 +105,24 @@ class ResultTable extends Component {
                                                 </a>
                                             </td>
                                             <td>{dataset.metadata.name}</td>
-                                            <td>{ff(model.bmdl)}</td>
-                                            <td>{ff(model.bmd)}</td>
-                                            <td>{ff(model.bmdu)}</td>
+                                            <td>
+                                                {ff(model.bmdl)}
+                                                <LongFloatPopover content={`${results.bmdl}`} />
+                                            </td>
+                                            <td>
+                                                {ff(model.bmd)}
+                                                <LongFloatPopover content={`${model.bmd}`} />
+                                            </td>
+                                            <td>
+                                                {ff(model.bmdu)}
+                                                <LongFloatPopover content={`${model.bmdu}`} />
+                                            </td>
                                             <td>{ff(model.slope_factor)}</td>
                                             <td>{ff(model.gof.p_value)}</td>
-                                            <td>{ff(model.fit.aic)}</td>
+                                            <td>
+                                                {ff(model.fit.aic)}
+                                                <LongFloatPopover content={`${model.bmdl}`} />
+                                            </td>
                                             <td>{ff(model.gof.residual[0])}</td>
                                             <td>{ff(model.gof.roi)}</td>
                                         </tr>

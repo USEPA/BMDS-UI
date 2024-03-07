@@ -10,10 +10,10 @@ class Summary extends Component {
     render() {
         const {results} = this.props,
             data = [
-                ["BMD", ff(results.summary.bmd)],
-                ["BMDL", ff(results.summary.bmdl)],
-                ["BMDU", ff(results.summary.bmdu)],
-                ["AIC", ff(results.summary.aic)],
+                ["BMD", ff(results.summary.bmd), results.summary.bmd],
+                ["BMDL", ff(results.summary.bmdl), results.summary.bmdl],
+                ["BMDU", ff(results.summary.bmdu), results.summary.bmdu],
+                ["AIC", ff(results.summary.aic), results.summary.aic],
                 [
                     <span key={0}>
                         <i>P</i>-value
