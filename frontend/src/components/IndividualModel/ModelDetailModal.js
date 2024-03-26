@@ -7,8 +7,18 @@ import * as dc from "@/constants/dataConstants";
 
 import Button from "../common/Button";
 import DoseResponsePlot from "../common/DoseResponsePlot";
-import MultitumorModalBody from "../Output/Multitumor/ModalBody";
-import NestedDichotomousModalBody from "../Output/NestedDichotomous/ModalBody";
+import AnalysisOfDeviance from "../Output/Multitumor/AnalysisOfDeviance";
+import ModelOptions from "../Output/Multitumor/ModelOptions";
+import {MsComboInfo, MsComboSummary} from "../Output/Multitumor/MsCombo";
+import MultitumorPlot from "../Output/Multitumor/MultitumorPlot";
+import ParameterSettings from "../Output/Multitumor/ParameterSettings";
+import Summary from "../Output/Multitumor/Summary";
+import BootstrapResults from "../Output/NestedDichotomous/BootstrapResults";
+import BootstrapRuns from "../Output/NestedDichotomous/BootstrapRuns";
+import LitterData from "../Output/NestedDichotomous/LitterData";
+import {ModelParameters as NdModelParameters} from "../Output/NestedDichotomous/ModelParameters";
+import ScaledResidual from "../Output/NestedDichotomous/ScaledResidual";
+import {Summary as NdSummary} from "../Output/NestedDichotomous/Summary";
 import CDFPlot from "./CDFPlot";
 import CDFTable from "./CDFTable";
 import ContinuousDeviance from "./ContinuousDeviance";
@@ -23,7 +33,6 @@ import MaIndividualModels from "./MaIndividualModels";
 import ModelOptionsTable from "./ModelOptionsTable";
 import ModelParameters from "./ModelParameters";
 import ParameterPriorTable from "./ParameterPriorTable";
-
 @observer
 class ModelBody extends Component {
     render() {
@@ -145,6 +154,137 @@ ModelAverageBody.propTypes = {
     outputStore: PropTypes.object,
 };
 
+@observer
+class MtModalBody extends Component {
+    render() {
+        const {outputStore} = this.props,
+            model = outputStore.modalModel,
+            isSummary = outputStore.drModelModalIsMA;
+
+        if (isSummary) {
+            return (
+                <Modal.Body>
+                    <Row>
+                        <Col xl={6}>
+                            <MsComboInfo options={outputStore.selectedModelOptions} />
+                        </Col>
+                        <Col xl={6}>
+                            <MsComboSummary results={model} />
+                        </Col>
+                        <Col xl={12}>
+                            <MultitumorPlot />
+                        </Col>
+                    </Row>
+                </Modal.Body>
+            );
+        }
+        return (
+            <Modal.Body>
+                <Row>
+                    <Col xl={4}>
+                        <InfoTable />
+                    </Col>
+                    <Col xl={4}>
+                        <ModelOptions />
+                    </Col>
+                    <Col xl={4}>
+                        <ParameterSettings model={model} />
+                    </Col>
+                    <Col xl={6}>
+                        <Summary model={model} />
+                    </Col>
+                    <Col xs={6}>
+                        <DoseResponsePlot
+                            layout={outputStore.drIndividualMultitumorPlotLayout}
+                            data={outputStore.drIndividualMultitumorPlotData}
+                        />
+                    </Col>
+                    <Col xl={6}>
+                        <ModelParameters parameters={model.parameters} />
+                    </Col>
+                    <Col xl={6}>
+                        <GoodnessFit store={outputStore} />
+                    </Col>
+                    <Col xl={6}>
+                        <AnalysisOfDeviance model={model} />
+                    </Col>
+                </Row>
+            </Modal.Body>
+        );
+    }
+}
+MtModalBody.propTypes = {
+    outputStore: PropTypes.object,
+};
+
+class NdModalBody extends Component {
+    render() {
+        const {outputStore} = this.props,
+            dataset = outputStore.selectedDataset,
+            dtype = dataset.dtype,
+            model = outputStore.modalModel,
+            isSummary = outputStore.drModelModalIsMA;
+
+        if (isSummary) {
+            return (
+                <Modal.Body>
+                    <Row>
+                        <Col xl={6}>
+                            <MsComboInfo options={outputStore.selectedModelOptions} />
+                        </Col>
+                        <Col xl={6}>
+                            <MsComboSummary results={model} />
+                        </Col>
+                        <Col xl={12}>
+                            <MultitumorPlot />
+                        </Col>
+                    </Row>
+                </Modal.Body>
+            );
+        }
+
+        return (
+            <Modal.Body>
+                <Row>
+                    <Col xs={6}>
+                        <InfoTable />
+                    </Col>
+                    <Col xs={6}>
+                        <ModelOptionsTable dtype={dtype} model={model} />
+                    </Col>
+                    <Col xs={6}>
+                        <NdSummary results={model.results} />
+                    </Col>
+                    <Col xs={6}>
+                        <DoseResponsePlot
+                            layout={outputStore.drIndividualPlotLayout}
+                            data={outputStore.drIndividualPlotData}
+                        />
+                    </Col>
+                    <Col xs={6}>
+                        <BootstrapResults model={model} />
+                    </Col>
+                    <Col xs={6}>
+                        <BootstrapRuns model={model} />
+                    </Col>
+                    <Col xs={6}>
+                        <NdModelParameters model={model} />
+                    </Col>
+                    <Col xs={6}>
+                        <ScaledResidual model={model} />
+                    </Col>
+                    <Col xs={12}>
+                        <LitterData model={model} />
+                    </Col>
+                </Row>
+            </Modal.Body>
+        );
+    }
+}
+NdModalBody.propTypes = {
+    outputStore: PropTypes.object,
+};
+
 @inject("outputStore")
 @observer
 class ModelDetailModal extends Component {
@@ -155,11 +295,11 @@ class ModelDetailModal extends Component {
     getBody() {
         const {outputStore} = this.props;
         if (outputStore.isMultiTumor) {
-            return MultitumorModalBody;
+            return MtModalBody;
         } else if (outputStore.drModelModalIsMA) {
             return ModelAverageBody;
         } else if (outputStore.isNestedDichotomous) {
-            return NestedDichotomousModalBody;
+            return NdModalBody;
         } else {
             return ModelBody;
         }
