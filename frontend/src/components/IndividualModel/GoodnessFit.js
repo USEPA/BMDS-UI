@@ -159,12 +159,11 @@ class GoodnessFit extends Component {
     render() {
         const {store} = this.props,
             settings = store.modalModel.settings,
-            // if modalDataset, means MT then do other table?
-            // is there a better way to detect MT?
-            dataset = store.modalDataset ? store.modalDataset : store.selectedDataset,
+            // MT has a different Dataset & dtype
+            dataset = store.isMultiTumor ? store.modalDataset : store.selectedDataset,
             {dtype} = dataset;
         let data;
-        if (store.modalDataset) {
+        if (store.isMultiTumor) {
             data = this.getMultitumorData(dtype, settings);
         } else {
             if (dtype == Dtype.DICHOTOMOUS) {
