@@ -16,9 +16,9 @@ import Summary from "../Output/Multitumor/Summary";
 import BootstrapResults from "../Output/NestedDichotomous/BootstrapResults";
 import BootstrapRuns from "../Output/NestedDichotomous/BootstrapRuns";
 import LitterData from "../Output/NestedDichotomous/LitterData";
-import {ModelParameters as NdModelParameters} from "../Output/NestedDichotomous/ModelParameters";
+import NdModelParameters from "../Output/NestedDichotomous/ModelParameters";
 import ScaledResidual from "../Output/NestedDichotomous/ScaledResidual";
-import {Summary as NdSummary} from "../Output/NestedDichotomous/Summary";
+import NdSummary from "../Output/NestedDichotomous/Summary";
 import CDFPlot from "./CDFPlot";
 import CDFTable from "./CDFTable";
 import ContinuousDeviance from "./ContinuousDeviance";
@@ -217,6 +217,7 @@ MtModalBody.propTypes = {
     outputStore: PropTypes.object,
 };
 
+@observer
 class NdModalBody extends Component {
     render() {
         const {outputStore} = this.props,
