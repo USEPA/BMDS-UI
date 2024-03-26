@@ -12,20 +12,16 @@ import ModelOptions from "../Output/Multitumor/ModelOptions";
 import {MsComboInfo, MsComboSummary} from "../Output/Multitumor/MsCombo";
 import MultitumorPlot from "../Output/Multitumor/MultitumorPlot";
 import ParameterSettings from "../Output/Multitumor/ParameterSettings";
-import Summary from "../Output/Multitumor/Summary";
 import BootstrapResults from "../Output/NestedDichotomous/BootstrapResults";
 import BootstrapRuns from "../Output/NestedDichotomous/BootstrapRuns";
 import LitterData from "../Output/NestedDichotomous/LitterData";
 import NdModelParameters from "../Output/NestedDichotomous/ModelParameters";
 import ScaledResidual from "../Output/NestedDichotomous/ScaledResidual";
-import NdSummary from "../Output/NestedDichotomous/Summary";
 import CDFPlot from "./CDFPlot";
 import CDFTable from "./CDFTable";
 import ContinuousDeviance from "./ContinuousDeviance";
-import ContinuousSummary from "./ContinuousSummary";
 import ContinuousTestOfInterest from "./ContinuousTestOfInterest";
 import DichotomousDeviance from "./DichotomousDeviance";
-import DichotomousSummary from "./DichotomousSummary";
 import GoodnessFit from "./GoodnessFit";
 import InfoTable from "./InfoTable";
 import MaBenchmarkDose from "./MaBenchmarkDose";
@@ -33,6 +29,7 @@ import MaIndividualModels from "./MaIndividualModels";
 import ModelOptionsTable from "./ModelOptionsTable";
 import ModelParameters from "./ModelParameters";
 import ParameterPriorTable from "./ParameterPriorTable";
+import Summary from "./Summary";
 @observer
 class ModelBody extends Component {
     render() {
@@ -62,8 +59,7 @@ class ModelBody extends Component {
                 </Row>
                 <Row>
                     <Col xl={4}>
-                        {isDichotomous ? <DichotomousSummary store={outputStore} /> : null}
-                        {isContinuous ? <ContinuousSummary store={outputStore} /> : null}
+                        <Summary store={outputStore} />
                     </Col>
                     <Col xl={8}>
                         <DoseResponsePlot
@@ -254,7 +250,7 @@ class NdModalBody extends Component {
                         <ModelOptionsTable dtype={dtype} model={model} />
                     </Col>
                     <Col xs={6}>
-                        <NdSummary results={model.results} />
+                        <Summary results={model.results} />
                     </Col>
                     <Col xs={6}>
                         <DoseResponsePlot
