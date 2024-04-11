@@ -30,10 +30,10 @@ class MsComboSummary extends Component {
     render() {
         const {results} = this.props,
             data = [
-                ["BMD", ff(results.bmd)],
-                ["BMDL", ff(results.bmdl)],
-                ["BMDU", ff(results.bmdu)],
-                ["Slope Factor", ff(results.slope_factor)],
+                ["BMD", ff(results.bmd), results.bmd],
+                ["BMDL", ff(results.bmdl), results.bmdl],
+                ["BMDU", ff(results.bmdu), results.bmdu],
+                ["Slope Factor", ff(results.slope_factor), results.slope_factor],
                 ["Combined Log-Likelihood", ff(results.ll)],
                 ["Combined Log-Likelihood Constant", ff(results.ll_constant)],
             ];

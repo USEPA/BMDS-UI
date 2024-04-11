@@ -2,6 +2,7 @@ import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
+import FloatingPointHover from "@/components/common/FloatingPointHover";
 import {ff, fractionalFormatter} from "@/utils/formatters";
 
 @observer
@@ -25,19 +26,27 @@ class ContinuousSummary extends Component {
                 <tbody>
                     <tr>
                         <td>BMD</td>
-                        <td>{ff(results.bmd)}</td>
+                        <td>
+                            <FloatingPointHover value={results.bmd} />
+                        </td>
                     </tr>
                     <tr>
                         <td>BMDL</td>
-                        <td>{ff(results.bmdl)}</td>
+                        <td>
+                            <FloatingPointHover value={results.bmdl} />
+                        </td>
                     </tr>
                     <tr>
                         <td>BMDU</td>
-                        <td>{ff(results.bmdu)}</td>
+                        <td>
+                            <FloatingPointHover value={results.bmdu} />
+                        </td>
                     </tr>
                     <tr>
                         <td>AIC</td>
-                        <td>{ff(results.fit.aic)}</td>
+                        <td>
+                            <FloatingPointHover value={results.fit.aic} />
+                        </td>
                     </tr>
                     <tr>
                         <td>-2* Log(Likelihood Ratio)</td>
