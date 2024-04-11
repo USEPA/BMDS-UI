@@ -2,19 +2,15 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
-import LongFloatPopover from "@/components/common/LongFloatPopover";
+import FloatingPointHover from "@/components/common/FloatingPointHover";
 
 class TwoColumnTable extends Component {
     render() {
         const {id, data, label, colwidths} = this.props,
-            widths = colwidths.map(d => `${d}%`);
-        const formatPopover = function(value) {
-            let ff_val = value[1];
-            let raw_value = value[2];
-            if (ff_val !== "-" && raw_value) {
-                return <LongFloatPopover content={`${raw_value}`} />;
-            }
-        };
+            widths = colwidths.map(d => `${d}%`),
+            formatPopover = function(value, raw_value) {
+                return _.isFinite(raw_value)? <FloatingPointHover value={raw_value} /> :<span>{value}</span>;
+            };
         return (
             <table id={id} className="table table-sm table-bordered">
                 <colgroup>
@@ -31,8 +27,7 @@ class TwoColumnTable extends Component {
                         <tr key={i}>
                             <td>{item[0]}</td>
                             <td>
-                                {item[1]}
-                                {formatPopover(item)}
+                                {formatPopover(item[1], item[2])}
                             </td>
                         </tr>
                     ))}

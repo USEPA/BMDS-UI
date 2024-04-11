@@ -13,7 +13,7 @@ class Summary extends Component {
                 ["BMD", ff(model.bmd), model.bmd],
                 ["BMDL", ff(model.bmdl), model.bmdl],
                 ["BMDU", ff(model.bmdu), model.bmdu],
-                ["Slope Factor", ff(model.slope_factor)],
+                ["Slope Factor", ff(model.slope_factor), model.slope_factor],
                 ["AIC", ff(model.fit.aic), model.fit.aic],
                 [
                     <span key="0">

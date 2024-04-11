@@ -2,7 +2,7 @@ import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
-import LongFloatPopover from "@/components/common/LongFloatPopover";
+import FloatingPointHover from "@/components/common/FloatingPointHover";
 import {ff, fourDecimalFormatter} from "@/utils/formatters";
 
 @observer
@@ -26,29 +26,25 @@ class DichotomousSummary extends Component {
                     <tr>
                         <td>BMD</td>
                         <td>
-                            {ff(results.bmd)}
-                            <LongFloatPopover content={`${results.bmd}`} />
+                            <FloatingPointHover value={results.bmd} />
                         </td>
                     </tr>
                     <tr>
                         <td>BMDL</td>
                         <td>
-                            {ff(results.bmdl)}
-                            <LongFloatPopover content={`${results.bmdl}`} />
+                            <FloatingPointHover value={results.bmdl} />
                         </td>
                     </tr>
                     <tr>
                         <td>BMDU</td>
                         <td>
-                            {ff(results.bmdu)}
-                            <LongFloatPopover content={`${results.bmdu}`} />
+                            <FloatingPointHover value={results.bmdu} />
                         </td>
                     </tr>
                     <tr>
                         <td>AIC</td>
                         <td>
-                            {ff(results.fit.aic)}
-                            <LongFloatPopover content={`${results.fit.aic}`} />
+                            <FloatingPointHover value={results.fit.aic} />
                         </td>
                     </tr>
                     <tr>
