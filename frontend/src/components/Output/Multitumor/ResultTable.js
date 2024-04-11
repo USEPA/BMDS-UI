@@ -70,7 +70,9 @@ class ResultTable extends Component {
                             <td>
                                 <FloatingPointHover value={results.bmdu} />
                             </td>
-                            <td><FloatingPointHover value={results.slope_factor} /></td>
+                            <td>
+                                <FloatingPointHover value={results.slope_factor} />
+                            </td>
                             <td>-</td>
                             <td>-</td>
                             <td>-</td>

@@ -9,7 +9,11 @@ class TwoColumnTable extends Component {
         const {id, data, label, colwidths} = this.props,
             widths = colwidths.map(d => `${d}%`),
             formatPopover = function(value, raw_value) {
-                return _.isFinite(raw_value)? <FloatingPointHover value={raw_value} /> :<span>{value}</span>;
+                return _.isFinite(raw_value) ? (
+                    <FloatingPointHover value={raw_value} />
+                ) : (
+                    <span>{value}</span>
+                );
             };
         return (
             <table id={id} className="table table-sm table-bordered">
@@ -26,9 +30,7 @@ class TwoColumnTable extends Component {
                     {data.filter(_.isArrayLike).map((item, i) => (
                         <tr key={i}>
                             <td>{item[0]}</td>
-                            <td>
-                                {formatPopover(item[1], item[2])}
-                            </td>
+                            <td>{formatPopover(item[1], item[2])}</td>
                         </tr>
                     ))}
                 </tbody>

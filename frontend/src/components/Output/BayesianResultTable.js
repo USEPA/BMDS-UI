@@ -90,9 +90,15 @@ class BayesianResultTable extends Component {
                             </td>
                             <td>-</td>
                             <td>-</td>
-                            <td><FloatingPointHover value={ma.results.bmdl}/></td>
-                            <td><FloatingPointHover value={ma.results.bmd}/></td>
-                            <td><FloatingPointHover value={ma.results.bmdu}/></td>
+                            <td>
+                                <FloatingPointHover value={ma.results.bmdl} />
+                            </td>
+                            <td>
+                                <FloatingPointHover value={ma.results.bmd} />
+                            </td>
+                            <td>
+                                <FloatingPointHover value={ma.results.bmdu} />
+                            </td>
                             <td>-</td>
                             <td>-</td>
                             <td>-</td>
