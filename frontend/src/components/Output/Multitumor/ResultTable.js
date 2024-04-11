@@ -118,7 +118,7 @@ class ResultTable extends Component {
                                             </td>
                                             <td>{ff(model.gof.p_value)}</td>
                                             <td>
-                                                <FloatingPointHover value={model.bmdl} />
+                                                <FloatingPointHover value={model.fit.aic} />
                                             </td>
                                             <td>{ff(model.gof.residual[0])}</td>
                                             <td>{ff(model.gof.roi)}</td>

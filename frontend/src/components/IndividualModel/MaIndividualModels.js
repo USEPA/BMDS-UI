@@ -46,7 +46,7 @@ class MaIndividualModels extends Component {
                                     <FloatingPointHover value={model.results.bmd} />
                                 </td>
                                 <td>
-                                    <FloatingPointHover value={model.results.bmd} />
+                                    <FloatingPointHover value={model.results.bmdu} />
                                 </td>
                             </tr>
                         );
