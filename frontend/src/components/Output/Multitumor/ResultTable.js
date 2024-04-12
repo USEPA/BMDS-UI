@@ -3,6 +3,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
+import FloatingPointHover from "@/components/common/FloatingPointHover";
 import {getNameFromDegrees} from "@/constants/modelConstants";
 import {ff} from "@/utils/formatters";
 
@@ -60,10 +61,18 @@ class ResultTable extends Component {
                                 </a>
                             </td>
                             <td>-</td>
-                            <td>{ff(results.bmdl)}</td>
-                            <td>{ff(results.bmd)}</td>
-                            <td>{ff(results.bmdu)}</td>
-                            <td>{ff(results.slope_factor)}</td>
+                            <td>
+                                <FloatingPointHover value={results.bmdl} />
+                            </td>
+                            <td>
+                                <FloatingPointHover value={results.bmd} />
+                            </td>
+                            <td>
+                                <FloatingPointHover value={results.bmdu} />
+                            </td>
+                            <td>
+                                <FloatingPointHover value={results.slope_factor} />
+                            </td>
                             <td>-</td>
                             <td>-</td>
                             <td>-</td>
@@ -95,12 +104,22 @@ class ResultTable extends Component {
                                                 </a>
                                             </td>
                                             <td>{dataset.metadata.name}</td>
-                                            <td>{ff(model.bmdl)}</td>
-                                            <td>{ff(model.bmd)}</td>
-                                            <td>{ff(model.bmdu)}</td>
-                                            <td>{ff(model.slope_factor)}</td>
+                                            <td>
+                                                <FloatingPointHover value={results.bmdl} />
+                                            </td>
+                                            <td>
+                                                <FloatingPointHover value={model.bmd} />
+                                            </td>
+                                            <td>
+                                                <FloatingPointHover value={model.bmdu} />
+                                            </td>
+                                            <td>
+                                                <FloatingPointHover value={model.slope_factor} />
+                                            </td>
                                             <td>{ff(model.gof.p_value)}</td>
-                                            <td>{ff(model.fit.aic)}</td>
+                                            <td>
+                                                <FloatingPointHover value={model.fit.aic} />
+                                            </td>
                                             <td>{ff(model.gof.residual[0])}</td>
                                             <td>{ff(model.gof.roi)}</td>
                                         </tr>
