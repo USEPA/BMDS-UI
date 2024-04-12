@@ -149,27 +149,6 @@ class Output extends Component {
                     </div>
                 ) : null}
 
-                {isFuture && !outputStore.isMultiTumor ? (
-                    <div className="row py-2">
-                        {selectedFrequentist ? (
-                            <div className="col col-lg-6">
-                                <DoseResponsePlot
-                                    layout={outputStore.drFrequentistLollipopPlotLayout}
-                                    data={outputStore.drFrequentistLollipopPlotDataset}
-                                />
-                            </div>
-                        ) : null}
-                        {selectedBayesian ? (
-                            <div className="col col-lg-6">
-                                <DoseResponsePlot
-                                    layout={outputStore.drBayesianLollipopPlotLayout}
-                                    data={outputStore.drBayesianLollipopPlotDataset}
-                                />
-                            </div>
-                        ) : null}
-                    </div>
-                ) : null}
-
                 <div>{outputStore.showModelModal ? <ModelDetailModal /> : null}</div>
             </div>
         );
