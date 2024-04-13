@@ -9,7 +9,7 @@ class FloatingPointHover extends Component {
     render() {
         const {value} = this.props;
         return (
-            <Popover element={"span"} content={value} title="Floating-Point Value">
+            <Popover element={"span"} content={value.toString()} title="Floating-Point Value">
                 {ff(value)}
             </Popover>
         );

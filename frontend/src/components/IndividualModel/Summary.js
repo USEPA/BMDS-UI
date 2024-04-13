@@ -3,67 +3,73 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import TwoColumnTable from "@/components/common/TwoColumnTable";
+import * as mc from "@/constants/mainConstants";
 import {ff, fourDecimalFormatter, fractionalFormatter} from "@/utils/formatters";
 
 @inject("outputStore")
 @observer
 class Summary extends Component {
     render() {
-        const {outputStore} = this.props;
+        const {outputStore} = this.props,
+            model = outputStore.modalModel;
         let data;
 
         if (outputStore.isMultitumor) {
             data = [
-                ["BMD", ff(outputStore.modalModel.bmd)],
-                ["BMDL", ff(outputStore.modalModel.bmdl)],
-                ["BMDU", ff(outputStore.modalModel.bmdu)],
-                ["Slope Factor", ff(outputStore.modalModel.slope_factor)],
-                ["AIC", ff(outputStore.modalModel.fit.aic)],
+                ["BMD", ff(model.bmd), model.bmd],
+                ["BMDL", ff(model.bmdl), model.bmdl],
+                ["BMDU", ff(model.bmdu), model.bmdu],
+                ["Slope Factor", ff(model.slope_factor), model.slope_factor],
+                ["AIC", ff(model.fit.aic), model.fit.aic],
                 [
                     <span key="0">
                         <i>P</i>-Value
                     </span>,
-                    fourDecimalFormatter(outputStore.modalModel.gof.p_value),
+                    fourDecimalFormatter(model.gof.p_value),
                 ],
-                ["Overall d.f.", ff(outputStore.modalModel.gof.df)],
-                ["Chi²", ff(outputStore.modalModel.fit.chisq)],
-                ["-2* Log(Likelihood Ratio)", ff(outputStore.modalModel.fit.loglikelihood)],
+                ["Overall d.f.", ff(model.gof.df)],
+                ["Chi²", ff(model.fit.chisq)],
+                ["-2* Log(Likelihood Ratio)", ff(model.fit.loglikelihood)],
             ];
         } else if (outputStore.isNestedDichotomous) {
             data = [
-                ["BMD", ff(outputStore.modalModel.results.bmd)],
-                ["BMDL", ff(outputStore.modalModel.results.summary.bmdl)],
-                ["BMDU", ff(outputStore.modalModel.results.summary.bmdu)],
-                ["AIC", ff(outputStore.modalModel.results.summary.aic)],
+                ["BMD", ff(model.results.bmd), model.results.bmd],
+                ["BMDL", ff(model.results.summary.bmdl), model.results.summary.bmdl],
+                ["BMDU", ff(model.results.summary.bmdu), model.results.summary.bmdu],
+                ["AIC", ff(model.results.summary.aic), model.results.summary.aic],
                 [
                     <span key={0}>
                         <i>P</i>-value
                     </span>,
-                    ff(outputStore.modalModel.results.combined_pvalue),
+                    ff(model.results.combined_pvalue),
                 ],
-                ["d.f.", ff(outputStore.modalModel.results.dof)],
+                ["d.f.", ff(model.results.dof)],
                 [
                     <span key={1}>
                         Chi<sup>2</sup>
                     </span>,
-                    ff(outputStore.modalModel.results.summary.chi_squared),
+                    ff(model.results.summary.chi_squared),
                 ],
             ];
         } else {
-            const p_value = outputStore.modalModel.results.tests.p_values[3];
+            const isContinuous = outputStore.getModelType === mc.MODEL_CONTINUOUS,
+                p_value = isContinuous
+                    ? model.results.tests.p_values[3]
+                    : model.results.gof.p_value,
+                df = isContinuous ? model.results.tests.p_values[3] : model.results.gof.df;
             data = [
-                ["BMD", ff(outputStore.modalModel.results.bmd)],
-                ["BMDL", ff(outputStore.modalModel.results.bmdl)],
-                ["BMDU", ff(outputStore.modalModel.results.bmdu)],
-                ["AIC", ff(outputStore.modalModel.results.fit.aic)],
-                ["-2* Log(Likelihood Ratio)", ff(outputStore.modalModel.results.fit.loglikelihood)],
+                ["BMD", ff(model.results.bmd), model.results.bmd],
+                ["BMDL", ff(model.results.bmdl), model.results.bmdl],
+                ["BMDU", ff(model.results.bmdu), model.results.bmdu],
+                ["AIC", ff(model.results.fit.aic), model.results.fit.aic],
+                ["-2* Log(Likelihood Ratio)", ff(model.results.fit.loglikelihood)],
                 [
                     <span key={0}>
                         <i>P</i>-value
                     </span>,
                     fractionalFormatter(p_value),
                 ],
-                ["Model d.f.", ff(outputStore.modalModel.results.tests.dfs[3])],
+                ["Model d.f.", ff(df)],
             ];
         }
 

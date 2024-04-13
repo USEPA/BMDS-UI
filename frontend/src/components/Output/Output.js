@@ -46,7 +46,7 @@ class Output extends Component {
                 selectedFrequentist,
                 selectedBayesian,
             } = outputStore,
-            {isFuture, analysisSavedAndValidated} = outputStore.rootStore.mainStore;
+            {analysisSavedAndValidated} = outputStore.rootStore.mainStore;
 
         if (hasAnyError) {
             return (
