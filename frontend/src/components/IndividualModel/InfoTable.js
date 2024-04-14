@@ -17,15 +17,17 @@ class InfoTable extends Component {
         let data;
         if (outputStore.isMultitumor) {
             data = [
-                ["Dataset", dataset.metadata.name],
+                ["HERERERE", "HERERE"],
+                [("Dataset", dataset.metadata.name)],
                 ["Model", getNameFromDegrees(model)],
                 ["Equation", "P[dose] = g + (1 - g) * (1 - exp(-b1 * dose^1 - b2 * dose^2 - ...))"],
             ];
         } else {
             data = [
-                ["Dataset", dataset.metadata.name],
-                ["Model", model.name],
-                ["Equation", model.model_class.model_form_str],
+                ["test", 123],
+                // ["Dataset", dataset.metadata.name],
+                // ["Model", model.name],
+                // ["Equation", model.model_class.model_form_str],
             ];
         }
         return <TwoColumnTable id="info-table" data={data} label="Info" />;

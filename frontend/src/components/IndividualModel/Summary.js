@@ -1,3 +1,4 @@
+import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -52,17 +53,18 @@ class Summary extends Component {
                 ],
             ];
         } else {
+            console.log(toJS(model));
+            console.log("bbb");
             const isContinuous = outputStore.getModelType === mc.MODEL_CONTINUOUS,
-                p_value = isContinuous
-                    ? model.results.tests.p_values[3]
-                    : model.results.gof.p_value,
-                df = isContinuous ? model.results.tests.p_values[3] : model.results.gof.df;
+                results = model.bmd ? model : model.results,
+                p_value = isContinuous ? results.tests.p_values[3] : results.gof.p_value,
+                df = isContinuous ? results.tests.p_values[3] : results.gof.df;
             data = [
-                ["BMD", ff(model.results.bmd), model.results.bmd],
-                ["BMDL", ff(model.results.bmdl), model.results.bmdl],
-                ["BMDU", ff(model.results.bmdu), model.results.bmdu],
-                ["AIC", ff(model.results.fit.aic), model.results.fit.aic],
-                ["-2* Log(Likelihood Ratio)", ff(model.results.fit.loglikelihood)],
+                ["BMD", ff(results.bmd), results.bmd],
+                ["BMDL", ff(results.bmdl), results.bmdl],
+                ["BMDU", ff(results.bmdu), results.bmdu],
+                ["AIC", ff(results.fit.aic), results.fit.aic],
+                ["-2* Log(Likelihood Ratio)", ff(results.fit.loglikelihood)],
                 [
                     <span key={0}>
                         <i>P</i>-value
