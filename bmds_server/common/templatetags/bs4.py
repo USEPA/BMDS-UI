@@ -1,6 +1,7 @@
 """
 Twitter Bootstrap 4 - helper methods
 """
+
 from datetime import datetime
 from textwrap import dedent
 from uuid import uuid4
