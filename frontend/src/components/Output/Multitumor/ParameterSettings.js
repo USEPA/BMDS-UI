@@ -6,8 +6,8 @@ import React, {Component} from "react";
 @observer
 class ParameterSettings extends Component {
     render() {
-        const model = this.props.model.parameters,
-            temp_rslt_len = _.size(model.names);
+        const params = this.props.model.results.parameters,
+            n_params = _.size(params.names);
         return (
             <table className="table table-sm table-bordered">
                 <thead>
@@ -22,13 +22,13 @@ class ParameterSettings extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {_.range(temp_rslt_len).map(i => {
+                    {_.range(n_params).map(i => {
                         return (
                             <tr key={i}>
-                                <td>{model.names[i]}</td>
-                                <td>{model.prior_initial_value[i]}</td>
-                                <td>{model.prior_min_value[i]}</td>
-                                <td>{model.prior_max_value[i]}</td>
+                                <td>{params.names[i]}</td>
+                                <td>{params.prior_initial_value[i]}</td>
+                                <td>{params.prior_min_value[i]}</td>
+                                <td>{params.prior_max_value[i]}</td>
                             </tr>
                         );
                     })}

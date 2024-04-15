@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import DoseResponsePlot from "@/components/common/DoseResponsePlot";
-import {getNameFromDegrees} from "@/constants/modelConstants";
 import {colorCodes, getBmdDiamond, getDrLayout, getResponse} from "@/constants/plotting";
 
 const getLayout = function(datasets) {
@@ -49,16 +48,17 @@ const getData = function(ma, datasets, models) {
 
     // add selected models
     models.forEach((model, index) => {
-        let dataset = datasets[index];
+        const dataset = datasets[index],
+            {results} = model;
         data.push({
-            x: model.plotting.dr_x,
-            y: model.plotting.dr_y,
+            x: results.plotting.dr_x,
+            y: results.plotting.dr_y,
             line: {
                 width: 3,
                 color: colorCodes[index],
             },
             legendgroup: index,
-            name: `${dataset.metadata.name} ${getNameFromDegrees(model)}`,
+            name: `${dataset.metadata.name} ${model.name}`,
         });
     });
 

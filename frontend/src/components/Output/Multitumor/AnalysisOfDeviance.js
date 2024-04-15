@@ -7,7 +7,8 @@ import {ff, fractionalFormatter} from "@/utils/formatters";
 @observer
 class AnalysisOfDeviance extends Component {
     render() {
-        const deviances = this.props.model.deviance;
+        const {model} = this.props,
+            deviances = model.results.deviance;
         return (
             <table className="table table-sm table-bordered text-right col-l-1">
                 <colgroup>

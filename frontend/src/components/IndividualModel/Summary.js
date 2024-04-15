@@ -1,11 +1,10 @@
-import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import TwoColumnTable from "@/components/common/TwoColumnTable";
 import * as mc from "@/constants/mainConstants";
-import {ff, fourDecimalFormatter, fractionalFormatter} from "@/utils/formatters";
+import {ff, fractionalFormatter} from "@/utils/formatters";
 
 @inject("outputStore")
 @observer
@@ -14,25 +13,7 @@ class Summary extends Component {
         const {outputStore} = this.props,
             model = outputStore.modalModel;
         let data;
-
-        if (outputStore.isMultitumor) {
-            data = [
-                ["BMD", ff(model.bmd), model.bmd],
-                ["BMDL", ff(model.bmdl), model.bmdl],
-                ["BMDU", ff(model.bmdu), model.bmdu],
-                ["Slope Factor", ff(model.slope_factor), model.slope_factor],
-                ["AIC", ff(model.fit.aic), model.fit.aic],
-                [
-                    <span key="0">
-                        <i>P</i>-Value
-                    </span>,
-                    fourDecimalFormatter(model.gof.p_value),
-                ],
-                ["Overall d.f.", ff(model.gof.df)],
-                ["Chi²", ff(model.fit.chisq)],
-                ["-2* Log(Likelihood Ratio)", ff(model.fit.loglikelihood)],
-            ];
-        } else if (outputStore.isNestedDichotomous) {
+        if (outputStore.isNestedDichotomous) {
             data = [
                 ["BMD", ff(model.results.bmd), model.results.bmd],
                 ["BMDL", ff(model.results.summary.bmdl), model.results.summary.bmdl],
@@ -53,8 +34,6 @@ class Summary extends Component {
                 ],
             ];
         } else {
-            console.log(toJS(model));
-            console.log("bbb");
             const isContinuous = outputStore.getModelType === mc.MODEL_CONTINUOUS,
                 results = model.bmd ? model : model.results,
                 p_value = isContinuous ? results.tests.p_values[3] : results.gof.p_value,
@@ -73,6 +52,9 @@ class Summary extends Component {
                 ],
                 ["Model d.f.", ff(df)],
             ];
+            if (outputStore.isMultiTumor) {
+                data.splice(3, 0, ["Slope Factor", ff(results.slope_factor), results.slope_factor]);
+            }
         }
 
         return <TwoColumnTable id="info-table" data={data} label="Modeling Summary" />;

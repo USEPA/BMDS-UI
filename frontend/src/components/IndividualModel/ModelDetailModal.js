@@ -196,7 +196,7 @@ class MtModalBody extends Component {
                         />
                     </Col>
                     <Col xl={6}>
-                        <ModelParameters parameters={model.parameters} />
+                        <ModelParameters parameters={model.results.parameters} />
                     </Col>
                     <Col xl={6}>
                         <GoodnessFit store={outputStore} />

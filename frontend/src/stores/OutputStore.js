@@ -3,7 +3,6 @@ import {action, computed, observable, toJS} from "mobx";
 
 import {getHeaders} from "@/common";
 import {MODEL_MULTI_TUMOR, MODEL_NESTED_DICHOTOMOUS} from "@/constants/mainConstants";
-import {getNameFromDegrees} from "@/constants/modelConstants";
 import {maIndex, modelClasses} from "@/constants/outputConstants";
 import {
     bmaColor,
@@ -192,7 +191,7 @@ class OutputStore {
                 return "MS Combo";
             } else {
                 const dataset = this.modalDataset;
-                return `${dataset.metadata.name} - ${getNameFromDegrees(model)}`;
+                return `${dataset.metadata.name} - ${model.name}`;
             }
         } else {
             return this.drModelModalIsMA ? "Model Average" : model.name;
@@ -358,13 +357,8 @@ class OutputStore {
 
     @computed get drIndividualMultitumorPlotData() {
         // a single model, shown in the modal
-        const model = this.modalModel,
-            modelMock = {name: getNameFromDegrees(model), results: _.cloneDeep(model)},
-            data = [
-                getDrDatasetPlotData(this.modalDataset),
-                ...getDrBmdLine(modelMock, hoverColor),
-            ];
-        return data;
+        const model = this.modalModel;
+        return [getDrDatasetPlotData(this.modalDataset), ...getDrBmdLine(model, hoverColor)];
     }
 
     @action.bound drPlotAddHover(model) {
