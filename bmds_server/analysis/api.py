@@ -20,7 +20,7 @@ from .reporting.docx import add_update_url, build_polyk_docx
 class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = serializers.AnalysisSerializer
     queryset = models.Analysis.objects.prefetch_related("collections").all()
-    schema = AutoSchema(operation_id_base="analysis")
+    schema = AutoSchema(operation_id_base="Analysis")
 
     @action(detail=False, url_path="default")
     def default(self, request, *args, **kwargs):
@@ -200,7 +200,7 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 class PolyKViewset(viewsets.GenericViewSet):
     queryset = models.Analysis.objects.none()
     serializer_class = UnusedSerializer
-    schema = AutoSchema(operation_id_base="polyk")
+    schema = AutoSchema(operation_id_base="PolyK")
 
     def _run_analysis(self, request) -> PolyKAdjustment:
         try:
