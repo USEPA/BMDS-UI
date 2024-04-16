@@ -12,7 +12,6 @@ import MultitumorPlot from "../Output/Multitumor/MultitumorPlot";
 import BootstrapResults from "../Output/NestedDichotomous/BootstrapResults";
 import BootstrapRuns from "../Output/NestedDichotomous/BootstrapRuns";
 import LitterData from "../Output/NestedDichotomous/LitterData";
-import NdModelParameters from "../Output/NestedDichotomous/ModelParameters";
 import ScaledResidual from "../Output/NestedDichotomous/ScaledResidual";
 import CDFPlot from "./CDFPlot";
 import CDFTable from "./CDFTable";
@@ -67,7 +66,7 @@ class ModelBody extends Component {
                 </Row>
                 <Row>
                     <Col xl={8}>
-                        <ModelParameters parameters={model.results.parameters} />
+                        <ModelParameters isNestedDichotomous={false} model={model} />
                     </Col>
                 </Row>
                 <Row>
@@ -197,7 +196,7 @@ class MtModalBody extends Component {
                         />
                     </Col>
                     <Col xl={8}>
-                        <ModelParameters parameters={model.results.parameters} />
+                        <ModelParameters isNestedDichotomous={false} model={model} />
                     </Col>
                     <Col xl={8}>
                         <GoodnessFit store={outputStore} />
@@ -274,7 +273,7 @@ class NdModalBody extends Component {
                         <BootstrapRuns model={model} />
                     </Col>
                     <Col xs={6}>
-                        <NdModelParameters model={model} />
+                        <ModelParameters isNestedDichotomous={true} model={model} />
                     </Col>
                     <Col xs={6}>
                         <ScaledResidual model={model} />
