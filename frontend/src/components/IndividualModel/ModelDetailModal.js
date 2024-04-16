@@ -154,7 +154,8 @@ class MtModalBody extends Component {
     render() {
         const {outputStore} = this.props,
             model = outputStore.modalModel,
-            isSummary = outputStore.drModelModalIsMA;
+            isSummary = outputStore.drModelModalIsMA,
+            dataset = outputStore.modalDataset;
 
         if (isSummary) {
             return (
@@ -202,6 +203,14 @@ class MtModalBody extends Component {
                     </Col>
                     <Col xl={8}>
                         <DichotomousDeviance store={outputStore} />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col xl={4} style={{maxHeight: "50vh", overflowY: "scroll"}}>
+                        <CDFTable bmd_dist={model.results.fit.bmd_dist} />
+                    </Col>
+                    <Col xl={8}>
+                        <CDFPlot dataset={dataset} cdf={model.results.fit.bmd_dist} />
                     </Col>
                 </Row>
             </Modal.Body>
