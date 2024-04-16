@@ -48,12 +48,12 @@ mkdocs serve -f docs/mkdocs.yml -a localhost:8050
 goto :eof
 
 :lint
-ruff format . --check && ruff .
+ruff format . --check && ruff check .
 npm --prefix .\frontend run lint
 goto :eof
 
 :format
-ruff format . && ruff . --fix --show-fixes
+ruff format . && ruff check . --fix --show-fixes
 npm --prefix .\frontend run format
 goto :eof
 
