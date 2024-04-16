@@ -121,7 +121,6 @@ class TestBmds3Execution:
             write_excel(df, data_path / "nested_dichotomous.xlsx")
             (data_path / "nested_dichotomous.docx").write_bytes(docx.getvalue())
 
-    @pytest.mark.xfail(reason="multitumor plotting error")  # TODO - remove xfail once fixed
     def test_multitumor(self, bmds_complete_mt, data_path, rewrite_data_files):
         analysis = Analysis.objects.create(inputs=bmds_complete_mt)
 

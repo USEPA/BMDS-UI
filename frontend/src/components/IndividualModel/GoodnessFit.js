@@ -8,10 +8,8 @@ import {ff} from "@/utils/formatters";
 
 @observer
 class GoodnessFit extends Component {
-    getDichotomousData() {
-        const {store} = this.props,
-            gof = store.modalModel.results.gof,
-            dataset = store.selectedDataset;
+    getDichotomousData(dataset, model) {
+        const gof = model.results.gof;
         return {
             headers: [
                 "Dose",
@@ -35,10 +33,8 @@ class GoodnessFit extends Component {
         };
     }
 
-    getContinuousNormalData(dtype) {
-        const {store} = this.props,
-            gof = store.modalModel.results.gof,
-            dataset = store.selectedDataset,
+    getContinuousNormalData(dataset, dtype, model) {
+        const gof = model.results.gof,
             useFF = dtype === Dtype.CONTINUOUS_INDIVIDUAL;
         return {
             headers: [
@@ -65,10 +61,8 @@ class GoodnessFit extends Component {
         };
     }
 
-    getContinuousLognormalData(dtype) {
-        const {store} = this.props,
-            gof = store.modalModel.results.gof,
-            dataset = store.selectedDataset,
+    getContinuousLognormalData(dataset, dtype, model) {
+        const gof = model.results.gof,
             useFF = dtype === Dtype.CONTINUOUS_INDIVIDUAL;
         return {
             headers: [
@@ -98,22 +92,22 @@ class GoodnessFit extends Component {
             }),
         };
     }
+
     render() {
         const {store} = this.props,
             settings = store.modalModel.settings,
-            dataset = store.selectedDataset,
+            model = store.modalModel,
+            dataset = store.isMultiTumor ? store.modalDataset : store.selectedDataset,
             {dtype} = dataset;
-
         let data;
-        if (dtype == Dtype.DICHOTOMOUS) {
-            data = this.getDichotomousData();
+        if (store.isMultiTumor || dtype == Dtype.DICHOTOMOUS) {
+            data = this.getDichotomousData(dataset, model);
+        } else if (isLognormal(settings.disttype)) {
+            data = this.getContinuousLognormalData(dataset, dtype, model);
         } else {
-            if (isLognormal(settings.disttype)) {
-                data = this.getContinuousLognormalData(dtype);
-            } else {
-                data = this.getContinuousNormalData(dtype);
-            }
+            data = this.getContinuousNormalData(dataset, dtype, model);
         }
+
         return (
             <table className="table table-sm table-bordered text-right">
                 <colgroup>

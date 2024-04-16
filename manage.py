@@ -12,6 +12,7 @@ Running `manage runserver --noreload` works fine.
 To fix, update our build/packaging system to flit or poetry and call console_scripts as a module
 instead of a file, which may fix this issue, based on work on other (private) projects?
 """
+
 import os
 import sys
 

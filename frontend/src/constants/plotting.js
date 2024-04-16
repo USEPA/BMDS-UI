@@ -238,40 +238,6 @@ export const getResponse = dataset => {
 
         return data;
     },
-    getLollipopDataset = function(dataArray, modelArray, modelName) {
-        return {
-            x: dataArray,
-            y: modelArray,
-            mode: "line",
-            type: "scatter",
-            line: {
-                width: 5,
-                color: "#696969",
-            },
-            marker: {
-                size: 10,
-                color: ["#FFFFFF", "#0000FF", "#FFFFFF"],
-            },
-            name: modelName,
-        };
-    },
-    getLollipopPlotLayout = function(title, dataset) {
-        const layout = {
-            title: {
-                text: title,
-            },
-            margin: {l: 100, r: 5, t: 35, b: 65},
-            showlegend: false,
-            xaxis: {
-                showline: true,
-                title: getDoseLabel(dataset),
-            },
-            yaxis: {
-                showline: true,
-            },
-        };
-        return layout;
-    },
     getConfig = function() {
         return {
             modeBarButtonsToRemove: [

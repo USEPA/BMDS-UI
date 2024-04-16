@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import FloatingPointHover from "@/components/common/FloatingPointHover";
-import {getNameFromDegrees} from "@/constants/modelConstants";
 import {ff} from "@/utils/formatters";
 
 @inject("outputStore")
@@ -84,8 +83,8 @@ class ResultTable extends Component {
                             rows = _.flatten(
                                 dataset_models.map((model, model_index) => {
                                     const key = `${dataset_index}-${model_index}`,
-                                        name = getNameFromDegrees(model),
-                                        selected = indexes[dataset_index] === model_index;
+                                        selected = indexes[dataset_index] === model_index,
+                                        {results} = model;
                                     return (
                                         <tr key={key} className={selected ? "table-info" : ""}>
                                             <td>
@@ -99,7 +98,7 @@ class ResultTable extends Component {
                                                             model_index
                                                         );
                                                     }}>
-                                                    {name}
+                                                    {model.name}
                                                     {selected ? "*" : ""}
                                                 </a>
                                             </td>
@@ -108,20 +107,20 @@ class ResultTable extends Component {
                                                 <FloatingPointHover value={results.bmdl} />
                                             </td>
                                             <td>
-                                                <FloatingPointHover value={model.bmd} />
+                                                <FloatingPointHover value={results.bmd} />
                                             </td>
                                             <td>
-                                                <FloatingPointHover value={model.bmdu} />
+                                                <FloatingPointHover value={results.bmdu} />
                                             </td>
                                             <td>
-                                                <FloatingPointHover value={model.slope_factor} />
+                                                <FloatingPointHover value={results.slope_factor} />
                                             </td>
-                                            <td>{ff(model.gof.p_value)}</td>
+                                            <td>{ff(results.gof.p_value)}</td>
                                             <td>
-                                                <FloatingPointHover value={model.fit.aic} />
+                                                <FloatingPointHover value={results.fit.aic} />
                                             </td>
-                                            <td>{ff(model.gof.residual[0])}</td>
-                                            <td>{ff(model.gof.roi)}</td>
+                                            <td>{ff(results.gof.residual[0])}</td>
+                                            <td>{ff(results.gof.roi)}</td>
                                         </tr>
                                     );
                                 })

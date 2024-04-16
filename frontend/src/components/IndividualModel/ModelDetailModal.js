@@ -7,15 +7,17 @@ import * as dc from "@/constants/dataConstants";
 
 import Button from "../common/Button";
 import DoseResponsePlot from "../common/DoseResponsePlot";
-import MultitumorModalBody from "../Output/Multitumor/ModalBody";
-import NestedDichotomousModalBody from "../Output/NestedDichotomous/ModalBody";
+import {MsComboInfo, MsComboSummary} from "../Output/Multitumor/MsCombo";
+import MultitumorPlot from "../Output/Multitumor/MultitumorPlot";
+import BootstrapResults from "../Output/NestedDichotomous/BootstrapResults";
+import BootstrapRuns from "../Output/NestedDichotomous/BootstrapRuns";
+import LitterData from "../Output/NestedDichotomous/LitterData";
+import ScaledResidual from "../Output/NestedDichotomous/ScaledResidual";
 import CDFPlot from "./CDFPlot";
 import CDFTable from "./CDFTable";
 import ContinuousDeviance from "./ContinuousDeviance";
-import ContinuousSummary from "./ContinuousSummary";
 import ContinuousTestOfInterest from "./ContinuousTestOfInterest";
 import DichotomousDeviance from "./DichotomousDeviance";
-import DichotomousSummary from "./DichotomousSummary";
 import GoodnessFit from "./GoodnessFit";
 import InfoTable from "./InfoTable";
 import MaBenchmarkDose from "./MaBenchmarkDose";
@@ -23,7 +25,7 @@ import MaIndividualModels from "./MaIndividualModels";
 import ModelOptionsTable from "./ModelOptionsTable";
 import ModelParameters from "./ModelParameters";
 import ParameterPriorTable from "./ParameterPriorTable";
-
+import Summary from "./Summary";
 @observer
 class ModelBody extends Component {
     render() {
@@ -53,8 +55,7 @@ class ModelBody extends Component {
                 </Row>
                 <Row>
                     <Col xl={4}>
-                        {isDichotomous ? <DichotomousSummary store={outputStore} /> : null}
-                        {isContinuous ? <ContinuousSummary store={outputStore} /> : null}
+                        <Summary store={outputStore} />
                     </Col>
                     <Col xl={8}>
                         <DoseResponsePlot
@@ -65,7 +66,7 @@ class ModelBody extends Component {
                 </Row>
                 <Row>
                     <Col xl={8}>
-                        <ModelParameters parameters={model.results.parameters} />
+                        <ModelParameters isNestedDichotomous={false} model={model} />
                     </Col>
                 </Row>
                 <Row>
@@ -145,6 +146,150 @@ ModelAverageBody.propTypes = {
     outputStore: PropTypes.object,
 };
 
+@observer
+class MtModalBody extends Component {
+    render() {
+        const {outputStore} = this.props,
+            model = outputStore.modalModel,
+            isSummary = outputStore.drModelModalIsMA,
+            dataset = outputStore.modalDataset;
+
+        if (isSummary) {
+            return (
+                <Modal.Body>
+                    <Row>
+                        <Col xl={6}>
+                            <MsComboInfo options={outputStore.selectedModelOptions} />
+                        </Col>
+                        <Col xl={6}>
+                            <MsComboSummary results={model} />
+                        </Col>
+                        <Col xl={12}>
+                            <MultitumorPlot />
+                        </Col>
+                    </Row>
+                </Modal.Body>
+            );
+        }
+        return (
+            <Modal.Body>
+                <Row>
+                    <Col xl={4}>
+                        <InfoTable />
+                    </Col>
+                    <Col xl={3}>
+                        <ModelOptionsTable dtype={dataset.dtype} model={model} />
+                    </Col>
+                    <Col xl={5}>
+                        <ParameterPriorTable
+                            parameters={model.results.parameters}
+                            priorClass={model.settings.priors.prior_class}
+                        />
+                    </Col>
+                    <Col xl={4}>
+                        <Summary model={model} />
+                    </Col>
+                    <Col xs={8}>
+                        <DoseResponsePlot
+                            layout={outputStore.drIndividualMultitumorPlotLayout}
+                            data={outputStore.drIndividualMultitumorPlotData}
+                        />
+                    </Col>
+                    <Col xl={8}>
+                        <ModelParameters isNestedDichotomous={false} model={model} />
+                    </Col>
+                    <Col xl={8}>
+                        <GoodnessFit store={outputStore} />
+                    </Col>
+                    <Col xl={8}>
+                        <DichotomousDeviance store={outputStore} />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col xl={4} style={{maxHeight: "50vh", overflowY: "scroll"}}>
+                        <CDFTable bmd_dist={model.results.fit.bmd_dist} />
+                    </Col>
+                    <Col xl={8}>
+                        <CDFPlot dataset={dataset} cdf={model.results.fit.bmd_dist} />
+                    </Col>
+                </Row>
+            </Modal.Body>
+        );
+    }
+}
+MtModalBody.propTypes = {
+    outputStore: PropTypes.object,
+};
+
+@observer
+class NdModalBody extends Component {
+    render() {
+        const {outputStore} = this.props,
+            dataset = outputStore.selectedDataset,
+            dtype = dataset.dtype,
+            model = outputStore.modalModel,
+            isSummary = outputStore.drModelModalIsMA;
+
+        if (isSummary) {
+            return (
+                <Modal.Body>
+                    <Row>
+                        <Col xl={6}>
+                            <MsComboInfo options={outputStore.selectedModelOptions} />
+                        </Col>
+                        <Col xl={6}>
+                            <MsComboSummary results={model} />
+                        </Col>
+                        <Col xl={12}>
+                            <MultitumorPlot />
+                        </Col>
+                    </Row>
+                </Modal.Body>
+            );
+        }
+
+        return (
+            <Modal.Body>
+                <Row>
+                    <Col xs={6}>
+                        <InfoTable />
+                    </Col>
+                    <Col xs={6}>
+                        <ModelOptionsTable dtype={dtype} model={model} />
+                    </Col>
+                    <Col xs={6}>
+                        <Summary results={model.results} />
+                    </Col>
+                    <Col xs={6}>
+                        <DoseResponsePlot
+                            layout={outputStore.drIndividualPlotLayout}
+                            data={outputStore.drIndividualPlotData}
+                        />
+                    </Col>
+                    <Col xs={6}>
+                        <BootstrapResults model={model} />
+                    </Col>
+                    <Col xs={6}>
+                        <BootstrapRuns model={model} />
+                    </Col>
+                    <Col xs={6}>
+                        <ModelParameters isNestedDichotomous={true} model={model} />
+                    </Col>
+                    <Col xs={6}>
+                        <ScaledResidual model={model} />
+                    </Col>
+                    <Col xs={12}>
+                        <LitterData model={model} />
+                    </Col>
+                </Row>
+            </Modal.Body>
+        );
+    }
+}
+NdModalBody.propTypes = {
+    outputStore: PropTypes.object,
+};
+
 @inject("outputStore")
 @observer
 class ModelDetailModal extends Component {
@@ -155,11 +300,11 @@ class ModelDetailModal extends Component {
     getBody() {
         const {outputStore} = this.props;
         if (outputStore.isMultiTumor) {
-            return MultitumorModalBody;
+            return MtModalBody;
         } else if (outputStore.drModelModalIsMA) {
             return ModelAverageBody;
         } else if (outputStore.isNestedDichotomous) {
-            return NestedDichotomousModalBody;
+            return NdModalBody;
         } else {
             return ModelBody;
         }

@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from rest_framework import exceptions, mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.schemas.openapi import AutoSchema
 
 from ..common import renderers
 from ..common.renderers import BinaryFile
@@ -19,6 +20,7 @@ from .reporting.docx import add_update_url, build_polyk_docx
 class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = serializers.AnalysisSerializer
     queryset = models.Analysis.objects.prefetch_related("collections").all()
+    schema = AutoSchema(operation_id_base="Analysis")
 
     @action(detail=False, url_path="default")
     def default(self, request, *args, **kwargs):
@@ -198,6 +200,7 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 class PolyKViewset(viewsets.GenericViewSet):
     queryset = models.Analysis.objects.none()
     serializer_class = UnusedSerializer
+    schema = AutoSchema(operation_id_base="PolyK")
 
     def _run_analysis(self, request) -> PolyKAdjustment:
         try:

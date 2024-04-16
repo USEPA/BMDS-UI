@@ -10,7 +10,9 @@ class InfoTable extends Component {
     render() {
         const {outputStore} = this.props,
             model = outputStore.modalModel,
-            dataset = outputStore.selectedDataset,
+            dataset = outputStore.isMultiTumor
+                ? outputStore.modalDataset
+                : outputStore.selectedDataset,
             data = [
                 ["Dataset", dataset.metadata.name],
                 ["Model", model.name],
