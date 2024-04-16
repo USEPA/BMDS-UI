@@ -8,10 +8,8 @@ import {ff} from "@/utils/formatters";
 
 @observer
 class GoodnessFit extends Component {
-    getDichotomousData() {
-        const {store} = this.props,
-            gof = store.modalModel.results.gof,
-            dataset = store.selectedDataset;
+    getDichotomousData(dataset, model) {
+        const gof = model.results.gof;
         return {
             headers: [
                 "Dose",
@@ -35,10 +33,8 @@ class GoodnessFit extends Component {
         };
     }
 
-    getContinuousNormalData(dtype) {
-        const {store} = this.props,
-            gof = store.modalModel.results.gof,
-            dataset = store.selectedDataset,
+    getContinuousNormalData(dataset, dtype, model) {
+        const gof = model.results.gof,
             useFF = dtype === Dtype.CONTINUOUS_INDIVIDUAL;
         return {
             headers: [
@@ -65,10 +61,8 @@ class GoodnessFit extends Component {
         };
     }
 
-    getContinuousLognormalData(dtype) {
-        const {store} = this.props,
-            gof = store.modalModel.results.gof,
-            dataset = store.selectedDataset,
+    getContinuousLognormalData(dataset, dtype, model) {
+        const gof = model.results.gof,
             useFF = dtype === Dtype.CONTINUOUS_INDIVIDUAL;
         return {
             headers: [
@@ -99,50 +93,19 @@ class GoodnessFit extends Component {
         };
     }
 
-    getMultitumorData() {
-        const hdr_d = [
-                "Dose",
-                "Size",
-                "Observed",
-                "Expected",
-                "Estimated Probability",
-                "Scaled Residual",
-            ],
-            {store} = this.props,
-            gof = store.modalModel.results.gof,
-            dataset = store.modalDataset ? store.modalDataset : store.selectedDataset;
-
-        return {
-            headers: hdr_d,
-            colwidths: [17, 16, 16, 17, 17, 17],
-            data: dataset.doses.map((dose, i) => {
-                return [
-                    dose,
-                    dataset.ns[i],
-                    dataset.incidences[i],
-                    ff(gof.expected[i]),
-                    ff(gof.expected[i] / dataset.ns[i]),
-                    ff(gof.residual[i]),
-                ];
-            }),
-        };
-    }
-
     render() {
         const {store} = this.props,
             settings = store.modalModel.settings,
-            // MT has a different Dataset & dtype
+            model = store.modalModel,
             dataset = store.isMultiTumor ? store.modalDataset : store.selectedDataset,
             {dtype} = dataset;
         let data;
-        if (store.isMultiTumor) {
-            data = this.getMultitumorData(dtype, settings);
-        } else if (dtype == Dtype.DICHOTOMOUS) {
-            data = this.getDichotomousData();
+        if (store.isMultiTumor || dtype == Dtype.DICHOTOMOUS) {
+            data = this.getDichotomousData(dataset, model);
         } else if (isLognormal(settings.disttype)) {
-            data = this.getContinuousLognormalData(dtype);
+            data = this.getContinuousLognormalData(dataset, dtype, model);
         } else {
-            data = this.getContinuousNormalData(dtype);
+            data = this.getContinuousNormalData(dataset, dtype, model);
         }
 
         return (

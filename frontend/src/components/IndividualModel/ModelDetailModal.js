@@ -7,10 +7,8 @@ import * as dc from "@/constants/dataConstants";
 
 import Button from "../common/Button";
 import DoseResponsePlot from "../common/DoseResponsePlot";
-import ModelOptions from "../Output/Multitumor/ModelOptions";
 import {MsComboInfo, MsComboSummary} from "../Output/Multitumor/MsCombo";
 import MultitumorPlot from "../Output/Multitumor/MultitumorPlot";
-import ParameterSettings from "../Output/Multitumor/ParameterSettings";
 import BootstrapResults from "../Output/NestedDichotomous/BootstrapResults";
 import BootstrapRuns from "../Output/NestedDichotomous/BootstrapRuns";
 import LitterData from "../Output/NestedDichotomous/LitterData";
@@ -180,25 +178,28 @@ class MtModalBody extends Component {
                     <Col xl={4}>
                         <InfoTable />
                     </Col>
-                    <Col xl={4}>
-                        <ModelOptions />
+                    <Col xl={3}>
+                        <ModelOptionsTable dtype={dataset.dtype} model={model} />
+                    </Col>
+                    <Col xl={5}>
+                        <ParameterPriorTable
+                            parameters={model.results.parameters}
+                            priorClass={model.settings.priors.prior_class}
+                        />
                     </Col>
                     <Col xl={4}>
-                        <ParameterSettings model={model} />
-                    </Col>
-                    <Col xl={6}>
                         <Summary model={model} />
                     </Col>
-                    <Col xs={6}>
+                    <Col xs={8}>
                         <DoseResponsePlot
                             layout={outputStore.drIndividualMultitumorPlotLayout}
                             data={outputStore.drIndividualMultitumorPlotData}
                         />
                     </Col>
-                    <Col xl={6}>
+                    <Col xl={8}>
                         <ModelParameters parameters={model.results.parameters} />
                     </Col>
-                    <Col xl={6}>
+                    <Col xl={8}>
                         <GoodnessFit store={outputStore} />
                     </Col>
                     <Col xl={8}>
