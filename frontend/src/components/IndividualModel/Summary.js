@@ -23,9 +23,9 @@ class Summary extends Component {
                     <span key={0}>
                         <i>P</i>-value
                     </span>,
-                    ff(model.results.combined_pvalue),
+                    fractionalFormatter(model.results.combined_pvalue),
                 ],
-                ["d.f.", ff(model.results.dof)],
+                ["Model d.f.", ff(model.results.dof)],
                 [
                     <span key={1}>
                         Chi<sup>2</sup>
