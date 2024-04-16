@@ -7,7 +7,6 @@ import * as dc from "@/constants/dataConstants";
 
 import Button from "../common/Button";
 import DoseResponsePlot from "../common/DoseResponsePlot";
-import AnalysisOfDeviance from "../Output/Multitumor/AnalysisOfDeviance";
 import ModelOptions from "../Output/Multitumor/ModelOptions";
 import {MsComboInfo, MsComboSummary} from "../Output/Multitumor/MsCombo";
 import MultitumorPlot from "../Output/Multitumor/MultitumorPlot";
@@ -201,8 +200,8 @@ class MtModalBody extends Component {
                     <Col xl={6}>
                         <GoodnessFit store={outputStore} />
                     </Col>
-                    <Col xl={6}>
-                        <AnalysisOfDeviance model={model} />
+                    <Col xl={8}>
+                        <DichotomousDeviance store={outputStore} />
                     </Col>
                 </Row>
             </Modal.Body>
