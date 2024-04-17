@@ -16,7 +16,7 @@ pytest-django==4.8.0
 vcrpy==6.0.1
   urllib3==2.2.1
 pytest-vcr==1.0.2
-pytest-asyncio==0.23.4
+pytest-asyncio==0.23.6
 coverage==7.4.4
 
 # integration tests
