@@ -112,9 +112,9 @@ export const getResponse = dataset => {
     },
     getCdfLayout = function(dataset) {
         let layout = _.cloneDeep(doseResponseLayout);
-        layout.title.text = "BMD Cumulative distribution function";
+        layout.title.text = "BMD Cumulative Distribution Function";
         layout.xaxis.title.text = getDoseLabel(dataset);
-        layout.yaxis.title.text = "Percentile";
+        layout.yaxis.title.text = "Cumulative Probability";
         layout.yaxis.range = [0, 1];
         return layout;
     },
@@ -237,40 +237,6 @@ export const getResponse = dataset => {
         }
 
         return data;
-    },
-    getLollipopDataset = function(dataArray, modelArray, modelName) {
-        return {
-            x: dataArray,
-            y: modelArray,
-            mode: "line",
-            type: "scatter",
-            line: {
-                width: 5,
-                color: "#696969",
-            },
-            marker: {
-                size: 10,
-                color: ["#FFFFFF", "#0000FF", "#FFFFFF"],
-            },
-            name: modelName,
-        };
-    },
-    getLollipopPlotLayout = function(title, dataset) {
-        const layout = {
-            title: {
-                text: title,
-            },
-            margin: {l: 100, r: 5, t: 35, b: 65},
-            showlegend: false,
-            xaxis: {
-                showline: true,
-                title: getDoseLabel(dataset),
-            },
-            yaxis: {
-                showline: true,
-            },
-        };
-        return layout;
     },
     getConfig = function() {
         return {

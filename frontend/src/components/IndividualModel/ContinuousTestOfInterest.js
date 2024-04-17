@@ -22,7 +22,7 @@ class ContinuousTestOfInterest extends Component {
                 </colgroup>
                 <thead>
                     <tr className="bg-custom text-left">
-                        <th colSpan="4">Test of Interest</th>
+                        <th colSpan="4">Tests of Mean and Variance Fits</th>
                     </tr>
                     <tr>
                         <th>Test</th>
@@ -30,7 +30,7 @@ class ContinuousTestOfInterest extends Component {
                             LLR
                             <HelpTextPopover title="LLR" content="2 * Log(Likelihood Ratio)" />
                         </th>
-                        <th>Test DOF</th>
+                        <th>Test d.f.</th>
                         <th>
                             <i>P</i>-Value
                         </th>

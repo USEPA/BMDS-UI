@@ -4,7 +4,7 @@ from io import BytesIO
 import docx
 import pandas as pd
 import pytest
-from bmds.bmds3.recommender import RecommenderSettings
+from bmds.recommender import RecommenderSettings
 from django.urls import reverse
 from rest_framework.test import APIClient
 
@@ -263,7 +263,7 @@ class TestPolyKViewSet:
         response = client.post(url, polyk_dataset, format="json")
         assert response.status_code == 200
         # ensure that response is a valid workbook with two worksheets
-        data = pd.read_excel(response.content, sheet_name=["adjusted", "summary"])
+        data = pd.read_excel(BytesIO(response.content), sheet_name=["adjusted", "summary"])
         assert isinstance(data["adjusted"], pd.DataFrame)
         assert isinstance(data["summary"], pd.DataFrame)
 

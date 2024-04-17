@@ -67,7 +67,7 @@ class DatasetTable extends Component {
                                 <col key={i} width={width} />
                             ))}
                         </colgroup>
-                        <thead className="bg-custom">
+                        <thead className="bg-custom sticky-top">
                             <tr>
                                 {columnNames.map((column, i) => (
                                     <th key={i}>{columnHeaders[column]}</th>

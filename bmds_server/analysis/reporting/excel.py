@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import Any
 
 import pandas as pd
-from bmds.bmds3.sessions import BmdsSession
 from bmds.constants import Dtype
+from bmds.sessions import BmdsSession
 
 from ..executor import AnalysisSession, MultiTumorSession
 

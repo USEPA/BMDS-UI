@@ -8,10 +8,10 @@ from io import BytesIO
 import bmds
 import pandas as pd
 import reversion
-from bmds.bmds3.batch import BatchBase, BmdsSessionBatch, MultitumorBatch
-from bmds.bmds3.recommender.recommender import RecommenderSettings
-from bmds.bmds3.types.sessions import VersionSchema
+from bmds.batch import BatchBase, BmdsSessionBatch, MultitumorBatch
 from bmds.constants import ModelClass
+from bmds.recommender.recommender import RecommenderSettings
+from bmds.types.sessions import VersionSchema
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError

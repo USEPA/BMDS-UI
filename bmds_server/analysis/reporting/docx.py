@@ -5,9 +5,8 @@ from typing import TYPE_CHECKING
 
 import docx
 from bmds import __version__
-from bmds.bmds3.reporting import write_setting_p
 from bmds.datasets.transforms.polyk import PolyKAdjustment
-from bmds.reporting.styling import Report
+from bmds.reporting.styling import Report, write_setting_p
 from django.conf import settings
 from django.utils.timezone import now
 

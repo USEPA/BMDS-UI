@@ -2,10 +2,19 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
+import FloatingPointHover from "@/components/common/FloatingPointHover";
+
 class TwoColumnTable extends Component {
     render() {
         const {id, data, label, colwidths} = this.props,
-            widths = colwidths.map(d => `${d}%`);
+            widths = colwidths.map(d => `${d}%`),
+            formatPopover = function(value, raw_value) {
+                return _.isFinite(raw_value) ? (
+                    <FloatingPointHover value={raw_value} />
+                ) : (
+                    <span>{value}</span>
+                );
+            };
         return (
             <table id={id} className="table table-sm table-bordered">
                 <colgroup>
@@ -21,7 +30,7 @@ class TwoColumnTable extends Component {
                     {data.filter(_.isArrayLike).map((item, i) => (
                         <tr key={i}>
                             <td>{item[0]}</td>
-                            <td>{item[1]}</td>
+                            <td>{formatPopover(item[1], item[2])}</td>
                         </tr>
                     ))}
                 </tbody>

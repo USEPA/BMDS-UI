@@ -43,9 +43,8 @@ from textual.widgets import (
 )
 from whitenoise import WhiteNoise
 
-from bmds_server.main.settings.desktop import DATABASES
-
 from ..main.constants import get_app_home
+from ..main.settings.desktop import DATABASES
 
 logger = logging.getLogger(__name__)
 
@@ -178,21 +177,13 @@ class AppThread(Thread):
 
         self.stream.write("\nStart collectstatic\n")
         call_command(
-            "collectstatic",
-            interactive=False,
-            verbosity=3,
-            stdout=self.stream,
-            stderr=self.stream,
+            "collectstatic", interactive=False, verbosity=3, stdout=self.stream, stderr=self.stream
         )
         self.stream.write("\nEnd collectstatic\n")
 
         self.stream.write("\nStart migration\n")
         call_command(
-            "migrate",
-            interactive=False,
-            verbosity=3,
-            stdout=self.stream,
-            stderr=self.stream,
+            "migrate", interactive=False, verbosity=3, stdout=self.stream, stderr=self.stream
         )
         self.stream.write("\nEnd migration\n")
 
@@ -456,14 +447,15 @@ class BmdsTabs(Static):
             with TabPane("Config", id="config"):
                 yield ConfigTab()
 
-    @on(TabbedContent.TabActivated, "#tabs", tab="#app")
-    def switch_to_app(self) -> None:
-        self.query_one("#folder").update(f"[b]Data folder:[/b]\n  {get_data_folder()}")
-        self.query_one("#project").update(f"[b]Data/Project:[/b]\n  {get_project_filename()}")
+    #  TODO - investigate these commented out
+    # @on(TabbedContent.TabActivated, "#tabs", tab="#app")
+    # def switch_to_app(self) -> None:
+    #     self.query_one("#folder").update(f"[b]Data folder:[/b]\n  {get_data_folder()}")
+    #     self.query_one("#project").update(f"[b]Data/Project:[/b]\n  {get_project_filename()}")
 
-    @on(TabbedContent.TabActivated, "#tabs", tab="#config")
-    def switch_to_config(self) -> None:
-        self.query_one(ConfigTree).reload()
+    # @on(TabbedContent.TabActivated, "#tabs", tab="#config")
+    # def switch_to_config(self) -> None:
+    #     self.query_one(ConfigTree).reload()
 
 
 class BmdsDesktop(App):

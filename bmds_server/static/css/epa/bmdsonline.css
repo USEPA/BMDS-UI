@@ -1,28 +1,32 @@
-/* Global */
-:focus {
+/* disable big blue border in main content */
+#main-content :focus {
   outline: none !important;
 }
 
-/* this rule was disabled in the epa style; re-enable to header */
-header.l-header * {
-  -webkit-transition-duration: 200ms;
-  transition-duration: 200ms;
+/* disable global transitions */
+* {
+  -webkit-transition-duration: unset;
+  transition-duration: unset;
   -webkit-transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform;
   transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform;
   transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform;
   transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform, -webkit-box-shadow, -webkit-transform;
-  -webkit-transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1)
+  -webkit-transition-timing-function: unset;
+  transition-timing-function: unset;
 }
 
-/* Header */
-#search-box {
-  margin-top: 0px;
+/* EPA header menu items */
+.l-header__nav .menu__item > .menu__link {
+  font-size: 0.91rem !important;
 }
 
-/* override environment banner position */
-.env-banner {
-  margin: 0 10% 0 70%;
+/* usa-banner flag icon */
+.usa-banner__button[aria-expanded=true]::after {
+  -webkit-mask: url(/static/vendor/uswds/3.1.0/img/usa-icons/expand_less.svg) no-repeat center/contain;
+}
+
+.usa-banner__button[aria-expanded=false]::after {
+  -webkit-mask: url(/static/vendor/uswds/3.1.0/img/usa-icons/expand_more.svg) no-repeat center/contain;
 }
 
 /* Background fill */
@@ -37,14 +41,15 @@ table td {
 
 /* sidebar-cards */
 .card.pane {
-    border-color:#5b616b;
-    border-width: 1px 1px 4px 1px;
-    border-radius: 0;
+  border-color: #5b616b;
+  border-width: 1px 1px 4px 1px;
+  border-radius: 0;
 }
+
 .card.pane > .card-header {
-    border-color:#5b616b;
-    background-color: #5b616b;
-    border-radius: 0;
+  border-color: #5b616b;
+  background-color: #5b616b;
+  border-radius: 0;
 }
 
 /* always above toast container */

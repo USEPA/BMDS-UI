@@ -1,8 +1,8 @@
 import bmds
 import pytest
-from bmds.bmds3.types.continuous import ContinuousRiskType
-from bmds.bmds3.types.dichotomous import DichotomousRiskType
 from bmds.constants import M_Exponential, M_ExponentialM3, M_ExponentialM5
+from bmds.types.continuous import ContinuousRiskType
+from bmds.types.dichotomous import DichotomousRiskType
 
 from bmds_server.analysis import transforms
 

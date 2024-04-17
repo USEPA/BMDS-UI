@@ -5,6 +5,7 @@ if /I %1 == help goto :help
 if /I %1 == sync-dev goto :sync-dev
 if /I %1 == docs goto :docs
 if /I %1 == docs-serve goto :docs-serve
+if /I %1 == docs-all goto :docs-all
 if /I %1 == test goto :test
 if /I %1 == lint goto :lint
 if /I %1 == format goto :format
@@ -19,8 +20,9 @@ goto :help
 :help
 echo.Please use `make ^<target^>` where ^<target^> is one of
 echo.  sync-dev     sync dev environment after code checkout
-echo.  docs         make documentation
-echo.  docs-serve   serve documentation for writing
+echo.  docs         Build documentation {html}
+echo.  docs-serve   Realtime documentation preview
+echo.  docs-all     Build documentation {html, docx}
 echo.  test         perform both test-py and test-js
 echo.  test-py      run python tests
 echo.  test-js      run javascript tests
@@ -40,29 +42,40 @@ manage.py migrate
 goto :eof
 
 :docs
-mkdocs build -f docs/mkdocs.yml --strict
+rmdir /s /q docs\build
+sphinx-build -b html docs/source docs/build/html
 goto :eof
 
 :docs-serve
-mkdocs serve -f docs/mkdocs.yml -a localhost:8050
+rmdir /s /q docs\build
+sphinx-autobuild -b html docs/source docs/build/html --port 5555
+goto :eof
+
+:docs-all
+rmdir /s /q docs\build
+sphinx-build -b html docs/source docs/build/html
+sphinx-build -b singlehtml docs/source docs/build/singlehtml
+cd docs\build\singlehtml
+pandoc -s index.html -o pybmds.docx
+cd ../../..
 goto :eof
 
 :lint
-ruff format . --check && ruff .
+ruff format . --check && ruff check .
 npm --prefix .\frontend run lint
 goto :eof
 
 :format
-ruff format . && ruff . --fix --show-fixes
+ruff format . && ruff check . --fix --show-fixes
 npm --prefix .\frontend run format
 goto :eof
 
 :lint-py
-ruff format . --check && ruff .
+ruff format . --check && ruff check .
 goto :eof
 
 :format-py
-ruff format . && ruff . --fix --show-fixes
+ruff format . && ruff check . --fix --show-fixes
 goto :eof
 
 :lint-js

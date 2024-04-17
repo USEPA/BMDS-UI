@@ -4,6 +4,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
+import FloatingPointHover from "@/components/common/FloatingPointHover";
 import {BIN_LABELS} from "@/constants/logicConstants";
 import {getPValue, modelClasses, priorClass} from "@/constants/outputConstants";
 import {fractionalFormatter} from "@/utils/formatters";
@@ -210,11 +211,19 @@ class FrequentistRow extends Component {
                         rowIcon={rowIcon}
                         modelClasses={modelClasses}
                     />
-                    <td>{ff(results.summary.bmdl)}</td>
-                    <td>{ff(results.summary.bmd)}</td>
-                    <td>{ff(results.summary.bmdu)}</td>
+                    <td>
+                        <FloatingPointHover value={results.summary.bmdl} />
+                    </td>
+                    <td>
+                        <FloatingPointHover value={results.summary.bmd} />
+                    </td>
+                    <td>
+                        <FloatingPointHover value={results.summary.bmdu} />
+                    </td>
                     <td>{ff(results.combined_pvalue)}</td>
-                    <td>{ff(results.summary.aic)}</td>
+                    <td>
+                        <FloatingPointHover value={results.summary.aic} />
+                    </td>
                     <td>-</td>
                     <td>-</td>
                     <RecommendationTd
@@ -237,13 +246,21 @@ class FrequentistRow extends Component {
                     rowIcon={rowIcon}
                     modelClasses={modelClasses}
                 />
-                <td>{ff(results.bmdl)}</td>
-                <td>{ff(results.bmd)}</td>
-                <td>{ff(results.bmdu)}</td>
+                <td>
+                    <FloatingPointHover value={results.bmdl} />
+                </td>
+                <td>
+                    <FloatingPointHover value={results.bmd} />
+                </td>
+                <td>
+                    <FloatingPointHover value={results.bmdu} />
+                </td>
                 <td>{fractionalFormatter(getPValue(dataset.dtype, results))}</td>
-                <td>{ff(results.fit.aic)}</td>
-                <td>{ff(results.gof.roi)}</td>
+                <td>
+                    <FloatingPointHover value={results.fit.aic} />
+                </td>
                 <td>{ff(results.gof.residual[0])}</td>
+                <td>{ff(results.gof.roi)}</td>
                 <RecommendationTd
                     store={store}
                     data={data}
@@ -326,8 +343,8 @@ class FrequentistResultTable extends Component {
                             <i>P</i>-Value
                         </th>
                         <th>AIC</th>
-                        <th>Scaled Residual for Dose Group near BMD</th>
-                        <th>Scaled Residual for Control Dose Group</th>
+                        <th>Scaled Residual at Control</th>
+                        <th>Scaled Residual near BMD</th>
                         {store.recommendationEnabled ? (
                             <th>
                                 <Button

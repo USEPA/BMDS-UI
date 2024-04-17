@@ -26,7 +26,7 @@ jobs:
       with:
         repository: USEPA/bmds-private
         path: venv
-        ref: next
+        ref: main
         token: ${{ secrets.USEPA_BMDS_PRIVATE_PAT }}
     - uses: actions/setup-python@v4
       with:
@@ -55,8 +55,7 @@ jobs:
         export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib"
         sudo cp vendor/libnlopt.so /usr/local/lib/libnlopt.so.0
         sudo ln -s /lib/x86_64-linux-gnu/libgsl.so /usr/local/lib/libgsl.so.25
-        export "BMD_DLL=$GITHUB_WORKSPACE/venv/bmds/bin/BMDS330/libDRBMD.so"
-        echo $BMD_DLL
+        export "BMD_DLL=$GITHUB_WORKSPACE/venv/bmds/bmdscore.cpython-*-x86_64-linux-gnu.so"
         ldd $BMD_DLL
     - name: lint
       run: |
@@ -146,7 +145,7 @@ jobs:
       with:
         repository: USEPA/bmds-private
         path: venv
-        ref: next
+        ref: main
         token: ${{ secrets.USEPA_BMDS_PRIVATE_PAT }}
     - uses: actions/setup-python@v4
       with:
@@ -176,8 +175,7 @@ jobs:
         export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib"
         sudo cp vendor/libnlopt.so /usr/local/lib/libnlopt.so.0
         sudo ln -s /lib/x86_64-linux-gnu/libgsl.so /usr/local/lib/libgsl.so.25
-        export "BMD_DLL=$GITHUB_WORKSPACE/venv/bmds/bin/BMDS330/libDRBMD.so"
-        echo $BMD_DLL
+        export "BMD_DLL=$GITHUB_WORKSPACE/venv/bmds/bmdscore.cpython-*-x86_64-linux-gnu.so"
         ldd $BMD_DLL
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run integration tests

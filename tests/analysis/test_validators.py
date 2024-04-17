@@ -350,7 +350,7 @@ class TestDatasetValidation:
         # check incidence > n
         check = deepcopy(dataset)
         check["incidences"][0] = check["ns"][0] + 1
-        with pytest.raises(PydanticValidationError, match="Incidence cannot be greater than N"):
+        with pytest.raises(PydanticValidationError, match="Incidence > N"):
             datasets.MaxDichotomousDatasetSchema(**check)
 
         # check minimums
