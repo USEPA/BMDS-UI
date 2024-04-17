@@ -425,34 +425,34 @@ class BmdsTabs(Static):
         super().__init__(**kw)
 
     def compose(self) -> ComposeResult:
-        with TabbedContent(id="tabs"):
+        with TabbedContent(id="tabs", initial="app"):
             with TabPane("Application", id="app", classes="app"):
                 yield Container(
                     self._app.runner.widget,
                 )
+
                 yield Container(
-                    Label("", id="folder"),
-                    Label("", id="project"),
+                    Label(f"[b]Data folder:[/b]\n  {get_data_folder()}", id="folder"),
+                    Label(f"[b]Data/Project:[/b]\n  {get_project_filename()}", id="project"),
                     Label(f"[b]Port:[/b]\n  {self._app.config.port}", id="port"),
                     Label(f"[b]Host:[/b]\n  {self._app.config.host}", id="host"),
                     classes="app-info-box",
                 )
 
-            with TabPane("Logging"):
+            with TabPane("Logging", id="log"):
                 yield self._app.log_app.widget
 
             with TabPane("Config", id="config"):
                 yield ConfigTab()
 
-    #  TODO - investigate these commented out
-    # @on(TabbedContent.TabActivated, "#tabs", tab="#app")
-    # def switch_to_app(self) -> None:
-    #     self.query_one("#folder").update(f"[b]Data folder:[/b]\n  {get_data_folder()}")
-    #     self.query_one("#project").update(f"[b]Data/Project:[/b]\n  {get_project_filename()}")
+    @on(TabbedContent.TabActivated, "#tabs", pane="#app")
+    def switch_to_app(self) -> None:
+        self.query_one("#folder").update(f"[b]Data folder:[/b]\n  {get_data_folder()}")
+        self.query_one("#project").update(f"[b]Data/Project:[/b]\n  {get_project_filename()}")
 
-    # @on(TabbedContent.TabActivated, "#tabs", tab="#config")
-    # def switch_to_config(self) -> None:
-    #     self.query_one(ConfigTree).reload()
+    @on(TabbedContent.TabActivated, "#tabs", pane="#config")
+    def switch_to_config(self) -> None:
+        self.query_one(ConfigTree).reload()
 
 
 class BmdsDesktop(App):
