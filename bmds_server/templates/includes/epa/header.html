@@ -102,3 +102,16 @@
     </nav>
   </div>
 </header>
+<nav class="bmds-header navbar justify-content-between">
+    <h2><a href="{% url 'home' %}">{% if IS_DESKTOP %}Benchmark Dose Tools (BMDS) Desktop{% else %}Benchmark Dose Tools (BMDS) Online{% endif %}</a></h2>
+    <ul class="nav text-right">
+        {% if user.is_staff %}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ADMIN_ROOT}}{% url 'admin:index' %}">Admin</a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+            <a class="nav-link" href="{{CONTACT_US_EMAIL}}">CONTACT US</a>
+        </li>
+    </ul>
+</nav>

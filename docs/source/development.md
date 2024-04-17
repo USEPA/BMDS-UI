@@ -23,8 +23,8 @@ mkdir -p ~/dev
 cd ~/dev
 
 # clone webserver package and execution package
-git clone https://github.com/shapiromatron/bmds
-git clone https://github.com/shapiromatron/bmds-server
+git clone https://github.com/USEPA/bmds-private
+git clone https://github.com/USEPA/bmds-online-private
 
 # create virtual environment and install requirements
 cd ~/dev/bmds-server

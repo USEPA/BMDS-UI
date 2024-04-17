@@ -71,7 +71,7 @@ The same approach can be done in production, except please harden the deployment
 
 ## Configuration
 
-For configurable parameters, we use environment variables which are loaded in the application configuration at runtime.  See the example [configuration file](https://github.com/shapiromatron/bmds-server/blob/main/compose/example.env) for a complete example. Many variables directly map to settings which are commonly used in django; refer to django documentation for these settings. Additional details on application-specific variables are described below:
+For configurable parameters, we use environment variables which are loaded in the application configuration at runtime.  See the example [configuration file](https://github.com/USEPA/bmds-online-private/blob/main/compose/example.env) for a complete example. Many variables directly map to settings which are commonly used in django; refer to django documentation for these settings. Additional details on application-specific variables are described below:
 
 - `SESSION_DURATION` [int, default 28800 seconds or 8 hours]. The length of a user-session. After this duration is exceeded, the user must login for a new session.
 - `AUTH_PROVIDERS` [pipe-separated str of bmds_server.constants.AuthProvider, default "django"]. A list of providers which can be used for authentication. One or more providers can be used and pipe separated.

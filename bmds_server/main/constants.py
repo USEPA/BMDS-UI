@@ -15,6 +15,7 @@ class SkinStyle(IntEnum):
 
 def get_app_home() -> Path:
     app_home = Path.home()
+    # TODO - add bmds version to path?
     match platform.system():
         case "Windows":
             app_home = app_home / "AppData" / "Roaming" / "bmds"
