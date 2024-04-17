@@ -3,6 +3,8 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
+import Table from "@/components/common/Table";
+
 const getData = datasets => {
     const headers = ["Dose"],
         rows = [],
@@ -26,11 +28,7 @@ const getData = datasets => {
             }
         });
     });
-    return {
-        headers,
-        colWidths: _.fill(Array(headers.length), `${Math.round(100 / headers.length)}%`),
-        rows,
-    };
+    return {headers, rows};
 };
 
 @inject("outputStore")
@@ -43,34 +41,7 @@ class DatasetTable extends Component {
         if (!selectedFrequentist) {
             return null;
         }
-        const {multitumorDatasets} = store,
-            data = getData(multitumorDatasets);
-
-        return (
-            <table className="table table-sm">
-                <colgroup>
-                    {_.map(data.colWidths).map((value, idx) => (
-                        <col key={idx} width={value}></col>
-                    ))}
-                </colgroup>
-                <thead className="table-bordered">
-                    <tr className="bg-custom">
-                        {data.headers.map((text, idx) => (
-                            <th key={idx}>{text}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody className="table-bordered">
-                    {data.rows.map((rows, idx) => (
-                        <tr key={idx}>
-                            {rows.map((text, idx) => (
-                                <td key={idx}>{text}</td>
-                            ))}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        );
+        return <Table data={getData(store.multitumorDatasets)} />;
     }
 }
 DatasetTable.propTypes = {

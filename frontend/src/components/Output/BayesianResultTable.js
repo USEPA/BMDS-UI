@@ -3,6 +3,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
+import FloatingPointHover from "@/components/common/FloatingPointHover";
 import {maIndex, modelClasses} from "@/constants/outputConstants";
 import {ff, fractionalFormatter} from "@/utils/formatters";
 
@@ -59,9 +60,15 @@ class BayesianResultTable extends Component {
                                 <td>
                                     {ma ? fractionalFormatter(ma.results.posteriors[index]) : "-"}
                                 </td>
-                                <td>{ff(model.results.bmdl)}</td>
-                                <td>{ff(model.results.bmd)}</td>
-                                <td>{ff(model.results.bmdu)}</td>
+                                <td>
+                                    <FloatingPointHover value={model.results.bmdl} />
+                                </td>
+                                <td>
+                                    <FloatingPointHover value={model.results.bmd} />
+                                </td>
+                                <td>
+                                    <FloatingPointHover value={model.results.bmdu} />
+                                </td>
                                 <td>{ff(model.results.fit.bic_equiv)}</td>
                                 <td>{ff(model.results.gof.residual[0])}</td>
                                 <td>{ff(model.results.gof.roi)}</td>
@@ -83,9 +90,15 @@ class BayesianResultTable extends Component {
                             </td>
                             <td>-</td>
                             <td>-</td>
-                            <td>{ff(ma.results.bmdl)}</td>
-                            <td>{ff(ma.results.bmd)}</td>
-                            <td>{ff(ma.results.bmdu)}</td>
+                            <td>
+                                <FloatingPointHover value={ma.results.bmdl} />
+                            </td>
+                            <td>
+                                <FloatingPointHover value={ma.results.bmd} />
+                            </td>
+                            <td>
+                                <FloatingPointHover value={ma.results.bmdu} />
+                            </td>
                             <td>-</td>
                             <td>-</td>
                             <td>-</td>

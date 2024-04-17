@@ -46,7 +46,7 @@ class Output extends Component {
                 selectedFrequentist,
                 selectedBayesian,
             } = outputStore,
-            {isFuture, analysisSavedAndValidated} = outputStore.rootStore.mainStore;
+            {analysisSavedAndValidated} = outputStore.rootStore.mainStore;
 
         if (hasAnyError) {
             return (
@@ -146,27 +146,6 @@ class Output extends Component {
                                 data={outputStore.drBayesianPlotData}
                             />
                         </div>
-                    </div>
-                ) : null}
-
-                {isFuture && !outputStore.isMultiTumor ? (
-                    <div className="row py-2">
-                        {selectedFrequentist ? (
-                            <div className="col col-lg-6">
-                                <DoseResponsePlot
-                                    layout={outputStore.drFrequentistLollipopPlotLayout}
-                                    data={outputStore.drFrequentistLollipopPlotDataset}
-                                />
-                            </div>
-                        ) : null}
-                        {selectedBayesian ? (
-                            <div className="col col-lg-6">
-                                <DoseResponsePlot
-                                    layout={outputStore.drBayesianLollipopPlotLayout}
-                                    data={outputStore.drBayesianLollipopPlotDataset}
-                                />
-                            </div>
-                        ) : null}
                     </div>
                 ) : null}
 

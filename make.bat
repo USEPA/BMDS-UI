@@ -48,21 +48,21 @@ sphinx-build -M latexpdf docs/source docs/build/latex
 goto :eof
 
 :lint
-ruff format . --check && ruff .
+ruff format . --check && ruff check .
 npm --prefix .\frontend run lint
 goto :eof
 
 :format
-ruff format . && ruff . --fix --show-fixes
+ruff format . && ruff check . --fix --show-fixes
 npm --prefix .\frontend run format
 goto :eof
 
 :lint-py
-ruff format . --check && ruff .
+ruff format . --check && ruff check .
 goto :eof
 
 :format-py
-ruff format . && ruff . --fix --show-fixes
+ruff format . && ruff check . --fix --show-fixes
 goto :eof
 
 :lint-js

@@ -3,7 +3,6 @@ import {action, computed, observable, toJS} from "mobx";
 
 import {getHeaders} from "@/common";
 import {MODEL_MULTI_TUMOR, MODEL_NESTED_DICHOTOMOUS} from "@/constants/mainConstants";
-import {getNameFromDegrees} from "@/constants/modelConstants";
 import {maIndex, modelClasses} from "@/constants/outputConstants";
 import {
     bmaColor,
@@ -12,8 +11,6 @@ import {
     getDrBmdLine,
     getDrDatasetPlotData,
     getDrLayout,
-    getLollipopDataset,
-    getLollipopPlotLayout,
     hoverColor,
     selectedColor,
 } from "@/constants/plotting";
@@ -194,7 +191,7 @@ class OutputStore {
                 return "MS Combo";
             } else {
                 const dataset = this.modalDataset;
-                return `${dataset.metadata.name} - ${getNameFromDegrees(model)}`;
+                return `${dataset.metadata.name} - ${model.name}`;
             }
         } else {
             return this.drModelModalIsMA ? "Model Average" : model.name;
@@ -360,13 +357,8 @@ class OutputStore {
 
     @computed get drIndividualMultitumorPlotData() {
         // a single model, shown in the modal
-        const model = this.modalModel,
-            modelMock = {name: getNameFromDegrees(model), results: _.cloneDeep(model)},
-            data = [
-                getDrDatasetPlotData(this.modalDataset),
-                ...getDrBmdLine(modelMock, hoverColor),
-            ];
-        return data;
+        const model = this.modalModel;
+        return [getDrDatasetPlotData(this.modalDataset), ...getDrBmdLine(model, hoverColor)];
     }
 
     @action.bound drPlotAddHover(model) {
@@ -378,46 +370,6 @@ class OutputStore {
 
     @action.bound drPlotRemoveHover() {
         this.drModelHover = null;
-    }
-
-    @computed get drFrequentistLollipopPlotDataset() {
-        let plotData = [];
-        let models = this.selectedOutput.frequentist.models;
-        models.map(model => {
-            let dataArray = [];
-            let modelArray = new Array(3);
-            modelArray.fill(model.name);
-            dataArray.push(model.results.bmdl);
-            dataArray.push(model.results.bmd);
-            dataArray.push(model.results.bmdu);
-            let data = getLollipopDataset(dataArray, modelArray, model.name);
-            plotData.push(data);
-        });
-        return plotData;
-    }
-
-    @computed get drBayesianLollipopPlotDataset() {
-        let plotData = [];
-        let models = this.selectedOutput.bayesian.models;
-        models.map(model => {
-            let dataArray = [];
-            let modelArray = new Array(3);
-            modelArray.fill(model.name);
-            dataArray.push(model.results.bmdl);
-            dataArray.push(model.results.bmd);
-            dataArray.push(model.results.bmdu);
-            let data = getLollipopDataset(dataArray, modelArray, model.name);
-            plotData.push(data);
-        });
-        return plotData;
-    }
-
-    @computed get drFrequentistLollipopPlotLayout() {
-        return getLollipopPlotLayout("Frequentist bmd/bmdl/bmdu Plot", this.selectedDataset);
-    }
-
-    @computed get drBayesianLollipopPlotLayout() {
-        return getLollipopPlotLayout("Bayesian bmd/bmdl/bmdu Plot", this.selectedDataset);
     }
     // end dose-response plotting data methods
 
