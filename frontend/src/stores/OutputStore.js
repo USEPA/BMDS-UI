@@ -5,15 +5,17 @@ import {getHeaders} from "@/common";
 import {MODEL_MULTI_TUMOR, MODEL_NESTED_DICHOTOMOUS} from "@/constants/mainConstants";
 import {maIndex, modelClasses} from "@/constants/outputConstants";
 import {
+    black,
     bmaColor,
     colorCodes,
     getBayesianBMDLine,
+    getBmdDiamond,
+    getCsfLine,
     getDrBmdLine,
     getDrDatasetPlotData,
     getDrLayout,
     hoverColor,
     selectedColor,
-    getBmdDiamond,
 } from "@/constants/plotting";
 
 class OutputStore {
@@ -359,22 +361,20 @@ class OutputStore {
     @computed get drIndividualMultitumorPlotData() {
         // a single model, shown in the modal
         const model = this.modalModel,
-        data = [getDrDatasetPlotData(this.modalDataset), ...getDrBmdLine(model, hoverColor)];
+            data = [getDrDatasetPlotData(this.modalDataset), ...getDrBmdLine(model, hoverColor)];
 
         if (model.results.bmdl) {
-            // add slope factor
-            data.push({
-                x: [0, model.results.bmdl],
-                y: [0, model.results.plotting.bmd_y],
-                name: "Cancer Slope Factor",
-                legendgroup: "Cancer Slope Factor",
-                line: {
-                    width: 5,
-                    color: "#000000",
-                    dash: "dot",
-                },
-            });
-            data.push(getBmdDiamond("Cancer Slope Factor", model.results.bmd, model.results.bmdl, model.results.bmdu, model.results.plotting.bmd_y, "#000000"));
+            data.push(
+                getBmdDiamond(
+                    model.name,
+                    model.results.bmd,
+                    model.results.bmdl,
+                    model.results.bmdu,
+                    model.results.plotting.bmd_y,
+                    hoverColor
+                )
+            );
+            data.push(getCsfLine(model.results.bmdl, model.results.plotting.bmd_y, black));
         }
 
         return data;
