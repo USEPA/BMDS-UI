@@ -1,4 +1,4 @@
-.PHONY: build clean clean-test clean-pyc clean-build docs loc help lint lint-py lint-js format format-py format-js sync-dev
+.PHONY: build docs docs-clean docs-serve docs-all clean clean-test clean-pyc clean-build loc help lint lint-py lint-js format format-py format-js sync-dev
 .DEFAULT_GOAL := help
 
 define BROWSER_PYSCRIPT
@@ -61,8 +61,28 @@ coverage: ## Run test coverage
 	coverage html -d coverage_report
 	$(BROWSER) coverage_report/index.html
 
-docs: ## Build documentation
-	cd docs; make html
+docs: ## Build documentation {html}
+	@$(MAKE) -C docs clean
+	@$(MAKE) -C docs html
+	@echo "HTML: \"docs/build/html/index.html\""
+
+docs-clean: ## Clean documentation
+	@$(MAKE) -C docs clean
+
+docs-serve: ## Realtime documentation preview
+	sphinx-autobuild -b html docs/source docs/build/html --port 5555
+
+docs-all: ## Build documentation {html, pdf, docx}
+	@$(MAKE) -C docs clean
+	@$(MAKE) -C docs html
+	@$(MAKE) -C docs singlehtml
+	@$(MAKE) -C docs latexpdf
+	@mkdir -p docs/build/docx
+	@cd docs/build/singlehtml; pandoc -s index.html -o ../docx/pybmds.docx
+	@echo "HTML: \"docs/build/html/index.html\""
+	@echo "Single Page HTML: \"docs/build/singlehtml/index.html\""
+	@echo "Microsoft Word:  \"docs/build/docx/pybmds.docx\""
+	@echo "PDF: \"docs/build/latex/pybmds.pdf\""
 
 loc: ## Generate lines of code report
 	@cloc \
