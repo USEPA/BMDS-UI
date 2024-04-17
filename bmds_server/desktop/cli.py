@@ -54,7 +54,7 @@ APP_ROOT = Path(__file__).parent
 def load_config():
     """Load config file."""
     config = configparser.ConfigParser()
-    config.read(Path(APP_ROOT / "config.ini"))
+    config.read(Path(APP_ROOT / "config.ini"))  # TODO - deal w/ not found
     return config
 
 
@@ -100,7 +100,7 @@ class QuitModal(ModalScreen):
 class UpdateModal(ModalScreen):
     """Modal with a dialog to check for updates."""
 
-    # TODO: check for udates
+    # TODO: check for updates
 
     @on(Button.Pressed, "#btn-update-download")
     def get_update(self):
@@ -372,6 +372,7 @@ class FileNameContainer(Container):
         config["desktop"]["file_name"] = str(db_name)
 
         try:
+            # TODO - get config and load or default? remove from CI/CD
             with open(Path(APP_ROOT / "config.ini"), "w") as configfile:
                 config.write(configfile)
             cf.touch()
@@ -388,11 +389,7 @@ class FileNameContainer(Container):
                 severity="information",
             )
         except Exception as e:
-            self.notify(
-                f"{e}",
-                title="ERROR",
-                severity="error",
-            )
+            self.notify(f"{e}", title="ERROR", severity="error")
 
 
 class ConfigTab(Static):
