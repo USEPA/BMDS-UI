@@ -21,7 +21,7 @@ jobs:
     steps:
     - name: Checkout bmds-server
       uses: actions/checkout@v3
-    - name: Checkout bmds@next
+    - name: Checkout bmds@main
       uses: actions/checkout@v3
       with:
         repository: USEPA/bmds-private
@@ -140,7 +140,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Checkout bmds@next
+    - name: Checkout bmds@main
       uses: actions/checkout@v3
       with:
         repository: USEPA/bmds-private
