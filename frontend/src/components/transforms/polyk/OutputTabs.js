@@ -7,7 +7,33 @@ import Tabs from "react-bootstrap/Tabs";
 import Plot from "react-plotly.js";
 
 import ClipboardButton from "@/components/common/ClipboardButton";
-import DataFrameTable from "@/components/common/DataFrameTable";
+import Table from "@/components/common/Table";
+
+const summaryTable = function(df) {
+    return (
+        <Table
+            data={{
+                headers: [
+                    "Dose",
+                    "N",
+                    "Adjusted N",
+                    "Incidence",
+                    "Proportion",
+                    "Adjusted Proportion",
+                ],
+                rows: _.range(df.dose.length).map(i => [
+                    df.dose[i],
+                    df.n[i],
+                    df.adj_n[i].toFixed(4),
+                    df.incidence[i],
+                    df.proportion[i],
+                    df.adj_proportion[i].toFixed(4),
+                ]),
+                tblClasses: "table table-sm table-striped table-hover text-right",
+            }}
+        />
+    );
+};
 
 @inject("store")
 @observer
@@ -147,21 +173,7 @@ class OutputTabs extends Component {
                     window.dispatchEvent(new Event("resize"));
                 }}>
                 <Tab eventKey="summary" title="Summary">
-                    <DataFrameTable
-                        data={df2}
-                        columns={[
-                            "dose",
-                            "n",
-                            "adj_n",
-                            "incidence",
-                            "proportion",
-                            "adj_proportion",
-                        ]}
-                        formatters={{
-                            adj_n: v => v.toFixed(4),
-                            adj_proportion: v => v.toFixed(4),
-                        }}
-                    />
+                    {summaryTable(df2)}
                     <div className="d-flex flex-row-reverse">
                         <ClipboardButton
                             text="Copy Data for BMDS Modeling"
@@ -180,28 +192,19 @@ class OutputTabs extends Component {
                     <RawDataPlot />
                 </Tab>
                 <Tab eventKey="table" title="Table">
-                    <DataFrameTable
-                        data={df2}
-                        columns={[
-                            "dose",
-                            "n",
-                            "adj_n",
-                            "incidence",
-                            "proportion",
-                            "adj_proportion",
-                        ]}
-                        formatters={{
-                            adj_n: v => v.toFixed(4),
-                            adj_proportion: v => v.toFixed(4),
-                        }}
-                    />
+                    {summaryTable(df2)}
                 </Tab>
-                <Tab eventKey="data" title="Data" style={{maxHeight: "50vh", overflowY: "scroll"}}>
-                    <DataFrameTable
-                        data={df}
-                        columns={["dose", "day", "has_tumor", "weight"]}
-                        formatters={{
-                            weight: v => v.toFixed(4),
+                <Tab eventKey="data" title="Data" style={{maxHeight: "70vh", overflowY: "scroll"}}>
+                    <Table
+                        data={{
+                            headers: ["Dose", "Day", "Has Tumor", "Weight"],
+                            rows: _.range(df.dose.length).map(i => [
+                                df.dose[i],
+                                df.day[i],
+                                df.has_tumor[i],
+                                df.weight[i].toFixed(4),
+                            ]),
+                            tblClasses: "table table-sm table-striped table-hover text-right",
                         }}
                     />
                 </Tab>
