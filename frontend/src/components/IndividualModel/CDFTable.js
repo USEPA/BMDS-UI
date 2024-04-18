@@ -10,13 +10,13 @@ class CDFTable extends Component {
     render() {
         const {bmd_dist} = this.props;
         return (
-            <table className="table table-sm table-bordered text-right">
+            <table className="table table-sm table-bordered text-right col-l-1">
                 <colgroup>
                     <col width="50%" />
                     <col width="50%" />
                 </colgroup>
                 <thead className="sticky-top">
-                    <tr className="bg-custom text-left">
+                    <tr className="bg-custom">
                         <th colSpan="2">CDF</th>
                     </tr>
                     <tr>

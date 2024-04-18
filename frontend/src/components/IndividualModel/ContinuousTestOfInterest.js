@@ -21,7 +21,7 @@ class ContinuousTestOfInterest extends Component {
                     <col width="25%" />
                 </colgroup>
                 <thead>
-                    <tr className="bg-custom text-left">
+                    <tr className="bg-custom">
                         <th colSpan="4">Tests of Mean and Variance Fits</th>
                     </tr>
                     <tr>

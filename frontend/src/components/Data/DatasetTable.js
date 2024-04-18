@@ -3,18 +3,13 @@ import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
+import Table from "@/components/common/Table";
 import {columnHeaders, columns} from "@/constants/dataConstants";
 import {Dtype} from "@/constants/dataConstants";
 
 const dataRows = (dataset, columnNames) => {
         return _.range(dataset.doses.length).map(rowIdx => {
-            return (
-                <tr key={rowIdx}>
-                    {columnNames.map((column, colIdx) => {
-                        return <td key={colIdx}>{dataset[column][rowIdx]}</td>;
-                    })}
-                </tr>
-            );
+            return columnNames.map(column => dataset[column][rowIdx]);
         });
     },
     individualDataRows = dataset => {
@@ -28,17 +23,8 @@ const dataRows = (dataset, columnNames) => {
                 return _.filter(data, resp => resp.dose === dose)
                     .map(d => d.response.toString())
                     .join(", ");
-            }),
-            rows = _.zip(doses, responses);
-
-        return rows.map((row, i) => {
-            return (
-                <tr key={i}>
-                    <td>{row[0]}</td>
-                    <td>{row[1]}</td>
-                </tr>
-            );
-        });
+            });
+        return _.zip(doses, responses);
     };
 
 @observer
@@ -46,13 +32,17 @@ class DatasetTable extends Component {
     render() {
         const {dataset} = this.props,
             columnNames = columns[dataset.dtype],
-            width = `${100 / columnNames.length}%`,
             isIndividual = dataset.dtype === Dtype.CONTINUOUS_INDIVIDUAL,
             nRows = dataset.doses.length,
             divStyle =
                 !isIndividual && nRows > 10
                     ? {height: "50vh", overflowY: "auto", resize: "vertical"}
-                    : {};
+                    : {},
+            data = {
+                headers: columnNames.map(d => columnHeaders[d]),
+                rows: isIndividual ? individualDataRows(dataset) : dataRows(dataset, columnNames),
+                tblClasses: "table table-sm table-bordered text-right",
+            };
 
         return (
             <>
@@ -61,25 +51,7 @@ class DatasetTable extends Component {
                     {dataset.metadata.name}
                 </div>
                 <div style={divStyle}>
-                    <table className="table table-sm table-bordered text-right">
-                        <colgroup>
-                            {columnNames.map((d, i) => (
-                                <col key={i} width={width} />
-                            ))}
-                        </colgroup>
-                        <thead className="bg-custom sticky-top">
-                            <tr>
-                                {columnNames.map((column, i) => (
-                                    <th key={i}>{columnHeaders[column]}</th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {isIndividual
-                                ? individualDataRows(dataset)
-                                : dataRows(dataset, columnNames)}
-                        </tbody>
-                    </table>
+                    <Table data={data} />
                 </div>
             </>
         );

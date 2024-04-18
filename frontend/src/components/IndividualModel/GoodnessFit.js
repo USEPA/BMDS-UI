@@ -2,13 +2,12 @@ import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
+import Table from "@/components/common/Table";
 import {Dtype} from "@/constants/dataConstants";
 import {isLognormal} from "@/constants/modelConstants";
 import {ff} from "@/utils/formatters";
 
-@observer
-class GoodnessFit extends Component {
-    getDichotomousData(dataset, model) {
+const getDichotomousData = function(dataset, model) {
         const gof = model.results.gof;
         return {
             headers: [
@@ -19,8 +18,8 @@ class GoodnessFit extends Component {
                 "Estimated Probability",
                 "Scaled Residual",
             ],
-            colwidths: [17, 16, 16, 17, 17, 17],
-            data: dataset.doses.map((dose, i) => {
+            colWidths: [17, 16, 16, 17, 17, 17],
+            rows: dataset.doses.map((dose, i) => {
                 return [
                     dose,
                     dataset.ns[i],
@@ -31,9 +30,8 @@ class GoodnessFit extends Component {
                 ];
             }),
         };
-    }
-
-    getContinuousNormalData(dataset, dtype, model) {
+    },
+    getContinuousNormalData = function(dataset, dtype, model) {
         const gof = model.results.gof,
             useFF = dtype === Dtype.CONTINUOUS_INDIVIDUAL;
         return {
@@ -46,11 +44,11 @@ class GoodnessFit extends Component {
                 "Model Fitted SD",
                 "Scaled Residual",
             ],
-            colwidths: [1, 1, 1, 1, 1, 1, 1],
-            data: dataset.doses.map((dose, i) => {
+            colWidths: [1, 1, 1, 1, 1, 1, 1],
+            rows: gof.dose.map((item, i) => {
                 return [
-                    dose,
-                    dataset.ns[i],
+                    item,
+                    gof.size[i],
                     useFF ? ff(gof.obs_mean[i]) : gof.obs_mean[i],
                     ff(gof.est_mean[i]),
                     useFF ? ff(gof.obs_sd[i]) : gof.obs_sd[i],
@@ -59,9 +57,8 @@ class GoodnessFit extends Component {
                 ];
             }),
         };
-    }
-
-    getContinuousLognormalData(dataset, dtype, model) {
+    },
+    getContinuousLognormalData = function(dataset, dtype, model) {
         const gof = model.results.gof,
             useFF = dtype === Dtype.CONTINUOUS_INDIVIDUAL;
         return {
@@ -76,8 +73,8 @@ class GoodnessFit extends Component {
                 "Model Fitted GSD",
                 "Scaled Residual",
             ],
-            colwidths: [10, 10, 10, 12, 12, 12, 10, 12, 12],
-            data: dataset.doses.map((dose, i) => {
+            colWidths: [10, 10, 10, 12, 12, 12, 10, 12, 12],
+            rows: dataset.doses.map((dose, i) => {
                 return [
                     dose,
                     dataset.ns[i],
@@ -91,8 +88,10 @@ class GoodnessFit extends Component {
                 ];
             }),
         };
-    }
+    };
 
+@observer
+class GoodnessFit extends Component {
     render() {
         const {store} = this.props,
             settings = store.modalModel.settings,
@@ -101,43 +100,16 @@ class GoodnessFit extends Component {
             {dtype} = dataset;
         let data;
         if (store.isMultiTumor || dtype == Dtype.DICHOTOMOUS) {
-            data = this.getDichotomousData(dataset, model);
+            data = getDichotomousData(dataset, model);
         } else if (isLognormal(settings.disttype)) {
-            data = this.getContinuousLognormalData(dataset, dtype, model);
+            data = getContinuousLognormalData(dataset, dtype, model);
         } else {
-            data = this.getContinuousNormalData(dataset, dtype, model);
+            data = getContinuousNormalData(dataset, dtype, model);
         }
+        data.tblClasses = "table table-sm table-bordered text-right col-l-1";
+        data.subheader = "Goodness of Fit";
 
-        return (
-            <table className="table table-sm table-bordered text-right">
-                <colgroup>
-                    {data.colwidths.map((d, i) => (
-                        <col key={i} width={`${d}%`} />
-                    ))}
-                </colgroup>
-                <thead>
-                    <tr className="bg-custom text-left">
-                        <th colSpan={data.headers.length}>Goodness of Fit</th>
-                    </tr>
-                    <tr>
-                        {data.headers.map((d, i) => (
-                            <th key={i}>{d}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.data.map((row, i) => {
-                        return (
-                            <tr key={i}>
-                                {row.map((cell, j) => (
-                                    <td key={j}>{cell}</td>
-                                ))}
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
-        );
+        return <Table data={data} />;
     }
 }
 GoodnessFit.propTypes = {
