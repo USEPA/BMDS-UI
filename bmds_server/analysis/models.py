@@ -339,7 +339,7 @@ class Analysis(models.Model):
 
     def default_input(self) -> dict:
         return {
-            "bmds_version": bmds.constants.BMDS330,  # TODO - change?
+            "bmds_version": settings.BMDS_VERSION,
             "dataset_type": ModelClass.CONTINUOUS,
             "datasets": [],
             "models": {},

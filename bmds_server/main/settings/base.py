@@ -234,3 +234,5 @@ INCLUDE_ADMIN = bool(os.environ.get("INCLUDE_ADMIN", "True") == "True")
 INCLUDE_BETA_FEATURES = bool(os.environ.get("INCLUDE_BETA", "False") == "True")
 IS_DESKTOP = False
 IS_TESTING = False
+
+BMDS_VERSION = "24.1a"  # TODO - current BMDS version

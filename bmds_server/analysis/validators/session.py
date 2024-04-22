@@ -6,12 +6,10 @@ from pydantic import BaseModel, Field
 
 from ...common.validation import pydantic_validate
 
-_versions = Literal[bmds.constants.BMDS330]
-
 
 class BaseSession(BaseModel):
     id: int | str | None = None
-    bmds_version: _versions
+    bmds_version: Literal["BMDS330", "23.2", settings.BMDS_VERSION]
     description: str = ""
     dataset_type: bmds.constants.ModelClass
 

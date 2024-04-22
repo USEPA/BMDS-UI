@@ -1,4 +1,4 @@
-export const VERSION_330 = "BMDS330",
+export const VERSION = "24.1a", // TODO - current BMDS version
     MODEL_CONTINUOUS = "C",
     MODEL_DICHOTOMOUS = "D",
     BAYESIAN = "bayesian",
