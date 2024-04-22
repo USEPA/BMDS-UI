@@ -20,7 +20,7 @@ def _missing_field(err, missing_field: str):
 class TestInputValidation:
     def test_bmds3_partial(self):
         data: dict[str, Any] = {
-            "bmds_version": bmds.constants.BMDS330,
+            "bmds_version": "BMDS330",
             "dataset_type": bmds.constants.CONTINUOUS,
         }
 
@@ -90,7 +90,7 @@ class TestInputValidation:
 
     def test_nested_dichotomous(self, nested_dichotomous_datasets):
         data: dict[str, Any] = {
-            "bmds_version": bmds.constants.BMDS330,
+            "bmds_version": "BMDS330",
             "dataset_type": bmds.constants.NESTED_DICHOTOMOUS,
         }
         assert validators.validate_input(data, partial=True) is None
@@ -135,7 +135,7 @@ class TestInputValidation:
 
     def test_multi_tumor(self):
         data: dict[str, Any] = {
-            "bmds_version": bmds.constants.BMDS330,
+            "bmds_version": "BMDS330",
             "dataset_type": bmds.constants.MULTI_TUMOR,
         }
 
