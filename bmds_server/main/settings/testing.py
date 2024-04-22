@@ -18,3 +18,4 @@ AUTH_PROVIDERS = {AuthProvider.django, AuthProvider.external}
 
 ALWAYS_SHOW_FUTURE = False
 IS_DESKTOP = False
+IS_TESTING = True
