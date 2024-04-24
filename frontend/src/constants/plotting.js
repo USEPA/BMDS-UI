@@ -119,12 +119,17 @@ export const getResponse = dataset => {
         return layout;
     },
     getDrDatasetPlotData = function(dataset) {
-        let errorBars, hovertemplate;
+        let errorBars, hovertemplate, name;
         if (dataset.dtype == Dtype.CONTINUOUS) {
             errorBars = continuousErrorBars(dataset);
-        }
-        if (dataset.dtype == Dtype.DICHOTOMOUS) {
+            name = "Observed Mean ± 95% CI";
+        } else if (dataset.dtype == Dtype.CONTINUOUS_INDIVIDUAL) {
+            name = "Observed";
+        } else if (dataset.dtype == Dtype.DICHOTOMOUS) {
             errorBars = dichotomousErrorBars(dataset);
+            name = "Fraction Affected ± 95% CI";
+        } else if (dataset.dtype == Dtype.NESTED_DICHOTOMOUS) {
+            name = "Fraction Affected";
         }
         if (errorBars) {
             hovertemplate = "%{y:.3f} (%{customdata[0]:.3f}, %{customdata[1]:.3f})<extra></extra>";
@@ -140,7 +145,7 @@ export const getResponse = dataset => {
             error_y: errorBars,
             customdata: errorBars ? errorBars.bounds : undefined,
             hovertemplate,
-            name: "Response",
+            name,
         };
     },
     getBmdDiamond = function(name, bmd, bmdl, bmdu, bmd_y, hexColor) {
