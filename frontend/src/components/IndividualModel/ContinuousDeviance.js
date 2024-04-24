@@ -24,7 +24,7 @@ class ContinuousDeviance extends Component {
                     </tr>
                     <tr>
                         <th>Model</th>
-                        <th>-2* Log(Likelihood Ratio)</th>
+                        <th>Log-Likelihood</th>
                         <th># of Parameters</th>
                         <th>AIC</th>
                     </tr>

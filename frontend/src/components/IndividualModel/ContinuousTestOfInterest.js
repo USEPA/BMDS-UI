@@ -4,8 +4,6 @@ import React, {Component} from "react";
 
 import {ff, fractionalFormatter} from "@/utils/formatters";
 
-import HelpTextPopover from "../common/HelpTextPopover";
-
 @observer
 class ContinuousTestOfInterest extends Component {
     render() {
@@ -26,10 +24,7 @@ class ContinuousTestOfInterest extends Component {
                     </tr>
                     <tr>
                         <th>Test</th>
-                        <th>
-                            LLR
-                            <HelpTextPopover title="LLR" content="2 * Log(Likelihood Ratio)" />
-                        </th>
+                        <th>-2 * Log(Likelihood Ratio)</th>
                         <th>Test d.f.</th>
                         <th>
                             <i>P</i>-Value

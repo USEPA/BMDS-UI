@@ -26,7 +26,7 @@ class DichotomousDeviance extends Component {
                     </tr>
                     <tr>
                         <th>Model</th>
-                        <th>-2* Log(Likelihood Ratio)</th>
+                        <th>Log-Likelihood</th>
                         <th># Parameters</th>
                         <th>Deviance</th>
                         <th>Test d.f.</th>

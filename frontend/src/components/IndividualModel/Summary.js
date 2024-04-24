@@ -43,7 +43,7 @@ class Summary extends Component {
                 ["BMDL", ff(results.bmdl), results.bmdl],
                 ["BMDU", ff(results.bmdu), results.bmdu],
                 ["AIC", ff(results.fit.aic), results.fit.aic],
-                ["-2* Log(Likelihood Ratio)", ff(results.fit.loglikelihood)],
+                ["Log-Likelihood", ff(results.fit.loglikelihood)],
                 [
                     <span key={0}>
                         <i>P</i>-value
