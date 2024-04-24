@@ -45,7 +45,7 @@ const getModelBinLabel = function(output, index) {
             fns.push({
                 index: recommendedModelIndex,
                 icon: icons[fns.length],
-                text: "Recommended model",
+                text: "BMDS recommended best fitting model",
                 class: "table-info",
             });
         }
