@@ -57,7 +57,7 @@ def build_docx(
 
     bmds_version = analysis.get_bmds_version()
     if bmds_version:
-        write_setting_p(report, "BMDS version: ", f"{bmds_version.pretty} ({bmds_version.dll})")
+        write_setting_p(report, "BMDS version: ", f"{bmds_version.python} ({bmds_version.dll})")
 
     write_setting_p(report, "BMDS Online version: ", str(settings.COMMIT))
 

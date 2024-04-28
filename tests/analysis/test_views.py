@@ -1,12 +1,13 @@
 import pytest
 from django.http.response import Http404
-from django.test import Client
+from django.test import Client, RequestFactory
 from django.urls import reverse
 from django.utils.timezone import now
 from pytest_django.asserts import assertTemplateNotUsed, assertTemplateUsed
 
 from bmds_server.analysis.models import Analysis
-from bmds_server.analysis.views import Analytics, get_analysis_or_404
+from bmds_server.analysis.validators.session import BmdsVersion
+from bmds_server.analysis.views import Analytics, DesktopHome, get_analysis_or_404
 
 
 @pytest.mark.django_db
@@ -69,6 +70,7 @@ class TestAnalysisDetail:
                 "executeUrl": f"/api/v1/analysis/{pk}/execute/",
                 "executeResetUrl": f"/api/v1/analysis/{pk}/execute-reset/",
                 "deleteDateStr": "June 14, 2022",
+                "bmdsVersion": BmdsVersion.latest(),
                 "collections": [],
             },
         }
@@ -128,3 +130,11 @@ class TestAnalytics:
         resp = client.get(url)
         assert resp.status_code == 200
         assertTemplateUsed(resp, template)
+
+
+@pytest.mark.django_db
+class TestDesktopHome:
+    def test_views(self):
+        request = RequestFactory().get(reverse("home"))
+        response = DesktopHome.as_view()(request)
+        assert response.status_code == 200

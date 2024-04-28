@@ -64,7 +64,7 @@ class MainStore {
             editKey,
             partial: true,
             data: {
-                bmds_version: mc.VERSION_330,
+                bmds_version: this.config.editSettings.bmdsVersion,
                 analysis_name: this.analysis_name,
                 analysis_description: this.analysis_description,
                 dataset_type: this.model_type,

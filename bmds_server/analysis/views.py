@@ -22,6 +22,7 @@ from django.views.generic import (
 from . import forms, models
 from .reporting.analytics import get_cached_analytics
 from .utils import get_citation
+from .validators.session import BmdsVersion
 
 
 class Home(TemplateView):
@@ -152,6 +153,7 @@ class AnalysisDetail(DetailView):
                 "executeResetUrl": self.object.get_api_execute_reset_url(),
                 "deleteDateStr": self.object.deletion_date_str,
                 "deletionDaysUntilDeletion": self.object.days_until_deletion,
+                "bmdsVersion": BmdsVersion.latest(),
                 "collections": models.Collection.opts(),
             }
         return context

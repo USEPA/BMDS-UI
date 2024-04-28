@@ -192,7 +192,8 @@ class AppThread(Thread):
             self.server = make_server(self.host, self.port, application)
             url = f"http://{self.host}:{self.port}"
             self.stream.write(f"\nStart {url}\n\n")
-            open_new_tab(url)
+            if not settings.IS_TESTING:
+                open_new_tab(url)
             try:
                 self.server.serve_forever()
             except KeyboardInterrupt:

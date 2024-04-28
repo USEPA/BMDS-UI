@@ -1,4 +1,5 @@
-from typing import Any, Literal
+from enum import StrEnum
+from typing import Any, Self
 
 import bmds
 from django.conf import settings
@@ -6,12 +7,20 @@ from pydantic import BaseModel, Field
 
 from ...common.validation import pydantic_validate
 
-_versions = Literal[bmds.constants.BMDS330]
+
+class BmdsVersion(StrEnum):
+    BMDS330: str = "BMDS330"
+    BMDS232: str = "23.2"
+    BMDS24: str = "24.1a"
+
+    @classmethod
+    def latest(cls) -> Self:
+        return list(cls)[-1]
 
 
 class BaseSession(BaseModel):
     id: int | str | None = None
-    bmds_version: _versions
+    bmds_version: BmdsVersion
     description: str = ""
     dataset_type: bmds.constants.ModelClass
 
