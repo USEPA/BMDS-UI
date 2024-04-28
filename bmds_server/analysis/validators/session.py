@@ -13,6 +13,10 @@ class BmdsVersion(StrEnum):
     BMDS232: str = "23.2"
     BMDS24: str = "24.1a"
 
+    @classmethod
+    def latest(cls):
+        return list(cls)[-1]
+
 
 class BaseSession(BaseModel):
     id: int | str | None = None

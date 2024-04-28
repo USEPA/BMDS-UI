@@ -1,5 +1,4 @@
-export const VERSION = "24.1a", // TODO - current BMDS version
-    MODEL_CONTINUOUS = "C",
+export const MODEL_CONTINUOUS = "C",
     MODEL_DICHOTOMOUS = "D",
     BAYESIAN = "bayesian",
     MODEL_NESTED_DICHOTOMOUS = "ND",
