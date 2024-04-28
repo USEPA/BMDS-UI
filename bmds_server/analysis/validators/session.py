@@ -1,4 +1,4 @@
-from typing import Any, Literal
+from typing import Any
 
 import bmds
 from django.conf import settings
@@ -6,12 +6,10 @@ from pydantic import BaseModel, Field
 
 from ...common.validation import pydantic_validate
 
-_versions = Literal[bmds.constants.BMDS330]
-
 
 class BaseSession(BaseModel):
     id: int | str | None = None
-    bmds_version: _versions
+    bmds_version: str = "BMDS330"
     description: str = ""
     dataset_type: bmds.constants.ModelClass
 
