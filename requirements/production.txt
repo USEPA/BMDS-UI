@@ -1,6 +1,6 @@
 -r base.txt
 
-gunicorn==21.2.0
+gunicorn==22.0.0
 bmds==23.3
 
 ./dist/bmds_server-2023.3-py3-none-any.whl
