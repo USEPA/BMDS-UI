@@ -183,6 +183,21 @@ export const getResponse = dataset => {
             };
         }
     },
+    getCsfLine = function(bmdl, bmd_y, hexColor) {
+        if (bmdl > 0) {
+            return {
+                x: [0, bmdl],
+                y: [0, bmd_y],
+                name: "Cancer Slope Factor",
+                legendgroup: "Cancer Slope Factor",
+                line: {
+                    width: 5,
+                    color: hexToRgbA(hexColor, 0.7),
+                    dash: "dot",
+                },
+            };
+        }
+    },
     getDrBmdLine = function(model, hexColor) {
         // https://plotly.com/python/marker-style/
         // https://plotly.com/javascript/reference/scatter/
@@ -261,6 +276,7 @@ export const getResponse = dataset => {
     bmaColor = "#00008b",
     hoverColor = "#DA2CDA",
     selectedColor = "#4a9f2f",
+    black = "#000000",
     colorCodes = [
         // adapted from https://observablehq.com/@d3/color-schemes
         "#e41a1c",

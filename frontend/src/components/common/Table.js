@@ -11,26 +11,29 @@ class Table extends Component {
         if (_.isUndefined(data.colWidths)) {
             data.colWidths = _.fill(Array(nCols), Math.round(100 / nCols));
         }
+        if (_.isUndefined(data.tblClasses)) {
+            data.tblClasses = "table table-sm";
+        }
         return (
-            <table className="table table-sm">
+            <table className={data.tblClasses}>
                 <colgroup>
                     {_.map(data.colWidths).map((value, idx) => (
                         <col key={idx} width={`${value}%`}></col>
                     ))}
                 </colgroup>
-                <thead className="table-bordered">
+                <thead>
                     {data.subheader ? (
-                        <tr className="bg-custom">
+                        <tr className="bg-custom sticky-top">
                             <th colSpan={nCols}>{data.subheader}</th>
                         </tr>
                     ) : null}
-                    <tr className="bg-custom">
+                    <tr className="bg-custom sticky-top">
                         {data.headers.map((text, idx) => (
                             <th key={idx}>{text}</th>
                         ))}
                     </tr>
                 </thead>
-                <tbody className="table-bordered">
+                <tbody>
                     {data.rows.map((rows, idx) => (
                         <tr key={idx}>
                             {rows.map((text, idx) => (
@@ -57,6 +60,7 @@ Table.propTypes = {
         subheader: PropTypes.string,
         colWidths: PropTypes.arrayOf(PropTypes.number),
         footnotes: PropTypes.node,
+        tblClasses: PropTypes.string,
     }),
 };
 

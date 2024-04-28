@@ -3,7 +3,14 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import DoseResponsePlot from "@/components/common/DoseResponsePlot";
-import {colorCodes, getBmdDiamond, getDrLayout, getResponse} from "@/constants/plotting";
+import {
+    black,
+    colorCodes,
+    getBmdDiamond,
+    getCsfLine,
+    getDrLayout,
+    getResponse,
+} from "@/constants/plotting";
 
 const getLayout = function(datasets) {
     let layout;
@@ -63,21 +70,9 @@ const getData = function(ma, datasets, models) {
     });
 
     if (ma.bmdl) {
-        // add slope factor
-        data.push({
-            x: [0, ma.bmdl],
-            y: [0, bmd_y],
-            name: "Cancer Slope Factor",
-            legendgroup: "Cancer Slope Factor",
-            line: {
-                width: 5,
-                color: "#000000",
-                dash: "dot",
-            },
-        });
-        data.push(getBmdDiamond("Cancer Slope Factor", ma.bmd, ma.bmdl, ma.bmdu, bmd_y, "#000000"));
+        data.push(getBmdDiamond("Cancer Slope Factor", ma.bmd, ma.bmdl, ma.bmdu, bmd_y, black));
+        data.push(getCsfLine(ma.bmdl, bmd_y, black));
     }
-
     return data;
 };
 

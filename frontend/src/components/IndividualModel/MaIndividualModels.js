@@ -3,57 +3,28 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import FloatingPointHover from "@/components/common/FloatingPointHover";
+import Table from "@/components/common/Table";
 import {ff} from "@/utils/formatters";
 
 @observer
 class MaIndividualModels extends Component {
     render() {
-        const {model_average, models} = this.props;
-        return (
-            <table className="table table-sm table-bordered text-right col-l-1">
-                <colgroup>
-                    <col width="25%" />
-                    <col width="15%" />
-                    <col width="15%" />
-                    <col width="15%" />
-                    <col width="15%" />
-                    <col width="15%" />
-                </colgroup>
-                <thead>
-                    <tr className="bg-custom">
-                        <th colSpan="6">Individual Model Results</th>
-                    </tr>
-                    <tr>
-                        <th>Model</th>
-                        <th>Prior Weights</th>
-                        <th>Posterior Probability</th>
-                        <th>BMDL</th>
-                        <th>BMD</th>
-                        <th>BMDU</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {models.map((model, i) => {
-                        return (
-                            <tr key={i}>
-                                <td>{model.name}</td>
-                                <td>{ff(model_average.results.priors[i])}</td>
-                                <td>{ff(model_average.results.posteriors[i])}</td>
-                                <td>
-                                    <FloatingPointHover value={model.results.bmdl} />
-                                </td>
-                                <td>
-                                    <FloatingPointHover value={model.results.bmd} />
-                                </td>
-                                <td>
-                                    <FloatingPointHover value={model.results.bmdu} />
-                                </td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
-        );
+        const {model_average, models} = this.props,
+            data = {
+                headers: ["Model", "Prior Weights", "Posterior Probability", "BMDL", "BMD", "BMDU"],
+                colWidths: [25, 15, 15, 15, 15, 15],
+                subheader: "Individual Model Results",
+                tblClasses: "table table-sm table-bordered text-right col-l-1",
+                rows: models.map((model, i) => [
+                    model.name,
+                    ff(model_average.results.priors[i]),
+                    ff(model_average.results.posteriors[i]),
+                    <FloatingPointHover key={1} value={model.results.bmdl} />,
+                    <FloatingPointHover key={2} value={model.results.bmd} />,
+                    <FloatingPointHover key={3} value={model.results.bmdu} />,
+                ]),
+            };
+        return <Table data={data} />;
     }
 }
 MaIndividualModels.propTypes = {

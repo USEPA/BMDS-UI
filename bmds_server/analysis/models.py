@@ -26,6 +26,7 @@ from .executor import AnalysisSession, MultiTumorSession, Session, deserialize
 from .reporting import excel
 from .reporting.cache import DocxReportCache, ExcelReportCache
 from .schema import AnalysisOutput, AnalysisSessionSchema
+from .validators.session import BmdsVersion
 
 logger = logging.getLogger(__name__)
 
@@ -339,7 +340,7 @@ class Analysis(models.Model):
 
     def default_input(self) -> dict:
         return {
-            "bmds_version": bmds.constants.BMDS330,  # TODO - change?
+            "bmds_version": BmdsVersion.latest(),
             "dataset_type": ModelClass.CONTINUOUS,
             "datasets": [],
             "models": {},

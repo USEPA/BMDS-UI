@@ -6,7 +6,7 @@ from django.urls import reverse
 from bmds_server.common.views import ExternalAuth
 
 
-class ExternalAuth(ExternalAuth):
+class MockExternalAuth(ExternalAuth):
     # mock user metdata handler for test case
     def get_user_metadata(self, request):
         return {
@@ -30,7 +30,7 @@ class ExternalAuthTests(TestCase):
         }
         request = self.request_factory.get("/", **headers)
         self.middleware.process_request(request)
-        return ExternalAuth.as_view()(request)
+        return MockExternalAuth.as_view()(request)
 
     def test_valid_auth(self):
         User = get_user_model()

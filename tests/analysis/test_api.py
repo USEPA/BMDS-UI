@@ -9,6 +9,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from bmds_server.analysis.models import Analysis
+from bmds_server.analysis.validators.session import BmdsVersion
 
 
 def check_error(response: dict, type: str, loc: list, msg: str):
@@ -97,7 +98,7 @@ class TestAnalysisViewSet:
 
         payload = {
             "editKey": analysis.password,
-            "data": {"bmds_version": "BMDS330", "dataset_type": "C"},
+            "data": {"bmds_version": BmdsVersion.BMDS330.value, "dataset_type": "C"},
         }
         response = client.patch(url, payload, format="json")
         assert response.status_code == 400
@@ -110,7 +111,7 @@ class TestAnalysisViewSet:
 
         payload = {
             "editKey": analysis.password,
-            "data": {"bmds_version": "BMDS330", "dataset_type": "C"},
+            "data": {"bmds_version": BmdsVersion.BMDS330.value, "dataset_type": "C"},
             "partial": True,
         }
         response = client.patch(url, payload, format="json")
@@ -118,7 +119,7 @@ class TestAnalysisViewSet:
         assert response.json()["inputs"] == payload["data"]
 
         payload["data"] = {
-            "bmds_version": "BMDS330",
+            "bmds_version": BmdsVersion.BMDS330.value,
             "dataset_type": "C",
             "models": {"frequentist_restricted": ["ZZZ"]},
         }
@@ -132,7 +133,7 @@ class TestAnalysisViewSet:
         )
 
         payload["data"] = {
-            "bmds_version": "BMDS330",
+            "bmds_version": BmdsVersion.BMDS330.value,
             "dataset_type": "C",
             "models": {"frequentist_restricted": ["Power"]},
             "recommender": RecommenderSettings.build_default().model_dump(),

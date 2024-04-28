@@ -4,7 +4,7 @@ from typing import NamedTuple, Self
 
 import bmds
 from bmds.constants import DistType, ModelClass
-from bmds.models.multi_tumor import Multitumor, MultitumorBase
+from bmds.models.multi_tumor import Multitumor
 from bmds.sessions import BmdsSession
 from bmds.types.nested_dichotomous import IntralitterCorrelation, LitterSpecificCovariate
 
@@ -29,12 +29,9 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Bmds
     if len(restricted_models) + len(unrestricted_models) == 0:
         return None
 
-    bmds_version = inputs["bmds_version"]
     dataset_type = inputs["dataset_type"]
     recommendation_settings = inputs.get("recommender", None)
-    session = bmds.BMDS.version(bmds_version)(
-        dataset=dataset, recommendation_settings=recommendation_settings
-    )
+    session = BmdsSession(dataset=dataset, recommendation_settings=recommendation_settings)
 
     for prior_type, model_names in [
         (PriorEnum.frequentist_restricted, remap_exponential(restricted_models)),
@@ -90,9 +87,8 @@ def build_bayesian_session(
     if len(models) == 0:
         return None
 
-    bmds_version = inputs["bmds_version"]
     dataset_type = inputs["dataset_type"]
-    session = bmds.BMDS.version(bmds_version)(dataset=dataset)
+    session = BmdsSession(dataset=dataset)
     models = remap_bayesian_exponential(models)
     prior_weights = list(map(lambda d: d["prior_weight"], models))
     for name in map(lambda d: d["model"], models):
@@ -185,7 +181,7 @@ class MultiTumorSession(NamedTuple):
     """
 
     option_index: int
-    session: MultitumorBase | None
+    session: Multitumor | None
 
     @classmethod
     def run(cls, inputs: dict, option_index: int) -> AnalysisSessionSchema:
@@ -208,9 +204,6 @@ class MultiTumorSession(NamedTuple):
         model_settings = build_model_settings(
             dataset_type, PriorEnum.frequentist_restricted, options, {}
         )
-
-        bmds_version = inputs["bmds_version"]
-        Multitumor = bmds.BMDS.multitumor(bmds_version)
         session = Multitumor(datasets, degrees=degrees, model_settings=model_settings)
         return cls(option_index=option_index, session=session)
 

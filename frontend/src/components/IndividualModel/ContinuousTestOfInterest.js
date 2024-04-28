@@ -2,49 +2,33 @@ import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
+import Table from "@/components/common/Table";
 import {ff, fractionalFormatter} from "@/utils/formatters";
 
 @observer
 class ContinuousTestOfInterest extends Component {
     render() {
         const {store} = this.props,
-            testInterest = store.modalModel.results.tests;
-
-        return (
-            <table className="table table-sm table-bordered text-right col-l-1">
-                <colgroup>
-                    <col width="25%" />
-                    <col width="25%" />
-                    <col width="25%" />
-                    <col width="25%" />
-                </colgroup>
-                <thead>
-                    <tr className="bg-custom text-left">
-                        <th colSpan="4">Tests of Mean and Variance Fits</th>
-                    </tr>
-                    <tr>
-                        <th>Test</th>
-                        <th>-2 * Log(Likelihood Ratio)</th>
-                        <th>Test d.f.</th>
-                        <th>
-                            <i>P</i>-Value
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {testInterest.names.map((name, i) => {
-                        return (
-                            <tr key={i}>
-                                <td>Test {i + 1}</td>
-                                <td>{ff(testInterest.ll_ratios[i])}</td>
-                                <td>{ff(testInterest.dfs[i])}</td>
-                                <td>{fractionalFormatter(testInterest.p_values[i])}</td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
-        );
+            testInterest = store.modalModel.results.tests,
+            data = {
+                headers: [
+                    "Test",
+                    "-2 * Log(Likelihood Ratio)",
+                    "Test d.f.",
+                    <span key={1}>
+                        <i>P</i>-Value
+                    </span>,
+                ],
+                rows: testInterest.names.map((name, i) => [
+                    `Test ${i + 1}`,
+                    ff(testInterest.ll_ratios[i]),
+                    ff(testInterest.dfs[i]),
+                    fractionalFormatter(testInterest.p_values[i]),
+                ]),
+                subheader: "Tests of Mean and Variance Fits",
+                tblClasses: "table table-sm table-bordered text-right col-l-1",
+            };
+        return <Table data={data} />;
     }
 }
 ContinuousTestOfInterest.propTypes = {
