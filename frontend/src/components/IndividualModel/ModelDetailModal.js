@@ -52,8 +52,6 @@ class ModelBody extends Component {
                             priorClass={priorClass}
                         />
                     </Col>
-                </Row>
-                <Row>
                     <Col xl={4}>
                         <Summary store={outputStore} />
                     </Col>
@@ -63,32 +61,24 @@ class ModelBody extends Component {
                             data={outputStore.drIndividualPlotData}
                         />
                     </Col>
-                </Row>
-                <Row>
                     <Col xl={8}>
                         <ModelParameters isNestedDichotomous={false} model={model} />
                     </Col>
-                </Row>
-                <Row>
                     <Col xl={isDichotomous ? 8 : 12}>
                         <GoodnessFit store={outputStore} />
                     </Col>
-                </Row>
-                {isDichotomous ? (
-                    <Row>
+                    {isDichotomous ? (
                         <Col xl={8}>
                             <DichotomousDeviance store={outputStore} />
                         </Col>
-                    </Row>
-                ) : null}
-                {isContinuous ? (
-                    <Row>
+                    ) : null}
+                    {isContinuous ? (
                         <Col xl={8}>
                             <ContinuousDeviance store={outputStore} />
                             <ContinuousTestOfInterest store={outputStore} />
                         </Col>
-                    </Row>
-                ) : null}
+                    ) : null}
+                </Row>
                 <Row>
                     <Col xl={4} style={{maxHeight: "50vh", overflowY: "scroll"}}>
                         <CDFTable bmd_dist={model.results.fit.bmd_dist} />

@@ -4,6 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import Icon from "@/components/common/Icon";
+import Table from "@/components/common/Table";
 
 const KEY = "bmds.data",
     DEFAULT_HISTORY = {enabled: true, history: {}},
@@ -17,31 +18,17 @@ const KEY = "bmds.data",
                 </div>
             );
         }
-        return (
-            <table className="table table-sm table-striped">
-                <thead>
-                    <tr>
-                        <th>Last viewed</th>
-                        <th>Analysis URL</th>
-                    </tr>
-                </thead>
-                <colgroup>
-                    <col width="200px" />
-                </colgroup>
-                <tbody>
-                    {history.map(run => {
-                        return (
-                            <tr key={run.lastAccess}>
-                                <td>{new Date(run.lastAccess).toLocaleString()}</td>
-                                <td>
-                                    <a href={run.href}>{run.href}</a>
-                                </td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
-        );
+        const data = {
+            headers: ["Last viewed", "Analysis URL"],
+            rows: history.map(run => [
+                new Date(run.lastAccess).toLocaleString(),
+                <a key={1} href={run.href}>
+                    {run.href}
+                </a>,
+            ]),
+            colWidths: [30, 70],
+        };
+        return <Table data={data} />;
     };
 HistoryTable.propTypes = {
     history: PropTypes.arrayOf(PropTypes.object),
