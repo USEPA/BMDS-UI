@@ -5,9 +5,12 @@ import {getHeaders} from "@/common";
 import {MODEL_MULTI_TUMOR, MODEL_NESTED_DICHOTOMOUS} from "@/constants/mainConstants";
 import {maIndex, modelClasses} from "@/constants/outputConstants";
 import {
+    black,
     bmaColor,
     colorCodes,
     getBayesianBMDLine,
+    getBmdDiamond,
+    getCsfLine,
     getDrBmdLine,
     getDrDatasetPlotData,
     getDrLayout,
@@ -357,8 +360,24 @@ class OutputStore {
 
     @computed get drIndividualMultitumorPlotData() {
         // a single model, shown in the modal
-        const model = this.modalModel;
-        return [getDrDatasetPlotData(this.modalDataset), ...getDrBmdLine(model, hoverColor)];
+        const model = this.modalModel,
+            data = [getDrDatasetPlotData(this.modalDataset), ...getDrBmdLine(model, hoverColor)];
+
+        if (model.results.bmdl) {
+            data.push(
+                getBmdDiamond(
+                    model.name,
+                    model.results.bmd,
+                    model.results.bmdl,
+                    model.results.bmdu,
+                    model.results.plotting.bmd_y,
+                    hoverColor
+                )
+            );
+            data.push(getCsfLine(model.results.bmdl, model.results.plotting.bmd_y, black));
+        }
+
+        return data;
     }
 
     @action.bound drPlotAddHover(model) {
