@@ -6,6 +6,7 @@ from django.utils.timezone import now
 from pytest_django.asserts import assertTemplateNotUsed, assertTemplateUsed
 
 from bmds_server.analysis.models import Analysis
+from bmds_server.analysis.validators.session import BmdsVersion
 from bmds_server.analysis.views import Analytics, DesktopHome, get_analysis_or_404
 
 
@@ -69,6 +70,7 @@ class TestAnalysisDetail:
                 "executeUrl": f"/api/v1/analysis/{pk}/execute/",
                 "executeResetUrl": f"/api/v1/analysis/{pk}/execute-reset/",
                 "deleteDateStr": "June 14, 2022",
+                "bmdsVersion": BmdsVersion.latest(),
                 "collections": [],
             },
         }

@@ -1,5 +1,5 @@
 from enum import StrEnum
-from typing import Any
+from typing import Any, Self
 
 import bmds
 from django.conf import settings
@@ -14,7 +14,7 @@ class BmdsVersion(StrEnum):
     BMDS24: str = "24.1a"
 
     @classmethod
-    def latest(cls):
+    def latest(cls) -> Self:
         return list(cls)[-1]
 
 
