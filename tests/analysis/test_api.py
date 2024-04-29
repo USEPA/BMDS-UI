@@ -248,6 +248,36 @@ class TestAnalysisViewSet:
         value = response.data["outputs"]["outputs"][0]["frequentist"]["selected"]
         assert value == {"model_index": None, "notes": "no notes"}
 
+    @pytest.mark.xfail(reason="TODO - fix fixture")
+    def test_excel(self):
+        client = APIClient()
+        analysis = Analysis.objects.get(pk="ded15870-8986-4d5b-b924-ef9036b2e17e")
+        url = reverse("api:analysis-excel", args=(analysis.id,))
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+    @pytest.mark.xfail(reason="TODO - fix fixture")
+    def test_word(self):
+        client = APIClient()
+        analysis = Analysis.objects.get(pk="ded15870-8986-4d5b-b924-ef9036b2e17e")
+        url = reverse("api:analysis-word", args=(analysis.id,))
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+    def test_star(self):
+        client = APIClient()
+        analysis = Analysis.objects.get(pk="cc3ca355-a57a-4fba-9dc3-99657562df68")
+        url = reverse("api:analysis-star", args=(analysis.id,))
+        resp = client.post(url, data={"editKey": analysis.password})
+        assert resp.status_code == 200
+
+    def test_collections(self):
+        client = APIClient()
+        analysis = Analysis.objects.get(pk="cc3ca355-a57a-4fba-9dc3-99657562df68")
+        url = reverse("api:analysis-collections", args=(analysis.id,))
+        resp = client.post(url, data={"editKey": analysis.password})
+        assert resp.status_code == 200
+
 
 @pytest.mark.django_db
 class TestPolyKViewSet:
