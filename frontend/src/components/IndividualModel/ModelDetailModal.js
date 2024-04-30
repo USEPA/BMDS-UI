@@ -93,13 +93,12 @@ class ModelBody extends Component {
                         <CDFTable bmd_dist={model.results.fit.bmd_dist} />
                     </Col>
                     <Col xl={8}>
-                        <CDFPlot dataset={dataset} cdf={model.results.fit.bmd_dist} />
+                        <CDFPlot
+                            dataset={dataset}
+                            cdf={model.results.fit.bmd_dist}
+                            {...getCdfData(model)}
+                        />
                     </Col>
-                    <CDFPlot
-                        dataset={dataset}
-                        cdf={model.results.fit.bmd_dist}
-                        {...getCdfData(model)}
-                    />
                 </Row>
             </Modal.Body>
         );
