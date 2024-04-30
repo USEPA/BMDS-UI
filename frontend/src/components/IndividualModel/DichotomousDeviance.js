@@ -14,7 +14,7 @@ class DichotomousDeviance extends Component {
                 colWidths: [20, 16, 16, 16, 16, 16],
                 headers: [
                     "Model",
-                    "-2* Log(Likelihood Ratio)",
+                    "Log-Likelihood",
                     "# Parameters",
                     "Deviance",
                     "Test d.f.",
@@ -31,7 +31,7 @@ class DichotomousDeviance extends Component {
                     fractionalFormatter(deviances.p_value[i]),
                 ]),
                 subheader: "Analysis of Deviance",
-                tblClasses: "table table-sm table-bordered text-right col-l-1",
+                tblClasses: "table table-sm text-right col-l-1",
             };
         return <Table data={data} />;
     }

@@ -41,7 +41,7 @@ class DatasetTable extends Component {
             data = {
                 headers: columnNames.map(d => columnHeaders[d]),
                 rows: isIndividual ? individualDataRows(dataset) : dataRows(dataset, columnNames),
-                tblClasses: "table table-sm table-bordered text-right",
+                tblClasses: "table table-sm text-right",
             };
 
         return (

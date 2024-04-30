@@ -41,20 +41,19 @@ const ModelsCheckBoxHeader = observer(props => {
         <thead className="bg-custom">
             <tr>
                 <th rowSpan="3">Models</th>
-                <th colSpan="2">MLE</th>
-                {hasBayesianModels ? <th colSpan="3">Alternatives</th> : null}
-            </tr>
-            <tr>
-                <th>Frequentist Restricted</th>
-                <th>Frequentist Unrestricted</th>
+                <th colSpan="2">Maximum Likelihood Estimate</th>
                 {hasBayesianModels ? (
-                    <th colSpan="2">
+                    <th colSpan="3" rowSpan="2">
                         Bayesian Model Averaging
                         {isContinuous ? (
                             <HelpTextPopover title={title} content={content}></HelpTextPopover>
                         ) : null}
                     </th>
                 ) : null}
+            </tr>
+            <tr>
+                <th>Restricted</th>
+                <th>Unrestricted</th>
             </tr>
             <tr>
                 <SelectAllComponent store={store} type={"frequentist_restricted"} />

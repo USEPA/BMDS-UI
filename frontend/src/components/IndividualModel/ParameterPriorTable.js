@@ -19,7 +19,7 @@ const getBayesianData = parameters => {
                 ff(parameters.prior_min_value[idx]),
                 ff(parameters.prior_max_value[idx]),
             ]),
-            tblClasses: "table table-sm table-bordered text-right col-l-1 col-l-2",
+            tblClasses: "table table-sm text-right col-l-1 col-l-2",
             subheader: "Parameter Settings",
         };
     },
@@ -32,7 +32,7 @@ const getBayesianData = parameters => {
                 ff(parameters.prior_min_value[idx]),
                 ff(parameters.prior_max_value[idx]),
             ]),
-            tblClasses: "table table-sm table-bordered text-right col-l-1",
+            tblClasses: "table table-sm text-right col-l-1",
             subheader: "Parameter Settings",
         };
     };

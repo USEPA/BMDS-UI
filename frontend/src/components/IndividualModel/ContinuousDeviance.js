@@ -11,7 +11,7 @@ class ContinuousDeviance extends Component {
         const {store} = this.props,
             deviances = store.modalModel.results.deviance,
             data = {
-                headers: ["Model", "-2* Log(Likelihood Ratio)", "# of Parameters", "AIC"],
+                headers: ["Model", "Log-Likelihood", "# of Parameters", "AIC"],
                 rows: deviances.names.map((name, i) => [
                     name,
                     ff(deviances.loglikelihoods[i]),
@@ -19,7 +19,7 @@ class ContinuousDeviance extends Component {
                     ff(deviances.aics[i]),
                 ]),
                 subheader: "Likelihoods",
-                tblClasses: "table table-sm table-bordered text-right col-l-1",
+                tblClasses: "table table-sm text-right col-l-1",
             };
         return <Table data={data} />;
     }

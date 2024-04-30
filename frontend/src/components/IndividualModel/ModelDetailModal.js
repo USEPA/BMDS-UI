@@ -26,6 +26,16 @@ import ModelOptionsTable from "./ModelOptionsTable";
 import ModelParameters from "./ModelParameters";
 import ParameterPriorTable from "./ParameterPriorTable";
 import Summary from "./Summary";
+
+const getCdfData = function(model) {
+    return {
+        bmd: model.results.bmd,
+        bmdl: model.results.bmdl,
+        bmdu: model.results.bmdu,
+        alpha: model.settings.alpha,
+    };
+};
+
 @observer
 class ModelBody extends Component {
     render() {
@@ -36,7 +46,6 @@ class ModelBody extends Component {
             priorClass = model.settings.priors.prior_class,
             isDichotomous = dtype == dc.Dtype.DICHOTOMOUS,
             isContinuous = dtype == dc.Dtype.CONTINUOUS || dtype == dc.Dtype.CONTINUOUS_INDIVIDUAL;
-
         return (
             <Modal.Body>
                 <Row>
@@ -86,6 +95,11 @@ class ModelBody extends Component {
                     <Col xl={8}>
                         <CDFPlot dataset={dataset} cdf={model.results.fit.bmd_dist} />
                     </Col>
+                    <CDFPlot
+                        dataset={dataset}
+                        cdf={model.results.fit.bmd_dist}
+                        {...getCdfData(model)}
+                    />
                 </Row>
             </Modal.Body>
         );
@@ -125,7 +139,11 @@ class ModelAverageBody extends Component {
                         <CDFTable bmd_dist={model.results.bmd_dist} />
                     </Col>
                     <Col xl={8}>
-                        <CDFPlot dataset={dataset} cdf={model.results.bmd_dist} />
+                        <CDFPlot
+                            dataset={dataset}
+                            cdf={model.results.bmd_dist}
+                            {...getCdfData(model)}
+                        />
                     </Col>
                 </Row>
             </Modal.Body>
@@ -137,7 +155,7 @@ ModelAverageBody.propTypes = {
 };
 
 @observer
-class MtModalBody extends Component {
+class MultitumorModalBody extends Component {
     render() {
         const {outputStore} = this.props,
             model = outputStore.modalModel,
@@ -200,43 +218,28 @@ class MtModalBody extends Component {
                         <CDFTable bmd_dist={model.results.fit.bmd_dist} />
                     </Col>
                     <Col xl={8}>
-                        <CDFPlot dataset={dataset} cdf={model.results.fit.bmd_dist} />
+                        <CDFPlot
+                            dataset={dataset}
+                            cdf={model.results.fit.bmd_dist}
+                            {...getCdfData(model)}
+                        />
                     </Col>
                 </Row>
             </Modal.Body>
         );
     }
 }
-MtModalBody.propTypes = {
+MultitumorModalBody.propTypes = {
     outputStore: PropTypes.object,
 };
 
 @observer
-class NdModalBody extends Component {
+class NestedDichotomousModalBody extends Component {
     render() {
         const {outputStore} = this.props,
             dataset = outputStore.selectedDataset,
             dtype = dataset.dtype,
-            model = outputStore.modalModel,
-            isSummary = outputStore.drModelModalIsMA;
-
-        if (isSummary) {
-            return (
-                <Modal.Body>
-                    <Row>
-                        <Col xl={6}>
-                            <MsComboInfo options={outputStore.selectedModelOptions} />
-                        </Col>
-                        <Col xl={6}>
-                            <MsComboSummary results={model} />
-                        </Col>
-                        <Col xl={12}>
-                            <MultitumorPlot />
-                        </Col>
-                    </Row>
-                </Modal.Body>
-            );
-        }
+            model = outputStore.modalModel;
 
         return (
             <Modal.Body>
@@ -276,7 +279,7 @@ class NdModalBody extends Component {
         );
     }
 }
-NdModalBody.propTypes = {
+NestedDichotomousModalBody.propTypes = {
     outputStore: PropTypes.object,
 };
 
@@ -285,16 +288,19 @@ NdModalBody.propTypes = {
 class ModelDetailModal extends Component {
     getTitle() {
         const {outputStore} = this.props;
-        return outputStore.modalName;
+        if (outputStore.drModelModalIsMA) {
+            return outputStore.modalName;
+        }
+        return `${outputStore.modalName} Model`;
     }
     getBody() {
         const {outputStore} = this.props;
         if (outputStore.isMultiTumor) {
-            return MtModalBody;
+            return MultitumorModalBody;
         } else if (outputStore.drModelModalIsMA) {
             return ModelAverageBody;
         } else if (outputStore.isNestedDichotomous) {
-            return NdModalBody;
+            return NestedDichotomousModalBody;
         } else {
             return ModelBody;
         }

@@ -12,7 +12,7 @@ class BootstrapResult extends Component {
             data = [
                 ["# Iterations", settings.bootstrap_iterations],
                 ["Bootstrap Seed", ff(settings.bootstrap_seed)],
-                ["-2* Log(Likelihood Ratio)", ff(results.ll)],
+                ["-2 * Log(Likelihood Ratio)", ff(results.ll)], // TODO - what label to use?
                 ["Observed Chi-square", ff(results.obs_chi_sq)],
                 [
                     <span key={0}>

@@ -24,7 +24,7 @@ playwright==1.43.0
 pytest-playwright==0.4.4
 
 # lint and formatting tools
-ruff~=0.3.7
+ruff~=0.4.1
 
 # install in editable mode
 -e .

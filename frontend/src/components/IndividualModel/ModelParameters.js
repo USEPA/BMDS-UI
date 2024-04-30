@@ -34,7 +34,7 @@ const getData = function(model) {
                 ];
             }),
             footnotes: anyBounded ? (
-                <p>
+                <p className="text-sm">
                     Standard errors estimates are not generated for parameters estimated on
                     corresponding bounds, although sampling error is present for all parameters, as
                     a rule. Standard error estimates may not be reliable as a basis for confidence

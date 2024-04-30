@@ -45,7 +45,7 @@ const getModelBinLabel = function(output, index) {
             fns.push({
                 index: recommendedModelIndex,
                 icon: icons[fns.length],
-                text: "Recommended model",
+                text: "BMDS recommended best fitting model",
                 class: "table-info",
             });
         }
@@ -333,7 +333,7 @@ class FrequentistResultTable extends Component {
                         <col key={idx} width={`${value}%`}></col>
                     ))}
                 </colgroup>
-                <thead className="table-bordered">
+                <thead>
                     <tr className="bg-custom">
                         <th>Model</th>
                         <th>BMDL</th>
@@ -361,7 +361,7 @@ class FrequentistResultTable extends Component {
                         ) : null}
                     </tr>
                 </thead>
-                <tbody className="table-bordered">
+                <tbody>
                     <FrequentistRowSet
                         store={store}
                         colSpan={numCols}

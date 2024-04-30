@@ -110,21 +110,31 @@ export const getResponse = dataset => {
         }
         return layout;
     },
-    getCdfLayout = function(dataset) {
+    getCdfLayout = function(dataset, xs) {
         let layout = _.cloneDeep(doseResponseLayout);
-        layout.title.text = "BMD Cumulative Distribution Function";
+        layout.title.text = "BMD Cumulative Distribution Function (CDF)";
         layout.xaxis.title.text = getDoseLabel(dataset);
         layout.yaxis.title.text = "Cumulative Probability";
         layout.yaxis.range = [0, 1];
+        const xMax = xs[xs.length - 1],
+            xMin = xs[0],
+            xPadding = (xMax - xMin) * 0.025;
+        layout.xaxis.range = [xMin - xPadding, xMax + xPadding];
+        layout.legend.traceorder = "reversed";
         return layout;
     },
     getDrDatasetPlotData = function(dataset) {
-        let errorBars, hovertemplate;
+        let errorBars, hovertemplate, name;
         if (dataset.dtype == Dtype.CONTINUOUS) {
             errorBars = continuousErrorBars(dataset);
-        }
-        if (dataset.dtype == Dtype.DICHOTOMOUS) {
+            name = "Observed Mean ± 95% CI";
+        } else if (dataset.dtype == Dtype.CONTINUOUS_INDIVIDUAL) {
+            name = "Observed";
+        } else if (dataset.dtype == Dtype.DICHOTOMOUS) {
             errorBars = dichotomousErrorBars(dataset);
+            name = "Fraction Affected ± 95% CI";
+        } else if (dataset.dtype == Dtype.NESTED_DICHOTOMOUS) {
+            name = "Fraction Affected";
         }
         if (errorBars) {
             hovertemplate = "%{y:.3f} (%{customdata[0]:.3f}, %{customdata[1]:.3f})<extra></extra>";
@@ -140,7 +150,7 @@ export const getResponse = dataset => {
             error_y: errorBars,
             customdata: errorBars ? errorBars.bounds : undefined,
             hovertemplate,
-            name: "Response",
+            name,
         };
     },
     getBmdDiamond = function(name, bmd, bmdl, bmdu, bmd_y, hexColor) {

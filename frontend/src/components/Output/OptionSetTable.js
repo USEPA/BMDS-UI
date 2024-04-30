@@ -81,7 +81,7 @@ class OptionSetTable extends Component {
                 <div className="label">
                     <label>Option Set:&nbsp;</label>#{option_index}
                 </div>
-                <table className="table table-sm table-bordered text-right">
+                <table className="table table-sm text-right">
                     <colgroup>
                         <col width="60%" />
                         <col width="40%" />

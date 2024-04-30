@@ -394,7 +394,11 @@ class OutputStore {
 
     // start model selection methods
     @action.bound saveSelectedModelIndex(idx) {
-        this.selectedOutput.frequentist.selected.model_index = idx === -1 ? null : idx;
+        const noModel = idx === -1;
+        this.selectedOutput.frequentist.selected.model_index = noModel ? null : idx;
+        this.selectedOutput.frequentist.selected.notes = noModel
+            ? ""
+            : "User selected best fitting model";
     }
 
     @action.bound saveSelectedIndexNotes(value) {

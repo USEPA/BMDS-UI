@@ -36,7 +36,7 @@ class ModelsCheckBoxList extends Component {
                         text="Reset Model Selection"
                     />
                 ) : null}
-                <table className="table table-sm table-bordered">
+                <table className="table table-sm">
                     <ModelsCheckBoxHeader store={modelsStore} />
                     <ModelsCheckBox store={modelsStore} />
                 </table>
