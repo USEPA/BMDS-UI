@@ -19,7 +19,7 @@ class ContinuousDeviance extends Component {
                     ff(deviances.aics[i]),
                 ]),
                 subheader: "Likelihoods",
-                tblClasses: "table table-sm table-bordered text-right col-l-1",
+                tblClasses: "table table-sm text-right col-l-1",
             };
         return <Table data={data} />;
     }

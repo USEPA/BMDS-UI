@@ -47,7 +47,7 @@ class DecisionLogic extends Component {
                 ) : null}
                 <div className="row mt-2">
                     <div className="col col-lg-6">
-                        <table id="decision-logic" className="table table-sm table-bordered">
+                        <table id="decision-logic" className="table table-sm">
                             <thead>
                                 <tr className="bg-custom">
                                     <th colSpan="2">Decision Logic</th>

@@ -106,7 +106,7 @@ class GoodnessFit extends Component {
         } else {
             data = getContinuousNormalData(dataset, dtype, model);
         }
-        data.tblClasses = "table table-sm table-bordered text-right col-l-1";
+        data.tblClasses = "table table-sm text-right col-l-1";
         data.subheader = "Goodness of Fit";
 
         return <Table data={data} />;

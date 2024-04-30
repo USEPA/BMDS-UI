@@ -28,7 +28,7 @@ class BayesianResultTable extends Component {
                         <col key={idx} width={`${value}%`}></col>
                     ))}
                 </colgroup>
-                <thead className="table-bordered">
+                <thead>
                     <tr className="bg-custom">
                         <th>Model</th>
                         <th>Prior Weights</th>
@@ -41,7 +41,7 @@ class BayesianResultTable extends Component {
                         <th>Scaled Residual near BMD</th>
                     </tr>
                 </thead>
-                <tbody className="table-bordered">
+                <tbody>
                     {selectedBayesian.models.map((model, index) => {
                         return (
                             <tr key={index}>

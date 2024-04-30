@@ -16,7 +16,7 @@ class CDFTable extends Component {
                     ff(bmd_dist[1][i]),
                     ff(bmd_dist[0][i]),
                 ]),
-                tblClasses: "table table-sm table-bordered text-right col-l-1",
+                tblClasses: "table table-sm text-right col-l-1",
             };
         return <Table data={data} />;
     }

@@ -16,7 +16,7 @@ class TwoColumnTable extends Component {
                 );
             };
         return (
-            <table id={id} className="table table-sm table-bordered">
+            <table id={id} className="table table-sm">
                 <colgroup>
                     <col width={widths[0]} />
                     <col width={widths[1]} />

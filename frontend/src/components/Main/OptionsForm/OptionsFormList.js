@@ -29,7 +29,7 @@ class OptionsFormList extends Component {
             <div>
                 <div className="panel panel-default">
                     <form className="form-horizontal">
-                        <table className="table table-sm table-bordered text-center">
+                        <table className="table table-sm text-center">
                             <thead className="bg-custom">
                                 <tr>
                                     <th>Option Set #</th>

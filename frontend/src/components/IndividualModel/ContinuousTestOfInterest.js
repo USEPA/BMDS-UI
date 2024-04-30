@@ -26,7 +26,7 @@ class ContinuousTestOfInterest extends Component {
                     fractionalFormatter(testInterest.p_values[i]),
                 ]),
                 subheader: "Tests of Mean and Variance Fits",
-                tblClasses: "table table-sm table-bordered text-right col-l-1",
+                tblClasses: "table table-sm text-right col-l-1",
             };
         return <Table data={data} />;
     }

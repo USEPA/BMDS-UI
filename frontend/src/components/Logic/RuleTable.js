@@ -16,7 +16,7 @@ class RuleList extends Component {
             {rules} = logicStore.logic;
 
         return (
-            <table id="rule-table" className="table table-sm table-bordered">
+            <table id="rule-table" className="table table-sm">
                 <thead className="bg-custom">
                     <tr>
                         <th colSpan="5">Model Recommendation and Bin Placement Logic</th>

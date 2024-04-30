@@ -29,7 +29,7 @@ class ResultTable extends Component {
                         <col key={idx} width={`${value}%`}></col>
                     ))}
                 </colgroup>
-                <thead className="table-bordered">
+                <thead>
                     <tr className="bg-custom">
                         <th>Model</th>
                         <th>Dataset</th>
@@ -45,7 +45,7 @@ class ResultTable extends Component {
                         <th>Scaled Residual near BMD</th>
                     </tr>
                 </thead>
-                <tbody className="table-bordered">
+                <tbody>
                     {showMultitumor ? (
                         <tr key={-1}>
                             <td>

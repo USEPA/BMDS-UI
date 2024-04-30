@@ -14,7 +14,7 @@ class MaIndividualModels extends Component {
                 headers: ["Model", "Prior Weights", "Posterior Probability", "BMDL", "BMD", "BMDU"],
                 colWidths: [25, 15, 15, 15, 15, 15],
                 subheader: "Individual Model Results",
-                tblClasses: "table table-sm table-bordered text-right col-l-1",
+                tblClasses: "table table-sm text-right col-l-1",
                 rows: models.map((model, i) => [
                     model.name,
                     ff(model_average.results.priors[i]),
