@@ -131,3 +131,7 @@ input[type=number] {
 .stretched-link-parent {
   transform: rotate(0);
 }
+
+.text-sm {
+  font-size: 0.9rem;
+}
