@@ -285,7 +285,10 @@ NdModalBody.propTypes = {
 class ModelDetailModal extends Component {
     getTitle() {
         const {outputStore} = this.props;
-        return outputStore.modalName;
+        if (outputStore.drModelModalIsMA) {
+            return outputStore.modalName;
+        }
+        return `${outputStore.modalName} Model`;
     }
     getBody() {
         const {outputStore} = this.props;
