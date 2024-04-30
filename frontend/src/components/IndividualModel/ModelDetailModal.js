@@ -26,6 +26,7 @@ import ModelOptionsTable from "./ModelOptionsTable";
 import ModelParameters from "./ModelParameters";
 import ParameterPriorTable from "./ParameterPriorTable";
 import Summary from "./Summary";
+
 @observer
 class ModelBody extends Component {
     render() {
@@ -137,7 +138,7 @@ ModelAverageBody.propTypes = {
 };
 
 @observer
-class MtModalBody extends Component {
+class MultitumorModalBody extends Component {
     render() {
         const {outputStore} = this.props,
             model = outputStore.modalModel,
@@ -207,36 +208,17 @@ class MtModalBody extends Component {
         );
     }
 }
-MtModalBody.propTypes = {
+MultitumorModalBody.propTypes = {
     outputStore: PropTypes.object,
 };
 
 @observer
-class NdModalBody extends Component {
+class NestedDichotomousModalBody extends Component {
     render() {
         const {outputStore} = this.props,
             dataset = outputStore.selectedDataset,
             dtype = dataset.dtype,
-            model = outputStore.modalModel,
-            isSummary = outputStore.drModelModalIsMA;
-
-        if (isSummary) {
-            return (
-                <Modal.Body>
-                    <Row>
-                        <Col xl={6}>
-                            <MsComboInfo options={outputStore.selectedModelOptions} />
-                        </Col>
-                        <Col xl={6}>
-                            <MsComboSummary results={model} />
-                        </Col>
-                        <Col xl={12}>
-                            <MultitumorPlot />
-                        </Col>
-                    </Row>
-                </Modal.Body>
-            );
-        }
+            model = outputStore.modalModel;
 
         return (
             <Modal.Body>
@@ -276,7 +258,7 @@ class NdModalBody extends Component {
         );
     }
 }
-NdModalBody.propTypes = {
+NestedDichotomousModalBody.propTypes = {
     outputStore: PropTypes.object,
 };
 
@@ -293,11 +275,11 @@ class ModelDetailModal extends Component {
     getBody() {
         const {outputStore} = this.props;
         if (outputStore.isMultiTumor) {
-            return MtModalBody;
+            return MultitumorModalBody;
         } else if (outputStore.drModelModalIsMA) {
             return ModelAverageBody;
         } else if (outputStore.isNestedDichotomous) {
-            return NdModalBody;
+            return NestedDichotomousModalBody;
         } else {
             return ModelBody;
         }
