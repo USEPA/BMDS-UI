@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {autorun} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
@@ -18,10 +19,10 @@ class App extends Component {
         // update HTML document title
         autorun(() => {
             const {analysis_name, canEdit} = this.props.mainStore,
-                verb = canEdit ? "Update Analysis" : "Analysis",
+                verb = canEdit ? "Update" : "",
                 name = analysis_name ? analysis_name : "",
                 app_name = this.props.mainStore.config.is_desktop ? "BMDS Desktop" : "BMDS Online";
-            document.title = [app_name, verb, name].join(" | ");
+            document.title = _.reject([name, verb, app_name], _.isEmpty).join(" | ");
         });
     }
     render() {
