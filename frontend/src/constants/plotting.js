@@ -110,12 +110,17 @@ export const getResponse = dataset => {
         }
         return layout;
     },
-    getCdfLayout = function(dataset) {
+    getCdfLayout = function(dataset, xs) {
         let layout = _.cloneDeep(doseResponseLayout);
-        layout.title.text = "BMD Cumulative Distribution Function";
+        layout.title.text = "BMD Cumulative Distribution Function (CDF)";
         layout.xaxis.title.text = getDoseLabel(dataset);
         layout.yaxis.title.text = "Cumulative Probability";
         layout.yaxis.range = [0, 1];
+        const xMax = xs[xs.length - 1],
+            xMin = xs[0],
+            xPadding = (xMax - xMin) * 0.025;
+        layout.xaxis.range = [xMin - xPadding, xMax + xPadding];
+        layout.legend.traceorder = "reversed";
         return layout;
     },
     getDrDatasetPlotData = function(dataset) {

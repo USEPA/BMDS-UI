@@ -27,6 +27,15 @@ import ModelParameters from "./ModelParameters";
 import ParameterPriorTable from "./ParameterPriorTable";
 import Summary from "./Summary";
 
+const getCdfData = function(model) {
+    return {
+        bmd: model.results.bmd,
+        bmdl: model.results.bmdl,
+        bmdu: model.results.bmdu,
+        alpha: model.settings.alpha,
+    };
+};
+
 @observer
 class ModelBody extends Component {
     render() {
@@ -37,7 +46,6 @@ class ModelBody extends Component {
             priorClass = model.settings.priors.prior_class,
             isDichotomous = dtype == dc.Dtype.DICHOTOMOUS,
             isContinuous = dtype == dc.Dtype.CONTINUOUS || dtype == dc.Dtype.CONTINUOUS_INDIVIDUAL;
-
         return (
             <Modal.Body>
                 <Row>
@@ -87,6 +95,11 @@ class ModelBody extends Component {
                     <Col xl={8}>
                         <CDFPlot dataset={dataset} cdf={model.results.fit.bmd_dist} />
                     </Col>
+                    <CDFPlot
+                        dataset={dataset}
+                        cdf={model.results.fit.bmd_dist}
+                        {...getCdfData(model)}
+                    />
                 </Row>
             </Modal.Body>
         );
@@ -126,7 +139,11 @@ class ModelAverageBody extends Component {
                         <CDFTable bmd_dist={model.results.bmd_dist} />
                     </Col>
                     <Col xl={8}>
-                        <CDFPlot dataset={dataset} cdf={model.results.bmd_dist} />
+                        <CDFPlot
+                            dataset={dataset}
+                            cdf={model.results.bmd_dist}
+                            {...getCdfData(model)}
+                        />
                     </Col>
                 </Row>
             </Modal.Body>
@@ -201,7 +218,11 @@ class MultitumorModalBody extends Component {
                         <CDFTable bmd_dist={model.results.fit.bmd_dist} />
                     </Col>
                     <Col xl={8}>
-                        <CDFPlot dataset={dataset} cdf={model.results.fit.bmd_dist} />
+                        <CDFPlot
+                            dataset={dataset}
+                            cdf={model.results.fit.bmd_dist}
+                            {...getCdfData(model)}
+                        />
                     </Col>
                 </Row>
             </Modal.Body>
