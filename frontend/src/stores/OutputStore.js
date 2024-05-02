@@ -374,7 +374,14 @@ class OutputStore {
                     hoverColor
                 )
             );
-            data.push(getCsfLine(model.results.bmdl, model.results.plotting.bmd_y, black));
+            data.push(
+                getCsfLine(
+                    model.results.plotting.dr_y[0],
+                    model.results.bmdl,
+                    model.results.plotting.bmd_y,
+                    black
+                )
+            );
         }
 
         return data;
