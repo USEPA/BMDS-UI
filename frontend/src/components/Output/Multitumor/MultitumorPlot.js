@@ -70,8 +70,10 @@ const getData = function(ma, datasets, models) {
     });
 
     if (ma.bmdl) {
+        // TODO bmd_y estimate based on background of 0 is that ok?
         data.push(getBmdDiamond("Cancer Slope Factor", ma.bmd, ma.bmdl, ma.bmdu, bmd_y, black));
-        data.push(getCsfLine(ma.bmdl, bmd_y, black));
+        // TODO - y0 set to 0 - what to do? if all datasets have an incidence of 0 show line, else dont?
+        data.push(getCsfLine(0, ma.bmdl, bmd_y, black));
     }
     return data;
 };
