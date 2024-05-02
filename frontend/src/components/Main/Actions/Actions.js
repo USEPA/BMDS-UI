@@ -71,7 +71,7 @@ class Actions extends Component {
                                     </p>
                                 </>
                             ) : null}
-                            {!mainStore.isDesktop ? (
+                            {mainStore.isDesktop ? (
                                 <a className="dropdown-item" href={config.editSettings.deleteUrl}>
                                     <Icon name="trash3-fill" text="Delete analysis" />
                                 </a>
