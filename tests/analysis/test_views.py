@@ -138,3 +138,11 @@ class TestDesktopHome:
         request = RequestFactory().get(reverse("home"))
         response = DesktopHome.as_view()(request)
         assert response.status_code == 200
+
+
+class TestDesktopActions:
+    def test_index(self):
+        pass  # TODO
+
+    def test_toggle_star(self):
+        pass  # TODO
