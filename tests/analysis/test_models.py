@@ -14,9 +14,9 @@ def write_excel(data: dict, path: Path):
 
 
 @pytest.mark.django_db()
-class TestBmds3Execution:
-    def test_continuous(self, bmds3_complete_continuous, data_path, rewrite_data_files):
-        analysis = Analysis.objects.create(inputs=bmds3_complete_continuous)
+class TestExecution:
+    def test_continuous(self, complete_continuous, data_path, rewrite_data_files):
+        analysis = Analysis.objects.create(inputs=complete_continuous)
 
         assert analysis.is_finished is False
         assert analysis.has_errors is False
@@ -38,13 +38,13 @@ class TestBmds3Execution:
         assert len(df) == 3
 
         if rewrite_data_files:
-            write_excel(df, data_path / "continuous.xlsx")
-            (data_path / "continuous.docx").write_bytes(docx.getvalue())
+            write_excel(df, data_path / "reports/continuous.xlsx")
+            (data_path / "reports/continuous.docx").write_bytes(docx.getvalue())
 
     def test_continuous_individual(
-        self, bmds3_complete_continuous_individual, data_path, rewrite_data_files
+        self, complete_continuous_individual, data_path, rewrite_data_files
     ):
-        analysis = Analysis.objects.create(inputs=bmds3_complete_continuous_individual)
+        analysis = Analysis.objects.create(inputs=complete_continuous_individual)
 
         assert analysis.is_finished is False
         assert analysis.has_errors is False
@@ -66,11 +66,11 @@ class TestBmds3Execution:
         assert len(df) == 3
 
         if rewrite_data_files:
-            write_excel(df, data_path / "continuous_individual.xlsx")
-            (data_path / "continuous_individual.docx").write_bytes(docx.getvalue())
+            write_excel(df, data_path / "reports/continuous_individual.xlsx")
+            (data_path / "reports/continuous_individual.docx").write_bytes(docx.getvalue())
 
-    def test_dichotomous(self, bmds3_complete_dichotomous, data_path, rewrite_data_files):
-        analysis = Analysis.objects.create(inputs=bmds3_complete_dichotomous)
+    def test_dichotomous(self, complete_dichotomous, data_path, rewrite_data_files):
+        analysis = Analysis.objects.create(inputs=complete_dichotomous)
 
         assert analysis.is_finished is False
         assert analysis.has_errors is False
@@ -92,8 +92,8 @@ class TestBmds3Execution:
         assert len(df) == 3
 
         if rewrite_data_files:
-            write_excel(df, data_path / "dichotomous.xlsx")
-            (data_path / "dichotomous.docx").write_bytes(docx.getvalue())
+            write_excel(df, data_path / "reports/dichotomous.xlsx")
+            (data_path / "reports/dichotomous.docx").write_bytes(docx.getvalue())
 
     def test_nested_dichotomous(self, bmds_complete_nd, data_path, rewrite_data_files):
         analysis = Analysis.objects.create(inputs=bmds_complete_nd)
@@ -118,8 +118,8 @@ class TestBmds3Execution:
         assert len(df) == 3
 
         if rewrite_data_files:
-            write_excel(df, data_path / "nested_dichotomous.xlsx")
-            (data_path / "nested_dichotomous.docx").write_bytes(docx.getvalue())
+            write_excel(df, data_path / "reports/nested_dichotomous.xlsx")
+            (data_path / "reports/nested_dichotomous.docx").write_bytes(docx.getvalue())
 
     def test_multitumor(self, bmds_complete_mt, data_path, rewrite_data_files):
         analysis = Analysis.objects.create(inputs=bmds_complete_mt)
@@ -144,5 +144,5 @@ class TestBmds3Execution:
         assert len(df) == 3
 
         if rewrite_data_files:
-            write_excel(df, data_path / "multitumor.xlsx")
-            (data_path / "multitumor.docx").write_bytes(docx.getvalue())
+            write_excel(df, data_path / "reports/multitumor.xlsx")
+            (data_path / "reports/multitumor.docx").write_bytes(docx.getvalue())
