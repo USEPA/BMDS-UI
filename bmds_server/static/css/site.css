@@ -135,3 +135,7 @@ input[type=number] {
 .text-sm {
   font-size: 0.9rem;
 }
+
+.pointer {
+  cursor: pointer;
+}

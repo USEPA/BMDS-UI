@@ -50,9 +50,9 @@
         </colgroup>
         <tbody>
           {% for object in objects %}
-          <tr class="stretched-link-parent" >
-            <td class="text-center"><span class="starred bi {{object.starred|yesno:'bi-star-fill,bi-star'}}"></span></td>
-            <td>
+          <tr>
+            {% include 'analysis/fragments/td_star.html' with object=object %}
+            <td class="stretched-link-parent">
               {% for collection in object.collections.all %}<span class="mr-1 badge badge-info">{{collection}}</span>{% endfor %}
               <a class="text-dark stretched-link" href="{{object.get_edit_url}}">{{object}}</a>
             </td>

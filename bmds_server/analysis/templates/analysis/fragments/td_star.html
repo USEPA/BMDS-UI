@@ -1,0 +1,4 @@
+<td class="text-center px-2 pointer" hx-get="{% url 'actions' action='toggle_star' %}?id={{object.id}}"
+    hx-swap="outerHTML" hx-on="click">
+    <span class="starred bi {{object.starred|yesno:'bi-star-fill,bi-star'}}"></span>
+</td>

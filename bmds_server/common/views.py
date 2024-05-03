@@ -1,4 +1,6 @@
 import logging
+from collections.abc import Iterable
+from functools import wraps
 from pprint import pformat
 from textwrap import dedent
 from typing import Any
@@ -9,7 +11,12 @@ from django.contrib.auth import get_user_model, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.mail import mail_admins
-from django.http import HttpResponseRedirect
+from django.http import (
+    HttpRequest,
+    HttpResponseBadRequest,
+    HttpResponseNotAllowed,
+    HttpResponseRedirect,
+)
 from django.shortcuts import resolve_url
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -133,3 +140,57 @@ class ExternalAuth(View):
 @method_decorator(staff_member_required, name="dispatch")
 class Swagger(TemplateView):
     template_name = "common/swagger.html"
+
+
+def is_htmx(request: HttpRequest) -> bool:
+    """Was this request initiated by HTMX?"""
+    return request.headers.get("HX-Request", "") == "true"
+
+
+def action(htmx_only: bool = True, methods: Iterable[str] = ("get",)):
+    """Decorator for an HtmxViewSet action method
+
+    Influenced by django-rest framework's ViewSet action decorator; permissions checking that
+    the user making the request can make this request, and the request is valid.
+
+    Args:
+        htmx_only (bool, optional, default True): Accept only htmx requests
+        methods (Iterable[str]): Accepted http methods; defaults to ("get",)
+    """
+
+    def actual_decorator(func):
+        @wraps(func)
+        def wrapper(view, request, *args, **kwargs):
+            # check if htmx is required
+            if htmx_only and not is_htmx(request):
+                return HttpResponseBadRequest("An HTMX request is required")
+            # check valid view method
+            if request.method.lower() not in methods:
+                return HttpResponseNotAllowed("Invalid HTTP method")
+            return func(view, request, *args, **kwargs)
+
+        return wrapper
+
+    return actual_decorator
+
+
+class HtmxView(View):
+    """Build a generic HtmxView which returns a index full page and multiple fragments.
+
+    If a valid "action" is specified via a GET parameter, a partial is returned, otherwise
+    the default_action ("index") is returned. It is generally assumed that the default_action
+    is a full page, while all other pages are fragments.
+    """
+
+    actions: set[str]
+    default_action: str = "index"
+
+    def get_handler(self, request: HttpRequest):
+        request.action = self.kwargs.get("action", "")
+        if request.action not in self.actions:
+            request.action = self.default_action
+        return getattr(self, request.action, self.http_method_not_allowed)
+
+    def dispatch(self, request, *args, **kwargs):
+        handler = self.get_handler(request)
+        return handler(request, *args, **kwargs)

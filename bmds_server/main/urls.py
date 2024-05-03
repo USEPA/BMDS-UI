@@ -53,6 +53,7 @@ urlpatterns = [
 
 if settings.IS_DESKTOP:
     urlpatterns += [
+        path("actions/<slug:action>/", views.DesktopActions.as_view(), name="actions"),
         path("collection/", views.CollectionList.as_view(), name="collection_list"),
         path("collection/create/", views.CollectionCreate.as_view(), name="collection_create"),
         path(
