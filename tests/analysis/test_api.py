@@ -20,7 +20,7 @@ def check_error(response: dict, type: str, loc: list, msg: str):
 
 @pytest.mark.django_db
 class TestAnalysisViewSet:
-    def test_auth(self, bmds3_complete_continuous):
+    def test_auth(self, complete_continuous):
         """
         Check API auth cases.
 
@@ -33,7 +33,7 @@ class TestAnalysisViewSet:
         read_url = analysis.get_api_url()
         payload = {
             "editKey": analysis.password,
-            "data": bmds3_complete_continuous,
+            "data": complete_continuous,
         }
 
         # client; no CSRF
@@ -142,43 +142,43 @@ class TestAnalysisViewSet:
         assert response.status_code == 200
         assert response.json()["inputs"] == payload["data"]
 
-    def test_patch_complete_continuous(self, bmds3_complete_continuous):
+    def test_patch_complete_continuous(self, complete_continuous):
         client = APIClient()
         analysis = Analysis.objects.create()
         url = analysis.get_api_patch_inputs_url()
 
-        # complete bmds3 continuous
-        payload = {"editKey": analysis.password, "data": bmds3_complete_continuous}
+        # complete continuous
+        payload = {"editKey": analysis.password, "data": complete_continuous}
         response = client.patch(url, payload, format="json")
         assert response.status_code == 200
         assert response.json()["inputs"] == payload["data"]
 
-    def test_optional_recommender(self, bmds3_complete_continuous):
+    def test_optional_recommender(self, complete_continuous):
         client = APIClient()
         analysis = Analysis.objects.create()
         url = analysis.get_api_patch_inputs_url()
 
-        # complete bmds3 continuous
-        payload = {"editKey": analysis.password, "data": bmds3_complete_continuous}
+        # complete continuous
+        payload = {"editKey": analysis.password, "data": complete_continuous}
         del payload["data"]["recommender"]
         response = client.patch(url, payload, format="json")
         assert response.status_code == 200
         assert response.json()["inputs"] == payload["data"]
 
-    def test_patch_complete_dichotomous(self, bmds3_complete_dichotomous):
+    def test_patch_complete_dichotomous(self, complete_dichotomous):
         client = APIClient()
         analysis = Analysis.objects.create()
         url = analysis.get_api_patch_inputs_url()
 
-        # complete bmds3 dichotomous
-        payload = {"editKey": analysis.password, "data": bmds3_complete_dichotomous}
+        # complete dichotomous
+        payload = {"editKey": analysis.password, "data": complete_dichotomous}
         response = client.patch(url, payload, format="json")
         assert response.status_code == 200
         assert response.json()["inputs"] == payload["data"]
 
-    def test_execute(self, bmds3_complete_dichotomous):
+    def test_execute(self, complete_dichotomous):
         client = APIClient()
-        analysis = Analysis.objects.create(inputs=bmds3_complete_dichotomous)
+        analysis = Analysis.objects.create(inputs=complete_dichotomous)
         assert analysis.started is None
         url = analysis.get_api_execute_url()
 
@@ -196,9 +196,9 @@ class TestAnalysisViewSet:
         assert response.data["has_errors"] is False
         assert bmd == pytest.approx(164.3, rel=0.05)
 
-    def test_reset_execute(self, bmds3_complete_dichotomous):
+    def test_reset_execute(self, complete_dichotomous):
         client = APIClient()
-        analysis = Analysis.objects.create(inputs=bmds3_complete_dichotomous)
+        analysis = Analysis.objects.create(inputs=complete_dichotomous)
         analysis.execute()
         url = analysis.get_api_execute_reset_url()
 
@@ -215,9 +215,9 @@ class TestAnalysisViewSet:
         assert response.data["has_errors"] is False
         assert response.data["outputs"] == {}
 
-    def test_model_selection(self, bmds3_complete_dichotomous):
+    def test_model_selection(self, complete_dichotomous):
         client = APIClient()
-        analysis = Analysis.objects.create(inputs=bmds3_complete_dichotomous)
+        analysis = Analysis.objects.create(inputs=complete_dichotomous)
         analysis.execute()
 
         url = analysis.get_api_url() + "select-model/"

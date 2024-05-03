@@ -8,7 +8,7 @@ from bmds_server.analysis import transforms
 
 
 class TestOptions:
-    def test_bmds3_options_c(self, bmds3_complete_continuous):
+    def test_options_continuous(self):
         options = {
             "bmr_type": 2,
             "bmr_value": 1.5,
@@ -30,7 +30,7 @@ class TestOptions:
         assert res.degree == 0
         assert res.is_increasing is None
 
-    def test_bmds3_options_d(self, bmds3_complete_dichotomous):
+    def test_options_dichotomous(self):
         options = {
             "bmr_type": 0,
             "bmr_value": 0.15,
@@ -49,8 +49,9 @@ class TestOptions:
         assert res.degree == 1
 
 
-def test_remap_exponential():
-    assert transforms.remap_exponential([]) == []
-    assert transforms.remap_exponential([M_Exponential]) == [M_ExponentialM3, M_ExponentialM5]
-    expected = ["a", M_ExponentialM3, M_ExponentialM5, "b"]
-    assert transforms.remap_exponential(["a", M_Exponential, "b"]) == expected
+class TestModels:
+    def test_remap_exponential(self):
+        assert transforms.remap_exponential([]) == []
+        assert transforms.remap_exponential([M_Exponential]) == [M_ExponentialM3, M_ExponentialM5]
+        expected = ["a", M_ExponentialM3, M_ExponentialM5, "b"]
+        assert transforms.remap_exponential(["a", M_Exponential, "b"]) == expected
