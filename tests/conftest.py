@@ -45,7 +45,7 @@ def vcr_cassette_dir(request):
 
 
 @pytest.fixture
-def bmds3_complete_continuous():
+def complete_continuous():
     return {
         "bmds_version": BmdsVersion.BMDS330.value,
         "dataset_type": "C",
@@ -80,7 +80,7 @@ def bmds3_complete_continuous():
 
 
 @pytest.fixture
-def bmds3_complete_continuous_individual():
+def complete_continuous_individual():
     # fmt: off
     return {
         "bmds_version": BmdsVersion.BMDS330.value,
@@ -131,7 +131,7 @@ def bmds3_complete_continuous_individual():
 
 
 @pytest.fixture
-def bmds3_complete_dichotomous():
+def complete_dichotomous():
     return {
         "bmds_version": BmdsVersion.BMDS330.value,
         "dataset_type": "D",
