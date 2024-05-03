@@ -1,0 +1,18 @@
+<form class="form-inline" hx-target="closest li">
+    {% csrf_token %}
+    <div class="form-group">{{ form.name }}</div>
+    <div class="form-group d-flex">
+        <input class="btn btn-primary" type="submit"
+            hx-target="form"
+            hx-post="{% url 'actions' action='collection_create' %}"
+            value="{% if object.id %}Update{% else %}Create{% endif %}"/>
+        <button class="btn btn-light" type='button' onclick="$(this).closest('li').remove()">Cancel</button>
+        {% if object.id %}
+            <a class="btn btn-danger" href="#"
+                hx-swap="outerHTML"
+                hx-confirm="Are you sure you wish to delete?"
+                hx-delete="{% url 'actions' action='collection_delete' %}?id={{object.id}}"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>Delete</a>
+        {% endif %}
+    </div>
+</form>
