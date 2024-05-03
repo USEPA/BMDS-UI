@@ -13,7 +13,7 @@ def data_path():
 
 
 @pytest.fixture(scope="session")
-def rewrite_data_files():
+def rewrite_data_files() -> bool:
     """
     If you're making changes to datasets and it's expected that previously saved data will need to
     be written, then you can set this flag to True and then all saved data will be rewritten.
