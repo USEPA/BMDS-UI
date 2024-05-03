@@ -188,11 +188,11 @@ export const getResponse = dataset => {
             };
         }
     },
-    getCsfLine = function(bmdl, bmd_y, hexColor) {
+    getCsfLine = function(y0, bmdl, bmd_y, hexColor) {
         if (bmdl > 0) {
             return {
                 x: [0, bmdl],
-                y: [0, bmd_y],
+                y: [y0, bmd_y],
                 name: "Cancer Slope Factor",
                 legendgroup: "Cancer Slope Factor",
                 line: {

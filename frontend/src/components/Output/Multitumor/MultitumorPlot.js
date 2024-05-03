@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -34,7 +35,8 @@ const getLayout = function(datasets) {
 
 const getData = function(ma, datasets, models) {
     const data = [],
-        bmd_y = ma.bmdl * ma.slope_factor;
+        y0 = _.mean(models.map(model => model.results.plotting.dr_y[0])),
+        y1 = y0 + ma.bmdl * ma.slope_factor;
 
     // add individual datasets
     datasets.forEach((dataset, index) => {
@@ -70,8 +72,8 @@ const getData = function(ma, datasets, models) {
     });
 
     if (ma.bmdl) {
-        data.push(getBmdDiamond("Cancer Slope Factor", ma.bmd, ma.bmdl, ma.bmdu, bmd_y, black));
-        data.push(getCsfLine(ma.bmdl, bmd_y, black));
+        data.push(getBmdDiamond("Cancer Slope Factor", ma.bmd, ma.bmdl, ma.bmdu, y1, black));
+        data.push(getCsfLine(y0, ma.bmdl, y1, black));
     }
     return data;
 };
