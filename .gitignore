@@ -38,5 +38,7 @@ settings.ini
 # keep folders, ignore contents
 logs/*
 public/*
+tests/data/reports/*
 !logs/.gitkeep
 !public/.gitkeep
+!tests/data/reports/.gitkeep

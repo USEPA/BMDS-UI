@@ -4,6 +4,7 @@ from functools import wraps
 from pprint import pformat
 from textwrap import dedent
 from typing import Any
+from uuid import UUID
 
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -12,6 +13,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.mail import mail_admins
 from django.http import (
+    Http404,
     HttpRequest,
     HttpResponseBadRequest,
     HttpResponseNotAllowed,
@@ -174,6 +176,18 @@ def action(htmx_only: bool = True, methods: Iterable[str] = ("get",)):
     return actual_decorator
 
 
+def desktop_only(func):
+    """Require request to be in desktop mode-ony."""
+
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):
+        if not settings.IS_DESKTOP:
+            raise Http404()
+        return func(request, *args, **kwargs)
+
+    return wrapper
+
+
 class HtmxView(View):
     """Build a generic HtmxView which returns a index full page and multiple fragments.
 
@@ -194,3 +208,10 @@ class HtmxView(View):
     def dispatch(self, request, *args, **kwargs):
         handler = self.get_handler(request)
         return handler(request, *args, **kwargs)
+
+
+def is_uuid_or_404(value: str) -> UUID:
+    try:
+        return UUID(value)
+    except ValueError:
+        raise Http404()

@@ -1,9 +1,13 @@
+from uuid import uuid4
+
+import pytest
 from django.contrib.auth import get_user_model
 from django.contrib.sessions.middleware import SessionMiddleware
-from django.test import RequestFactory, TestCase
+from django.http import Http404
+from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
-from bmds_server.common.views import ExternalAuth
+from bmds_server.common.views import ExternalAuth, desktop_only, is_uuid_or_404
 
 
 class MockExternalAuth(ExternalAuth):
@@ -72,3 +76,42 @@ class ExternalAuthTests(TestCase):
         bad_email = "another_user@example.com"
         response = self._login(bad_email, username)
         assert response.status_code == 302 and response.url == forbidden_url
+
+
+@pytest.mark.django_db
+def test_desktop_only(settings):
+    @desktop_only
+    def demo(request):
+        return True
+
+    settings.IS_DESKTOP = False
+    with pytest.raises(Http404):
+        demo(request=None)
+
+    settings.IS_DESKTOP = True
+    assert demo(request=None) is True
+
+
+def test_is_uuid_or_404():
+    u = uuid4()
+    assert is_uuid_or_404(str(u)) == u
+    with pytest.raises(Http404):
+        is_uuid_or_404("")
+
+
+@pytest.mark.django_db
+class TestDesktopActions:
+    def test_index(self, settings):
+        # check our htmx handler handles handles bad request properly
+        client = Client(headers={"hx-request": "true"})
+
+        settings.IS_DESKTOP = True
+        url = reverse("actions", kwargs=dict(action="zzz"))
+        resp = client.get(url)
+        assert resp.status_code == 405
+
+        url = reverse("actions", kwargs=dict(action="toggle_star"))
+        resp = client.get(url)
+        assert resp.status_code == 404
+
+        settings.IS_DESKTOP = False

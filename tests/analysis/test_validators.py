@@ -19,7 +19,7 @@ def _missing_field(err, missing_field: str):
 
 
 class TestInputValidation:
-    def test_bmds3_partial(self):
+    def test_partial(self):
         data: dict[str, Any] = {
             "bmds_version": BmdsVersion.BMDS330.value,
             "dataset_type": bmds.constants.CONTINUOUS,
@@ -74,19 +74,19 @@ class TestInputValidation:
         assert validators.validate_input(data, partial=True) is None
         assert validators.validate_input(data) is None
 
-    def test_recommender(self, bmds3_complete_dichotomous):
+    def test_recommender(self, complete_dichotomous):
         # ensure recommender is optional
-        recommender = bmds3_complete_dichotomous.pop("recommender")
-        assert validators.validate_input(bmds3_complete_dichotomous) is None
+        recommender = complete_dichotomous.pop("recommender")
+        assert validators.validate_input(complete_dichotomous) is None
 
         # but if it's included it validates
-        bmds3_complete_dichotomous["recommender"] = recommender
-        assert validators.validate_input(bmds3_complete_dichotomous) is None
+        complete_dichotomous["recommender"] = recommender
+        assert validators.validate_input(complete_dichotomous) is None
 
         # but it must be complete if included
         recommender.pop("rules")
         with pytest.raises(ValidationError) as err:
-            validators.validate_input(bmds3_complete_dichotomous)
+            validators.validate_input(complete_dichotomous)
         _missing_field(err, "rules")
 
     def test_nested_dichotomous(self, nested_dichotomous_datasets):
@@ -193,7 +193,7 @@ class TestInputValidation:
 
 
 class TestModelValidation:
-    def test_bmds3_dichotomous(self):
+    def test_dichotomous(self):
         dtype = bmds.constants.DICHOTOMOUS
         probit = bmds.constants.M_Probit
         logprobit = bmds.constants.M_LogProbit
@@ -242,7 +242,7 @@ class TestModelValidation:
             validators.validate_models(dtype, data)
         assert "Prior weight in bayesian does not sum to 1" in str(err.value)
 
-    def test_bmds3_continuous(self):
+    def test_continuous(self):
         dtype = bmds.constants.CONTINUOUS
         power = bmds.constants.M_Power
         linear = bmds.constants.M_Linear
@@ -341,8 +341,8 @@ class TestOptionSetValidation:
 
 
 class TestDatasetValidation:
-    def test_dichotomous(self, bmds3_complete_dichotomous):
-        dataset = bmds3_complete_dichotomous["datasets"][0]
+    def test_dichotomous(self, complete_dichotomous):
+        dataset = complete_dichotomous["datasets"][0]
 
         # check valid
         check = deepcopy(dataset)
@@ -374,8 +374,8 @@ class TestDatasetValidation:
         with pytest.raises(PydanticValidationError, match="A maximum of 30 groups are allowed"):
             datasets.MaxDichotomousDatasetSchema(**check)
 
-    def test_continuous(self, bmds3_complete_continuous):
-        dataset = bmds3_complete_continuous["datasets"][0]
+    def test_continuous(self, complete_continuous):
+        dataset = complete_continuous["datasets"][0]
 
         # check valid
         check = deepcopy(dataset)
@@ -401,8 +401,8 @@ class TestDatasetValidation:
         with pytest.raises(PydanticValidationError, match="A maximum of 30 groups are allowed"):
             datasets.MaxContinuousDatasetSchema(**check)
 
-    def test_continuous_individual(self, bmds3_complete_continuous_individual):
-        dataset = bmds3_complete_continuous_individual["datasets"][0]
+    def test_continuous_individual(self, complete_continuous_individual):
+        dataset = complete_continuous_individual["datasets"][0]
 
         # check valid
         check = deepcopy(dataset)

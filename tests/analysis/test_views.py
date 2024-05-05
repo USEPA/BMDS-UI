@@ -138,3 +138,28 @@ class TestDesktopHome:
         request = RequestFactory().get(reverse("home"))
         response = DesktopHome.as_view()(request)
         assert response.status_code == 200
+
+
+@pytest.mark.django_db
+class TestDesktopActions:
+    def test_toggle_star(self, settings):
+        # check star works as expected
+        client = Client(headers={"hx-request": "true"})
+        url = reverse("actions", kwargs=dict(action="toggle_star"))
+
+        resp = client.get(url)
+        assert resp.status_code == 404
+
+        settings.IS_DESKTOP = True
+
+        resp = client.get(url)
+        assert resp.status_code == 404
+
+        obj = Analysis.objects.first()
+        assert obj.starred is False
+        resp = client.get(url + f"?id={obj.id}")
+        assert resp.status_code == 200
+        obj.refresh_from_db()
+        assert obj.starred is True
+
+        settings.IS_DESKTOP = False
