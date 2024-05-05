@@ -20,7 +20,7 @@ from django.views.generic import (
     UpdateView,
 )
 
-from ..common.views import HtmxView, action
+from ..common.views import HtmxView, action, desktop_only, is_uuid_or_404
 from . import forms, models
 from .reporting.analytics import get_cached_analytics
 from .utils import get_citation
@@ -79,6 +79,7 @@ class DesktopHome(ListView):
         return context
 
 
+@method_decorator(desktop_only, name="dispatch")
 class DesktopActions(HtmxView):
     actions: ClassVar = {
         "toggle_star",
@@ -86,7 +87,7 @@ class DesktopActions(HtmxView):
 
     @action()
     def toggle_star(self, request: HttpRequest, **kw):
-        id = request.GET.get("id", "")
+        id = is_uuid_or_404(request.GET.get("id", ""))
         object = get_object_or_404(models.Analysis, id=id)
         object.starred = not object.starred
         models.Analysis.objects.bulk_update([object], ["starred"])
@@ -204,24 +205,28 @@ class PolyKAdjustment(TemplateView):
     template_name: str = "analysis/polyk.html"
 
 
+@method_decorator(desktop_only, name="dispatch")
 class CollectionList(ListView):
     model = models.Collection
     queryset = models.Collection.objects.all().order_by("name")
     paginate_by = 1000
 
 
+@method_decorator(desktop_only, name="dispatch")
 class CollectionCreate(CreateView):
     model = models.Collection
     form_class = forms.CollectionForm
     success_url = reverse_lazy("collection_list")
 
 
+@method_decorator(desktop_only, name="dispatch")
 class CollectionUpdate(UpdateView):
     model = models.Collection
     form_class = forms.CollectionForm
     success_url = reverse_lazy("collection_list")
 
 
+@method_decorator(desktop_only, name="dispatch")
 class CollectionDelete(DeleteView):
     model = models.Collection
     success_url = reverse_lazy("collection_list")

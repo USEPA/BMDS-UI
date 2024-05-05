@@ -18,8 +18,7 @@ healthcheck_url = (
 
 router = SimpleRouter()
 router.register("analysis", AnalysisViewset, basename="analysis")
-if settings.INCLUDE_BETA_FEATURES:
-    router.register("polyk", PolyKViewset, basename="polyk")
+router.register("polyk", PolyKViewset, basename="polyk")
 router.register(healthcheck_url, HealthcheckViewset, basename="healthcheck")
 
 edit_pattern = "analysis/<uuid:pk>/<str:password>/"
@@ -41,6 +40,7 @@ urlpatterns = [
     path(edit_pattern, views.AnalysisDetail.as_view(), name="analysis_edit"),
     path(f"{edit_pattern}renew/", views.AnalysisRenew.as_view(), name="analysis_renew"),
     path(f"{edit_pattern}delete/", views.AnalysisDelete.as_view(), name="analysis_delete"),
+    path("transforms/polyk/", views.PolyKAdjustment.as_view(), name="polyk"),
     # errors
     path("401/", common_views.Error401.as_view(), name="401"),
     path("403/", TemplateView.as_view(template_name="403.html"), name="403"),
@@ -49,29 +49,21 @@ urlpatterns = [
     # auth
     path("user/login/", common_views.AppLoginView.as_view(), name="login"),
     path("user/logout/", common_views.AppLogoutView.as_view(), name="logout"),
+    # desktop actions
+    path("actions/<slug:action>/", views.DesktopActions.as_view(), name="actions"),
+    path("collection/", views.CollectionList.as_view(), name="collection_list"),
+    path("collection/create/", views.CollectionCreate.as_view(), name="collection_create"),
+    path(
+        "collection/<int:pk>/update/",
+        views.CollectionUpdate.as_view(),
+        name="collection_update",
+    ),
+    path(
+        "collection/<int:pk>/delete/",
+        views.CollectionDelete.as_view(),
+        name="collection_delete",
+    ),
 ]
-
-if settings.IS_DESKTOP:
-    urlpatterns += [
-        path("actions/<slug:action>/", views.DesktopActions.as_view(), name="actions"),
-        path("collection/", views.CollectionList.as_view(), name="collection_list"),
-        path("collection/create/", views.CollectionCreate.as_view(), name="collection_create"),
-        path(
-            "collection/<int:pk>/update/",
-            views.CollectionUpdate.as_view(),
-            name="collection_update",
-        ),
-        path(
-            "collection/<int:pk>/delete/",
-            views.CollectionDelete.as_view(),
-            name="collection_delete",
-        ),
-    ]
-
-if settings.INCLUDE_BETA_FEATURES:
-    urlpatterns += [
-        path("transforms/polyk/", views.PolyKAdjustment.as_view(), name="polyk"),
-    ]
 
 if settings.INCLUDE_ADMIN:
     admin_url = f"admin/{settings.ADMIN_URL_PREFIX}/" if not settings.DEBUG else "admin/"
