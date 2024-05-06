@@ -3,8 +3,9 @@ from typing import ClassVar
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 from django.middleware.csrf import get_token
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.template import RequestContext, Template
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -19,6 +20,7 @@ from django.views.generic import (
     UpdateView,
 )
 
+from ..common.views import HtmxView, action, desktop_only, is_uuid_or_404
 from . import forms, models
 from .reporting.analytics import get_cached_analytics
 from .utils import get_citation
@@ -75,6 +77,25 @@ class DesktopHome(ListView):
             now=now(),
         )
         return context
+
+
+@method_decorator(desktop_only, name="dispatch")
+class DesktopActions(HtmxView):
+    actions: ClassVar = {
+        "toggle_star",
+    }
+
+    @action()
+    def toggle_star(self, request: HttpRequest, **kw):
+        id = is_uuid_or_404(request.GET.get("id", ""))
+        object = get_object_or_404(models.Analysis, id=id)
+        object.starred = not object.starred
+        models.Analysis.objects.bulk_update([object], ["starred"])
+        return render(
+            request,
+            "analysis/fragments/td_star.html",
+            {"object": object},
+        )
 
 
 class AnalysisCreate(CreateView):
@@ -184,24 +205,28 @@ class PolyKAdjustment(TemplateView):
     template_name: str = "analysis/polyk.html"
 
 
+@method_decorator(desktop_only, name="dispatch")
 class CollectionList(ListView):
     model = models.Collection
     queryset = models.Collection.objects.all().order_by("name")
     paginate_by = 1000
 
 
+@method_decorator(desktop_only, name="dispatch")
 class CollectionCreate(CreateView):
     model = models.Collection
     form_class = forms.CollectionForm
     success_url = reverse_lazy("collection_list")
 
 
+@method_decorator(desktop_only, name="dispatch")
 class CollectionUpdate(UpdateView):
     model = models.Collection
     form_class = forms.CollectionForm
     success_url = reverse_lazy("collection_list")
 
 
+@method_decorator(desktop_only, name="dispatch")
 class CollectionDelete(DeleteView):
     model = models.Collection
     success_url = reverse_lazy("collection_list")
