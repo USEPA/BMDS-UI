@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 from bmds.recommender import RecommenderSettings
 from django.core.management import call_command
+from django.test import Client
 
 from bmds_server.analysis.validators.session import BmdsVersion
 
@@ -330,3 +331,9 @@ def polyk_dataset() -> dict:
         "power": 3,
         "duration": None,
     }
+
+@pytest.fixture()
+def desktop_client(settings):
+    settings.IS_DESKTOP = True
+    yield Client(headers={"hx-request": "true"})
+    settings.IS_DESKTOP = False

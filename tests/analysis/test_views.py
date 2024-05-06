@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 from pytest_django.asserts import assertTemplateNotUsed, assertTemplateUsed
 
-from bmds_server.analysis.models import Analysis
+from bmds_server.analysis.models import Analysis, Collection
 from bmds_server.analysis.validators.session import BmdsVersion
 from bmds_server.analysis.views import Analytics, DesktopHome, get_analysis_or_404
 
@@ -71,7 +71,7 @@ class TestAnalysisDetail:
                 "executeResetUrl": f"/api/v1/analysis/{pk}/execute-reset/",
                 "deleteDateStr": "June 14, 2022",
                 "bmdsVersion": BmdsVersion.latest(),
-                "collections": [],
+                "collections": [{"id": 1, "name": "Label #1"}],
             },
         }
 
@@ -142,24 +142,59 @@ class TestDesktopHome:
 
 @pytest.mark.django_db
 class TestDesktopActions:
-    def test_toggle_star(self, settings):
+    def test_toggle_star(self, desktop_client):
         # check star works as expected
-        client = Client(headers={"hx-request": "true"})
         url = reverse("actions", kwargs=dict(action="toggle_star"))
 
-        resp = client.get(url)
+        resp = desktop_client.get(url)
         assert resp.status_code == 404
 
-        settings.IS_DESKTOP = True
-
-        resp = client.get(url)
+        resp = desktop_client.get(url)
         assert resp.status_code == 404
 
         obj = Analysis.objects.first()
         assert obj.starred is False
-        resp = client.get(url + f"?id={obj.id}")
+        resp = desktop_client.get(url + f"?id={obj.id}")
         assert resp.status_code == 200
         obj.refresh_from_db()
         assert obj.starred is True
 
-        settings.IS_DESKTOP = False
+    def test_collection_detail(self, desktop_client):
+        url = reverse("actions", kwargs=dict(action="collection_detail"))
+
+        for bad_url in [url, url + "?id=999999", url + "?id=abc"]:
+            resp = desktop_client.get(bad_url)
+            assert resp.status_code == 404
+
+        resp = desktop_client.get(url + "?id=1")
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "analysis/fragments/collection_li.html")
+
+    def test_collection_crud(self, desktop_client):
+        # CREATE
+        url = reverse("actions", kwargs=dict(action="collection_create"))
+
+        resp = desktop_client.get(url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "analysis/fragments/collection_form.html")
+
+        resp = desktop_client.post(url, data={"name": "hi"})
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "analysis/fragments/collection_list.html")
+        obj = resp.context["object"]
+
+        # UPDATE
+        url = reverse("actions", kwargs=dict(action="collection_update")) + f"?id={obj.id}"
+        resp = desktop_client.get(url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "analysis/fragments/collection_form.html")
+
+        resp = desktop_client.post(url, data={"name": "hi2"})
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "analysis/fragments/collection_list.html")
+
+        # DELETE
+        url = reverse("actions", kwargs=dict(action="collection_delete")) + f"?id={obj.id}"
+        resp = desktop_client.delete(url)
+        assert resp.status_code == 200
+        assert Collection.objects.filter(id=obj.id).count() == 0

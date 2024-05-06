@@ -51,18 +51,6 @@ urlpatterns = [
     path("user/logout/", common_views.AppLogoutView.as_view(), name="logout"),
     # desktop actions
     path("actions/<slug:action>/", views.DesktopActions.as_view(), name="actions"),
-    path("collection/", views.CollectionList.as_view(), name="collection_list"),
-    path("collection/create/", views.CollectionCreate.as_view(), name="collection_create"),
-    path(
-        "collection/<int:pk>/update/",
-        views.CollectionUpdate.as_view(),
-        name="collection_update",
-    ),
-    path(
-        "collection/<int:pk>/delete/",
-        views.CollectionDelete.as_view(),
-        name="collection_delete",
-    ),
 ]
 
 if settings.INCLUDE_ADMIN:

@@ -3,7 +3,7 @@ from typing import ClassVar
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models.query import QuerySet
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, render
 from django.template import RequestContext, Template
@@ -17,10 +17,9 @@ from django.views.generic import (
     ListView,
     RedirectView,
     TemplateView,
-    UpdateView,
 )
 
-from ..common.views import HtmxView, action, desktop_only, is_uuid_or_404
+from ..common.views import HtmxView, action, desktop_only, int_or_404, uuid_or_404
 from . import forms, models
 from .reporting.analytics import get_cached_analytics
 from .utils import get_citation
@@ -73,6 +72,7 @@ class DesktopHome(ListView):
             q=self.request.GET.get("q", ""),
             starred=len(self.request.GET.get("starred", "")) > 0,
             collection=int(collection) if collection.isnumeric() else "",
+            collection_qs=models.Collection.objects.all().order_by("name"),
             collections=models.Collection.opts(),
             now=now(),
         )
@@ -83,11 +83,22 @@ class DesktopHome(ListView):
 class DesktopActions(HtmxView):
     actions: ClassVar = {
         "toggle_star",
+        "collection_detail",
+        "collection_create",
+        "collection_update",
+        "collection_delete",
     }
+
+    def _return_collection_list(self, request: HttpRequest) -> HttpResponse:
+        return render(
+            request,
+            "analysis/fragments/collection_list.html",
+            {"object_list": models.Collection.objects.all().order_by("name")},
+        )
 
     @action()
     def toggle_star(self, request: HttpRequest, **kw):
-        id = is_uuid_or_404(request.GET.get("id", ""))
+        id = uuid_or_404(request.GET.get("id", ""))
         object = get_object_or_404(models.Analysis, id=id)
         object.starred = not object.starred
         models.Analysis.objects.bulk_update([object], ["starred"])
@@ -96,6 +107,51 @@ class DesktopActions(HtmxView):
             "analysis/fragments/td_star.html",
             {"object": object},
         )
+
+    @action()
+    def collection_detail(self, request: HttpRequest, **kw):
+        id = int_or_404(request.GET.get("id", ""))
+        object = get_object_or_404(models.Collection, id=id)
+        return render(
+            request,
+            "analysis/fragments/collection_li.html",
+            {"object": object},
+        )
+
+    @action(methods=("get", "post"))
+    def collection_create(self, request: HttpRequest, **kw):
+        data = request.POST if request.method == "POST" else None
+        form = forms.CollectionForm(data=data)
+        if request.method == "POST" and form.is_valid():
+            form.instance.save()
+            return self._return_collection_list(request)
+        return render(
+            request,
+            "analysis/fragments/collection_form.html",
+            {"form": form},
+        )
+
+    @action(methods=("get", "post"))
+    def collection_update(self, request: HttpRequest, **kw):
+        id = int_or_404(request.GET.get("id", ""))
+        object = get_object_or_404(models.Collection, id=id)
+        data = request.POST if request.method == "POST" else None
+        form = forms.CollectionForm(instance=object, data=data)
+        if request.method == "POST" and form.is_valid():
+            form.save()
+            return self._return_collection_list(request)
+        return render(
+            request,
+            "analysis/fragments/collection_form.html",
+            {"form": form, "object": object},
+        )
+
+    @action(methods=("delete",))
+    def collection_delete(self, request: HttpRequest, **kw):
+        id = int_or_404(request.GET.get("id", ""))
+        object = get_object_or_404(models.Collection, id=id)
+        object.delete()
+        return HttpResponse("")
 
 
 class AnalysisCreate(CreateView):
@@ -203,30 +259,3 @@ class AnalysisDelete(DeleteView):
 
 class PolyKAdjustment(TemplateView):
     template_name: str = "analysis/polyk.html"
-
-
-@method_decorator(desktop_only, name="dispatch")
-class CollectionList(ListView):
-    model = models.Collection
-    queryset = models.Collection.objects.all().order_by("name")
-    paginate_by = 1000
-
-
-@method_decorator(desktop_only, name="dispatch")
-class CollectionCreate(CreateView):
-    model = models.Collection
-    form_class = forms.CollectionForm
-    success_url = reverse_lazy("collection_list")
-
-
-@method_decorator(desktop_only, name="dispatch")
-class CollectionUpdate(UpdateView):
-    model = models.Collection
-    form_class = forms.CollectionForm
-    success_url = reverse_lazy("collection_list")
-
-
-@method_decorator(desktop_only, name="dispatch")
-class CollectionDelete(DeleteView):
-    model = models.Collection
-    success_url = reverse_lazy("collection_list")
