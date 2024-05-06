@@ -9,7 +9,7 @@
     <div class="d-flex">
       <h3 class="flex-grow-1">Analyses</h3>
 
-      <div class="dropdown">
+      <div class="dropdown mr-2">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">Collections</button>
         <div class="dropdown-menu dropdown-menu-right">
           <form class="p-2">
@@ -19,7 +19,7 @@
               hx-target="#collection-list"
               hx-swap="afterbegin">Create</a>
             <div class="clearfix"></div>
-            {% include "analysis/fragments/collection_list.html" with object_list=collection_qs %}
+            {% include "analysis/fragments/collection_list.html" with object_list=collection_qs no_oob=True %}
           </form>
         </div>
       </div>
@@ -50,7 +50,7 @@
         </div>
       </div>
       <div class="ml-auto">
-        <a href="." class="btn btn-secondary mr-3">Reset</a>
+        <a href="." class="btn btn-secondary mr-2">Reset</a>
         <button type="submit" class="btn btn-primary px-3">
           <span class="bi bi-search mr-1"></span>Search
         </button>

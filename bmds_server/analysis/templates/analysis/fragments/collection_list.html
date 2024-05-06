@@ -4,3 +4,11 @@
     {% endfor %}
     <li class="list-group-item show-only-child text-muted">No collections!</li>
 </ul>
+{% if not no_oob %}
+<optgroup id="id_collection" hx-swap-oob="innerHTML">
+    <option>--- Collection ---</option>
+    {% for object in object_list %}
+        <option value="{{object.id}}">{{object.name}}</option>
+    {% endfor %}
+</optgroup>
+{% endif %}
