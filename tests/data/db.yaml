@@ -5059,6 +5059,12 @@
     started: 2021-11-15 18:42:05.518205+00:00
     ended: 2021-11-15 18:42:06.176363+00:00
     deletion_date: 2022-05-14 18:42:06.176363+00:00
+- model: analysis.collection
+  pk: 1
+  fields:
+    name: "Label #1"
+    created: 2024-05-01 09:00:00.000000+00:00
+    last_updated: 2024-05-01 09:00:00.000000+00:00
 - model: analysis.content
   pk: 1
   fields:

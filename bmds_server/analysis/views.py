@@ -19,7 +19,7 @@ from django.views.generic import (
     TemplateView,
 )
 
-from ..common.views import HtmxView, action, desktop_only, is_uuid_or_404
+from ..common.views import HtmxView, action, desktop_only, int_or_404, uuid_or_404
 from . import forms, models
 from .reporting.analytics import get_cached_analytics
 from .utils import get_citation
@@ -98,7 +98,7 @@ class DesktopActions(HtmxView):
 
     @action()
     def toggle_star(self, request: HttpRequest, **kw):
-        id = is_uuid_or_404(request.GET.get("id", ""))
+        id = uuid_or_404(request.GET.get("id", ""))
         object = get_object_or_404(models.Analysis, id=id)
         object.starred = not object.starred
         models.Analysis.objects.bulk_update([object], ["starred"])
@@ -110,7 +110,8 @@ class DesktopActions(HtmxView):
 
     @action()
     def collection_detail(self, request: HttpRequest, **kw):
-        object = get_object_or_404(models.Collection, id=request.GET.get("id", "-1"))
+        id = int_or_404(request.GET.get("id", ""))
+        object = get_object_or_404(models.Collection, id=id)
         return render(
             request,
             "analysis/fragments/collection_li.html",
@@ -132,7 +133,8 @@ class DesktopActions(HtmxView):
 
     @action(methods=("get", "post"))
     def collection_update(self, request: HttpRequest, **kw):
-        object = get_object_or_404(models.Collection, id=request.GET.get("id", -1))
+        id = int_or_404(request.GET.get("id", ""))
+        object = get_object_or_404(models.Collection, id=id)
         data = request.POST if request.method == "POST" else None
         form = forms.CollectionForm(instance=object, data=data)
         if request.method == "POST" and form.is_valid():
@@ -146,7 +148,8 @@ class DesktopActions(HtmxView):
 
     @action(methods=("delete",))
     def collection_delete(self, request: HttpRequest, **kw):
-        object = get_object_or_404(models.Collection, id=request.GET.get("id", -1))
+        id = int_or_404(request.GET.get("id", ""))
+        object = get_object_or_404(models.Collection, id=id)
         object.delete()
         return HttpResponse("")
 

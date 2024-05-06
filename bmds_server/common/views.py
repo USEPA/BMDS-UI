@@ -210,8 +210,15 @@ class HtmxView(View):
         return handler(request, *args, **kwargs)
 
 
-def is_uuid_or_404(value: str) -> UUID:
+def uuid_or_404(value: str) -> UUID:
     try:
         return UUID(value)
+    except ValueError:
+        raise Http404()
+
+
+def int_or_404(value: str) -> int:
+    try:
+        return int(value)
     except ValueError:
         raise Http404()
