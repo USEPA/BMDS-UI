@@ -15,6 +15,7 @@ if /I %1 == format-py goto :format-py
 if /I %1 == test-js goto :test-js
 if /I %1 == lint-js goto :lint-js
 if /I %1 == format-js goto :format-js
+if /I %1 == coverage goto :coverage
 goto :help
 
 :help
@@ -24,6 +25,7 @@ echo.  docs         Build documentation {html}
 echo.  docs-serve   Realtime documentation preview
 echo.  docs-all     Build documentation {html, docx}
 echo.  test         perform both test-py and test-js
+echo.  coverage     generate test coverage report
 echo.  test-py      run python tests
 echo.  test-js      run javascript tests
 echo.  lint         check formatting issues
@@ -98,3 +100,8 @@ goto :eof
 :test-js
 npm --prefix .\frontend run test-windows
 goto :eof
+
+:coverage
+coverage run -m pytest
+coverage html -d coverage_report
+echo "Report ready; open ./coverage_html/index.html to view"
