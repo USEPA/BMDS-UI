@@ -7,11 +7,28 @@
   <div class="col-lg-8">
 
     <div class="d-flex">
-      <h3>Analyses</h3>
-      <form action="{% url 'analysis_create' %}" method="post" class="ml-auto align-self-start flex-shrink-0">
+      <h3 class="flex-grow-1">Analyses</h3>
+
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">Collections</button>
+        <div class="dropdown-menu dropdown-menu-right">
+          <form class="p-2">
+            <a class="btn btn-primary float-right"
+              href="#"
+              hx-get="{% url 'actions' action='collection_create' %}"
+              hx-target="#collection-list"
+              hx-swap="afterbegin">Create</a>
+            <div class="clearfix"></div>
+            {% include "analysis/fragments/collection_list.html" with object_list=collection_qs %}
+          </form>
+        </div>
+      </div>
+
+      <form action="{% url 'analysis_create' %}" method="post">
         {% csrf_token %}
         <button type="submit" class="btn btn-primary"><span class="bi bi-plus-square-fill mr-1"></span>Create analysis</button>
       </form>
+
     </div>
 
     <form method="get" class="form-row align-items-center bg-light py-3">
@@ -74,7 +91,6 @@
       </div>
       <div class="card-body p-3">
         <ul class="mb-0">
-          <li><a href="{% url 'collection_list' %}">Collections</a></li>
           <li><a href="https://www.epa.gov/bmds" target="_blank" rel="noopener noreferrer">BMDS Home Page</a></li>
           <li><a href="https://www.epa.gov/bmds/how-modeling-dichotomous-data-bmds-online" target="_blank" rel="noopener noreferrer">BMDS Online Tutorial</a></li>
           <li><a href="https://www.epa.gov/bmds/benchmark-dose-software-bmds-version-32-download" target="_blank" rel="noopener noreferrer">BMDS Downloads</a></li>

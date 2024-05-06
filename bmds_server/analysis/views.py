@@ -72,6 +72,7 @@ class DesktopHome(ListView):
             q=self.request.GET.get("q", ""),
             starred=len(self.request.GET.get("starred", "")) > 0,
             collection=int(collection) if collection.isnumeric() else "",
+            collection_qs=models.Collection.objects.all().order_by("name"),
             collections=models.Collection.opts(),
             now=now(),
         )
@@ -82,10 +83,18 @@ class DesktopHome(ListView):
 class DesktopActions(HtmxView):
     actions: ClassVar = {
         "toggle_star",
+        "collection_detail",
         "collection_create",
         "collection_update",
         "collection_delete",
     }
+
+    def _return_collection_list(self, request: HttpRequest) -> HttpResponse:
+        return render(
+            request,
+            "analysis/fragments/collection_list.html",
+            {"object_list": models.Collection.objects.all().order_by("name")},
+        )
 
     @action()
     def toggle_star(self, request: HttpRequest, **kw):
@@ -99,13 +108,22 @@ class DesktopActions(HtmxView):
             {"object": object},
         )
 
+    @action()
+    def collection_detail(self, request: HttpRequest, **kw):
+        object = get_object_or_404(models.Collection, id=request.GET.get("id", "-1"))
+        return render(
+            request,
+            "analysis/fragments/collection_li.html",
+            {"object": object},
+        )
+
     @action(methods=("get", "post"))
     def collection_create(self, request: HttpRequest, **kw):
         data = request.POST if request.method == "POST" else None
         form = forms.CollectionForm(data=data)
         if request.method == "POST" and form.is_valid():
             form.instance.save()
-            return HttpResponse("done")
+            return self._return_collection_list(request)
         return render(
             request,
             "analysis/fragments/collection_form.html",
@@ -119,6 +137,7 @@ class DesktopActions(HtmxView):
         form = forms.CollectionForm(instance=object, data=data)
         if request.method == "POST" and form.is_valid():
             form.save()
+            return self._return_collection_list(request)
         return render(
             request,
             "analysis/fragments/collection_form.html",
@@ -237,10 +256,3 @@ class AnalysisDelete(DeleteView):
 
 class PolyKAdjustment(TemplateView):
     template_name: str = "analysis/polyk.html"
-
-
-@method_decorator(desktop_only, name="dispatch")
-class CollectionList(ListView):
-    model = models.Collection
-    queryset = models.Collection.objects.all().order_by("name")
-    paginate_by = 1000

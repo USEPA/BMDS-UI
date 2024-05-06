@@ -1,11 +1,6 @@
-<div id="collection-list">
-    <p class="show-only-child text-muted">No collections!</p>
-    <ul class="mb-0">
+<ul class="list-group mt-2" id="collection-list" style="width:400px">
     {% for object in object_list %}
-        <li hx-swap="innerHTML">{{object.name}}
-            <a href="#"
-                hx-get="{% url 'actions' action='collection_update' %}?id={{object.id}}"
-                hx-target='closest li'>Update</a></li>
+        {% include 'analysis/fragments/collection_li.html' %}
     {% endfor %}
-    </ul>
-</div>
+    <li class="list-group-item show-only-child text-muted">No collections!</li>
+</ul>
