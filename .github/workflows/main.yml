@@ -77,7 +77,7 @@ jobs:
       with:
         node-version: 20
         cache: 'yarn'
-        cache-dependency-path: 'frontend/yarn.json'
+        cache-dependency-path: 'frontend/yarn.lock'
     - name: install
       run: |
         yarn --cwd ./frontend install --frozen-lockfile
