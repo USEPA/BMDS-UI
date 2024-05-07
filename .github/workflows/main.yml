@@ -153,7 +153,7 @@ jobs:
         path: bmds_server
     - name: install
       run: |
-        pip install -U pip
+        pip install -U pip wheel
         pip install -r requirements/ci.txt
         playwright install --with-deps chromium
     - name: Setup linux environment
