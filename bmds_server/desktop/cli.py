@@ -61,22 +61,22 @@ def load_config():
 def get_data_folder() -> Path:
     """Sets default folder based on OS or gets custom value from config."""
     config = load_config()
-    if config["desktop"]["directory"] == "default":
+    directory = config.get("desktop", "directory", fallback="default")
+    if directory == "default":
         path = get_app_home()
         path.mkdir(parents=True, exist_ok=True)
         return path
-    else:
-        return config["desktop"]["directory"]
+    return Path(directory)
 
 
 def get_project_filename() -> str:
     """Sets default db name or gets custom value from config."""
     # file <-> db <-> project
     config = load_config()
-    if config["desktop"]["file_name"] == "default":
+    filename = config.get("desktop", "file_name", fallback="default")
+    if filename == "default":
         return "bmds.sqlite3"
-    else:
-        return config["desktop"]["file_name"]
+    return filename
 
 
 class QuitModal(ModalScreen):

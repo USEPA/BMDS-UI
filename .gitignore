@@ -32,7 +32,6 @@ bmds_server/main/settings/local.py
 bmds_server/webpack-stats.json
 celerybeat-schedule
 compose/nginx/conf/nginx.conf
-frontend/yarn.lock
 settings.ini
 
 # keep folders, ignore contents
