@@ -189,6 +189,7 @@ jobs:
         fi
     - name: build wheel
       run: |
+        export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
         manage.py set_git_commit
         python setup.py build
         python setup.py bdist_wheel
