@@ -78,7 +78,7 @@ jobs:
         node-version: 20
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
+      run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
     - name: try to restore yarn cache
       uses: actions/cache@v4
       id: yarn-cache
@@ -100,7 +100,7 @@ jobs:
       run: |
         npm --prefix ./frontend run build
     - name: Upload webpack build
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: webpack-build
         path: |
@@ -147,7 +147,7 @@ jobs:
         architecture: 'x64'
         cache: 'pip'
     - name: Download webpack build
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: webpack-build
         path: bmds_server
@@ -194,7 +194,7 @@ jobs:
         python setup.py build
         python setup.py bdist_wheel
     - name: Upload webpack build
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: wheel
         path: dist/*.whl
