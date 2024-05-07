@@ -97,6 +97,7 @@ jobs:
         path: |
           bmds_server/webpack-stats.json
           bmds_server/static/bundles/
+        retention-days: 1
 
   integration:
     name: integration
