@@ -3,7 +3,10 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import ClassVar, Self
 
+from django.utils.text import slugify
 from pydantic import BaseModel, Field
+
+from .. import __version__
 
 
 def now() -> datetime:
@@ -38,13 +41,14 @@ class DesktopConfig(BaseModel):
 
 def get_app_home() -> Path:
     app_home = Path.home()
+    version = slugify(__version__)
     match platform.system():
         case "Windows":
-            app_home = app_home / "AppData" / "Roaming" / "bmds"
+            app_home = app_home / "AppData" / "Roaming" / "bmds" / version
         case "Darwin":
-            app_home = app_home / "Library" / "Application Support" / "bmds"
+            app_home = app_home / "Library" / "Application Support" / "bmds" / version
         case "Linux" | _:
-            app_home = app_home / ".bmds"
+            app_home = app_home / ".bmds" / version
     app_home.mkdir(parents=True, exist_ok=True)
     return app_home
 
