@@ -43,8 +43,8 @@ from textual.widgets import (
 )
 from whitenoise import WhiteNoise
 
-from ..main.constants import get_app_home
 from ..main.settings.desktop import DATABASES
+from .config import DesktopConfig, get_app_home
 
 logger = logging.getLogger(__name__)
 
