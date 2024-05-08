@@ -1,34 +1,33 @@
 from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import ScrollableContainer
+from textual.reactive import reactive
 from textual.widgets import Button, Footer, Label, TabbedContent, TabPane
 
 from .. import __version__
+from .components.database_list import DatabaseList
 from .components.header import Header
+from .components.log import Log
 from .components.quit import QuitModal
+from .components.settings import Settings
 from .components.update_check import CheckForUpdatesModal
 
 
 class BmdsDesktopTui(App):
-    def compose(self) -> ComposeResult:
-        yield Label("settings")
+    config = reactive({})
 
-    def compose_complete(self) -> ComposeResult:
+    def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
+        yield Header()
         with ScrollableContainer():
-            yield Header()
             with TabbedContent(id="tabs", initial="project"):
                 with TabPane("Projects", id="project"):
-                    yield Label("projects")
+                    yield DatabaseList()
                 with TabPane("Logging", id="log"):
-                    yield Label("logging")
+                    yield Log()
                 with TabPane("Settings", id="settings"):
-                    yield Label("settings")
+                    yield Settings()
         yield Footer()
-
-    def on_mount(self) -> None:
-        self.title = "BMDS Desktop"
-        self.sub_title = f"Version {__version__}"
 
     @on(Button.Pressed, "#quit-modal")
     def on_quit_modal(self) -> None:

@@ -1,8 +1,6 @@
 from textual import on
 from textual.app import ComposeResult
-from textual.containers import (
-    Grid,
-)
+from textual.containers import Grid
 from textual.reactive import reactive
 from textual.screen import ModalScreen
 from textual.widget import Widget
