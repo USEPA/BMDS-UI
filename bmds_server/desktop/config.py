@@ -55,15 +55,23 @@ class Config:
     _config: ClassVar[DesktopConfig | None] = None
 
     @classmethod
+    def get_config_path(cls) -> Path:
+        last_config = get_app_home() / "latest.txt"
+        if last_config.exists():
+            path = Path(last_config.read_text())
+            if path.exists():
+                return path
+        # if the path doesn't exist, create a new default configuration and persist to disk
+        default_config = get_app_home() / "config.json"
+        default_config.write_text(DesktopConfig.default().model_dump_json(indent=2))
+        last_config.write_text(str((default_config).resolve()))
+        return default_config
+
+    @classmethod
     def get(cls) -> DesktopConfig:
-        # load from disk
-        if cls._config is not None:
+        if cls._config:
             return cls._config
-        if cls._config_path is None:
-            cls._config_path = get_app_home() / "config.json"
-        if not cls._config_path.exists():
-            cls._config = DesktopConfig.default()
-            cls.sync()
+        cls._config_path = cls.get_config_path()
         cls._config = DesktopConfig.model_validate_json(cls._config_path.read_text())
         return cls._config
 
