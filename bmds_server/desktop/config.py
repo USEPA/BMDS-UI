@@ -1,9 +1,9 @@
 import platform
+import re
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import ClassVar, Self
 
-from django.utils.text import slugify
 from pydantic import BaseModel, Field
 
 from .. import __version__
@@ -39,9 +39,16 @@ class DesktopConfig(BaseModel):
         self.databases.append(Databases(path=path, name=name, description=description))
 
 
+def get_version_path() -> str:
+    """Get major/minor version path, ignoring patch or alpha/beta markers in version name"""
+    if m := re.match(r"^(\d+).(\d+)", __version__):
+        return f"{m[1]}_{m[2]}"
+    raise ValueError("Cannot parse version string")
+
+
 def get_app_home() -> Path:
     app_home = Path.home()
-    version = slugify(__version__)
+    version = get_version_path()
     match platform.system():
         case "Windows":
             app_home = app_home / "AppData" / "Roaming" / "bmds" / version
