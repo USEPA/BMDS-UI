@@ -1,7 +1,8 @@
 import os
 from pathlib import Path
 
-from ..constants import SkinStyle, get_app_home
+from ...desktop.config import get_app_home
+from ..constants import SkinStyle
 from .base import *  # noqa: F403
 
 APP_HOME = Path(os.getenv("BMDS_HOME") or get_app_home())
