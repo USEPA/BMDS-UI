@@ -40,4 +40,4 @@ class BmdsDesktopTui(App):
             if refresh:
                 self.app.query_one("DatabaseList").refresh(layout=True, recompose=True)
 
-        self.push_screen(DatabaseFormModel(), maybe_refresh)
+        self.push_screen(DatabaseFormModel(db=None), maybe_refresh)

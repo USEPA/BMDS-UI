@@ -22,6 +22,9 @@ class Database(BaseModel):
     created: datetime = Field(default_factory=now)
     last_accessed: datetime = Field(default_factory=now)
 
+    def update_last_accessed(self):
+        self.last_accessed = datetime.now(tz=UTC)
+
 
 class WebServer(BaseModel):
     host: str = "127.0.0.1"
@@ -37,6 +40,16 @@ class DesktopConfig(BaseModel):
     @classmethod
     def default(cls) -> Self:
         return cls(server=WebServer())
+
+    def add_db(self, db: Database):
+        self.databases.insert(0, db)
+
+    def get_db(self, id: UUID) -> Database:
+        db = [db for db in self.databases if db.id == id]
+        return db[0]
+
+    def remove_db(self, db):
+        self.databases.remove(db)
 
 
 def get_version_path() -> str:

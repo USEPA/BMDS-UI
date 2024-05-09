@@ -55,9 +55,8 @@ class FormError(Widget):
 class DatabaseFormModel(ModalScreen):
     """Modal with a dialog to quit."""
 
-    def __init__(self, *args, **kw):
-        self.db_idx: int | None = kw.pop("db_idx", None)
-        self.db: Database | None = kw.pop("db", None)
+    def __init__(self, *args, db: Database | None, **kw):
+        self.db = db
         super().__init__(*args, **kw)
 
     def get_db_value(self, attr: str, default: Any):
@@ -74,21 +73,21 @@ class DatabaseFormModel(ModalScreen):
         yield Grid(
             Label("Name (required)"),
             Input(
-                value=self.get_db_value("name", ""),
+                value=self.get_db_value("name", "My Database"),
                 type="text",
                 id="name",
                 validators=[Function(str_exists)],
             ),
             Label("Path (must exist)"),
             Input(
-                value=str(path.parent) if path else "",
+                value=str(path.parent) if path else str(Path("~").expanduser().resolve()),
                 type="text",
                 id="path",
                 validators=[Function(path_exists)],
             ),
             Label("Filename (must end in .sqlite)"),
             Input(
-                value=path.name if path else "",
+                value=path.name if path else "db.sqlite",
                 type="text",
                 id="filename",
                 validators=[Function(file_valid)],
@@ -119,13 +118,8 @@ class DatabaseFormModel(ModalScreen):
             self.query_one(FormError).message = message
             return
 
-        db = Database(
-            name=name,
-            description=description,
-            path=db_path,
-        )
         config = Config.get()
-        config.databases.insert(0, db)
+        config.add_db(Database(name=name, description=description, path=db_path))
         Config.sync()
         self.dismiss(True)
 
@@ -145,19 +139,16 @@ class DatabaseFormModel(ModalScreen):
             self.query_one(FormError).message = message
             return
 
-        self.db: Database
         self.db.name = name
         self.db.path = Path(path) / db
         self.db.description = description
-        config = Config.get()
-        config.databases[self.db_idx] = self.db
         Config.sync()
         self.dismiss(True)
 
     @on(Button.Pressed, "#db-delete")
     async def on_db_delete(self) -> None:
         config = Config.get()
-        config.databases.pop(self.db_idx)
+        config.remove_db(self.db)
         Config.sync()
         self.dismiss(True)
 

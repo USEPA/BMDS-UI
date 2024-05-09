@@ -11,4 +11,4 @@ class DatabaseList(Static):
         if len(config.databases) == 0:
             yield Label("No databases exist! Create one!")
         for idx, db in enumerate(config.databases):
-            yield DatabaseItem(db_idx=idx, db=db, classes="db_item")
+            yield DatabaseItem(db=db, classes="db_item")

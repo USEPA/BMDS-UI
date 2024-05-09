@@ -36,9 +36,8 @@ class DatabaseItem(Static):
     }
     """
 
-    def __init__(self, *args, db_idx: int, db: Database, **kw):
-        self.db_idx = db_idx
-        self.db = db
+    def __init__(self, *args, db: Database, **kw):
+        self.db: Database = db
         super().__init__(*args, **kw)
 
     def compose(self):
@@ -58,13 +57,11 @@ class DatabaseItem(Static):
             if refresh:
                 self.app.query_one("DatabaseList").refresh(layout=True, recompose=True)
 
-        self.app.push_screen(DatabaseFormModel(db_idx=self.db_idx, db=self.db), maybe_refresh)
+        self.app.push_screen(DatabaseFormModel(db=self.db), maybe_refresh)
 
     @on(Button.Pressed, ".db-start")
     def on_db_start(self) -> None:
-        config = Config.get()
-        self.db.last_accessed = datetime.now(tz=UTC)
-        config.databases[self.db_idx] = self.db
+        self.db.update_last_accessed()
         Config.sync()
         self.query_one("Button.db-stop").remove_class("hidden")
         self.app.query("Button.db-edit").add_class("hidden")
