@@ -4,7 +4,7 @@ from textual import on
 from textual.containers import Horizontal, Vertical
 from textual.widgets import Button, Label, Static
 
-from ..config import Database
+from ..config import Config, Database
 from .database_form import DatabaseFormModel
 
 
@@ -58,6 +58,10 @@ class DatabaseItem(Static):
 
     @on(Button.Pressed, ".db-start")
     def on_db_start(self) -> None:
+        config = Config.get()
+        self.db.last_accessed = datetime.now(tz=UTC)
+        config.databases[self.db_idx] = self.db
+        Config.sync()
         self.query_one("Button.db-stop").remove_class("hidden")
         self.app.query("Button.db-edit").add_class("hidden")
         self.app.query("Button.db-start").add_class("hidden")
