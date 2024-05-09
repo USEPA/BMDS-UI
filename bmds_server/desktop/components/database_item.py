@@ -1,9 +1,24 @@
+from datetime import UTC, datetime
+
 from textual import on
 from textual.containers import Horizontal, Vertical
 from textual.widgets import Button, Label, Static
 
 from ..config import Database
 from .database_form import DatabaseFormModel
+
+
+def utc_to_local(timestamp: datetime):
+    """timestamp is a UTC normalized timestamp"""
+    now = datetime.now(UTC)
+    day_diff = (now - timestamp).total_seconds() / (60 * 60 * 24)
+    local = timestamp.astimezone(tz=None)
+    if day_diff <= 1:
+        return local.strftime("%I:%M %p")
+    elif day_diff < 180:
+        return local.strftime("%b %d")
+    else:
+        return local.strftime("%m/%d/%y")
 
 
 class DatabaseItem(Static):
@@ -31,7 +46,7 @@ class DatabaseItem(Static):
             with Vertical():
                 yield Label(f"Name: {self.db.name}")
                 yield Label(f"Description: {self.db.description}")
-                yield Label(f"Last accessed: {self.db.last_accessed}")
+                yield Label(f"Last accessed: {utc_to_local(self.db.last_accessed)}")
                 yield Label(f"Location: {self.db.path}")
             yield Button("Edit", variant="default", classes="db-edit")
             yield Button("Start", variant="success", classes="db-start")

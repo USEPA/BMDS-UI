@@ -10,7 +10,7 @@ from .. import __version__
 
 
 def now() -> datetime:
-    return datetime.now(UTC)
+    return datetime.now(tz=UTC)
 
 
 class Database(BaseModel):
