@@ -1,11 +1,10 @@
 import os
-from pathlib import Path
 
 from ...desktop.config import get_app_home
 from ..constants import SkinStyle
 from .base import *  # noqa: F403
 
-APP_HOME = Path(os.getenv("BMDS_HOME") or get_app_home())
+APP_HOME = get_app_home()
 ALLOWED_HOSTS = ["*"]
 IS_DESKTOP = True
 

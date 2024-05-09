@@ -22,6 +22,9 @@ class Database(BaseModel):
     created: datetime = Field(default_factory=now)
     last_accessed: datetime = Field(default_factory=now)
 
+    def __str__(self) -> str:
+        return f"{self.name}: {self.path}"
+
     def update_last_accessed(self):
         self.last_accessed = datetime.now(tz=UTC)
 

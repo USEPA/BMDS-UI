@@ -11,7 +11,9 @@ from textual.validation import Function
 from textual.widget import Widget
 from textual.widgets import Button, Input, Label
 
+from ..actions import create_django_db
 from ..config import Config, Database
+from ..log import log
 
 
 def str_exists(value: str):
@@ -119,8 +121,10 @@ class DatabaseFormModel(ModalScreen):
             return
 
         config = Config.get()
-        config.add_db(Database(name=name, description=description, path=db_path))
+        db = Database(name=name, description=description, path=db_path)
+        config.add_db(db)
         Config.sync()
+        create_django_db(config, db)
         self.dismiss(True)
 
     @on(Button.Pressed, "#db-update")
@@ -143,6 +147,7 @@ class DatabaseFormModel(ModalScreen):
         self.db.path = Path(path) / db
         self.db.description = description
         Config.sync()
+        log.info(f"Updated config for {self.db}")
         self.dismiss(True)
 
     @on(Button.Pressed, "#db-delete")
@@ -150,6 +155,7 @@ class DatabaseFormModel(ModalScreen):
         config = Config.get()
         config.remove_db(self.db)
         Config.sync()
+        log.info(f"Removed config for {self.db}")
         self.dismiss(True)
 
     @on(Button.Pressed, "#db-edit-cancel")
