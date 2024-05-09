@@ -104,7 +104,7 @@ class DatabaseFormModel(ModalScreen):
         )
 
     @on(Button.Pressed, "#db-create")
-    def on_db_create(self) -> None:
+    async def on_db_create(self) -> None:
         name = self.query_one("#name").value
         path = self.query_one("#path").value
         db = self.query_one("#filename").value
@@ -127,10 +127,10 @@ class DatabaseFormModel(ModalScreen):
         config = Config.get()
         config.databases.insert(0, db)
         Config.sync()
-        self.app.pop_screen()  # TODO - update the original list view?
+        self.dismiss(True)
 
     @on(Button.Pressed, "#db-update")
-    def on_db_update(self) -> None:
+    async def on_db_update(self) -> None:
         name = self.query_one("#name").value
         path = self.query_one("#path").value
         db = self.query_one("#filename").value
@@ -152,15 +152,15 @@ class DatabaseFormModel(ModalScreen):
         config = Config.get()
         config.databases[self.db_idx] = self.db
         Config.sync()
-        self.app.pop_screen()  # TODO - update the original list view?
+        self.dismiss(True)
 
     @on(Button.Pressed, "#db-delete")
-    def on_db_delete(self) -> None:
+    async def on_db_delete(self) -> None:
         config = Config.get()
         config.databases.pop(self.db_idx)
         Config.sync()
-        self.app.pop_screen()  # TODO - update the original list view?
+        self.dismiss(True)
 
     @on(Button.Pressed, "#db-edit-cancel")
     def on_db_create_cancel(self) -> None:
-        self.app.pop_screen()
+        self.dismiss(False)

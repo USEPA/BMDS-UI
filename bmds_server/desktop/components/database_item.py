@@ -54,7 +54,11 @@ class DatabaseItem(Static):
 
     @on(Button.Pressed, ".db-edit")
     def on_db_edit(self) -> None:
-        self.app.push_screen(DatabaseFormModel(db_idx=self.db_idx, db=self.db))
+        def maybe_refresh(refresh: bool):
+            if refresh:
+                self.app.query_one("DatabaseList").refresh(layout=True, recompose=True)
+
+        self.app.push_screen(DatabaseFormModel(db_idx=self.db_idx, db=self.db), maybe_refresh)
 
     @on(Button.Pressed, ".db-start")
     def on_db_start(self) -> None:

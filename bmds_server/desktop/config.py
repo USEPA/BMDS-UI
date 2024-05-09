@@ -3,6 +3,7 @@ import re
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import ClassVar, Self
+from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
@@ -14,6 +15,7 @@ def now() -> datetime:
 
 
 class Database(BaseModel):
+    id: UUID = Field(default_factory=uuid4)
     name: str = ""
     description: str = ""
     path: Path

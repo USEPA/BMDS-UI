@@ -36,4 +36,8 @@ class BmdsDesktopTui(App):
 
     @on(Button.Pressed, "#create-db")
     def on_create_db(self) -> None:
-        self.push_screen(DatabaseFormModel())
+        def maybe_refresh(refresh: bool):
+            if refresh:
+                self.app.query_one("DatabaseList").refresh(layout=True, recompose=True)
+
+        self.push_screen(DatabaseFormModel(), maybe_refresh)
