@@ -6,6 +6,7 @@ from textual.widgets import Button, Label, Static
 
 from ..config import Config, Database
 from .database_form import DatabaseFormModel
+from .utils import refresh
 
 
 def utc_to_local(timestamp: datetime):
@@ -53,11 +54,9 @@ class DatabaseItem(Static):
 
     @on(Button.Pressed, ".db-edit")
     def on_db_edit(self) -> None:
-        def maybe_refresh(refresh: bool):
-            if refresh:
-                self.app.query_one("DatabaseList").refresh(layout=True, recompose=True)
-
-        self.app.push_screen(DatabaseFormModel(db=self.db), maybe_refresh)
+        self.app.push_screen(
+            DatabaseFormModel(db=self.db), lambda status: refresh(status, self.app)
+        )
 
     @on(Button.Pressed, ".db-start")
     def on_db_start(self) -> None:
