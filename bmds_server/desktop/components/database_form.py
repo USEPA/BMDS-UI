@@ -127,7 +127,7 @@ class DatabaseFormModel(ModalScreen):
         config = Config.get()
         config.databases.insert(0, db)
         Config.sync()
-        self.app.pop_screen()
+        self.app.pop_screen()  # TODO - update the original list view?
 
     @on(Button.Pressed, "#db-update")
     def on_db_update(self) -> None:
@@ -152,14 +152,14 @@ class DatabaseFormModel(ModalScreen):
         config = Config.get()
         config.databases[self.db_idx] = self.db
         Config.sync()
-        self.app.pop_screen()
+        self.app.pop_screen()  # TODO - update the original list view?
 
     @on(Button.Pressed, "#db-delete")
     def on_db_delete(self) -> None:
         config = Config.get()
         config.databases.pop(self.db_idx)
         Config.sync()
-        self.app.pop_screen()
+        self.app.pop_screen()  # TODO - update the original list view?
 
     @on(Button.Pressed, "#db-edit-cancel")
     def on_db_create_cancel(self) -> None:
