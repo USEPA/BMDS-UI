@@ -9,7 +9,7 @@ def get_title_md() -> str:
 
 def get_desc_md() -> str:
     return dedent("""
-    This application is the desktop launcher for the BMDS Desktop application.  BMDS Desktop runs in yoru browser, but the data and execution are all performed locally on your computer. An online application exists: [https://bmdsonline.epa.gov](https://bmdsonline.epa.gov).
+    This application is the desktop launcher for the BMDS Desktop application.  BMDS Desktop runs in your browser, but the data and execution are all performed locally on your computer. An online application exists: [https://bmdsonline.epa.gov](https://bmdsonline.epa.gov).
     """)
 
 
