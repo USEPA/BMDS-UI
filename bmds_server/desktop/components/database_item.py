@@ -68,6 +68,7 @@ class DatabaseItem(Static):
         self.app.query("Button.db-start").add_class("hidden")
         self.add_class("active")
         log.info(f"Starting {self.db}")
+        self.app.webapp.start(config=Config.get(), db=self.db)
 
     @on(Button.Pressed, ".db-stop")
     def on_db_stop(self) -> None:
@@ -76,3 +77,4 @@ class DatabaseItem(Static):
         self.app.query("Button.db-start").remove_class("hidden")
         self.remove_class("active")
         log.info(f"Stopping {self.db}")
+        self.app.webapp.stop()

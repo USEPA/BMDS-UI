@@ -1,3 +1,4 @@
+import os
 import platform
 import re
 from datetime import UTC, datetime
@@ -63,6 +64,10 @@ def get_version_path() -> str:
 
 
 def get_app_home() -> Path:
+    # if a custom path is specified, use that instead
+    if path := os.environ.get("BMDS_APP_HOME"):
+        return Path(path)
+    # otherwise fallback to standard locations based on operating system
     app_home = Path.home()
     version = get_version_path()
     match platform.system():
