@@ -1,10 +1,9 @@
 from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import ScrollableContainer
-from textual.reactive import reactive
 from textual.widgets import Button, Footer, TabbedContent, TabPane
 
-from .components.database_form import CreateDatabaseModel
+from .components.database_form import DatabaseFormModel
 from .components.database_list import DatabaseList
 from .components.header import Header
 from .components.log import Log
@@ -37,4 +36,4 @@ class BmdsDesktopTui(App):
 
     @on(Button.Pressed, "#create-db")
     def on_create_db(self) -> None:
-        self.push_screen(CreateDatabaseModel())
+        self.push_screen(DatabaseFormModel())
