@@ -2,9 +2,9 @@ from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import ScrollableContainer
 from textual.reactive import reactive
-from textual.widgets import Button, Footer, Label, TabbedContent, TabPane
+from textual.widgets import Button, Footer, TabbedContent, TabPane
 
-from .. import __version__
+from .components.database_form import CreateDatabaseModel
 from .components.database_list import DatabaseList
 from .components.header import Header
 from .components.log import Log
@@ -14,8 +14,6 @@ from .components.update_check import CheckForUpdatesModal
 
 
 class BmdsDesktopTui(App):
-    config = reactive({})
-
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
         yield Header()
@@ -36,3 +34,7 @@ class BmdsDesktopTui(App):
     @on(Button.Pressed, "#update-modal")
     def on_update_modal(self) -> None:
         self.push_screen(CheckForUpdatesModal())
+
+    @on(Button.Pressed, "#create-db")
+    def on_create_db(self) -> None:
+        self.push_screen(CreateDatabaseModel())

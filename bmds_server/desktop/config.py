@@ -13,7 +13,7 @@ def now() -> datetime:
     return datetime.now(UTC)
 
 
-class Databases(BaseModel):
+class Database(BaseModel):
     name: str = ""
     description: str = ""
     path: Path
@@ -27,16 +27,14 @@ class WebServer(BaseModel):
 
 
 class DesktopConfig(BaseModel):
+    version: int = 1
     server: WebServer
-    databases: list[Databases] = []
+    databases: list[Database] = []
     created: datetime = Field(default_factory=now)
 
     @classmethod
     def default(cls) -> Self:
         return cls(server=WebServer())
-
-    def create_db(self, path: Path, name: str = "", description: str = ""):
-        self.databases.append(Databases(path=path, name=name, description=description))
 
 
 def get_version_path() -> str:
