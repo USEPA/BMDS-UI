@@ -1,0 +1,24 @@
+# * {
+#  outline: solid red;
+# }
+
+Footer {
+  background: $primary
+}
+
+.align-right {
+  align: right middle;
+  height: 3;
+}
+
+.hidden {
+  display: none;
+}
+
+.span4 {
+  column-span: 4
+}
+
+.error-text {
+  color: $error;
+}

@@ -1,10 +1,10 @@
 import os
-from pathlib import Path
 
-from ..constants import SkinStyle, get_app_home
+from ...desktop.config import get_app_home
+from ..constants import SkinStyle
 from .base import *  # noqa: F403
 
-APP_HOME = Path(os.getenv("BMDS_HOME") or get_app_home())
+APP_HOME = get_app_home()
 ALLOWED_HOSTS = ["*"]
 IS_DESKTOP = True
 
@@ -33,7 +33,7 @@ DATABASES = {
 
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": True,
+    "disable_existing_loggers": False,
     "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
     "formatters": {"basic": {"format": "%(levelname)s %(asctime)s %(name)s %(message)s"}},
     "handlers": {

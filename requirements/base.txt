@@ -20,5 +20,5 @@ plotly==5.20.0
 redis==5.0.3
 
 # desktop
-textual==0.56.4
+textual==0.58.1
 whitenoise==6.6.0
