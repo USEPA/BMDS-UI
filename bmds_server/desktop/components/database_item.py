@@ -42,7 +42,7 @@ class DatabaseItem(Static):
         with Horizontal():
             with Vertical():
                 yield Label(f"[b][u]{self.db.name}[/u][/b] ({utc_to_local(self.db.last_accessed)})")
-                yield Label(self.db.description)
+                yield Label(f"[i]{self.db.description}[/i]")
                 yield Label(str(self.db.path))
             yield Button("Edit", variant="default", classes="db-edit")
             yield Button("Start", variant="success", classes="db-start")

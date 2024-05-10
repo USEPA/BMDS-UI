@@ -23,10 +23,10 @@ class Header(Static):
       margin-bottom: 1;
     }
     Header .col1 {
-      width: 70fr;
+      width: 75fr;
     }
     Header .col2 {
-      width: 30fr;
+      width: 25fr;
       padding: 0 2 0 0;
     }
     Header .col2 Button {
@@ -40,7 +40,7 @@ class Header(Static):
             with Vertical(classes="col1"):
                 yield Markdown(content.description())
             with Vertical(classes="col2"):
-                yield Button(label="Quit Application", variant="error", id="quit-modal")
+                yield Button(label="Exit", variant="error", id="quit-modal")
                 yield Button(label="Check for Updates", variant="default", id="update-modal")
 
     @on(Button.Pressed, "#quit-modal")

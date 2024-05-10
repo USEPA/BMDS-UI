@@ -35,8 +35,8 @@ class QuitModal(ModalScreen):
 
     def compose(self) -> ComposeResult:
         yield Grid(
-            Label("Are you sure you want to quit?", id="quit-text"),
-            Button("Quit", variant="error", id="quit-yes"),
+            Label("Are you sure you want to exit?", id="quit-text"),
+            Button("Exit", variant="error", id="quit-yes"),
             Button("Cancel", variant="default", id="quit-no"),
             id="quit-grid",
         )

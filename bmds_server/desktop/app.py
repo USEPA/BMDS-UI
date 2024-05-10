@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from textual import events
 from textual.app import App, ComposeResult
 from textual.containers import ScrollableContainer
@@ -13,6 +15,11 @@ from .components.settings import Settings
 
 class BmdsDesktopTui(App):
     CSS_PATH = "components/style.tcss"
+
+    BINDINGS: ClassVar = [
+        ("q", "quit", "Exit"),
+        ("d", "toggle_dark", "Light/Dark"),
+    ]
 
     def __init__(self, **kw):
         self.webapp = AppRunner()
@@ -31,6 +38,10 @@ class BmdsDesktopTui(App):
                     yield Settings()
         yield Footer()
 
-    def on_key(self, event: events.Key) -> None:
-        if event.name == "escape":
-            self.app.push_screen(QuitModal())
+    def action_quit(self):
+        """Exit the application."""
+        self.push_screen(QuitModal(classes="modal-window"))
+
+    def action_toggle_dark(self):
+        """An action to toggle dark mode."""
+        self.dark = not self.dark
