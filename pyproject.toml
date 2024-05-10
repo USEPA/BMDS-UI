@@ -1,3 +1,37 @@
+[project]
+name = "bmds_server"
+license = {text = "MIT License"}
+authors = [{name = "Andy Shapiro", email = "shapiro.andy@epa.gov"}]
+readme = "README.md"
+description = "US EPA Dose Response Modeling Software"
+dynamic = ["version"]
+keywords = [
+  "dose response",
+  "toxicology",
+  "risk assessment",
+]
+classifiers = [
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.11"
+
+[project.urls]
+Source = "https://github.com/USEPA/bmds-online-private"
+
+[project.scripts]
+"manage.py" = "bmds_server:manage"
+manage = "bmds_server:manage"
+bmds = "bmds_server.desktop.cli:main"
+bmdsdesktop = "bmds_server.desktop.cli:main"
+
+
+[build-system]
+requires = ["flit_core ~=3.9"]
+build-backend = "flit_core.buildapi"
+
 [tool.coverage.run]
 omit = [
     "../bmds/*",
@@ -24,3 +58,8 @@ known-third-party = ["bmds"]
 "scripts/*.py" = ["T201"]
 "**/management/**.py" = ["T201"]
 "**/migrations/**.py" = ["T201", "RUF012"]
+
+[tool.pytest.ini_options]
+addopts = "--ds=bmds_server.main.settings.testing --reuse-db --nomigrations"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
