@@ -1,4 +1,5 @@
 from textual import on
+from textual.containers import Horizontal
 from textual.widgets import Button, Label, Static
 
 from ..config import Config
@@ -8,9 +9,17 @@ from .utils import refresh
 
 
 class DatabaseList(Static):
+    DEFAULT_CSS = """
+    DatabaseList #create-db {
+      padding: 0;
+      margin-right: 1;
+    }
+    """
+
     def compose(self):
         config = Config.get()
-        yield Button(label="Create", variant="success", id="create-db")
+        with Horizontal(classes="align-right"):
+            yield Button(label="Create", variant="success", id="create-db")
         if len(config.databases) == 0:
             yield Label("No databases exist! Create one!")
         for db in config.databases:

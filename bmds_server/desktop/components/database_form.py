@@ -39,7 +39,7 @@ def file_valid(value: str):
 class NullWidget(Widget):
     DEFAULT_CSS = """
     NullWidget {
-        display: none;
+      display: none;
     }
     """
 
@@ -57,6 +57,33 @@ class FormError(Widget):
 class DatabaseFormModel(ModalScreen):
     """Modal with a dialog to quit."""
 
+    DEFAULT_CSS = """
+    DatabaseFormModel {
+      align: center middle;
+    }
+    DatabaseFormModel Label {
+      padding: 1 0 0 1;
+    }
+    DatabaseFormModel #grid-db-form {
+      grid-size: 4;
+      padding: 0;
+      width: 90;
+      height: 30;
+      border: thick $background 80%;
+      background: $surface;
+    }
+    DatabaseFormModel Input {
+      column-span: 3;
+    }
+    DatabaseFormModel .btn-holder {
+      align: center middle;
+    }
+    DatabaseFormModel .btn-holder Button {
+      width: 25%;
+      margin: 0 5;
+    }
+    """
+
     def __init__(self, *args, db: Database | None, **kw):
         self.db = db
         super().__init__(*args, **kw)
@@ -66,9 +93,9 @@ class DatabaseFormModel(ModalScreen):
 
     def compose(self) -> ComposeResult:
         save_btn = (
-            Button("Update", variant="success", id="db-update")
+            Button("Update", variant="primary", id="db-update")
             if self.db
-            else Button("Create", variant="success", id="db-create")
+            else Button("Create", variant="primary", id="db-create")
         )
         delete_btn = Button("Delete", variant="error", id="db-delete") if self.db else NullWidget()
         path = self.get_db_value("path", None)
@@ -87,7 +114,7 @@ class DatabaseFormModel(ModalScreen):
                 id="path",
                 validators=[Function(path_exists)],
             ),
-            Label("Filename (must end in .sqlite)"),
+            Label("Filename (*.sqlite)"),
             Input(
                 value=path.name if path else "db.sqlite",
                 type="text",
@@ -96,12 +123,14 @@ class DatabaseFormModel(ModalScreen):
             ),
             Label("Description"),
             Input(value=self.get_db_value("description", ""), type="text", id="description"),
-            FormError(),
+            FormError(classes="span4 error-text"),
             Horizontal(
                 save_btn,
+                Button("Cancel", variant="default", id="db-edit-cancel"),
                 delete_btn,
-                Button("Cancel", variant="primary", id="db-edit-cancel"),
+                classes="btn-holder span4",
             ),
+            id="grid-db-form",
         )
 
     @on(Button.Pressed, "#db-create")
@@ -113,13 +142,7 @@ class DatabaseFormModel(ModalScreen):
         if not all((str_exists(name), path_exists(path), file_valid(db))):
             self.query_one(FormError).message = "An error occurred."
             return
-
         db_path = (Path(path).expanduser().resolve() / db).absolute()
-        if db_path.exists():
-            message = f"Cannot create - database already exists: {db_path}"
-            self.query_one(FormError).message = message
-            return
-
         config = Config.get()
         db = Database(name=name, description=description, path=db_path)
         config.add_db(db)
@@ -139,7 +162,7 @@ class DatabaseFormModel(ModalScreen):
 
         db_path = (Path(path).expanduser().resolve() / db).absolute()
         if not db_path.exists():
-            message = f"Cannot update - database does not exists: {db_path}"
+            message = f"Database does not exist: {db_path}"
             self.query_one(FormError).message = message
             return
 
@@ -147,7 +170,7 @@ class DatabaseFormModel(ModalScreen):
         self.db.path = Path(path) / db
         self.db.description = description
         Config.sync()
-        log.info(f"Updated config for {self.db}")
+        log.info(f"Config updated for {self.db}")
         self.dismiss(True)
 
     @on(Button.Pressed, "#db-delete")
@@ -155,7 +178,7 @@ class DatabaseFormModel(ModalScreen):
         config = Config.get()
         config.remove_db(self.db)
         Config.sync()
-        log.info(f"Removed config for {self.db}")
+        log.info(f"Config removed for {self.db}")
         self.dismiss(True)
 
     @on(Button.Pressed, "#db-edit-cancel")

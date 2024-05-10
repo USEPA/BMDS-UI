@@ -1,5 +1,6 @@
 from textual import on
-from textual.widgets import Button, Markdown, Static
+from textual.containers import Horizontal, Vertical
+from textual.widgets import Button, Label, Markdown, Static
 
 from .. import content
 from .quit import QuitModal
@@ -7,11 +8,40 @@ from .update_check import CheckForUpdatesModal
 
 
 class Header(Static):
+    DEFAULT_CSS = """
+    Header {
+      dock: top;
+      height: 10;
+    }
+    Header .title {
+      content-align: center middle;
+      background: $primary;
+      border: double $primary-lighten-2;
+      color: white;
+      height: 3;
+      width: 100%;
+      margin-bottom: 1;
+    }
+    Header .col1 {
+      width: 70fr;
+    }
+    Header .col2 {
+      width: 30fr;
+      padding: 0 2 0 0;
+    }
+    Header .col2 Button {
+      width: 100%
+    }
+    """
+
     def compose(self):
-        yield Markdown(content.get_title_md())
-        yield Markdown(content.get_desc_md())
-        yield Button(label="Quit Application", variant="error", id="quit-modal")
-        yield Button(label="Check for Updates", variant="default", id="update-modal")
+        yield Label(content.title(), classes="title")
+        with Horizontal():
+            with Vertical(classes="col1"):
+                yield Markdown(content.description())
+            with Vertical(classes="col2"):
+                yield Button(label="Quit Application", variant="error", id="quit-modal")
+                yield Button(label="Check for Updates", variant="default", id="update-modal")
 
     @on(Button.Pressed, "#quit-modal")
     def on_quit_modal(self) -> None:

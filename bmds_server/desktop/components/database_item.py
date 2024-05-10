@@ -25,16 +25,12 @@ def utc_to_local(timestamp: datetime):
 
 class DatabaseItem(Static):
     DEFAULT_CSS = """
-    .hidden {
-        display: none;
-    }
     DatabaseItem {
-        height: 7;
-        border: solid green;
+      height: 5;
+      border: double $primary-lighten-2;
     }
     DatabaseItem.active {
-        background: green 20%;
-        border: solid green;
+      background: $primary 50%;
     }
     """
 
@@ -45,10 +41,9 @@ class DatabaseItem(Static):
     def compose(self):
         with Horizontal():
             with Vertical():
-                yield Label(f"Name: {self.db.name}")
-                yield Label(f"Description: {self.db.description}")
-                yield Label(f"Last accessed: {utc_to_local(self.db.last_accessed)}")
-                yield Label(f"Location: {self.db.path}")
+                yield Label(f"[b][u]{self.db.name}[/u][/b] ({utc_to_local(self.db.last_accessed)})")
+                yield Label(self.db.description)
+                yield Label(str(self.db.path))
             yield Button("Edit", variant="default", classes="db-edit")
             yield Button("Start", variant="success", classes="db-start")
             yield Button("Stop", variant="error", classes="db-stop hidden")
