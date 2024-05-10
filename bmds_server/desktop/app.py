@@ -1,6 +1,5 @@
 from typing import ClassVar
 
-from textual import events
 from textual.app import App, ComposeResult
 from textual.containers import ScrollableContainer
 from textual.widgets import Footer, TabbedContent, TabPane
