@@ -1,21 +1,20 @@
-import os
 from contextlib import redirect_stderr, redirect_stdout
 from threading import Thread
 from webbrowser import open_new_tab
 from wsgiref.simple_server import WSGIServer, make_server
 
+import django
 from django.conf import settings
 from django.core.management import call_command
 from whitenoise import WhiteNoise
 
+from ..main.settings import desktop
 from .config import Database, DesktopConfig
 from .log import log, stream
 
 
 def setup_django_environment(db: Database):
-    os.environ["BMDS_DB"] = str(db.path)
-    import django
-
+    desktop.DATABASES["default"]["NAME"] = str(db.path)
     django.setup()
 
 
