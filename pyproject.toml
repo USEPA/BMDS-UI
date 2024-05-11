@@ -74,7 +74,6 @@ dev = [
 ]
 prod = [
   "gunicorn==22.0.0",
-  "bmds==23.3",
 ]
 
 
