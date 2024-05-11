@@ -31,8 +31,7 @@ build:  ## build application for containerization
 	manage.py set_git_commit
 	rm -rf build/ dist/
 	npm --prefix ./frontend run build
-	python setup.py build
-	python setup.py bdist_wheel
+	flit build --no-use-vcs
 
 dev: ## Start developer environment.
 	./bin/dev.sh

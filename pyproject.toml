@@ -44,6 +44,9 @@ pg = [
   "psycopg2-binary~=2.9.9",
 ]
 dev = [
+  # build
+  "flit~=3.9.0",
+
   # debug
   "django-debug-toolbar==4.3.0",
   "django_extensions==3.2.3",
@@ -87,6 +90,10 @@ bmdsdesktop = "bmds_server.desktop.cli:main"
 [build-system]
 requires = ["flit_core ~=3.9"]
 build-backend = "flit_core.buildapi"
+
+[tool.flit.sdist]
+include = ["bmds_server/"]
+exclude = ["bmds_server/main/settings/local.py"]
 
 [tool.coverage.run]
 omit = [

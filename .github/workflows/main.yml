@@ -43,7 +43,6 @@ jobs:
         pip install -U pip wheel
         pip install -e ".[pg,dev]"
         pip install -e "./venv"
-
     - name: Setup linux environment
       run: |
         sudo apt-get update -y
@@ -186,8 +185,7 @@ jobs:
       run: |
         export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
         manage.py set_git_commit
-        python setup.py build
-        python setup.py bdist_wheel
+        flit build --no-use-vcs
     - name: Upload webpack build
       uses: actions/upload-artifact@v4
       with:
