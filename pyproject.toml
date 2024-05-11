@@ -17,6 +17,63 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
 ]
 requires-python = ">=3.11"
+dependencies = [
+  # website
+  "Django~=5.0.6",
+  "django-anymail~=10.3",
+  "django-redis~=5.4.0",
+  "django-webpack-loader~=3.1.0",
+  "djangorestframework~=3.15.1",
+  "uritemplate~=4.1.1",
+  "django-reversion~=5.0.12",
+
+  # tasks
+  "celery~=5.4.0",
+  "billiard~=4.2.0",
+  "kombu~=5.3.7",
+  "plotly~=5.20.0",
+  "redis~=5.0.3",
+
+  # desktop
+  "textual~=0.58.1",
+  "whitenoise~=6.6.0",
+]
+
+[project.optional-dependencies]
+pg = [
+  "psycopg2-binary~=2.9.9",
+]
+dev = [
+  # debug
+  "django-debug-toolbar==4.3.0",
+  "django_extensions==3.2.3",
+  "django-browser-reload==1.12.1",
+
+  # docs
+  "Sphinx==7.2.6",
+  "myst-parser==2.0.0",
+  "pydata-sphinx-theme==0.15.2",
+
+  # tests
+  "pytest==8.1.1",
+  "pytest-django==4.8.0",
+  "vcrpy==6.0.1",
+  "pytest-vcr==1.0.2",
+  "pytest-asyncio==0.23.6",
+  "coverage==7.4.4",
+
+  # integration tests
+  "playwright==1.43.0",
+  "pytest-playwright==0.4.4",
+
+  # lint and formatting tools
+  "ruff~=0.4.1",
+]
+prod = [
+  "gunicorn==22.0.0",
+  "bmds==23.3",
+]
+
 
 [project.urls]
 Source = "https://github.com/USEPA/bmds-online-private"
@@ -26,7 +83,6 @@ Source = "https://github.com/USEPA/bmds-online-private"
 manage = "bmds_server:manage"
 bmds = "bmds_server.desktop.cli:main"
 bmdsdesktop = "bmds_server.desktop.cli:main"
-
 
 [build-system]
 requires = ["flit_core ~=3.9"]

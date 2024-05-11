@@ -34,11 +34,11 @@ python -m venv venv
 source ./venv/bin/activate
 
 # install requirements
-./venv/bin/pip install -r ./requirements/dev.txt --trusted-host=pypi.org --trusted-host=files.pythonhosted.org
+pip install -U pip uv
+uv pip install -e ".[pg,dev]"
 
 # install package in developer mode and developer tools
-pip install -e ../bmds --trusted-host=pypi.org --trusted-host=files.pythonhosted.org
-pip install -r requirements/dev.txt --trusted-host=pypi.org --trusted-host=files.pythonhosted.org
+uv pip install -e "../bmds"
 
 # create the database
 createuser --superuser --no-password bmds-online
@@ -140,7 +140,7 @@ Future mode can also be enabled via the local setting `ALWAYS_SHOW_FUTURE`. This
     # Shows future-flagged items without login/url parameter
     ALWAYS_SHOW_FUTURE = True
     ...
-``` 
+```
 
 
 That's it! Now you should be able to view content that's coming soon!
