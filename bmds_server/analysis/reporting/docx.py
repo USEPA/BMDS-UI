@@ -10,6 +10,7 @@ from bmds.reporting.styling import Report, write_setting_p
 from django.conf import settings
 from django.utils.timezone import now
 
+from ... import __version__ as bmds_server_version
 from ...common.docx import add_url_hyperlink
 from ...common.utils import to_timestamp
 from ..utils import get_citation
@@ -48,18 +49,18 @@ def build_docx(
     if description:
         report.document.add_paragraph(description)
 
-    write_setting_p(report, "Report generated: ", to_timestamp(now()))
+    write_setting_p(report, "Report Generated: ", to_timestamp(now()))
 
     p = report.document.add_paragraph()
     p.add_run(ANALYSIS_URL).bold = True
     uri += analysis.get_absolute_url()
     add_url_hyperlink(p, uri, "View")
 
-    bmds_version = analysis.get_bmds_version()
-    if bmds_version:
-        write_setting_p(report, "BMDS version: ", f"{bmds_version.python} ({bmds_version.dll})")
+    version_label = "BMDS Desktop Version: " if settings.IS_DESKTOP else "BMDS Online Version: "
+    write_setting_p(report, version_label, bmds_server_version)
 
-    write_setting_p(report, "BMDS Online version: ", str(settings.COMMIT))
+    bmds_version = analysis.get_bmds_version()
+    write_setting_p(report, "BMDS Version: ", f"{bmds_version.python} ({bmds_version.dll})")
 
     if not analysis.is_finished:
         report.document.add_paragraph("Execution is incomplete; no report could be generated")
