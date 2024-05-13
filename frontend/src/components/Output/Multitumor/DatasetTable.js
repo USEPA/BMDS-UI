@@ -28,7 +28,7 @@ const getData = datasets => {
             }
         });
     });
-    return {headers, rows};
+    return {tblClasses: "table table-sm text-right col-l-1", headers, rows};
 };
 
 @inject("outputStore")

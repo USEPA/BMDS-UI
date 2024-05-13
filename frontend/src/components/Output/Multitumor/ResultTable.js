@@ -23,7 +23,7 @@ class ResultTable extends Component {
             showMultitumor = store.multitumorDatasets.length > 1;
 
         return (
-            <table className="table table-sm">
+            <table className="table table-sm text-right col-l-1 col-l-2">
                 <colgroup>
                     {_.map(colWidths).map((value, idx) => (
                         <col key={idx} width={`${value}%`}></col>
