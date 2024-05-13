@@ -1,4 +1,5 @@
 {% load static %}
+{% if not IS_DESKTOP %}
 <section class="usa-banner" aria-label="Official website of the United States government">
   <div class="usa-accordion">
     <header class="usa-banner__header">
@@ -45,6 +46,7 @@
     </div>
   </div>
 </section>
+{% endif %}
 <header class="l-header">
   <div class="usa-overlay"></div>
   <div class="l-constrain">
@@ -60,9 +62,12 @@
             </svg>
           </span>
         </a>
+        {% if not IS_DESKTOP %}
         <button class="usa-menu-btn button--dark l-header__menu-button">MAIN MENU</button>
+        {% endif %}
       </div>
       <div class="l-header__search">
+        {% if not IS_DESKTOP %}
         <form class="usa-search usa-search--small usa-search--epa" method="get" action="https://search.epa.gov/epasearch">
           <div role="search">
             <label class="usa-sr-only" for="search-box">Search</label>
@@ -79,9 +84,11 @@
             <input type="hidden" name="result_template" value="">
           </div>
         </form>
+        {% endif %}
       </div>
     </div>
   </div>
+  {% if not IS_DESKTOP %}
   <div class="l-header__nav">
     <nav class="usa-nav usa-nav--epa" role="navigation" aria-label="Primary navigation" style="width: 100%">
       <div class="usa-nav__inner">
@@ -101,6 +108,7 @@
       </div>
     </nav>
   </div>
+  {% endif %}
 </header>
 <nav class="bmds-header navbar justify-content-between">
     <h2><a href="{% url 'home' %}">{% if IS_DESKTOP %}Benchmark Dose Tools (BMDS) Desktop{% else %}Benchmark Dose Tools (BMDS) Online{% endif %}</a></h2>

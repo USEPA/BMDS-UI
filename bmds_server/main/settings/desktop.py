@@ -69,3 +69,5 @@ LOGGING = {
         "bmds_server.request": {"handlers": ["console"], "propagate": False, "level": "INFO"},
     },
 }
+
+CONTACT_US_LINK = "https://ecomments.epa.gov/bmds/"
