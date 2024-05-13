@@ -8,7 +8,11 @@ def desktop_versions() -> dict:
 
     from bmds_server import __version__
 
-    return {"online": __version__, "bmds": bmds.__version__}
+    return {
+        "online": __version__,
+        "bmds": bmds.__version__,
+        "db_path": settings.DATABASES["default"]["NAME"],
+    }
 
 
 def from_settings(request):
