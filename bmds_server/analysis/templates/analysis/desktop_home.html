@@ -13,11 +13,11 @@
         <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">Collections</button>
         <div class="dropdown-menu dropdown-menu-right">
           <form class="p-2">
-            <a class="btn btn-primary float-right"
+            <a class="btn btn-primary float-right mr-4"
               href="#"
               hx-get="{% url 'actions' action='collection_create' %}"
               hx-target="#collection-list"
-              hx-swap="afterbegin">Create</a>
+              hx-swap="afterbegin"><span class="bi bi-plus-square-fill mr-1"></span>Create</a>
             <div class="clearfix"></div>
             {% include "analysis/fragments/collection_list.html" with object_list=collection_qs no_oob=True %}
           </form>
