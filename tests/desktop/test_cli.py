@@ -1,6 +1,11 @@
-import pytest
+import sys
+
+from bmds_server import __version__
+from bmds_server.desktop.cli import main
 
 
-@pytest.mark.xfail(reason="TODO - fix fixture")
-def test_cli(self):
-    assert 1 == 2
+def test_version(capsys):
+    sys.argv = ["bmds", "--version"]
+    main()
+    captured = capsys.readouterr()
+    assert __version__ in captured.out
