@@ -43,9 +43,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-pg = [
-  "psycopg2-binary~=2.9.9",
-]
 dev = [
   # build
   "flit~=3.9.0",
@@ -75,11 +72,13 @@ dev = [
   # lint and formatting tools
   "ruff~=0.4.1",
 ]
+pg = [
+  "psycopg2-binary~=2.9.9",
+]
 prod = [
   "gunicorn==22.0.0",
   "sentry-sdk~=2.1.1",
 ]
-
 
 [project.urls]
 Source = "https://github.com/USEPA/bmds-online-private"
