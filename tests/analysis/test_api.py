@@ -248,7 +248,6 @@ class TestAnalysisViewSet:
         value = response.data["outputs"]["outputs"][0]["frequentist"]["selected"]
         assert value == {"model_index": None, "notes": "no notes"}
 
-    @pytest.mark.xfail(reason="TODO - fix fixture")
     def test_excel(self):
         client = APIClient()
         analysis = Analysis.objects.get(pk="ded15870-8986-4d5b-b924-ef9036b2e17e")
@@ -256,7 +255,6 @@ class TestAnalysisViewSet:
         resp = client.get(url)
         assert resp.status_code == 200
 
-    @pytest.mark.xfail(reason="TODO - fix fixture")
     def test_word(self):
         client = APIClient()
         analysis = Analysis.objects.get(pk="ded15870-8986-4d5b-b924-ef9036b2e17e")
