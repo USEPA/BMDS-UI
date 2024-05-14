@@ -1,4 +1,3 @@
-from copy import deepcopy
 from enum import StrEnum
 
 import bmds
@@ -99,17 +98,4 @@ def remap_exponential(models: list[str]) -> list[str]:
         models = models.copy()  # return a copy so inputs are unchanged
         pos = models.index(bmds.constants.M_Exponential)
         models[pos : pos + 1] = (bmds.constants.M_ExponentialM3, bmds.constants.M_ExponentialM5)
-    return models
-
-
-def remap_bayesian_exponential(models: list[dict]) -> list[dict]:
-    for i, model in enumerate(models):
-        if model["model"] == bmds.constants.M_Exponential:
-            models = deepcopy(models)
-            weight = model["prior_weight"] / 2  # TODO - replace in BMDS 23.3
-            models[i : i + 1] = (
-                dict(model=bmds.constants.M_ExponentialM3, prior_weight=weight),
-                dict(model=bmds.constants.M_ExponentialM5, prior_weight=weight),
-            )
-            break
     return models
