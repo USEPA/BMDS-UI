@@ -22,9 +22,9 @@ Clone the repository and install all requirements into a virtual environment:
 mkdir -p ~/dev
 cd ~/dev
 
-# clone webserver package and execution package
-git clone https://github.com/USEPA/bmds-private
-git clone https://github.com/USEPA/bmds-online-private
+# clone package and execution package
+git clone https://github.com/USEPA/bmds-private bmds
+git clone https://github.com/USEPA/bmds-online-private bmds-server
 
 # create virtual environment and install requirements
 cd ~/dev/bmds-server
@@ -34,11 +34,9 @@ python -m venv venv
 source ./venv/bin/activate
 
 # install requirements
-./venv/bin/pip install -r ./requirements/dev.txt --trusted-host=pypi.org --trusted-host=files.pythonhosted.org
-
-# install package in developer mode and developer tools
-pip install -e ../bmds --trusted-host=pypi.org --trusted-host=files.pythonhosted.org
-pip install -r requirements/dev.txt --trusted-host=pypi.org --trusted-host=files.pythonhosted.org
+pip install -U pip uv
+uv pip install -e "../bmds"
+uv pip install -e ".[pg,dev]"
 
 # create the database
 createuser --superuser --no-password bmds-online
@@ -140,7 +138,7 @@ Future mode can also be enabled via the local setting `ALWAYS_SHOW_FUTURE`. This
     # Shows future-flagged items without login/url parameter
     ALWAYS_SHOW_FUTURE = True
     ...
-``` 
+```
 
 
 That's it! Now you should be able to view content that's coming soon!

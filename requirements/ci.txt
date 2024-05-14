@@ -1,4 +1,0 @@
--r dev.txt
-
-# write to venv b/c path is ignored by linters/formatters
--e ./venv

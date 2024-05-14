@@ -1,3 +1,102 @@
+[project]
+name = "bmds_server"
+license = {text = "MIT License"}
+authors = [{name = "Andy Shapiro", email = "shapiro.andy@epa.gov"}]
+readme = "README.md"
+description = "US EPA Dose Response Modeling Software"
+dynamic = ["version"]
+keywords = [
+  "dose response",
+  "toxicology",
+  "risk assessment",
+]
+classifiers = [
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.11"
+dependencies = [
+  # bmds
+  "bmds~=24.1a0",
+
+  # website
+  "Django~=5.0.6",
+  "django-anymail~=10.3",
+  "django-redis~=5.4.0",
+  "django-webpack-loader~=3.1.0",
+  "djangorestframework~=3.15.1",
+  "uritemplate~=4.1.1",
+  "django-reversion~=5.0.12",
+
+  # tasks
+  "celery~=5.4.0",
+  "billiard~=4.2.0",
+  "kombu~=5.3.7",
+  "plotly~=5.20.0",
+  "redis~=5.0.3",
+
+  # desktop
+  "textual~=0.58.1",
+  "whitenoise~=6.6.0",
+]
+
+[project.optional-dependencies]
+pg = [
+  "psycopg2-binary~=2.9.9",
+]
+dev = [
+  # build
+  "flit~=3.9.0",
+
+  # debug
+  "django-debug-toolbar==4.3.0",
+  "django_extensions==3.2.3",
+  "django-browser-reload==1.12.1",
+
+  # docs
+  "Sphinx==7.2.6",
+  "myst-parser==2.0.0",
+  "pydata-sphinx-theme==0.15.2",
+
+  # tests
+  "pytest==8.1.1",
+  "pytest-django==4.8.0",
+  "vcrpy==6.0.1",
+  "pytest-vcr==1.0.2",
+  "pytest-asyncio==0.23.6",
+  "coverage==7.4.4",
+
+  # integration tests
+  "playwright==1.43.0",
+  "pytest-playwright==0.4.4",
+
+  # lint and formatting tools
+  "ruff~=0.4.1",
+]
+prod = [
+  "gunicorn==22.0.0",
+]
+
+
+[project.urls]
+Source = "https://github.com/USEPA/bmds-online-private"
+
+[project.scripts]
+"manage.py" = "bmds_server:manage"
+manage = "bmds_server:manage"
+bmds = "bmds_server.desktop.cli:main"
+bmdsdesktop = "bmds_server.desktop.cli:main"
+
+[build-system]
+requires = ["flit_core ~=3.9"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.sdist]
+include = ["bmds_server/"]
+exclude = ["bmds_server/main/settings/local.py"]
+
 [tool.coverage.run]
 omit = [
     "../bmds/*",
@@ -24,3 +123,8 @@ known-third-party = ["bmds"]
 "scripts/*.py" = ["T201"]
 "**/management/**.py" = ["T201"]
 "**/migrations/**.py" = ["T201", "RUF012"]
+
+[tool.pytest.ini_options]
+addopts = "--ds=bmds_server.main.settings.testing --reuse-db --nomigrations"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
