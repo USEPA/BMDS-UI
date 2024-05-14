@@ -1,7 +1,7 @@
 FROM python:3.11-slim-bullseye
 
 ENV BMDS_SERVER_VERSION=24.1a0
-ENV BMDS_VERSION=23.4
+ENV BMDS_VERSION=24.1a0
 ENV EXTRA_BMDS_BUILD_ARGS=
 
 RUN groupadd -g 555 -r app && \
@@ -34,8 +34,8 @@ COPY ./vendor /vendor
 RUN mv /vendor/libnlopt.so /usr/local/lib/libnlopt.so.0 && \
     \
     pip install -U pip && \
-    pip install "dist/bmds_server-${BMDS_SERVER_VERSION}-py3-none-any.whl[pg,prod]" --no-cache-dir && \
     pip install "${EXTRA_BMDS_BUILD_ARGS} bmds==${BMDS_VERSION}" --no-cache-dir && \
+    pip install "dist/bmds_server-${BMDS_SERVER_VERSION}-py3-none-any.whl[pg,prod]" --no-cache-dir && \
     \
     rm -rf /vendor /dist && \
     pip uninstall -y pip
