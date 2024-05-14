@@ -10,7 +10,6 @@ BMDS Server is a web application for conducting dose-response modeling using the
 
 ```{toctree}
 :maxdepth: 2
-desktop
 deployment
 development
 ```
