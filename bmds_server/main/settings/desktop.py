@@ -2,7 +2,7 @@ import os
 
 from ...desktop.config import get_app_home
 from ..constants import SkinStyle
-from .base import *  # noqa: F403
+from .base import *
 
 APP_HOME = get_app_home()
 ALLOWED_HOSTS = ["*"]

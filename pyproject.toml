@@ -120,6 +120,7 @@ known-third-party = ["bmds"]
 "scripts/*.py" = ["T201"]
 "**/management/**.py" = ["T201"]
 "**/migrations/**.py" = ["T201", "RUF012"]
+"**/main/settings/**.py" = ["F403", "F405"]
 
 [tool.pytest.ini_options]
 addopts = "--ds=bmds_server.main.settings.testing --reuse-db --nomigrations"

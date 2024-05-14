@@ -1,5 +1,3 @@
-# flake8: noqa
-
 import os
 from datetime import datetime
 from pathlib import Path
@@ -71,7 +69,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "bmds_server.main.wsgi.application"
-SECRET_KEY = "io^^q^q1))7*r0u@6i+6kx&ek!yxyf6^5vix_6io6k4kdn@@5t"
+SECRET_KEY = "io^^q^q1))7*r0u@6i+6kx&ek!yxyf6^5vix_6io6k4kdn@@5t"  # noqa: S105
 
 DATABASES = {
     "default": {

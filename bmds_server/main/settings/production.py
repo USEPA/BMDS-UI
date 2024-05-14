@@ -1,5 +1,3 @@
-# flake8: noqa
-
 import os
 from pathlib import Path
 
@@ -17,7 +15,7 @@ ADMINS = []
 _admin_names = os.environ["DJANGO_ADMIN_NAMES"]
 _admin_emails = os.environ["DJANGO_ADMIN_EMAILS"]
 if _admin_names and _admin_emails:
-    ADMINS = list(zip(_admin_names.split("|"), _admin_emails.split("|")))
+    ADMINS = list(zip(_admin_names.split("|"), _admin_emails.split("|"), strict=True))
     MANAGERS = ADMINS
 else:
     raise ValueError("Invalid DJANGO_ADMIN_NAMES or DJANGO_ADMIN_EMAILS")
