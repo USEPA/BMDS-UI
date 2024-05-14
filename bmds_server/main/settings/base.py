@@ -1,8 +1,10 @@
+import json
 import os
 from datetime import datetime
 from pathlib import Path
 from subprocess import CalledProcessError
 
+from ... import __version__
 from ...common.git import Commit
 from ..constants import AuthProvider, SkinStyle
 
@@ -223,6 +225,18 @@ COMMIT = get_git_commit()
 
 # Google Tag Manager settings
 GTM_ID = os.getenv("GTM_ID")
+
+# optionally enable sentry
+if SENTRY_DSN := os.environ.get("SENTRY_DSN"):
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    SENTRY_SETTINGS = json.loads(
+        os.environ.get("SENTRY_SETTINGS", '{"traces_sample_rate": 1.0, "send_default_pii": false}')
+    )
+    release = COMMIT.sha if "undefined" not in COMMIT.sha else __version__
+    SENTRY_SETTINGS.setdefault("release", release)
+    sentry_sdk.init(dsn=SENTRY_DSN, integrations=[DjangoIntegration()], **SENTRY_SETTINGS)
 
 TEST_DB_FIXTURE = ROOT_DIR / "tests/data/db.yaml"
 CONTACT_US_LINK = os.getenv("CONTACT_US_LINK", "")

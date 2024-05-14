@@ -74,6 +74,7 @@ dev = [
 ]
 prod = [
   "gunicorn==22.0.0",
+  "sentry-sdk~=2.1.1",
 ]
 
 
