@@ -52,17 +52,11 @@ class TestAnalysisSession:
 
     def test_exponential_unpacking(self, complete_continuous):
         data = deepcopy(complete_continuous)
-        data["models"] = {
-            "frequentist_restricted": ["Exponential"],
-            "bayesian": [{"model": "Exponential", "prior_weight": 1}],
-        }
+        data["models"] = {"frequentist_restricted": ["Exponential"]}
         session = AnalysisSession.create(data, 0, 0)
         assert len(session.frequentist.models) == 2
         assert session.frequentist.models[0].bmd_model_class.id == ContinuousModelIds.c_exp_m3
         assert session.frequentist.models[1].bmd_model_class.id == ContinuousModelIds.c_exp_m5
-        assert len(session.bayesian.models) == 2
-        assert session.bayesian.models[0].bmd_model_class.id == ContinuousModelIds.c_exp_m3
-        assert session.bayesian.models[1].bmd_model_class.id == ContinuousModelIds.c_exp_m5
 
     def test_multistage_permutations(self, complete_dichotomous):
         def _expected_degree(session, n: int):

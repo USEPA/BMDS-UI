@@ -13,7 +13,6 @@ from .transforms import (
     PriorEnum,
     build_dataset,
     build_model_settings,
-    remap_bayesian_exponential,
     remap_exponential,
 )
 
@@ -89,7 +88,6 @@ def build_bayesian_session(
 
     dataset_type = inputs["dataset_type"]
     session = BmdsSession(dataset=dataset)
-    models = remap_bayesian_exponential(models)
     prior_weights = list(map(lambda d: d["prior_weight"], models))
     for name in map(lambda d: d["model"], models):
         model_options = build_model_settings(

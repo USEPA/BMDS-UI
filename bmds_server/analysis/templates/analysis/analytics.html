@@ -6,12 +6,12 @@
 <div class="row pt-3">
     <div class="col-lg-12">
         <h2>Analytics and summary statistics</h2>
-        <p class="text-muted">This is an interal webpage for BMDS Online administrators to better understand user analytics and performace of the application. Results are updated hourly.</p>
+        <p class="text-muted">This is an internal webpage for BMDS Online administrators to better understand user analytics and performance of the application. Results are updated hourly.</p>
     </div>
     {% card col-md-4 %}
         <p class="text-muted mb-0">Number of analyses created:</p>
         <h4 class="h3 my-1">{{config.n_total}}</h4>
-        <p class="text-muted mb-0">Total analyses currently saved in the database. This isn't a cummulative number; this would not include analyses which were deleted or expired after 6 months.</p>
+        <p class="text-muted mb-0">Total analyses currently saved in the database. This isn't a cumulative number; this would not include analyses which were deleted or expired after 6 months.</p>
     {% endcard %}
     {% card col-md-4 %}
         <p class="text-muted mb-0">Created per day:</p>
@@ -21,63 +21,63 @@
     {% card col-md-4 %}
         <p class="text-muted mb-0">Fraction executed:</p>
         <h4 class="h3 my-1">{{config.fraction_completed|floatformat:1}}%</h4>
-        <p class="text-muted mb-0">Fraction of analyses which compelted succesfully overall.</p>
+        <p class="text-muted mb-0">Fraction of analyses which completed succesfully overall.</p>
     {% endcard %}
     <div class="col-lg-12">
         <h3>Time series analysis</h3>
     </div>
     {% card col-lg-12 %}
         {% plotly config.time_series.fig_punchcard %}
-        <p class='mb-0 text-muted'>Footnote here. TODO - add.</p>
+        <p class='mb-0 text-muted'>Heatmap of number of analyses created per day.</p>
     {% endcard %}
     {% card col-lg-4 %}
         {% plotly config.time_series.fig_per_day %}
-        <p class='mb-0 text-muted'>Footnote here. TODO - add.</p>
+        <p class='mb-0 text-muted'>Analyses created per day.</p>
     {% endcard %}
     {% card col-lg-4 %}
         {% plotly config.time_series.fig_per_week %}
-        <p class='mb-0 text-muted'>Footnote here. TODO - add.</p>
+        <p class='mb-0 text-muted'>Analyses created per week.</p>
     {% endcard %}
     {% card col-lg-4 %}
         {% plotly config.time_series.fig_per_month %}
-        <p class='mb-0 text-muted'>Footnote here. TODO - add.</p>
+        <p class='mb-0 text-muted'>Analyses created per month.</p>
     {% endcard %}
     <div class="col-lg-12">
         <h3>Execution success/failure rates</h3>
     </div>
     {% card col-lg-6 %}
         {% plotly config.successes.fig_completions_per_week %}
-        <p class='mb-0 text-muted'>Footnote here. TODO - add.</p>
+        <p class='mb-0 text-muted'>Completions per week. A completed analysis is one where it successfully executes and results are generated.</p>
     {% endcard %}
     {% card col-lg-6 %}
         {% plotly config.successes.fig_completions_per_month %}
-        <p class='mb-0 text-muted'>Footnote here. TODO - add.</p>
+        <p class='mb-0 text-muted'>Completions per month. A completed analysis is one where it successfully executes and results are generated.</p>
     {% endcard %}
     <div class="col-lg-12">
         <h3>Analysis settings composition</h3>
     </div>
     {% card col-lg-6 %}
         {% plotly config.datasets.fig_n_dataset_option %}
-        <p class='mb-0 text-muted'>Footnote here. TODO - add.</p>
+        <p class='mb-0 text-muted'>How many datasets and option sets are used in an analysis?</p>
     {% endcard %}
     {% card col-lg-6 %}
         {% plotly config.datasets.fig_n_dataset %}
-        <p class='mb-0 text-muted'>Footnote here. TODO - add.</p>
+        <p class='mb-0 text-muted'>Histogram of # of datasets used in an analysis.</p>
     {% endcard %}
     {% card col-lg-6 %}
         {% plotly config.datasets.fig_n_options %}
-        <p class='mb-0 text-muted'>Footnote here. TODO - add.</p>
+        <p class='mb-0 text-muted'>Histogram of # of option sets used in an analysis.</p>
     {% endcard %}
     {% card col-lg-6 %}
         {% plotly config.datasets.fig_by_type %}
-        <p class='mb-0 text-muted'>Footnote here. TODO - add.</p>
+        <p class='mb-0 text-muted'>Fraction of run by data type.</p>
     {% endcard %}
     <div class="col-lg-12">
         <h3>Runtime</h3>
     </div>
     {% card col-lg-4 %}
         {% plotly config.runtime.fig_boxplot %}
-        <p class='mb-0 text-muted'>Footnote here. TODO - add.</p>
+        <p class='mb-0 text-muted'>Boxplot of total execution time for each analysis</p>
     {% endcard %}
     {% card col-lg-4 %}
         <p class="mb-0">Execution runtime statistics:</p>
@@ -91,7 +91,7 @@
                 {% endfor %}
             </tbody>
         </table>
-        <p class='mb-0 text-muted'>Footnote here. TODO - add.</p>
+        <p class='mb-0 text-muted'>Summary statistics for analysis runtime.</p>
     {% endcard %}
     {% card col-lg-4 %}
         <p class="mb-0">Top 50 most recent runtime failures:</p>
@@ -107,7 +107,7 @@
                 {% endfor %}
             </tbody>
         </table>
-        <p class='mb-0 text-muted'>Footnote here. TODO - add.</p>
+        <p class='mb-0 text-muted'>The 50 most recent failures where an analysis was attempted to execute, but it either failed or timed out.</p>
     {% endcard %}
 </div>
 {% endblock content %}
