@@ -1,7 +1,7 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {NavLink, Redirect, Route} from "react-router-dom";
+import {NavLink, Redirect, Route, Switch} from "react-router-dom";
 
 import DataTab from "./Data/DataTab";
 import LogicRoot from "./Logic/LogicRoot";
@@ -58,13 +58,15 @@ class Navigation extends Component {
                     </li>
                 </ul>
                 <div className="content mt-2">
-                    <Route exact path="/" component={Main} />
-                    <Route path="/data" component={DataTab} />
-                    <Route path="/logic" component={LogicRoot} />
-                    <Route path="/output" component={Output} />
-                    <Route path="*">
-                        <Redirect to="/" />
-                    </Route>
+                    <Switch>
+                        <Route exact path="/" component={Main} />
+                        <Route path="/data" component={DataTab} />
+                        <Route path="/logic" component={LogicRoot} />
+                        <Route path="/output" component={Output} />
+                        <Route path="*">
+                            <Redirect to="/" />
+                        </Route>
+                    </Switch>
                 </div>
                 <div className="toast-container">
                     {/* put toasts at the end so it's above everything else */}

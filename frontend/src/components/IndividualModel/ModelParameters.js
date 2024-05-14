@@ -13,6 +13,7 @@ const getData = function(model) {
             anyBounded = _.sum(parameters.bounded) > 0;
 
         return {
+            tblClasses: "table table-sm text-right col-l-1",
             headers: ["Variable", "Estimate", "Standard Error"],
             subheader: "Model Parameters",
             rows: indexes.map(i => {
@@ -47,6 +48,7 @@ const getData = function(model) {
         const names = model.results.parameter_names,
             values = model.results.parameters;
         return {
+            tblClasses: "table table-sm text-right col-l-1",
             headers: ["Variable", "Estimate"],
             rows: _.range(_.size(names)).map(i => [names[i], values[i]]),
             subheader: "Model Parameters",

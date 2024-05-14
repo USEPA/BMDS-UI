@@ -15,11 +15,6 @@
   transition-timing-function: unset;
 }
 
-/* EPA header menu items */
-.l-header__nav .menu__item > .menu__link {
-  font-size: 0.91rem !important;
-}
-
 /* usa-banner flag icon */
 .usa-banner__button[aria-expanded=true]::after {
   -webkit-mask: url(/static/vendor/uswds/3.1.0/img/usa-icons/expand_less.svg) no-repeat center/contain;
@@ -78,4 +73,9 @@ a.dropdown-toggle:not([href])::after {
   border-left: 0px;
   border-right: 0px;
   border-color: #dddddd
+}
+
+/* Expand width of footer column since there is only one column */
+.bmds-desktop,.footer__column{
+  width: 100%;
 }

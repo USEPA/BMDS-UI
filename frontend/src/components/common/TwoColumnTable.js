@@ -16,7 +16,7 @@ class TwoColumnTable extends Component {
                 );
             };
         return (
-            <table id={id} className="table table-sm">
+            <table id={id} className="table table-sm col-r-2">
                 <colgroup>
                     <col width={widths[0]} />
                     <col width={widths[1]} />
@@ -45,7 +45,7 @@ TwoColumnTable.propTypes = {
     colwidths: PropTypes.array,
 };
 TwoColumnTable.defaultProps = {
-    colwidths: [30, 70],
+    colwidths: [40, 60],
 };
 
 export default TwoColumnTable;
