@@ -9,7 +9,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:12-alpine
+        image: postgres:16-alpine
         env:
           POSTGRES_USER: bmds
           POSTGRES_PASSWORD: password
@@ -107,7 +107,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:12-alpine
+        image: postgres:16-alpine
         env:
           POSTGRES_USER: bmds
           POSTGRES_PASSWORD: password

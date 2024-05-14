@@ -6,7 +6,7 @@ Make sure you have the following applications installed locally:
 - [Python](https://www.python.org/) == 3.11
 - [Node.js](https://nodejs.org) == 18
 - [Yarn](https://yarnpkg.com/)
-- [PostgreSQL](https://www.postgresql.org/) >= 12
+- [PostgreSQL](https://www.postgresql.org/) >= 16
 
 If installing on Windows, all requirements are available using [miniconda](https://docs.conda.io/en/latest/miniconda.html), and do not require administrative access.
 
