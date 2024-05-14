@@ -30,7 +30,7 @@ const dataRows = (dataset, columnNames) => {
 @observer
 class DatasetTable extends Component {
     render() {
-        const {dataset} = this.props,
+        const {dataset, footnotes} = this.props,
             columnNames = columns[dataset.dtype],
             isIndividual = dataset.dtype === Dtype.CONTINUOUS_INDIVIDUAL,
             nRows = dataset.doses.length,
@@ -42,6 +42,7 @@ class DatasetTable extends Component {
                 headers: columnNames.map(d => columnHeaders[d]),
                 rows: isIndividual ? individualDataRows(dataset) : dataRows(dataset, columnNames),
                 tblClasses: "table table-sm text-right",
+                footnotes,
             };
 
         return (
@@ -59,5 +60,6 @@ class DatasetTable extends Component {
 }
 DatasetTable.propTypes = {
     dataset: PropTypes.object.isRequired,
+    footnotes: PropTypes.node,
 };
 export default DatasetTable;

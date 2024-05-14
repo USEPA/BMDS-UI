@@ -43,7 +43,7 @@ class Table extends Component {
                     ))}
                 </tbody>
                 {data.footnotes ? (
-                    <tfoot>
+                    <tfoot className="text-left">
                         <tr>
                             <td colSpan={nCols}>{data.footnotes}</td>
                         </tr>
