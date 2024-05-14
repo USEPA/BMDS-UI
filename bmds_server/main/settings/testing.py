@@ -1,5 +1,3 @@
-# flake8: noqa
-
 from ..constants import AuthProvider
 from .dev import *
 
