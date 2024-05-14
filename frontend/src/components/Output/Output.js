@@ -8,6 +8,7 @@ import DoseResponsePlot from "../common/DoseResponsePlot";
 import Icon from "../common/Icon";
 import SelectInput from "../common/SelectInput";
 import DatasetTable from "../Data/DatasetTable";
+import {ContinuousTestOfInterestDatasetFootnote} from "../IndividualModel/ContinuousTestOfInterest";
 import ModelDetailModal from "../IndividualModel/ModelDetailModal";
 import BayesianResultTable from "./BayesianResultTable";
 import FrequentistResultTable from "./FrequentistResultTable";
@@ -37,6 +38,20 @@ OutputErrorComponent.propTypes = {
 @inject("outputStore")
 @observer
 class Output extends Component {
+    renderDataset() {
+        const {outputStore} = this.props;
+
+        if (outputStore.isMultiTumor) {
+            return <MultitumorDatasetTable />;
+        }
+        const footnote = outputStore.showContinuousDatasetFootnote ? (
+            <ContinuousTestOfInterestDatasetFootnote />
+        ) : (
+            undefined
+        );
+        return <DatasetTable dataset={outputStore.selectedDataset} footnotes={footnote} />;
+    }
+
     render() {
         const {outputStore} = this.props,
             {
@@ -96,13 +111,7 @@ class Output extends Component {
                             />
                         </div>
                     ) : null}
-                    <div className="col-lg-6">
-                        {outputStore.isMultiTumor ? (
-                            <MultitumorDatasetTable />
-                        ) : (
-                            <DatasetTable dataset={outputStore.selectedDataset} />
-                        )}
-                    </div>
+                    <div className="col-lg-6">{this.renderDataset()}</div>
                     <div className="col-lg-4">
                         <OptionSetTable />
                     </div>

@@ -2,7 +2,11 @@ import _ from "lodash";
 import {action, computed, observable, toJS} from "mobx";
 
 import {getHeaders} from "@/common";
-import {MODEL_MULTI_TUMOR, MODEL_NESTED_DICHOTOMOUS} from "@/constants/mainConstants";
+import {
+    MODEL_CONTINUOUS,
+    MODEL_MULTI_TUMOR,
+    MODEL_NESTED_DICHOTOMOUS,
+} from "@/constants/mainConstants";
 import {maIndex, modelClasses} from "@/constants/outputConstants";
 import {
     black,
@@ -118,6 +122,11 @@ class OutputStore {
     @computed get selectedDatasetOptions() {
         const index = this.selectedOutput.dataset_index;
         return this.rootStore.dataOptionStore.options[index];
+    }
+
+    @computed get showContinuousDatasetFootnote() {
+        const output = this.selectedOutput;
+        return this.getModelType === MODEL_CONTINUOUS && output && output.frequentist;
     }
 
     @computed get multitumorDegreeInputSettings() {

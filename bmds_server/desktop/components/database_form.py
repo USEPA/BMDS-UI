@@ -9,7 +9,7 @@ from textual.reactive import reactive
 from textual.screen import ModalScreen
 from textual.validation import Function
 from textual.widget import Widget
-from textual.widgets import Button, Input, Label
+from textual.widgets import Button, Input, Label, Markdown
 
 from ..actions import create_django_db
 from ..config import Config, Database
@@ -61,6 +61,13 @@ class DatabaseFormModel(ModalScreen):
     DatabaseFormModel {
       align: center middle;
     }
+    DatabaseFormModel .subheader {
+      background: $primary;
+      color: white;
+      width: 100%;
+      padding: 0 3;
+      margin: 0 0 1 0;
+    }
     DatabaseFormModel Label {
       padding: 1 0 0 1;
     }
@@ -92,14 +99,16 @@ class DatabaseFormModel(ModalScreen):
         return getattr(self.db, attr) if self.db else default
 
     def compose(self) -> ComposeResult:
-        save_btn = (
-            Button("Update", variant="primary", id="db-update")
-            if self.db
-            else Button("Create", variant="primary", id="db-create")
-        )
+        btn_label = "Update" if self.db else "Create"
+        btn_id = "db-update" if self.db else "db-create"
+        save_btn = Button(btn_label, variant="primary", id=btn_id)
         delete_btn = Button("Delete", variant="error", id="db-delete") if self.db else NullWidget()
         path = self.get_db_value("path", None)
         yield Grid(
+            Markdown(
+                f"**{btn_label} Project**: A project contains all analyses in a single file. Within a project, you can create stars and labels to help organize analyses.",
+                classes="subheader span4",
+            ),
             Label("Name (required)"),
             Input(
                 value=self.get_db_value("name", "My Database"),

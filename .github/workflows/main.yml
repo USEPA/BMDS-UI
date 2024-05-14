@@ -41,8 +41,8 @@ jobs:
       run: |
         mv tests/data/ci-webpack-stats.json bmds_server/webpack-stats.json
         pip install -U pip wheel
+        pip install -e "venv"
         pip install -e ".[pg,dev]"
-        pip install -e "./venv"
     - name: Setup linux environment
       run: |
         sudo apt-get update -y
@@ -147,8 +147,8 @@ jobs:
     - name: install
       run: |
         pip install -U pip wheel
+        pip install -e "venv"
         pip install -e ".[pg,dev]"
-        pip install -e "./venv"
         playwright install --with-deps chromium
     - name: Setup linux environment
       run: |

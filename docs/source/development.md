@@ -22,9 +22,9 @@ Clone the repository and install all requirements into a virtual environment:
 mkdir -p ~/dev
 cd ~/dev
 
-# clone webserver package and execution package
-git clone https://github.com/USEPA/bmds-private
-git clone https://github.com/USEPA/bmds-online-private
+# clone package and execution package
+git clone https://github.com/USEPA/bmds-private bmds
+git clone https://github.com/USEPA/bmds-online-private bmds-server
 
 # create virtual environment and install requirements
 cd ~/dev/bmds-server
@@ -35,10 +35,8 @@ source ./venv/bin/activate
 
 # install requirements
 pip install -U pip uv
-uv pip install -e ".[pg,dev]"
-
-# install package in developer mode and developer tools
 uv pip install -e "../bmds"
+uv pip install -e ".[pg,dev]"
 
 # create the database
 createuser --superuser --no-password bmds-online
