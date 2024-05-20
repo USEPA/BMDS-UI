@@ -198,3 +198,9 @@ export INTEGRATION_TESTS=1
 export PWDEBUG=1
 py.test -sv tests/integration/test_dichotomous.py --pdb
 ```
+
+### Running Textual in developer mode
+
+```bash
+textual run --dev bmds_server.desktop.cli:main
+```

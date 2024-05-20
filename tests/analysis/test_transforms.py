@@ -26,7 +26,7 @@ class TestOptions:
         assert res.bmr_type is ContinuousRiskType.StandardDeviation
         assert pytest.approx(res.bmr) == 1.5
         assert pytest.approx(res.alpha) == 0.05
-        assert pytest.approx(res.tail_prob) == 0.01
+        assert pytest.approx(res.tail_prob) == 0.4
         assert res.degree == 0
         assert res.is_increasing is None
 
