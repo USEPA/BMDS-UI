@@ -6,6 +6,7 @@ from textual.widgets import Footer, TabbedContent, TabPane
 
 from .actions import AppRunner
 from .components.database_list import DatabaseList
+from .components.disclaimer import DisclaimerModal
 from .components.header import Header
 from .components.log import AppLog
 from .components.quit import QuitModal
@@ -17,12 +18,16 @@ class BmdsDesktopTui(App):
 
     BINDINGS: ClassVar = [
         ("q", "quit", "Exit"),
-        ("d", "toggle_dark", "Light/Dark"),
+        ("d", "show_disclaimer", "Disclaimer"),
+        ("l", "toggle_dark", "Light/Dark"),
     ]
 
     def __init__(self, **kw):
         self.webapp = AppRunner()
         super().__init__(**kw)
+
+    def on_mount(self) -> None:
+        self.action_show_disclaimer()
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
@@ -44,3 +49,7 @@ class BmdsDesktopTui(App):
     def action_toggle_dark(self):
         """An action to toggle dark mode."""
         self.dark = not self.dark
+
+    def action_show_disclaimer(self):
+        """An action to show the disclaimer."""
+        self.push_screen(DisclaimerModal())
