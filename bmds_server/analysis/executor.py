@@ -74,7 +74,7 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Bmds
 
 
 def build_bayesian_session(
-    dataset: bmds.datasets.DatasetType, inputs: dict, options: dict, dataset_options: dict
+    dataset: bmds.datasets.base.DatasetBase, inputs: dict, options: dict, dataset_options: dict
 ) -> BmdsSession | None:
     models = inputs["models"].get(PriorEnum.bayesian, [])
 

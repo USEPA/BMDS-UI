@@ -77,16 +77,16 @@ def build_model_settings(
         raise ValueError(f"Unknown dataset_type: {dataset_type}")
 
 
-def build_dataset(dataset: dict[str, list[float]]) -> bmds.datasets.DatasetType:
+def build_dataset(dataset: dict[str, list[float]]) -> bmds.datasets.base.DatasetBase:
     dataset_type = dataset["dtype"]
     if dataset_type == Dtype.CONTINUOUS:
-        schema = bmds.datasets.ContinuousDatasetSchema
+        schema = bmds.datasets.continuous.ContinuousDatasetSchema
     elif dataset_type == Dtype.CONTINUOUS_INDIVIDUAL:
-        schema = bmds.datasets.ContinuousIndividualDatasetSchema
+        schema = bmds.datasets.continuous.ContinuousIndividualDatasetSchema
     elif dataset_type == Dtype.DICHOTOMOUS:
-        schema = bmds.datasets.DichotomousDatasetSchema
+        schema = bmds.datasets.dichotomous.DichotomousDatasetSchema
     elif dataset_type == Dtype.NESTED_DICHOTOMOUS:
-        schema = bmds.datasets.NestedDichotomousDatasetSchema
+        schema = bmds.datasets.nested_dichotomous.NestedDichotomousDatasetSchema
     else:
         raise ValueError(f"Unknown dataset type: {dataset_type}")
     return schema.model_validate(dataset).deserialize()

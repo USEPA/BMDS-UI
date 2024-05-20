@@ -2,12 +2,9 @@ from enum import IntEnum
 from typing import Any, ClassVar
 
 import bmds
-from bmds.datasets import (
-    ContinuousDatasetSchema,
-    ContinuousIndividualDatasetSchema,
-    DichotomousDatasetSchema,
-    NestedDichotomousDatasetSchema,
-)
+from bmds.datasets.continuous import ContinuousDatasetSchema, ContinuousIndividualDatasetSchema
+from bmds.datasets.dichotomous import DichotomousDatasetSchema
+from bmds.datasets.nested_dichotomous import NestedDichotomousDatasetSchema
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from pydantic import BaseModel, Field, model_validator

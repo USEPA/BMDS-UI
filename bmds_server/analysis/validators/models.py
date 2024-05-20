@@ -114,7 +114,6 @@ class MultiTumorModelListSchema(ModelListSchema):
 
 schema_map = {
     bmds.constants.DICHOTOMOUS: DichotomousModelListSchema,
-    bmds.constants.DICHOTOMOUS_CANCER: DichotomousModelListSchema,
     bmds.constants.CONTINUOUS: ContinuousModelListSchema,
     bmds.constants.CONTINUOUS_INDIVIDUAL: ContinuousModelListSchema,
     bmds.constants.NESTED_DICHOTOMOUS: NestedDichotomousModelListSchema,
