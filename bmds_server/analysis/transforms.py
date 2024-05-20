@@ -47,7 +47,7 @@ def build_model_settings(
         return ContinuousModelSettings(
             bmr=options["bmr_value"],
             alpha=round(1.0 - options["confidence_level"], 3),
-            tailProb=options["tail_probability"],
+            tail_prob=options["tail_probability"],
             bmr_type=options["bmr_type"],
             disttype=options["dist_type"],
             degree=dataset_options["degree"],
