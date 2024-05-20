@@ -34,11 +34,11 @@ dependencies = [
   "celery~=5.4.0",
   "billiard~=4.2.0",
   "kombu~=5.3.7",
-  "plotly~=5.20.0",
-  "redis~=5.0.3",
+  "plotly~=5.22.0",
+  "redis~=5.0.4",
 
   # desktop
-  "textual~=0.58.1",
+  "textual~=0.62.0",
   "whitenoise~=6.6.0",
 ]
 
@@ -48,36 +48,36 @@ dev = [
   "flit~=3.9.0",
 
   # debug
-  "django-debug-toolbar==4.3.0",
+  "django-debug-toolbar~=4.3.0",
   "django_extensions==3.2.3",
   "django-browser-reload==1.12.1",
 
   # docs
-  "Sphinx==7.2.6",
-  "myst-parser==2.0.0",
-  "pydata-sphinx-theme==0.15.2",
+  "Sphinx~=7.3.7",
+  "myst-parser~=2.0.0",
+  "pydata-sphinx-theme~=0.15.2",
 
   # tests
-  "pytest==8.1.1",
-  "pytest-django==4.8.0",
-  "vcrpy==6.0.1",
-  "pytest-vcr==1.0.2",
-  "pytest-asyncio==0.23.6",
-  "coverage==7.4.4",
+  "pytest~=8.2.1",
+  "pytest-django~=4.8.0",
+  "vcrpy~=6.0.1",
+  "pytest-vcr~=1.0.2",
+  "pytest-asyncio==0.23.7",
+  "coverage==7.5.1",
 
   # integration tests
-  "playwright==1.43.0",
-  "pytest-playwright==0.4.4",
+  "playwright==1.44.0",
+  "pytest-playwright==0.5.0",
 
   # lint and formatting tools
-  "ruff~=0.4.1",
+  "ruff~=0.4.4",
 ]
 pg = [
   "psycopg2-binary~=2.9.9",
 ]
 prod = [
-  "gunicorn==22.0.0",
-  "sentry-sdk~=2.1.1",
+  "gunicorn~=22.0.0",
+  "sentry-sdk~=2.2.0",
 ]
 
 [project.urls]
