@@ -2,6 +2,7 @@ from typing import Any
 
 import bmds
 import numpy as np
+from bmds.constants import Dtype, ModelClass
 from django.core.exceptions import ValidationError
 from pydantic import BaseModel, Field, model_validator
 
@@ -15,26 +16,26 @@ class ModelTypeSchema(BaseModel):
 
 
 DichotomousModelSchema = ModelTypeSchema(
-    restricted=set(bmds.constants.D_MODELS_RESTRICTABLE),
-    unrestricted=set(bmds.constants.D_MODELS),
-    bayesian=set(bmds.constants.D_MODELS),
+    restricted=bmds.constants.D_MODELS_RESTRICTABLE,
+    unrestricted=bmds.constants.D_MODELS,
+    bayesian=bmds.constants.D_MODELS,
 )
 
 
 ContinuousModelSchema = ModelTypeSchema(
-    restricted=set(bmds.constants.C_MODELS_RESTRICTABLE),
-    unrestricted=set(bmds.constants.C_MODELS_UNRESTRICTABLE),
-    bayesian=set(bmds.constants.C_MODELS),
+    restricted=bmds.constants.C_MODELS_RESTRICTABLE,
+    unrestricted=bmds.constants.C_MODELS_UNRESTRICTABLE,
+    bayesian=bmds.constants.C_MODELS,
 )
 
 NestedDichotomousModelSchema = ModelTypeSchema(
-    restricted=set(bmds.constants.ND_MODELS),
-    unrestricted=set(bmds.constants.ND_MODELS),
+    restricted=bmds.constants.ND_MODELS,
+    unrestricted=bmds.constants.ND_MODELS,
     bayesian=set(),
 )
 
 MultiTumorModelSchema = ModelTypeSchema(
-    restricted=set(bmds.constants.MT_MODELS),
+    restricted=bmds.constants.MT_MODELS,
     unrestricted=set(),
     bayesian=set(),
 )
@@ -113,11 +114,11 @@ class MultiTumorModelListSchema(ModelListSchema):
 
 
 schema_map = {
-    bmds.constants.DICHOTOMOUS: DichotomousModelListSchema,
-    bmds.constants.CONTINUOUS: ContinuousModelListSchema,
-    bmds.constants.CONTINUOUS_INDIVIDUAL: ContinuousModelListSchema,
-    bmds.constants.NESTED_DICHOTOMOUS: NestedDichotomousModelListSchema,
-    bmds.constants.MULTI_TUMOR: MultiTumorModelListSchema,
+    Dtype.DICHOTOMOUS: DichotomousModelListSchema,
+    Dtype.CONTINUOUS: ContinuousModelListSchema,
+    Dtype.CONTINUOUS_INDIVIDUAL: ContinuousModelListSchema,
+    Dtype.NESTED_DICHOTOMOUS: NestedDichotomousModelListSchema,
+    ModelClass.MULTI_TUMOR: MultiTumorModelListSchema,
 }
 
 

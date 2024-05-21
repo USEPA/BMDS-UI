@@ -35,7 +35,7 @@ def build_model_settings(
     dataset_options: dict,
 ) -> DichotomousModelSettings | ContinuousModelSettings | NestedDichotomousModelSettings:
     prior_class = bmd3_prior_map[prior_class]
-    if dataset_type in bmds.constants.DICHOTOMOUS_DTYPES:
+    if dataset_type == bmds.constants.Dtype.DICHOTOMOUS:
         return DichotomousModelSettings(
             bmr=options["bmr_value"],
             alpha=round(1.0 - options["confidence_level"], 3),
@@ -43,7 +43,7 @@ def build_model_settings(
             degree=dataset_options["degree"],
             priors=prior_class,
         )
-    elif dataset_type in bmds.constants.CONTINUOUS_DTYPES:
+    elif dataset_type in bmds.constants.Dtype.CONTINUOUS_DTYPES():
         return ContinuousModelSettings(
             bmr=options["bmr_value"],
             alpha=round(1.0 - options["confidence_level"], 3),
@@ -54,7 +54,7 @@ def build_model_settings(
             is_increasing=is_increasing_map[dataset_options["adverse_direction"]],
             priors=prior_class,
         )
-    elif dataset_type == bmds.constants.NESTED_DICHOTOMOUS:
+    elif dataset_type == bmds.constants.Dtype.NESTED_DICHOTOMOUS:
         is_restricted = prior_class == PriorClass.frequentist_restricted
         return NestedDichotomousModelSettings(
             bmr_type=options["bmr_type"],
@@ -65,7 +65,7 @@ def build_model_settings(
             bootstrap_iterations=options["bootstrap_iterations"],
             bootstrap_seed=options["bootstrap_seed"],
         )
-    elif dataset_type == bmds.constants.MULTI_TUMOR:
+    elif dataset_type == bmds.constants.ModelClass.MULTI_TUMOR:
         return DichotomousModelSettings(
             bmr_type=options["bmr_type"],
             bmr=options["bmr_value"],

@@ -50,13 +50,13 @@ class NestedDichotomousOptions(BaseModel):
 
 
 def validate_options(dataset_type: str, data: Any):
-    if dataset_type in bmds.constants.DICHOTOMOUS_DTYPES:
+    if dataset_type in bmds.constants.ModelClass.DICHOTOMOUS:
         schema = DichotomousOptions
-    elif dataset_type in bmds.constants.CONTINUOUS_DTYPES:
+    elif dataset_type in bmds.constants.ModelClass.CONTINUOUS:
         schema = ContinuousOptions
-    elif dataset_type == bmds.constants.NESTED_DICHOTOMOUS:
+    elif dataset_type == bmds.constants.ModelClass.NESTED_DICHOTOMOUS:
         schema = NestedDichotomousOptions
-    elif dataset_type == bmds.constants.MULTI_TUMOR:
+    elif dataset_type == bmds.constants.ModelClass.MULTI_TUMOR:
         schema = DichotomousOptions
     else:
         ValidationError(f"Unknown `dataset_type`: {dataset_type}")

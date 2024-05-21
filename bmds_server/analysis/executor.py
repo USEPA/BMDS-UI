@@ -157,7 +157,7 @@ class AnalysisSession(NamedTuple):
                 self.frequentist.recommend()
 
         if self.bayesian:
-            if self.bayesian.dataset.dtype in bmds.constants.DICHOTOMOUS_DTYPES:
+            if self.bayesian.dataset.dtype == bmds.constants.Dtype.DICHOTOMOUS:
                 self.bayesian.add_model_averaging()
             self.bayesian.execute()
 
