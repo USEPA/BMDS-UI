@@ -5,7 +5,7 @@ from typing import NamedTuple, Self
 import bmds
 from bmds.constants import DistType, ModelClass
 from bmds.models.multi_tumor import Multitumor
-from bmds.sessions import BmdsSession
+from bmds.session import Session
 from bmds.types.nested_dichotomous import IntralitterCorrelation, LitterSpecificCovariate
 
 from .schema import AnalysisSessionSchema
@@ -20,7 +20,7 @@ from .transforms import (
 lognormal_enabled = {bmds.constants.M_ExponentialM3, bmds.constants.M_ExponentialM5}
 
 
-def build_frequentist_session(dataset, inputs, options, dataset_options) -> BmdsSession | None:
+def build_frequentist_session(dataset, inputs, options, dataset_options) -> Session | None:
     restricted_models = inputs["models"].get(PriorEnum.frequentist_restricted, [])
     unrestricted_models = inputs["models"].get(PriorEnum.frequentist_unrestricted, [])
 
@@ -30,7 +30,7 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Bmds
 
     dataset_type = inputs["dataset_type"]
     recommendation_settings = inputs.get("recommender", None)
-    session = BmdsSession(dataset=dataset, recommendation_settings=recommendation_settings)
+    session = Session(dataset=dataset, recommendation_settings=recommendation_settings)
 
     for prior_type, model_names in [
         (PriorEnum.frequentist_restricted, remap_exponential(restricted_models)),
@@ -75,7 +75,7 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Bmds
 
 def build_bayesian_session(
     dataset: bmds.datasets.base.DatasetBase, inputs: dict, options: dict, dataset_options: dict
-) -> BmdsSession | None:
+) -> Session | None:
     models = inputs["models"].get(PriorEnum.bayesian, [])
 
     # filter lognormal
@@ -87,7 +87,7 @@ def build_bayesian_session(
         return None
 
     dataset_type = inputs["dataset_type"]
-    session = BmdsSession(dataset=dataset)
+    session = Session(dataset=dataset)
     prior_weights = list(map(lambda d: d["prior_weight"], models))
     for name in map(lambda d: d["model"], models):
         model_options = build_model_settings(
@@ -110,7 +110,7 @@ class AnalysisSession(NamedTuple):
     This is the execution engine for running analysis in BMDS.
 
     All database state is decoupled from the execution engine, along with serialization and
-    de-serialization methods.  Note that this is a custom BmdsSession implementation; the UI of
+    de-serialization methods.  Note that this is a custom Session implementation; the UI of
     the bmds software allows you to effectively run multiple "independent" sessions at once;
     for example, a frequentist model session with a bayesian model averaging session. This
     Session allows construction of these individual bmds sessions into a single analysis
@@ -119,8 +119,8 @@ class AnalysisSession(NamedTuple):
 
     dataset_index: int
     option_index: int
-    frequentist: BmdsSession | None
-    bayesian: BmdsSession | None
+    frequentist: Session | None
+    bayesian: Session | None
 
     @classmethod
     def run(cls, inputs: dict, dataset_index: int, option_index: int) -> AnalysisSessionSchema:
@@ -146,8 +146,8 @@ class AnalysisSession(NamedTuple):
         return cls(
             dataset_index=obj.dataset_index,
             option_index=obj.option_index,
-            frequentist=BmdsSession.from_serialized(obj.frequentist) if obj.frequentist else None,
-            bayesian=BmdsSession.from_serialized(obj.bayesian) if obj.bayesian else None,
+            frequentist=Session.from_serialized(obj.frequentist) if obj.frequentist else None,
+            bayesian=Session.from_serialized(obj.bayesian) if obj.bayesian else None,
         )
 
     def execute(self):
@@ -225,9 +225,9 @@ class MultiTumorSession(NamedTuple):
         return self.to_schema().model_dump(by_alias=True)
 
 
-Session = AnalysisSession | MultiTumorSession
+AllSession = AnalysisSession | MultiTumorSession
 
 
-def deserialize(model_class: ModelClass, data: dict) -> Session:
+def deserialize(model_class: ModelClass, data: dict) -> AllSession:
     Runner = MultiTumorSession if model_class is ModelClass.MULTI_TUMOR else AnalysisSession
     return Runner.deserialize(data)
