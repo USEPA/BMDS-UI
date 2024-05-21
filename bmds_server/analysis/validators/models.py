@@ -1,8 +1,7 @@
 from typing import Any
 
-import bmds
 import numpy as np
-from bmds.constants import Dtype, ModelClass
+from bmds.constants import Dtype, ModelClass, Models
 from django.core.exceptions import ValidationError
 from pydantic import BaseModel, Field, model_validator
 
@@ -16,26 +15,53 @@ class ModelTypeSchema(BaseModel):
 
 
 DichotomousModelSchema = ModelTypeSchema(
-    restricted=bmds.constants.D_MODELS_RESTRICTABLE,
-    unrestricted=bmds.constants.D_MODELS,
-    bayesian=bmds.constants.D_MODELS,
+    restricted={
+        Models.DichotomousHill,
+        Models.Gamma,
+        Models.LogLogistic,
+        Models.LogProbit,
+        Models.Multistage,
+        Models.Weibull,
+    },
+    unrestricted={
+        Models.DichotomousHill,
+        Models.Gamma,
+        Models.Logistic,
+        Models.LogLogistic,
+        Models.LogProbit,
+        Models.Multistage,
+        Models.Probit,
+        Models.QuantalLinear,
+        Models.Weibull,
+    },
+    bayesian={
+        Models.DichotomousHill,
+        Models.Gamma,
+        Models.Logistic,
+        Models.LogLogistic,
+        Models.LogProbit,
+        Models.Multistage,
+        Models.Probit,
+        Models.QuantalLinear,
+        Models.Weibull,
+    },
 )
 
 
 ContinuousModelSchema = ModelTypeSchema(
-    restricted=bmds.constants.C_MODELS_RESTRICTABLE,
-    unrestricted=bmds.constants.C_MODELS_UNRESTRICTABLE,
-    bayesian=bmds.constants.C_MODELS,
+    restricted={Models.Exponential, Models.Hill, Models.Polynomial, Models.Power},
+    unrestricted={Models.Hill, Models.Linear, Models.Polynomial, Models.Power},
+    bayesian={Models.Exponential, Models.Hill, Models.Linear, Models.Polynomial, Models.Power},
 )
 
 NestedDichotomousModelSchema = ModelTypeSchema(
-    restricted=bmds.constants.ND_MODELS,
-    unrestricted=bmds.constants.ND_MODELS,
+    restricted={Models.NestedLogistic},
+    unrestricted={Models.NestedLogistic},
     bayesian=set(),
 )
 
 MultiTumorModelSchema = ModelTypeSchema(
-    restricted=bmds.constants.MT_MODELS,
+    restricted={Models.Multistage},
     unrestricted=set(),
     bayesian=set(),
 )

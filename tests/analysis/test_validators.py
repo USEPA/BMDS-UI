@@ -55,7 +55,7 @@ class TestInputValidation:
         _missing_field(err, "models")
 
         # add models, try again
-        data["models"] = {"frequentist_restricted": [bmds.constants.M_Power]}
+        data["models"] = {"frequentist_restricted": [bmds.Models.Power]}
         assert validators.validate_input(data, partial=True) is None
 
         with pytest.raises(ValidationError) as err:
@@ -114,7 +114,7 @@ class TestInputValidation:
         _missing_field(err, "models")
 
         # add models, try again
-        data["models"] = {"frequentist_restricted": [bmds.constants.M_NestedLogistic]}
+        data["models"] = {"frequentist_restricted": [bmds.Models.NestedLogistic]}
         assert validators.validate_input(data, partial=True) is None
 
         with pytest.raises(ValidationError) as err:
@@ -178,7 +178,7 @@ class TestInputValidation:
         _missing_field(err, "models")
 
         # add models, try again
-        data["models"] = {"frequentist_restricted": [bmds.constants.M_Multistage]}
+        data["models"] = {"frequentist_restricted": [bmds.Models.Multistage]}
         assert validators.validate_input(data, partial=True) is None
 
         with pytest.raises(ValidationError) as err:
@@ -196,14 +196,14 @@ class TestInputValidation:
 class TestModelValidation:
     def test_dichotomous(self):
         dtype = Dtype.DICHOTOMOUS
-        probit = bmds.constants.M_Probit
-        logprobit = bmds.constants.M_LogProbit
+        probit = bmds.Models.Probit
+        logprobit = bmds.Models.LogProbit
 
         # test success
         validators.validate_models(dtype, {"frequentist_restricted": [logprobit]})
 
         # assert wrong model type
-        data = {"frequentist_restricted": [bmds.constants.M_Power]}
+        data = {"frequentist_restricted": [bmds.Models.Power]}
         with pytest.raises(ValidationError) as err:
             validators.validate_models(dtype, data)
         assert "Invalid model(s) in frequentist_restricted: Power" in str(err)
@@ -245,8 +245,8 @@ class TestModelValidation:
 
     def test_continuous(self):
         dtype = Dtype.CONTINUOUS
-        power = bmds.constants.M_Power
-        linear = bmds.constants.M_Linear
+        power = bmds.Models.Power
+        linear = bmds.Models.Linear
 
         # test success
         assert (
@@ -261,7 +261,7 @@ class TestModelValidation:
         with pytest.raises(ValidationError) as err:
             validators.validate_models(
                 dtype,
-                {"frequentist_restricted": [bmds.constants.M_Probit]},
+                {"frequentist_restricted": [bmds.Models.Probit]},
             )
         assert "Invalid model(s) in frequentist_restricted: Probit" in str(err)
 

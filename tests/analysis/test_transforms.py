@@ -1,6 +1,6 @@
 import bmds
 import pytest
-from bmds.constants import M_Exponential, M_ExponentialM3, M_ExponentialM5
+from bmds.constants import Models
 from bmds.types.continuous import ContinuousRiskType
 from bmds.types.dichotomous import DichotomousRiskType
 
@@ -52,6 +52,7 @@ class TestOptions:
 class TestModels:
     def test_remap_exponential(self):
         assert transforms.remap_exponential([]) == []
-        assert transforms.remap_exponential([M_Exponential]) == [M_ExponentialM3, M_ExponentialM5]
-        expected = ["a", M_ExponentialM3, M_ExponentialM5, "b"]
-        assert transforms.remap_exponential(["a", M_Exponential, "b"]) == expected
+        expected = [Models.ExponentialM3, Models.ExponentialM5]
+        assert transforms.remap_exponential([Models.Exponential]) == expected
+        expected = ["a", Models.ExponentialM3, Models.ExponentialM5, "b"]
+        assert transforms.remap_exponential(["a", Models.Exponential, "b"]) == expected

@@ -17,7 +17,7 @@ from .transforms import (
 )
 
 # excluded continuous models if distribution type is lognormal
-lognormal_enabled = {bmds.constants.M_ExponentialM3, bmds.constants.M_ExponentialM5}
+lognormal_enabled = {bmds.Models.ExponentialM3, bmds.Models.ExponentialM5}
 
 
 def build_frequentist_session(dataset, inputs, options, dataset_options) -> Session | None:
@@ -41,8 +41,8 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Sess
 
         for model_name in model_names:
             model_options = build_model_settings(dataset_type, prior_type, options, dataset_options)
-            if model_name in bmds.constants.VARIABLE_POLYNOMIAL:
-                min_degree = 2 if model_name in bmds.constants.M_Polynomial else 1
+            if model_name in bmds.Models.VARIABLE_POLYNOMIAL():
+                min_degree = 2 if model_name in bmds.Models.Polynomial else 1
                 max_degree = (
                     model_options.degree + 1
                     if model_options.degree > 0
@@ -65,7 +65,7 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Sess
                     )
                     session.add_model(model_name, settings=settings)
             else:
-                if model_name == bmds.constants.M_Linear:
+                if model_name == bmds.Models.Linear:
                     # a linear model must have a degree of 1
                     model_options.degree = 1
                 session.add_model(model_name, settings=model_options)
@@ -96,7 +96,7 @@ def build_bayesian_session(
             options,
             dataset_options,
         )
-        if name in bmds.constants.VARIABLE_POLYNOMIAL:
+        if name in bmds.Models.VARIABLE_POLYNOMIAL():
             model_options.degree = 2
         session.add_model(name, settings=model_options)
 
