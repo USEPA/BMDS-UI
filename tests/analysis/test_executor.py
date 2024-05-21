@@ -57,11 +57,11 @@ class TestAnalysisSession:
         assert len(session.frequentist.models) == 2
         assert (
             session.frequentist.models[0].bmd_model_class.id
-            == ContinuousModelChoices.c_exp_m3.value.id
+            == ContinuousModelChoices.exp_m3.value.id
         )
         assert (
             session.frequentist.models[1].bmd_model_class.id
-            == ContinuousModelChoices.c_exp_m5.value.id
+            == ContinuousModelChoices.exp_m5.value.id
         )
 
     def test_multistage_permutations(self, complete_dichotomous):
@@ -69,7 +69,7 @@ class TestAnalysisSession:
             assert session.bayesian is None
             assert len(session.frequentist.models) == n
             model_classes = set([model.bmd_model_class.id for model in session.frequentist.models])
-            assert model_classes == {DichotomousModelChoices.d_multistage.value.id}
+            assert model_classes == {DichotomousModelChoices.multistage.value.id}
             degrees = set([model.settings.degree for model in session.frequentist.models])
             assert degrees == set(list(range(1, n + 1)))
 
@@ -114,7 +114,7 @@ class TestAnalysisSession:
         assert session.frequentist is None
         assert len(session.bayesian.models) == 1
         model = session.bayesian.models[0]
-        assert model.bmd_model_class.id == DichotomousModelChoices.d_multistage.value.id
+        assert model.bmd_model_class.id == DichotomousModelChoices.multistage.value.id
         assert model.settings.degree == 2
 
     def test_polynomial_unpacking(self, complete_continuous):
