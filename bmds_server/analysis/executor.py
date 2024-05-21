@@ -5,7 +5,7 @@ from typing import NamedTuple, Self
 import bmds
 from bmds.constants import DistType, ModelClass
 from bmds.models.multi_tumor import Multitumor
-from bmds.sessions import BmdsSession
+from bmds.session import Session
 from bmds.types.nested_dichotomous import IntralitterCorrelation, LitterSpecificCovariate
 
 from .schema import AnalysisSessionSchema
@@ -17,10 +17,10 @@ from .transforms import (
 )
 
 # excluded continuous models if distribution type is lognormal
-lognormal_enabled = {bmds.constants.M_ExponentialM3, bmds.constants.M_ExponentialM5}
+lognormal_enabled = {bmds.Models.ExponentialM3, bmds.Models.ExponentialM5}
 
 
-def build_frequentist_session(dataset, inputs, options, dataset_options) -> BmdsSession | None:
+def build_frequentist_session(dataset, inputs, options, dataset_options) -> Session | None:
     restricted_models = inputs["models"].get(PriorEnum.frequentist_restricted, [])
     unrestricted_models = inputs["models"].get(PriorEnum.frequentist_unrestricted, [])
 
@@ -30,7 +30,7 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Bmds
 
     dataset_type = inputs["dataset_type"]
     recommendation_settings = inputs.get("recommender", None)
-    session = BmdsSession(dataset=dataset, recommendation_settings=recommendation_settings)
+    session = Session(dataset=dataset, recommendation_settings=recommendation_settings)
 
     for prior_type, model_names in [
         (PriorEnum.frequentist_restricted, remap_exponential(restricted_models)),
@@ -41,8 +41,8 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Bmds
 
         for model_name in model_names:
             model_options = build_model_settings(dataset_type, prior_type, options, dataset_options)
-            if model_name in bmds.constants.VARIABLE_POLYNOMIAL:
-                min_degree = 2 if model_name in bmds.constants.M_Polynomial else 1
+            if model_name in bmds.Models.VARIABLE_POLYNOMIAL():
+                min_degree = 2 if model_name in bmds.Models.Polynomial else 1
                 max_degree = (
                     model_options.degree + 1
                     if model_options.degree > 0
@@ -65,7 +65,7 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Bmds
                     )
                     session.add_model(model_name, settings=settings)
             else:
-                if model_name == bmds.constants.M_Linear:
+                if model_name == bmds.Models.Linear:
                     # a linear model must have a degree of 1
                     model_options.degree = 1
                 session.add_model(model_name, settings=model_options)
@@ -74,8 +74,8 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Bmds
 
 
 def build_bayesian_session(
-    dataset: bmds.datasets.DatasetType, inputs: dict, options: dict, dataset_options: dict
-) -> BmdsSession | None:
+    dataset: bmds.datasets.base.DatasetBase, inputs: dict, options: dict, dataset_options: dict
+) -> Session | None:
     models = inputs["models"].get(PriorEnum.bayesian, [])
 
     # filter lognormal
@@ -87,7 +87,7 @@ def build_bayesian_session(
         return None
 
     dataset_type = inputs["dataset_type"]
-    session = BmdsSession(dataset=dataset)
+    session = Session(dataset=dataset)
     prior_weights = list(map(lambda d: d["prior_weight"], models))
     for name in map(lambda d: d["model"], models):
         model_options = build_model_settings(
@@ -96,7 +96,7 @@ def build_bayesian_session(
             options,
             dataset_options,
         )
-        if name in bmds.constants.VARIABLE_POLYNOMIAL:
+        if name in bmds.Models.VARIABLE_POLYNOMIAL():
             model_options.degree = 2
         session.add_model(name, settings=model_options)
 
@@ -110,7 +110,7 @@ class AnalysisSession(NamedTuple):
     This is the execution engine for running analysis in BMDS.
 
     All database state is decoupled from the execution engine, along with serialization and
-    de-serialization methods.  Note that this is a custom BmdsSession implementation; the UI of
+    de-serialization methods.  Note that this is a custom Session implementation; the UI of
     the bmds software allows you to effectively run multiple "independent" sessions at once;
     for example, a frequentist model session with a bayesian model averaging session. This
     Session allows construction of these individual bmds sessions into a single analysis
@@ -119,8 +119,8 @@ class AnalysisSession(NamedTuple):
 
     dataset_index: int
     option_index: int
-    frequentist: BmdsSession | None
-    bayesian: BmdsSession | None
+    frequentist: Session | None
+    bayesian: Session | None
 
     @classmethod
     def run(cls, inputs: dict, dataset_index: int, option_index: int) -> AnalysisSessionSchema:
@@ -146,8 +146,8 @@ class AnalysisSession(NamedTuple):
         return cls(
             dataset_index=obj.dataset_index,
             option_index=obj.option_index,
-            frequentist=BmdsSession.from_serialized(obj.frequentist) if obj.frequentist else None,
-            bayesian=BmdsSession.from_serialized(obj.bayesian) if obj.bayesian else None,
+            frequentist=Session.from_serialized(obj.frequentist) if obj.frequentist else None,
+            bayesian=Session.from_serialized(obj.bayesian) if obj.bayesian else None,
         )
 
     def execute(self):
@@ -157,7 +157,7 @@ class AnalysisSession(NamedTuple):
                 self.frequentist.recommend()
 
         if self.bayesian:
-            if self.bayesian.dataset.dtype in bmds.constants.DICHOTOMOUS_DTYPES:
+            if self.bayesian.dataset.dtype == bmds.constants.Dtype.DICHOTOMOUS:
                 self.bayesian.add_model_averaging()
             self.bayesian.execute()
 
@@ -225,9 +225,9 @@ class MultiTumorSession(NamedTuple):
         return self.to_schema().model_dump(by_alias=True)
 
 
-Session = AnalysisSession | MultiTumorSession
+AllSession = AnalysisSession | MultiTumorSession
 
 
-def deserialize(model_class: ModelClass, data: dict) -> Session:
+def deserialize(model_class: ModelClass, data: dict) -> AllSession:
     Runner = MultiTumorSession if model_class is ModelClass.MULTI_TUMOR else AnalysisSession
     return Runner.deserialize(data)

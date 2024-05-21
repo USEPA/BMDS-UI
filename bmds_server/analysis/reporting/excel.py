@@ -4,13 +4,13 @@ from typing import Any
 
 import pandas as pd
 from bmds.constants import Dtype
-from bmds.sessions import BmdsSession
+from bmds.session import Session
 
 from ..executor import AnalysisSession, MultiTumorSession
 
 
 def add_session(
-    models: list, dataset_index: int, option_index: int, analysis_type: str, session: BmdsSession
+    models: list, dataset_index: int, option_index: int, analysis_type: str, session: Session
 ) -> None:
     # add a row for each model
     for model_index, model in enumerate(session.models):

@@ -1,7 +1,7 @@
 from typing import Any
 
-import bmds
 import numpy as np
+from bmds.constants import Dtype, ModelClass, Models
 from django.core.exceptions import ValidationError
 from pydantic import BaseModel, Field, model_validator
 
@@ -15,26 +15,53 @@ class ModelTypeSchema(BaseModel):
 
 
 DichotomousModelSchema = ModelTypeSchema(
-    restricted=set(bmds.constants.D_MODELS_RESTRICTABLE),
-    unrestricted=set(bmds.constants.D_MODELS),
-    bayesian=set(bmds.constants.D_MODELS),
+    restricted={
+        Models.DichotomousHill,
+        Models.Gamma,
+        Models.LogLogistic,
+        Models.LogProbit,
+        Models.Multistage,
+        Models.Weibull,
+    },
+    unrestricted={
+        Models.DichotomousHill,
+        Models.Gamma,
+        Models.Logistic,
+        Models.LogLogistic,
+        Models.LogProbit,
+        Models.Multistage,
+        Models.Probit,
+        Models.QuantalLinear,
+        Models.Weibull,
+    },
+    bayesian={
+        Models.DichotomousHill,
+        Models.Gamma,
+        Models.Logistic,
+        Models.LogLogistic,
+        Models.LogProbit,
+        Models.Multistage,
+        Models.Probit,
+        Models.QuantalLinear,
+        Models.Weibull,
+    },
 )
 
 
 ContinuousModelSchema = ModelTypeSchema(
-    restricted=set(bmds.constants.C_MODELS_RESTRICTABLE),
-    unrestricted=set(bmds.constants.C_MODELS_UNRESTRICTABLE),
-    bayesian=set(bmds.constants.C_MODELS),
+    restricted={Models.Exponential, Models.Hill, Models.Polynomial, Models.Power},
+    unrestricted={Models.Hill, Models.Linear, Models.Polynomial, Models.Power},
+    bayesian={Models.Exponential, Models.Hill, Models.Linear, Models.Polynomial, Models.Power},
 )
 
 NestedDichotomousModelSchema = ModelTypeSchema(
-    restricted=set(bmds.constants.ND_MODELS),
-    unrestricted=set(bmds.constants.ND_MODELS),
+    restricted={Models.NestedLogistic},
+    unrestricted={Models.NestedLogistic},
     bayesian=set(),
 )
 
 MultiTumorModelSchema = ModelTypeSchema(
-    restricted=set(bmds.constants.MT_MODELS),
+    restricted={Models.Multistage},
     unrestricted=set(),
     bayesian=set(),
 )
@@ -113,12 +140,11 @@ class MultiTumorModelListSchema(ModelListSchema):
 
 
 schema_map = {
-    bmds.constants.DICHOTOMOUS: DichotomousModelListSchema,
-    bmds.constants.DICHOTOMOUS_CANCER: DichotomousModelListSchema,
-    bmds.constants.CONTINUOUS: ContinuousModelListSchema,
-    bmds.constants.CONTINUOUS_INDIVIDUAL: ContinuousModelListSchema,
-    bmds.constants.NESTED_DICHOTOMOUS: NestedDichotomousModelListSchema,
-    bmds.constants.MULTI_TUMOR: MultiTumorModelListSchema,
+    Dtype.DICHOTOMOUS: DichotomousModelListSchema,
+    Dtype.CONTINUOUS: ContinuousModelListSchema,
+    Dtype.CONTINUOUS_INDIVIDUAL: ContinuousModelListSchema,
+    Dtype.NESTED_DICHOTOMOUS: NestedDichotomousModelListSchema,
+    ModelClass.MULTI_TUMOR: MultiTumorModelListSchema,
 }
 
 

@@ -4,6 +4,7 @@ from typing import Any
 
 import bmds
 import pytest
+from bmds.constants import Dtype, ModelClass
 from django.core.exceptions import ValidationError
 from pydantic import ValidationError as PydanticValidationError
 
@@ -22,7 +23,7 @@ class TestInputValidation:
     def test_partial(self):
         data: dict[str, Any] = {
             "bmds_version": BmdsVersion.BMDS330.value,
-            "dataset_type": bmds.constants.CONTINUOUS,
+            "dataset_type": Dtype.CONTINUOUS,
         }
 
         # check minimal passes when partial
@@ -54,7 +55,7 @@ class TestInputValidation:
         _missing_field(err, "models")
 
         # add models, try again
-        data["models"] = {"frequentist_restricted": [bmds.constants.M_Power]}
+        data["models"] = {"frequentist_restricted": [bmds.Models.Power]}
         assert validators.validate_input(data, partial=True) is None
 
         with pytest.raises(ValidationError) as err:
@@ -92,7 +93,7 @@ class TestInputValidation:
     def test_nested_dichotomous(self, nested_dichotomous_datasets):
         data: dict[str, Any] = {
             "bmds_version": BmdsVersion.BMDS330.value,
-            "dataset_type": bmds.constants.NESTED_DICHOTOMOUS,
+            "dataset_type": Dtype.NESTED_DICHOTOMOUS,
         }
         assert validators.validate_input(data, partial=True) is None
 
@@ -113,7 +114,7 @@ class TestInputValidation:
         _missing_field(err, "models")
 
         # add models, try again
-        data["models"] = {"frequentist_restricted": [bmds.constants.M_NestedLogistic]}
+        data["models"] = {"frequentist_restricted": [bmds.Models.NestedLogistic]}
         assert validators.validate_input(data, partial=True) is None
 
         with pytest.raises(ValidationError) as err:
@@ -137,7 +138,7 @@ class TestInputValidation:
     def test_multi_tumor(self):
         data: dict[str, Any] = {
             "bmds_version": BmdsVersion.BMDS330.value,
-            "dataset_type": bmds.constants.MULTI_TUMOR,
+            "dataset_type": ModelClass.MULTI_TUMOR,
         }
 
         assert validators.validate_input(data, partial=True) is None
@@ -177,7 +178,7 @@ class TestInputValidation:
         _missing_field(err, "models")
 
         # add models, try again
-        data["models"] = {"frequentist_restricted": [bmds.constants.M_Multistage]}
+        data["models"] = {"frequentist_restricted": [bmds.Models.Multistage]}
         assert validators.validate_input(data, partial=True) is None
 
         with pytest.raises(ValidationError) as err:
@@ -194,15 +195,15 @@ class TestInputValidation:
 
 class TestModelValidation:
     def test_dichotomous(self):
-        dtype = bmds.constants.DICHOTOMOUS
-        probit = bmds.constants.M_Probit
-        logprobit = bmds.constants.M_LogProbit
+        dtype = Dtype.DICHOTOMOUS
+        probit = bmds.Models.Probit
+        logprobit = bmds.Models.LogProbit
 
         # test success
         validators.validate_models(dtype, {"frequentist_restricted": [logprobit]})
 
         # assert wrong model type
-        data = {"frequentist_restricted": [bmds.constants.M_Power]}
+        data = {"frequentist_restricted": [bmds.Models.Power]}
         with pytest.raises(ValidationError) as err:
             validators.validate_models(dtype, data)
         assert "Invalid model(s) in frequentist_restricted: Power" in str(err)
@@ -243,9 +244,9 @@ class TestModelValidation:
         assert "Prior weight in bayesian does not sum to 1" in str(err.value)
 
     def test_continuous(self):
-        dtype = bmds.constants.CONTINUOUS
-        power = bmds.constants.M_Power
-        linear = bmds.constants.M_Linear
+        dtype = Dtype.CONTINUOUS
+        power = bmds.Models.Power
+        linear = bmds.Models.Linear
 
         # test success
         assert (
@@ -260,7 +261,7 @@ class TestModelValidation:
         with pytest.raises(ValidationError) as err:
             validators.validate_models(
                 dtype,
-                {"frequentist_restricted": [bmds.constants.M_Probit]},
+                {"frequentist_restricted": [bmds.Models.Probit]},
             )
         assert "Invalid model(s) in frequentist_restricted: Probit" in str(err)
 
@@ -312,12 +313,12 @@ class TestOptionSetValidation:
     def test_dichotomous(self):
         # test success
         data = [dict(bmr_type=1, bmr_value=0.1, confidence_level=0.95)]
-        assert validators.validate_options(bmds.constants.DICHOTOMOUS, data) is None
+        assert validators.validate_options(Dtype.DICHOTOMOUS, data) is None
 
         # must have at least one option
         data = []
         with pytest.raises(ValidationError) as err:
-            validators.validate_options(bmds.constants.DICHOTOMOUS, data)
+            validators.validate_options(Dtype.DICHOTOMOUS, data)
         assert "List should have at least 1 item" in str(err)
 
     def test_continuous(self):
@@ -331,12 +332,12 @@ class TestOptionSetValidation:
                 "dist_type": 1,
             }
         ]
-        assert validators.validate_options(bmds.constants.CONTINUOUS, data) is None
+        assert validators.validate_options(Dtype.CONTINUOUS, data) is None
 
         # must have at least one option
         data = []
         with pytest.raises(ValidationError) as err:
-            validators.validate_options(bmds.constants.CONTINUOUS, data)
+            validators.validate_options(Dtype.CONTINUOUS, data)
         assert "List should have at least 1 item" in str(err)
 
 

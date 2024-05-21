@@ -35,7 +35,7 @@ def build_model_settings(
     dataset_options: dict,
 ) -> DichotomousModelSettings | ContinuousModelSettings | NestedDichotomousModelSettings:
     prior_class = bmd3_prior_map[prior_class]
-    if dataset_type in bmds.constants.DICHOTOMOUS_DTYPES:
+    if dataset_type == bmds.constants.Dtype.DICHOTOMOUS:
         return DichotomousModelSettings(
             bmr=options["bmr_value"],
             alpha=round(1.0 - options["confidence_level"], 3),
@@ -43,7 +43,7 @@ def build_model_settings(
             degree=dataset_options["degree"],
             priors=prior_class,
         )
-    elif dataset_type in bmds.constants.CONTINUOUS_DTYPES:
+    elif dataset_type in bmds.constants.Dtype.CONTINUOUS_DTYPES():
         return ContinuousModelSettings(
             bmr=options["bmr_value"],
             alpha=round(1.0 - options["confidence_level"], 3),
@@ -54,7 +54,7 @@ def build_model_settings(
             is_increasing=is_increasing_map[dataset_options["adverse_direction"]],
             priors=prior_class,
         )
-    elif dataset_type == bmds.constants.NESTED_DICHOTOMOUS:
+    elif dataset_type == bmds.constants.Dtype.NESTED_DICHOTOMOUS:
         is_restricted = prior_class == PriorClass.frequentist_restricted
         return NestedDichotomousModelSettings(
             bmr_type=options["bmr_type"],
@@ -65,7 +65,7 @@ def build_model_settings(
             bootstrap_iterations=options["bootstrap_iterations"],
             bootstrap_seed=options["bootstrap_seed"],
         )
-    elif dataset_type == bmds.constants.MULTI_TUMOR:
+    elif dataset_type == bmds.constants.ModelClass.MULTI_TUMOR:
         return DichotomousModelSettings(
             bmr_type=options["bmr_type"],
             bmr=options["bmr_value"],
@@ -77,25 +77,28 @@ def build_model_settings(
         raise ValueError(f"Unknown dataset_type: {dataset_type}")
 
 
-def build_dataset(dataset: dict[str, list[float]]) -> bmds.datasets.DatasetType:
+def build_dataset(dataset: dict[str, list[float]]) -> bmds.datasets.base.DatasetBase:
     dataset_type = dataset["dtype"]
     if dataset_type == Dtype.CONTINUOUS:
-        schema = bmds.datasets.ContinuousDatasetSchema
+        schema = bmds.datasets.continuous.ContinuousDatasetSchema
     elif dataset_type == Dtype.CONTINUOUS_INDIVIDUAL:
-        schema = bmds.datasets.ContinuousIndividualDatasetSchema
+        schema = bmds.datasets.continuous.ContinuousIndividualDatasetSchema
     elif dataset_type == Dtype.DICHOTOMOUS:
-        schema = bmds.datasets.DichotomousDatasetSchema
+        schema = bmds.datasets.dichotomous.DichotomousDatasetSchema
     elif dataset_type == Dtype.NESTED_DICHOTOMOUS:
-        schema = bmds.datasets.NestedDichotomousDatasetSchema
+        schema = bmds.datasets.nested_dichotomous.NestedDichotomousDatasetSchema
     else:
         raise ValueError(f"Unknown dataset type: {dataset_type}")
     return schema.model_validate(dataset).deserialize()
 
 
 def remap_exponential(models: list[str]) -> list[str]:
-    # recursively expand user-specified "exponential" model into M3 and M5
-    if bmds.constants.M_Exponential in models:
+    # expand user-specified "exponential" model into M3 and M5
+    if bmds.Models.Exponential in models:
         models = models.copy()  # return a copy so inputs are unchanged
-        pos = models.index(bmds.constants.M_Exponential)
-        models[pos : pos + 1] = (bmds.constants.M_ExponentialM3, bmds.constants.M_ExponentialM5)
+        pos = models.index(bmds.Models.Exponential)
+        models[pos : pos + 1] = (
+            bmds.Models.ExponentialM3,
+            bmds.Models.ExponentialM5,
+        )
     return models

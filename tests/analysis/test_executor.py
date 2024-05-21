@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from bmds.constants import ContinuousModelIds, DichotomousModelIds
+from bmds.constants import ContinuousModelChoices, DichotomousModelChoices
 from bmds.types.priors import PriorClass
 
 from bmds_server.analysis.executor import AnalysisSession
@@ -55,15 +55,21 @@ class TestAnalysisSession:
         data["models"] = {"frequentist_restricted": ["Exponential"]}
         session = AnalysisSession.create(data, 0, 0)
         assert len(session.frequentist.models) == 2
-        assert session.frequentist.models[0].bmd_model_class.id == ContinuousModelIds.c_exp_m3
-        assert session.frequentist.models[1].bmd_model_class.id == ContinuousModelIds.c_exp_m5
+        assert (
+            session.frequentist.models[0].bmd_model_class.id
+            == ContinuousModelChoices.exp_m3.value.id
+        )
+        assert (
+            session.frequentist.models[1].bmd_model_class.id
+            == ContinuousModelChoices.exp_m5.value.id
+        )
 
     def test_multistage_permutations(self, complete_dichotomous):
         def _expected_degree(session, n: int):
             assert session.bayesian is None
             assert len(session.frequentist.models) == n
             model_classes = set([model.bmd_model_class.id for model in session.frequentist.models])
-            assert model_classes == {DichotomousModelIds.d_multistage}
+            assert model_classes == {DichotomousModelChoices.multistage.value.id}
             degrees = set([model.settings.degree for model in session.frequentist.models])
             assert degrees == set(list(range(1, n + 1)))
 
@@ -108,7 +114,7 @@ class TestAnalysisSession:
         assert session.frequentist is None
         assert len(session.bayesian.models) == 1
         model = session.bayesian.models[0]
-        assert model.bmd_model_class.id == DichotomousModelIds.d_multistage
+        assert model.bmd_model_class.id == DichotomousModelChoices.multistage.value.id
         assert model.settings.degree == 2
 
     def test_polynomial_unpacking(self, complete_continuous):

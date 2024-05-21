@@ -1,6 +1,6 @@
 import bmds
 import pytest
-from bmds.constants import M_Exponential, M_ExponentialM3, M_ExponentialM5
+from bmds.constants import Models
 from bmds.types.continuous import ContinuousRiskType
 from bmds.types.dichotomous import DichotomousRiskType
 
@@ -18,7 +18,7 @@ class TestOptions:
         }
         dataset_options = {"dataset_id": 123, "enabled": True, "degree": 0, "adverse_direction": -1}
         res = transforms.build_model_settings(
-            bmds.constants.CONTINUOUS,
+            bmds.constants.Dtype.CONTINUOUS,
             transforms.PriorEnum.frequentist_restricted,
             options,
             dataset_options,
@@ -38,7 +38,7 @@ class TestOptions:
         }
         dataset_options = {"dataset_id": 123, "enabled": True, "degree": 1}
         res = transforms.build_model_settings(
-            bmds.constants.DICHOTOMOUS,
+            bmds.constants.Dtype.DICHOTOMOUS,
             transforms.PriorEnum.frequentist_restricted,
             options,
             dataset_options,
@@ -52,6 +52,7 @@ class TestOptions:
 class TestModels:
     def test_remap_exponential(self):
         assert transforms.remap_exponential([]) == []
-        assert transforms.remap_exponential([M_Exponential]) == [M_ExponentialM3, M_ExponentialM5]
-        expected = ["a", M_ExponentialM3, M_ExponentialM5, "b"]
-        assert transforms.remap_exponential(["a", M_Exponential, "b"]) == expected
+        expected = [Models.ExponentialM3, Models.ExponentialM5]
+        assert transforms.remap_exponential([Models.Exponential]) == expected
+        expected = ["a", Models.ExponentialM3, Models.ExponentialM5, "b"]
+        assert transforms.remap_exponential(["a", Models.Exponential, "b"]) == expected

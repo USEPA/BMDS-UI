@@ -8,10 +8,10 @@ from io import BytesIO
 import bmds
 import pandas as pd
 import reversion
-from bmds.batch import BatchBase, BmdsSessionBatch, MultitumorBatch
+from bmds.batch import BatchBase, BatchSession, MultitumorBatch
 from bmds.constants import ModelClass
 from bmds.recommender.recommender import RecommenderSettings
-from bmds.types.sessions import VersionSchema
+from bmds.types.session import VersionSchema
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -169,7 +169,7 @@ class Analysis(models.Model):
         ]
 
     def to_batch(self) -> BatchBase:
-        # convert list[AnalysisSession] to list[bmds.BmdsSession]
+        # convert list[AnalysisSession] to list[bmds.Session]
         items = []
         sessions = self.get_sessions()
 
@@ -181,7 +181,7 @@ class Analysis(models.Model):
                 items.append(session.frequentist)
             if session.bayesian:
                 items.append(session.bayesian)
-        return BmdsSessionBatch(sessions=items)
+        return BatchSession(sessions=items)
 
     def to_df(self) -> dict[str, pd.DataFrame]:
         # exit early if we don't have data for a report

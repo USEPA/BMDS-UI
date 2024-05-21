@@ -2,12 +2,9 @@ from enum import IntEnum
 from typing import Any, ClassVar
 
 import bmds
-from bmds.datasets import (
-    ContinuousDatasetSchema,
-    ContinuousIndividualDatasetSchema,
-    DichotomousDatasetSchema,
-    NestedDichotomousDatasetSchema,
-)
+from bmds.datasets.continuous import ContinuousDatasetSchema, ContinuousIndividualDatasetSchema
+from bmds.datasets.dichotomous import DichotomousDatasetSchema
+from bmds.datasets.nested_dichotomous import NestedDichotomousDatasetSchema
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from pydantic import BaseModel, Field, model_validator
@@ -108,13 +105,13 @@ class MultiTumorDatasets(DatasetValidator):
 
 
 def validate_datasets(dataset_type: str, datasets: Any, datasetOptions: Any):
-    if dataset_type in bmds.constants.CONTINUOUS_DTYPES:
+    if dataset_type == bmds.constants.ModelClass.CONTINUOUS:
         schema = ContinuousDatasets
-    elif dataset_type in bmds.constants.DICHOTOMOUS_DTYPES:
+    elif dataset_type == bmds.constants.ModelClass.DICHOTOMOUS:
         schema = DichotomousDatasets
-    elif dataset_type == bmds.constants.NESTED_DICHOTOMOUS:
+    elif dataset_type == bmds.constants.ModelClass.NESTED_DICHOTOMOUS:
         schema = NestedDichotomousDataset
-    elif dataset_type == bmds.constants.MULTI_TUMOR:
+    elif dataset_type == bmds.constants.ModelClass.MULTI_TUMOR:
         schema = MultiTumorDatasets
     else:
         raise ValidationError(f"Unknown dataset type: {dataset_type}")
