@@ -1,8 +1,8 @@
 from typing import Any
 
 import numpy as np
-from bmds.constants import Dtype, ModelClass, Models
 from django.core.exceptions import ValidationError
+from pybmds.constants import Dtype, ModelClass, Models
 from pydantic import BaseModel, Field, model_validator
 
 from ...common.validation import pydantic_validate

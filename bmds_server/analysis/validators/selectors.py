@@ -1,4 +1,4 @@
-from bmds.selected import SelectedModelSchema
+from pybmds.selected import SelectedModelSchema
 from pydantic import BaseModel
 
 

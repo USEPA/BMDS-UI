@@ -5,13 +5,9 @@ from copy import deepcopy
 from datetime import datetime, timedelta
 from io import BytesIO
 
-import bmds
 import pandas as pd
+import pybmds
 import reversion
-from bmds.batch import BatchBase, BatchSession, MultitumorBatch
-from bmds.constants import ModelClass
-from bmds.recommender.recommender import RecommenderSettings
-from bmds.types.session import VersionSchema
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -19,6 +15,10 @@ from django.db import DataError, models
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.timezone import now
+from pybmds.batch import BatchBase, BatchSession, MultitumorBatch
+from pybmds.constants import ModelClass
+from pybmds.recommender.recommender import RecommenderSettings
+from pybmds.types.session import VersionSchema
 
 from ..common.utils import random_string
 from . import tasks, validators
@@ -169,7 +169,7 @@ class Analysis(models.Model):
         ]
 
     def to_batch(self) -> BatchBase:
-        # convert list[AnalysisSession] to list[bmds.Session]
+        # convert list[AnalysisSession] to list[pybmds.Session]
         items = []
         sessions = self.get_sessions()
 
@@ -291,7 +291,7 @@ class Analysis(models.Model):
         ]
 
     def _execute(self) -> list[AnalysisSessionSchema]:
-        is_multitumor = self.inputs.get("dataset_type") == bmds.constants.ModelClass.MULTI_TUMOR
+        is_multitumor = self.inputs.get("dataset_type") == pybmds.constants.ModelClass.MULTI_TUMOR
         if is_multitumor:
             return self._execute_multitumor()
         return self._execute_session()

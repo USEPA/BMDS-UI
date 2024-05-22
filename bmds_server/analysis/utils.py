@@ -1,8 +1,8 @@
 from textwrap import dedent
 
-from bmds.utils import get_version
 from django.conf import settings
 from django.utils.timezone import now
+from pybmds.utils import get_version
 
 from .. import __version__
 

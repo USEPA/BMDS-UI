@@ -1,4 +1,4 @@
-from bmds.recommender import RecommenderSettings
+from pybmds.recommender import RecommenderSettings
 
 from ...common.validation import pydantic_validate
 from .datasets import validate_datasets

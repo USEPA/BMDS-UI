@@ -1,11 +1,11 @@
 from enum import StrEnum
 
-import bmds
-from bmds.constants import Dtype
-from bmds.types.continuous import ContinuousModelSettings
-from bmds.types.dichotomous import DichotomousModelSettings
-from bmds.types.nested_dichotomous import NestedDichotomousModelSettings
-from bmds.types.priors import PriorClass
+import pybmds
+from pybmds.constants import Dtype
+from pybmds.types.continuous import ContinuousModelSettings
+from pybmds.types.dichotomous import DichotomousModelSettings
+from pybmds.types.nested_dichotomous import NestedDichotomousModelSettings
+from pybmds.types.priors import PriorClass
 
 from .validators.datasets import AdverseDirection
 
@@ -35,7 +35,7 @@ def build_model_settings(
     dataset_options: dict,
 ) -> DichotomousModelSettings | ContinuousModelSettings | NestedDichotomousModelSettings:
     prior_class = bmd3_prior_map[prior_class]
-    if dataset_type == bmds.constants.Dtype.DICHOTOMOUS:
+    if dataset_type == pybmds.constants.Dtype.DICHOTOMOUS:
         return DichotomousModelSettings(
             bmr=options["bmr_value"],
             alpha=round(1.0 - options["confidence_level"], 3),
@@ -43,7 +43,7 @@ def build_model_settings(
             degree=dataset_options["degree"],
             priors=prior_class,
         )
-    elif dataset_type in bmds.constants.Dtype.CONTINUOUS_DTYPES():
+    elif dataset_type in pybmds.constants.Dtype.CONTINUOUS_DTYPES():
         return ContinuousModelSettings(
             bmr=options["bmr_value"],
             alpha=round(1.0 - options["confidence_level"], 3),
@@ -54,7 +54,7 @@ def build_model_settings(
             is_increasing=is_increasing_map[dataset_options["adverse_direction"]],
             priors=prior_class,
         )
-    elif dataset_type == bmds.constants.Dtype.NESTED_DICHOTOMOUS:
+    elif dataset_type == pybmds.constants.Dtype.NESTED_DICHOTOMOUS:
         is_restricted = prior_class == PriorClass.frequentist_restricted
         return NestedDichotomousModelSettings(
             bmr_type=options["bmr_type"],
@@ -65,7 +65,7 @@ def build_model_settings(
             bootstrap_iterations=options["bootstrap_iterations"],
             bootstrap_seed=options["bootstrap_seed"],
         )
-    elif dataset_type == bmds.constants.ModelClass.MULTI_TUMOR:
+    elif dataset_type == pybmds.constants.ModelClass.MULTI_TUMOR:
         return DichotomousModelSettings(
             bmr_type=options["bmr_type"],
             bmr=options["bmr_value"],
@@ -77,16 +77,16 @@ def build_model_settings(
         raise ValueError(f"Unknown dataset_type: {dataset_type}")
 
 
-def build_dataset(dataset: dict[str, list[float]]) -> bmds.datasets.base.DatasetBase:
+def build_dataset(dataset: dict[str, list[float]]) -> pybmds.datasets.base.DatasetBase:
     dataset_type = dataset["dtype"]
     if dataset_type == Dtype.CONTINUOUS:
-        schema = bmds.datasets.continuous.ContinuousDatasetSchema
+        schema = pybmds.datasets.continuous.ContinuousDatasetSchema
     elif dataset_type == Dtype.CONTINUOUS_INDIVIDUAL:
-        schema = bmds.datasets.continuous.ContinuousIndividualDatasetSchema
+        schema = pybmds.datasets.continuous.ContinuousIndividualDatasetSchema
     elif dataset_type == Dtype.DICHOTOMOUS:
-        schema = bmds.datasets.dichotomous.DichotomousDatasetSchema
+        schema = pybmds.datasets.dichotomous.DichotomousDatasetSchema
     elif dataset_type == Dtype.NESTED_DICHOTOMOUS:
-        schema = bmds.datasets.nested_dichotomous.NestedDichotomousDatasetSchema
+        schema = pybmds.datasets.nested_dichotomous.NestedDichotomousDatasetSchema
     else:
         raise ValueError(f"Unknown dataset type: {dataset_type}")
     return schema.model_validate(dataset).deserialize()
@@ -94,11 +94,11 @@ def build_dataset(dataset: dict[str, list[float]]) -> bmds.datasets.base.Dataset
 
 def remap_exponential(models: list[str]) -> list[str]:
     # expand user-specified "exponential" model into M3 and M5
-    if bmds.Models.Exponential in models:
+    if pybmds.Models.Exponential in models:
         models = models.copy()  # return a copy so inputs are unchanged
-        pos = models.index(bmds.Models.Exponential)
+        pos = models.index(pybmds.Models.Exponential)
         models[pos : pos + 1] = (
-            bmds.Models.ExponentialM3,
-            bmds.Models.ExponentialM5,
+            pybmds.Models.ExponentialM3,
+            pybmds.Models.ExponentialM5,
         )
     return models

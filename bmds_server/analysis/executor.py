@@ -2,11 +2,11 @@ import itertools
 from copy import deepcopy
 from typing import NamedTuple, Self
 
-import bmds
-from bmds.constants import DistType, ModelClass
-from bmds.models.multi_tumor import Multitumor
-from bmds.session import Session
-from bmds.types.nested_dichotomous import IntralitterCorrelation, LitterSpecificCovariate
+import pybmds
+from pybmds.constants import DistType, ModelClass
+from pybmds.models.multi_tumor import Multitumor
+from pybmds.session import Session
+from pybmds.types.nested_dichotomous import IntralitterCorrelation, LitterSpecificCovariate
 
 from .schema import AnalysisSessionSchema
 from .transforms import (
@@ -17,7 +17,7 @@ from .transforms import (
 )
 
 # excluded continuous models if distribution type is lognormal
-lognormal_enabled = {bmds.Models.ExponentialM3, bmds.Models.ExponentialM5}
+lognormal_enabled = {pybmds.Models.ExponentialM3, pybmds.Models.ExponentialM5}
 
 
 def build_frequentist_session(dataset, inputs, options, dataset_options) -> Session | None:
@@ -41,8 +41,8 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Sess
 
         for model_name in model_names:
             model_options = build_model_settings(dataset_type, prior_type, options, dataset_options)
-            if model_name in bmds.Models.VARIABLE_POLYNOMIAL():
-                min_degree = 2 if model_name in bmds.Models.Polynomial else 1
+            if model_name in pybmds.Models.VARIABLE_POLYNOMIAL():
+                min_degree = 2 if model_name in pybmds.Models.Polynomial else 1
                 max_degree = (
                     model_options.degree + 1
                     if model_options.degree > 0
@@ -65,7 +65,7 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Sess
                     )
                     session.add_model(model_name, settings=settings)
             else:
-                if model_name == bmds.Models.Linear:
+                if model_name == pybmds.Models.Linear:
                     # a linear model must have a degree of 1
                     model_options.degree = 1
                 session.add_model(model_name, settings=model_options)
@@ -74,7 +74,7 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Sess
 
 
 def build_bayesian_session(
-    dataset: bmds.datasets.base.DatasetBase, inputs: dict, options: dict, dataset_options: dict
+    dataset: pybmds.datasets.base.DatasetBase, inputs: dict, options: dict, dataset_options: dict
 ) -> Session | None:
     models = inputs["models"].get(PriorEnum.bayesian, [])
 
@@ -96,7 +96,7 @@ def build_bayesian_session(
             options,
             dataset_options,
         )
-        if name in bmds.Models.VARIABLE_POLYNOMIAL():
+        if name in pybmds.Models.VARIABLE_POLYNOMIAL():
             model_options.degree = 2
         session.add_model(name, settings=model_options)
 
@@ -107,7 +107,7 @@ def build_bayesian_session(
 
 class AnalysisSession(NamedTuple):
     """
-    This is the execution engine for running analysis in BMDS.
+    This is the execution engine for running analysis in pybmds.
 
     All database state is decoupled from the execution engine, along with serialization and
     de-serialization methods.  Note that this is a custom Session implementation; the UI of
@@ -157,7 +157,7 @@ class AnalysisSession(NamedTuple):
                 self.frequentist.recommend()
 
         if self.bayesian:
-            if self.bayesian.dataset.dtype == bmds.constants.Dtype.DICHOTOMOUS:
+            if self.bayesian.dataset.dtype == pybmds.constants.Dtype.DICHOTOMOUS:
                 self.bayesian.add_model_averaging()
             self.bayesian.execute()
 
@@ -175,7 +175,7 @@ class AnalysisSession(NamedTuple):
 
 class MultiTumorSession(NamedTuple):
     """
-    This is the execution engine for running Multitumor modeling in BMDS.
+    This is the execution engine for running Multitumor modeling in pybmds.
     """
 
     option_index: int

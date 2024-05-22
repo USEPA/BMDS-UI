@@ -1,7 +1,7 @@
 from copy import deepcopy
 
-from bmds.constants import ContinuousModelChoices, DichotomousModelChoices
-from bmds.types.priors import PriorClass
+from pybmds.constants import ContinuousModelChoices, DichotomousModelChoices
+from pybmds.types.priors import PriorClass
 
 from bmds_server.analysis.executor import AnalysisSession
 

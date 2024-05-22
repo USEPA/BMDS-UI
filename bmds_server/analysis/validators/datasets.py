@@ -1,12 +1,12 @@
 from enum import IntEnum
 from typing import Any, ClassVar
 
-import bmds
-from bmds.datasets.continuous import ContinuousDatasetSchema, ContinuousIndividualDatasetSchema
-from bmds.datasets.dichotomous import DichotomousDatasetSchema
-from bmds.datasets.nested_dichotomous import NestedDichotomousDatasetSchema
+import pybmds
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from pybmds.datasets.continuous import ContinuousDatasetSchema, ContinuousIndividualDatasetSchema
+from pybmds.datasets.dichotomous import DichotomousDatasetSchema
+from pybmds.datasets.nested_dichotomous import NestedDichotomousDatasetSchema
 from pydantic import BaseModel, Field, model_validator
 
 from ...common.validation import pydantic_validate
@@ -105,13 +105,13 @@ class MultiTumorDatasets(DatasetValidator):
 
 
 def validate_datasets(dataset_type: str, datasets: Any, datasetOptions: Any):
-    if dataset_type == bmds.constants.ModelClass.CONTINUOUS:
+    if dataset_type == pybmds.constants.ModelClass.CONTINUOUS:
         schema = ContinuousDatasets
-    elif dataset_type == bmds.constants.ModelClass.DICHOTOMOUS:
+    elif dataset_type == pybmds.constants.ModelClass.DICHOTOMOUS:
         schema = DichotomousDatasets
-    elif dataset_type == bmds.constants.ModelClass.NESTED_DICHOTOMOUS:
+    elif dataset_type == pybmds.constants.ModelClass.NESTED_DICHOTOMOUS:
         schema = NestedDichotomousDataset
-    elif dataset_type == bmds.constants.ModelClass.MULTI_TUMOR:
+    elif dataset_type == pybmds.constants.ModelClass.MULTI_TUMOR:
         schema = MultiTumorDatasets
     else:
         raise ValidationError(f"Unknown dataset type: {dataset_type}")

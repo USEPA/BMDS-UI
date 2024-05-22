@@ -1,7 +1,7 @@
 from enum import StrEnum
 from typing import Any, Self
 
-import bmds
+import pybmds
 from django.conf import settings
 from pydantic import BaseModel, Field
 
@@ -22,7 +22,7 @@ class BaseSession(BaseModel):
     id: int | str | None = None
     bmds_version: BmdsVersion
     description: str = ""
-    dataset_type: bmds.constants.ModelClass
+    dataset_type: pybmds.constants.ModelClass
 
 
 max_length = 1000 if settings.IS_DESKTOP else 10

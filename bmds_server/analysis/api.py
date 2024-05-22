@@ -1,6 +1,6 @@
-from bmds.datasets.transforms.polyk import PolyKAdjustment
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from rest_framework import exceptions, mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response

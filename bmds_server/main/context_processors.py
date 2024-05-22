@@ -4,13 +4,13 @@ from .constants import SkinStyle
 
 
 def desktop_versions() -> dict:
-    import bmds
+    import pybmds
 
     from bmds_server import __version__
 
     return {
         "online": __version__,
-        "bmds": bmds.__version__,
+        "bmds": pybmds.__version__,
         "db_path": settings.DATABASES["default"]["NAME"],
     }
 
