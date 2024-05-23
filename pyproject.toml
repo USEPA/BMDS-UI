@@ -18,8 +18,8 @@ classifiers = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-  # bmds
-  "bmds~=24.1a0",
+  # pybmds
+  "pybmds~=24.1a0",
 
   # website
   "Django~=5.0.6",
@@ -100,6 +100,7 @@ exclude = ["bmds_server/main/settings/local.py"]
 [tool.coverage.run]
 omit = [
     "../bmds/*",
+    "../bmds-core/*",
     "./bmds_server/main/settings/*",
     "./tests/*",
     "./venv/*",
@@ -115,8 +116,7 @@ ignore = ["E501", "B904", "B007", "S308", "S113", "S314"]
 unfixable = ["F401", "F841"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["bmds_server"]
-known-third-party = ["bmds"]
+known-first-party = ["bmds_server", "pybmds"]
 
 [tool.ruff.lint.per-file-ignores]
 "test_*.py" = ["S101", "S106"]

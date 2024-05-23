@@ -131,6 +131,7 @@ class MainStore {
 
         const apiUrl = this.config.apiUrl,
             {csrfToken} = this.config.editSettings,
+            pollInterval = this.pollInterval,
             handleServerError = error => {
                 console.error("error", error);
                 if (error.status == 500) {
@@ -153,7 +154,7 @@ class MainStore {
                     })
                     .then(data => {
                         if (data.is_executing) {
-                            setTimeout(pollForResults, 5000);
+                            setTimeout(pollForResults, pollInterval);
                         } else {
                             this.updateModelStateFromApi(data);
                             simulateClick(document.getElementById("navlink-output"));
@@ -178,7 +179,7 @@ class MainStore {
             })
             .then(data => {
                 if (data.is_executing) {
-                    setTimeout(pollForResults, 5000);
+                    setTimeout(pollForResults, pollInterval);
                 } else {
                     this.updateModelStateFromApi(data);
                     simulateClick(document.getElementById("navlink-output"));
@@ -299,6 +300,9 @@ class MainStore {
     @computed get isDesktop() {
         return this.config.is_desktop;
     }
+    @computed get pollInterval() {
+        return this.isDesktop ? 1000 : 5000;
+    }
     @computed get getExecutionOutputs() {
         return this.executionOutputs;
     }
@@ -316,7 +320,6 @@ class MainStore {
             return {value: item.value, text: item.name};
         });
     }
-
     @computed get getModels() {
         return this.rootStore.modelsStore.models;
     }
@@ -355,7 +358,8 @@ class MainStore {
     @observable toastMessage = "";
     @action.bound downloadReport(url) {
         let apiUrl = (apiUrl = this.config[url]),
-            params = {};
+            params = {},
+            pollInterval = this.pollInterval;
         if (this.canEdit) {
             params.editKey = this.config.editSettings.editKey;
         }
@@ -371,7 +375,7 @@ class MainStore {
                     response.json().then(json => {
                         this.showToast(json.header, json.message);
                     });
-                    setTimeout(fetchReport, 5000);
+                    setTimeout(fetchReport, pollInterval);
                 } else {
                     const filename = response.headers
                         .get("content-disposition")

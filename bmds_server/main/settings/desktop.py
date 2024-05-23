@@ -26,7 +26,7 @@ CELERY_TASK_EAGER_PROPAGATES = True
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.getenv("BMDS_DB", APP_HOME / "bmds.sqlite3"),
+        "NAME": os.getenv("BMDS_DB", APP_HOME / "pybmds.sqlite3"),
         "STARTUP_OPTIONS": {"init_command": "PRAGMA journal_mode=wal;"},
     }
 }

@@ -1,13 +1,14 @@
 from typing import Any
 
-import bmds
-from bmds.constants import DistType
-from bmds.types.continuous import ContinuousRiskType
-from bmds.types.dichotomous import DichotomousRiskType
-from bmds.types.nested_dichotomous import LitterSpecificCovariate
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from pydantic import BaseModel, Field
+
+import pybmds
+from pybmds.constants import DistType
+from pybmds.types.continuous import ContinuousRiskType
+from pybmds.types.dichotomous import DichotomousRiskType
+from pybmds.types.nested_dichotomous import LitterSpecificCovariate
 
 from ...common.validation import pydantic_validate
 
@@ -50,13 +51,13 @@ class NestedDichotomousOptions(BaseModel):
 
 
 def validate_options(dataset_type: str, data: Any):
-    if dataset_type in bmds.constants.ModelClass.DICHOTOMOUS:
+    if dataset_type in pybmds.constants.ModelClass.DICHOTOMOUS:
         schema = DichotomousOptions
-    elif dataset_type in bmds.constants.ModelClass.CONTINUOUS:
+    elif dataset_type in pybmds.constants.ModelClass.CONTINUOUS:
         schema = ContinuousOptions
-    elif dataset_type == bmds.constants.ModelClass.NESTED_DICHOTOMOUS:
+    elif dataset_type == pybmds.constants.ModelClass.NESTED_DICHOTOMOUS:
         schema = NestedDichotomousOptions
-    elif dataset_type == bmds.constants.ModelClass.MULTI_TUMOR:
+    elif dataset_type == pybmds.constants.ModelClass.MULTI_TUMOR:
         schema = DichotomousOptions
     else:
         ValidationError(f"Unknown `dataset_type`: {dataset_type}")

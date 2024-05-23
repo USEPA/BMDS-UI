@@ -4,11 +4,12 @@ from io import BytesIO
 from typing import TYPE_CHECKING
 
 import docx
-from bmds import __version__
-from bmds.datasets.transforms.polyk import PolyKAdjustment
-from bmds.reporting.styling import Report, write_setting_p
 from django.conf import settings
 from django.utils.timezone import now
+
+from pybmds import __version__
+from pybmds.datasets.transforms.polyk import PolyKAdjustment
+from pybmds.reporting.styling import Report, write_setting_p
 
 from ... import __version__ as bmds_server_version
 from ...common.docx import add_url_hyperlink
