@@ -24,7 +24,7 @@ jobs:
     - name: Checkout bmds@main
       uses: actions/checkout@v4
       with:
-        repository: USEPA/bmds-private
+        repository: USEPA/bmds
         path: venv
         ref: main
         token: ${{ secrets.USEPA_BMDS_PRIVATE_PAT }}
@@ -37,11 +37,16 @@ jobs:
       run: |
         sudo apt-get install -y cloc
         make loc
-    - name: install
+    - name: Install bmds
+      run: |
+        cd bmds
+        source ./tools/linux_ci.sh
+        python -m pip install -U pip wheel
+        python -m pip install -e .
+    - name: Install bmds_server
       run: |
         mv tests/data/ci-webpack-stats.json bmds_server/webpack-stats.json
         pip install -U pip wheel
-        pip install -e "venv"
         pip install -e ".[pg,dev]"
     - name: Setup linux environment
       run: |
@@ -144,7 +149,13 @@ jobs:
       with:
         name: webpack-build
         path: bmds_server
-    - name: install
+    - name: Install bmds
+      run: |
+        cd bmds
+        source ./tools/linux_ci.sh
+        python -m pip install -U pip wheel
+        python -m pip install -e .
+    - name: Install bmds_server
       run: |
         pip install -U pip wheel
         pip install -e "venv"
