@@ -39,15 +39,15 @@ jobs:
         make loc
     - name: Install bmds
       run: |
-        cd bmds
-        source ./tools/linux_ci.sh
         python -m pip install -U pip wheel
-        python -m pip install -e .
+        cd venv
+        source ./tools/linux_ci.sh
+        python setup.py bdist_wheel
+        python -m pip install "$(ls dist/*.whl | head -n 1)"
     - name: Install bmds_server
       run: |
         mv tests/data/ci-webpack-stats.json bmds_server/webpack-stats.json
-        pip install -U pip wheel
-        pip install -e ".[pg,dev]"
+        python -m pip install -e ".[pg,dev]"
     - name: Setup linux environment
       run: |
         sudo apt-get update -y
@@ -72,6 +72,14 @@ jobs:
         coverage run -m pytest --vcr-record=none
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
         coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+    - name: Upload pybmds wheel
+      uses: actions/upload-artifact@v4
+      with:
+        name: pybmds
+        path: |
+          venv/dist
+          venv/tools
+        retention-days: 1
 
   frontend:
     name: frontend
@@ -149,12 +157,16 @@ jobs:
       with:
         name: webpack-build
         path: bmds_server
+    - name: Upload pybmds wheel
+      uses: actions/download-artifact@v4
+      with:
+        name: pybmds
+        path: venv
     - name: Install bmds
       run: |
-        cd bmds
-        source ./tools/linux_ci.sh
         python -m pip install -U pip wheel
-        python -m pip install -e .
+        source ./venv/tools/linux_ci.sh
+        python -m pip install "$(ls venv/dist/*.whl | head -n 1)"
     - name: Install bmds_server
       run: |
         pip install -U pip wheel
