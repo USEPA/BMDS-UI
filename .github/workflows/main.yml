@@ -36,7 +36,8 @@ jobs:
     - name: loc
       run: |
         sudo apt-get install -y cloc
-        make loc
+        echo "# Lines of Code Report" >> $GITHUB_STEP_SUMMARY
+        make loc >> $GITHUB_STEP_SUMMARY
     - name: Install bmds
       run: |
         python -m pip install -U pip wheel
