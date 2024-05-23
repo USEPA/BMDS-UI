@@ -1,16 +1,11 @@
 from typing import ClassVar
 
-from textual.app import App, ComposeResult
-from textual.containers import ScrollableContainer
-from textual.widgets import Footer, TabbedContent, TabPane
+from textual.app import App
 
 from .actions import AppRunner
-from .components.database_list import DatabaseList
 from .components.disclaimer import DisclaimerModal
-from .components.header import Header
-from .components.log import AppLog
+from .components.main import Main
 from .components.quit import QuitModal
-from .components.settings import Settings
 
 
 class BmdsDesktopTui(App):
@@ -27,20 +22,8 @@ class BmdsDesktopTui(App):
         super().__init__(**kw)
 
     def on_mount(self) -> None:
-        self.action_show_disclaimer()
-
-    def compose(self) -> ComposeResult:
-        """Create child widgets for the app."""
-        yield Header()
-        with ScrollableContainer():
-            with TabbedContent(id="tabs", initial="project"):
-                with TabPane("Projects", id="project"):
-                    yield DatabaseList()
-                with TabPane("Logging", id="log"):
-                    yield AppLog()
-                with TabPane("Settings", id="settings"):
-                    yield Settings()
-        yield Footer()
+        self.push_screen(Main(name="main"))
+        self.push_screen(DisclaimerModal())
 
     def action_quit(self):
         """Exit the application."""
