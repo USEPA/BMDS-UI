@@ -47,5 +47,5 @@ USER app
 
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
-RUN ldd /usr/local/lib/python3.11/site-packages/bmds/bmdscore.cpython-*-x86_64-linux-gnu.so && \
+RUN ldd /usr/local/lib/python3.11/site-packages/pybmds/bmdscore.cpython-*-x86_64-linux-gnu.so && \
     python /app/test.py

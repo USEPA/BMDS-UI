@@ -24,7 +24,7 @@ jobs:
     - name: Checkout bmds@main
       uses: actions/checkout@v4
       with:
-        repository: USEPA/bmds-private
+        repository: USEPA/bmds
         path: venv
         ref: main
         token: ${{ secrets.USEPA_BMDS_PRIVATE_PAT }}
@@ -36,13 +36,19 @@ jobs:
     - name: loc
       run: |
         sudo apt-get install -y cloc
-        make loc
-    - name: install
+        echo "# Lines of Code Report" >> $GITHUB_STEP_SUMMARY
+        make loc >> $GITHUB_STEP_SUMMARY
+    - name: Install pybmds
+      run: |
+        python -m pip install -U pip wheel
+        cd venv
+        source ./tools/linux_ci.sh
+        python setup.py bdist_wheel
+        python -m pip install "$(ls dist/*.whl | head -n 1)"
+    - name: Install bmds_server
       run: |
         mv tests/data/ci-webpack-stats.json bmds_server/webpack-stats.json
-        pip install -U pip wheel
-        pip install -e "venv"
-        pip install -e ".[pg,dev]"
+        python -m pip install -e ".[pg,dev]"
     - name: Setup linux environment
       run: |
         sudo apt-get update -y
@@ -50,8 +56,6 @@ jobs:
         export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib"
         sudo cp vendor/libnlopt.so /usr/local/lib/libnlopt.so.0
         sudo ln -s /lib/x86_64-linux-gnu/libgsl.so /usr/local/lib/libgsl.so.25
-        export "BMD_DLL=$GITHUB_WORKSPACE/venv/bmds/bmdscore.cpython-*-x86_64-linux-gnu.so"
-        ldd $BMD_DLL
     - name: lint
       run: |
         make lint-py
@@ -67,6 +71,14 @@ jobs:
         coverage run -m pytest --vcr-record=none
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
         coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+    - name: Upload pybmds wheel
+      uses: actions/upload-artifact@v4
+      with:
+        name: pybmds
+        path: |
+          venv/dist
+          venv/tools
+        retention-days: 1
 
   frontend:
     name: frontend
@@ -144,7 +156,17 @@ jobs:
       with:
         name: webpack-build
         path: bmds_server
-    - name: install
+    - name: Download pybmds wheel
+      uses: actions/download-artifact@v4
+      with:
+        name: pybmds
+        path: venv
+    - name: Install pybmds
+      run: |
+        python -m pip install -U pip wheel
+        source ./venv/tools/linux_ci.sh
+        python -m pip install "$(ls venv/dist/*.whl | head -n 1)"
+    - name: Install bmds_server
       run: |
         pip install -U pip wheel
         pip install -e "venv"
@@ -157,8 +179,6 @@ jobs:
         export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib"
         sudo cp vendor/libnlopt.so /usr/local/lib/libnlopt.so.0
         sudo ln -s /lib/x86_64-linux-gnu/libgsl.so /usr/local/lib/libgsl.so.25
-        export "BMD_DLL=$GITHUB_WORKSPACE/venv/bmds/bmdscore.cpython-*-x86_64-linux-gnu.so"
-        ldd $BMD_DLL
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run integration tests
       id: test

@@ -23,7 +23,7 @@ mkdir -p ~/dev
 cd ~/dev
 
 # clone package and execution package
-git clone https://github.com/USEPA/bmds-private bmds
+git clone https://github.com/USEPA/bmds bmds
 git clone https://github.com/USEPA/bmds-online-private bmds-server
 
 # create virtual environment and install requirements

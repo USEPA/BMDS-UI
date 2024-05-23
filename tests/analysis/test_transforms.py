@@ -1,10 +1,10 @@
-import bmds
 import pytest
-from bmds.constants import Models
-from bmds.types.continuous import ContinuousRiskType
-from bmds.types.dichotomous import DichotomousRiskType
 
+import pybmds
 from bmds_server.analysis import transforms
+from pybmds.constants import Models
+from pybmds.types.continuous import ContinuousRiskType
+from pybmds.types.dichotomous import DichotomousRiskType
 
 
 class TestOptions:
@@ -18,7 +18,7 @@ class TestOptions:
         }
         dataset_options = {"dataset_id": 123, "enabled": True, "degree": 0, "adverse_direction": -1}
         res = transforms.build_model_settings(
-            bmds.constants.Dtype.CONTINUOUS,
+            pybmds.constants.Dtype.CONTINUOUS,
             transforms.PriorEnum.frequentist_restricted,
             options,
             dataset_options,
@@ -38,7 +38,7 @@ class TestOptions:
         }
         dataset_options = {"dataset_id": 123, "enabled": True, "degree": 1}
         res = transforms.build_model_settings(
-            bmds.constants.Dtype.DICHOTOMOUS,
+            pybmds.constants.Dtype.DICHOTOMOUS,
             transforms.PriorEnum.frequentist_restricted,
             options,
             dataset_options,

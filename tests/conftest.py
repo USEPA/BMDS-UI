@@ -1,11 +1,11 @@
 from pathlib import Path
 
 import pytest
-from bmds.recommender import RecommenderSettings
 from django.core.management import call_command
 from django.test import Client
 
 from bmds_server.analysis.validators.session import BmdsVersion
+from pybmds.recommender import RecommenderSettings
 
 
 @pytest.fixture(scope="session")

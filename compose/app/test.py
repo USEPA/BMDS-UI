@@ -1,7 +1,7 @@
-import bmds
-from bmds.models.dichotomous import Logistic
+import pybmds
+from pybmds.models.dichotomous import Logistic
 
-dataset = bmds.DichotomousDataset(
+dataset = pybmds.DichotomousDataset(
     doses=[0, 50, 100, 150, 200], ns=[100, 100, 100, 100, 100], incidences=[0, 5, 30, 65, 90]
 )
 model = Logistic(dataset=dataset)

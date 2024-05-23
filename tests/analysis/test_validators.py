@@ -2,15 +2,15 @@ import json
 from copy import deepcopy
 from typing import Any
 
-import bmds
 import pytest
-from bmds.constants import Dtype, ModelClass
 from django.core.exceptions import ValidationError
 from pydantic import ValidationError as PydanticValidationError
 
+import pybmds
 from bmds_server.analysis import validators
 from bmds_server.analysis.validators import datasets
 from bmds_server.analysis.validators.session import BmdsVersion
+from pybmds.constants import Dtype, ModelClass
 
 
 def _missing_field(err, missing_field: str):
@@ -55,7 +55,7 @@ class TestInputValidation:
         _missing_field(err, "models")
 
         # add models, try again
-        data["models"] = {"frequentist_restricted": [bmds.Models.Power]}
+        data["models"] = {"frequentist_restricted": [pybmds.Models.Power]}
         assert validators.validate_input(data, partial=True) is None
 
         with pytest.raises(ValidationError) as err:
@@ -114,7 +114,7 @@ class TestInputValidation:
         _missing_field(err, "models")
 
         # add models, try again
-        data["models"] = {"frequentist_restricted": [bmds.Models.NestedLogistic]}
+        data["models"] = {"frequentist_restricted": [pybmds.Models.NestedLogistic]}
         assert validators.validate_input(data, partial=True) is None
 
         with pytest.raises(ValidationError) as err:
@@ -178,7 +178,7 @@ class TestInputValidation:
         _missing_field(err, "models")
 
         # add models, try again
-        data["models"] = {"frequentist_restricted": [bmds.Models.Multistage]}
+        data["models"] = {"frequentist_restricted": [pybmds.Models.Multistage]}
         assert validators.validate_input(data, partial=True) is None
 
         with pytest.raises(ValidationError) as err:
@@ -196,14 +196,14 @@ class TestInputValidation:
 class TestModelValidation:
     def test_dichotomous(self):
         dtype = Dtype.DICHOTOMOUS
-        probit = bmds.Models.Probit
-        logprobit = bmds.Models.LogProbit
+        probit = pybmds.Models.Probit
+        logprobit = pybmds.Models.LogProbit
 
         # test success
         validators.validate_models(dtype, {"frequentist_restricted": [logprobit]})
 
         # assert wrong model type
-        data = {"frequentist_restricted": [bmds.Models.Power]}
+        data = {"frequentist_restricted": [pybmds.Models.Power]}
         with pytest.raises(ValidationError) as err:
             validators.validate_models(dtype, data)
         assert "Invalid model(s) in frequentist_restricted: Power" in str(err)
@@ -245,8 +245,8 @@ class TestModelValidation:
 
     def test_continuous(self):
         dtype = Dtype.CONTINUOUS
-        power = bmds.Models.Power
-        linear = bmds.Models.Linear
+        power = pybmds.Models.Power
+        linear = pybmds.Models.Linear
 
         # test success
         assert (
@@ -261,7 +261,7 @@ class TestModelValidation:
         with pytest.raises(ValidationError) as err:
             validators.validate_models(
                 dtype,
-                {"frequentist_restricted": [bmds.Models.Probit]},
+                {"frequentist_restricted": [pybmds.Models.Probit]},
             )
         assert "Invalid model(s) in frequentist_restricted: Probit" in str(err)
 
