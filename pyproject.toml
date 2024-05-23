@@ -99,6 +99,8 @@ exclude = ["bmds_server/main/settings/local.py"]
 
 [tool.coverage.run]
 omit = [
+    "../bmds/*",
+    "../bmds-core/*",
     "./bmds_server/main/settings/*",
     "./tests/*",
     "./venv/*",
