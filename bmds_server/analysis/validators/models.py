@@ -2,8 +2,9 @@ from typing import Any
 
 import numpy as np
 from django.core.exceptions import ValidationError
-from pybmds.constants import Dtype, ModelClass, Models
 from pydantic import BaseModel, Field, model_validator
+
+from pybmds.constants import Dtype, ModelClass, Models
 
 from ...common.validation import pydantic_validate
 

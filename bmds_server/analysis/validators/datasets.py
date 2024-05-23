@@ -1,13 +1,14 @@
 from enum import IntEnum
 from typing import Any, ClassVar
 
-import pybmds
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from pydantic import BaseModel, Field, model_validator
+
+import pybmds
 from pybmds.datasets.continuous import ContinuousDatasetSchema, ContinuousIndividualDatasetSchema
 from pybmds.datasets.dichotomous import DichotomousDatasetSchema
 from pybmds.datasets.nested_dichotomous import NestedDichotomousDatasetSchema
-from pydantic import BaseModel, Field, model_validator
 
 from ...common.validation import pydantic_validate
 

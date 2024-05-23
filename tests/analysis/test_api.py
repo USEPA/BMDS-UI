@@ -5,11 +5,11 @@ import docx
 import pandas as pd
 import pytest
 from django.urls import reverse
-from pybmds.recommender import RecommenderSettings
 from rest_framework.test import APIClient
 
 from bmds_server.analysis.models import Analysis
 from bmds_server.analysis.validators.session import BmdsVersion
+from pybmds.recommender import RecommenderSettings
 
 
 def check_error(response: dict, type: str, loc: list, msg: str):

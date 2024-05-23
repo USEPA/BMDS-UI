@@ -1,10 +1,10 @@
-import pybmds
 import pytest
+
+import pybmds
+from bmds_server.analysis import transforms
 from pybmds.constants import Models
 from pybmds.types.continuous import ContinuousRiskType
 from pybmds.types.dichotomous import DichotomousRiskType
-
-from bmds_server.analysis import transforms
 
 
 class TestOptions:

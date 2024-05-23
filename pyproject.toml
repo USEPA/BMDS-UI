@@ -114,8 +114,7 @@ ignore = ["E501", "B904", "B007", "S308", "S113", "S314"]
 unfixable = ["F401", "F841"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["bmds_server"]
-known-third-party = ["pybmds"]
+known-first-party = ["bmds_server", "pybmds"]
 
 [tool.ruff.lint.per-file-ignores]
 "test_*.py" = ["S101", "S106"]

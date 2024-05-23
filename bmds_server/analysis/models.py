@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 from io import BytesIO
 
 import pandas as pd
-import pybmds
 import reversion
 from django.conf import settings
 from django.core.cache import cache
@@ -15,6 +14,8 @@ from django.db import DataError, models
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.timezone import now
+
+import pybmds
 from pybmds.batch import BatchBase, BatchSession, MultitumorBatch
 from pybmds.constants import ModelClass
 from pybmds.recommender.recommender import RecommenderSettings

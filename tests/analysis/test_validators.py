@@ -2,15 +2,15 @@ import json
 from copy import deepcopy
 from typing import Any
 
-import pybmds
 import pytest
 from django.core.exceptions import ValidationError
-from pybmds.constants import Dtype, ModelClass
 from pydantic import ValidationError as PydanticValidationError
 
+import pybmds
 from bmds_server.analysis import validators
 from bmds_server.analysis.validators import datasets
 from bmds_server.analysis.validators.session import BmdsVersion
+from pybmds.constants import Dtype, ModelClass
 
 
 def _missing_field(err, missing_field: str):

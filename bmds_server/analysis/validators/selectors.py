@@ -1,5 +1,6 @@
-from pybmds.selected import SelectedModelSchema
 from pydantic import BaseModel
+
+from pybmds.selected import SelectedModelSchema
 
 
 class AnalysisSelectedSchema(BaseModel):
