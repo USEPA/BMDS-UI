@@ -17,6 +17,11 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
         ports:
         - 5432/tcp
+      redis:
+        image: redis:7-alpine
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+        - 6379:6379
 
     steps:
     - name: Checkout bmds-server
@@ -66,6 +71,7 @@ jobs:
         DJANGO_DB_PW: password
         DJANGO_DB_HOST: localhost
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
+        DJANGO_CACHE_LOCATION: redis://localhost:6379/0
       run: |
         export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
         coverage run -m pytest --vcr-record=none
