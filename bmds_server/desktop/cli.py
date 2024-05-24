@@ -7,13 +7,11 @@ from .config import Config
 from .log import setup_logging
 
 
-def run_app():
-    """Run the application"""
+def get_app() -> BmdsDesktopTui:
     setup_logging()
     os.environ["DJANGO_SETTINGS_MODULE"] = "bmds_server.main.settings.desktop"
     Config.get()
-    app = BmdsDesktopTui()
-    app.run()
+    return BmdsDesktopTui()
 
 
 def show_version():
@@ -27,4 +25,4 @@ def main():
     args = parser.parse_args()
     if args.version:
         return show_version()
-    run_app()
+    get_app().run()

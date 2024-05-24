@@ -1,9 +1,7 @@
 import json
-from io import BytesIO, StringIO
+from io import BytesIO
 from typing import NamedTuple
 
-import matplotlib.pyplot as plt
-from matplotlib.axes import Axes
 from rest_framework.renderers import BaseRenderer
 
 
@@ -44,16 +42,3 @@ class DocxRenderer(BaseRenderer):
         response = renderer_context["response"]
         response["Content-Disposition"] = f'attachment; filename="{dataset.filename}.docx"'
         return dataset.data.getvalue()
-
-
-class SvgRenderer(BaseRenderer):
-    media_type = "image/svg+xml"
-    format = "svg"
-
-    def render(self, ax: Axes, accepted_media_type=None, renderer_context=None):
-        if isinstance(ax, dict):
-            return f"<svg><text>{json.dumps(ax)}</text></svg>"
-        f = StringIO()
-        ax.figure.savefig(f, format="svg")
-        plt.close(ax.figure)
-        return f.getvalue()

@@ -1,13 +1,7 @@
 from datetime import UTC, datetime, timedelta
 
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 from django_redis import get_redis_connection
-from matplotlib.axes import Axes
-from matplotlib.dates import DateFormatter
-
-from ..main.celery import app
 
 
 class WorkerHealthcheck:
@@ -49,61 +43,6 @@ class WorkerHealthcheck:
         conn = self._get_conn()
         data = conn.lrange(self.KEY, 0, -1)
         return pd.to_datetime(pd.Series(data, dtype=float), unit="s", utc=True)
-
-    def plot(self) -> Axes:
-        """Plot the current array of available timestamps"""
-        series = self.series()
-        return event_plot(series)
-
-    def stats(self) -> dict:
-        inspect = app.control.inspect()
-        stats = dict(ping=inspect.ping())
-        if stats["ping"]:
-            stats.update(active=inspect.active(), stats=inspect.stats())
-        return stats
-
-
-def empty_mpl_figure(title: str = "No data available.") -> Axes:
-    """Create a matplotlib figure with no data"""
-    plt.figure(figsize=(3, 1))
-    plt.axis("off")
-    plt.suptitle(title)
-    return plt.gca()
-
-
-def event_plot(series: pd.Series) -> Axes:
-    """Return matplotlib event plot"""
-    plt.style.use("bmh")
-
-    if series.empty:
-        return empty_mpl_figure()
-
-    df = series.to_frame(name="timestamp")
-    df.loc[:, "event"] = 1 + (np.random.rand(df.size) - 0.5) / 5  # jitter
-    ax = df.plot.scatter(
-        x="timestamp",
-        y="event",
-        c="None",
-        edgecolors="blue",
-        alpha=1,
-        s=80,
-        figsize=(15, 5),
-        legend=False,
-        grid=True,
-    )
-
-    # set x axis
-    ax.xaxis.set_major_formatter(DateFormatter("%b %d %H:%M"))
-    buffer = ((series.max() - series.min()) / 30) + timedelta(seconds=1)
-    ax.set_xlim(left=series.min() - buffer, right=pd.Timestamp.utcnow() + buffer)
-    ax.set_xlabel("Timestamp (UTC)")
-
-    # set y axis
-    ax.set_ybound(0, 2)
-    ax.axes.get_yaxis().set_visible(False)
-
-    plt.tight_layout()
-    return ax
 
 
 worker_healthcheck = WorkerHealthcheck()

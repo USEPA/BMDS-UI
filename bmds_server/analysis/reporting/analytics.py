@@ -71,7 +71,7 @@ def successes() -> dict:
         .annotate(count=Count("id"))
         .values("week", "completed", "count")
     )
-    df.loc[:, "completed"] = df.completed.map({True: "completed", False: "not completed"})
+    df["completed"] = df.completed.map({True: "completed", False: "not completed"})
     fig = px.bar(
         df,
         x="week",
@@ -94,7 +94,7 @@ def successes() -> dict:
         .annotate(count=Count("id"))
         .values("month", "completed", "count")
     )
-    df.loc[:, "completed"] = df.completed.map({True: "completed", False: "not completed"})
+    df["completed"] = df.completed.map({True: "completed", False: "not completed"})
     fig = px.bar(
         df,
         x="month",
