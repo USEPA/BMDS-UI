@@ -30,7 +30,7 @@ def test_diagnostic_cache(admin_client):
 
 
 @pytest.mark.django_db
-def diagnostic_celery_task(admin_client):
+def test_diagnostic_celery_task(admin_client):
     url = reverse("admin:auth_user_changelist")
     data = {"action": "diagnostic_celery_task", "_selected_action": 3}
     resp = admin_client.post(url, data, follow=True)
@@ -38,7 +38,7 @@ def diagnostic_celery_task(admin_client):
 
 
 @pytest.mark.django_db
-def diagnostic_email(admin_client):
+def test_diagnostic_email(admin_client):
     url = reverse("admin:auth_user_changelist")
     data = {"action": "diagnostic_email", "_selected_action": 4}
     resp = admin_client.post(url, data, follow=True)
