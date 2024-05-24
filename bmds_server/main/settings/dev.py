@@ -17,6 +17,11 @@ SERVER_BANNER_COLOR = "#318d50"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
+# use a memory cache if no redis location specified
+if CACHES["default"]["LOCATION"] is None:
+    CACHES["default"]["BACKEND"] = "django.core.cache.backends.locmem.LocMemCache"
+    del CACHES["default"]["OPTIONS"]
+
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
 

@@ -181,7 +181,9 @@ CELERY_WORKER_PREFETCH_MULTIPLIER = 1
 # Cache settings
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.getenv("DJANGO_CACHE_LOCATION"),
+        "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
         "TIMEOUT": 60 * 10,  # 10 minutes (in seconds)
     }
 }
