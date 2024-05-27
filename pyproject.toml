@@ -38,6 +38,7 @@ dependencies = [
   "redis~=5.0.4",
 
   # desktop
+  "packaging~=24.0",
   "textual~=0.62.0",
   "whitenoise~=6.6.0",
 ]

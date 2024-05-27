@@ -1,13 +1,20 @@
+import json
 from contextlib import redirect_stderr, redirect_stdout
+from datetime import datetime
 from threading import Thread
+from urllib.error import URLError
+from urllib.parse import urlparse
+from urllib.request import urlopen
 from webbrowser import open_new_tab
 from wsgiref.simple_server import WSGIServer, make_server
 
 import django
 from django.conf import settings
 from django.core.management import call_command
+from packaging.version import Version, parse
 from whitenoise import WhiteNoise
 
+from .. import __version__
 from ..main.settings import desktop
 from .config import Database, DesktopConfig
 from .log import log, stream
@@ -86,3 +93,34 @@ class AppRunner:
         if self.thread is not None:
             self.thread.stop()
             self.thread = None
+
+
+def get_latest_version(package: str) -> tuple[datetime, Version]:
+    url = f"https://pypi.org/pypi/{package}/json"
+    try:
+        resp = urlopen(url, timeout=5)  # noqa: S310
+    except URLError:
+        parsed = urlparse("https://pypi.org/pypi/")
+        raise ValueError(
+            f"Could not check latest version; unable to reach {parsed.scheme}://{parsed.netloc}."
+        )
+    data = json.loads(resp.read().decode("utf-8"))
+    latest_str = list(data["releases"].keys())[-1]
+    upload_time = data["releases"][latest_str][0]["upload_time"]
+    return datetime.fromisoformat(upload_time), parse(latest_str)
+
+
+def get_installed_version() -> Version:
+    return parse(__version__)
+
+
+def get_version_message(current: Version, latest: Version, latest_date: datetime) -> str:
+    if latest == current:
+        return (
+            f"You have the latest version installed, {latest} (released {latest_date:%b %d, %Y})."
+        )
+    elif current < latest:
+        return f"There is a newer version available, {latest} (released {latest_date:%b %d, %Y})."
+    elif current > latest:
+        return f"You have a newer version than what's currently available, {latest} (released {latest_date:%b %d, %Y})."
+    raise ValueError("Cannot compare versions")
