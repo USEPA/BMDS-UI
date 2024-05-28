@@ -39,6 +39,7 @@ dependencies = [
   "redis~=5.0.4",
 
   # desktop
+  "packaging~=24.0",
   "textual~=0.62.0",
   "whitenoise~=6.6.0",
 ]
@@ -62,7 +63,7 @@ dev = [
   "pytest~=8.2.1",
   "pytest-django~=4.8.0",
   "vcrpy~=6.0.1",
-  "pytest-vcr~=1.0.2",
+  "pytest-recording~=0.13.1",
   "pytest-asyncio==0.23.7",
   "coverage==7.5.1",
 
@@ -127,6 +128,6 @@ known-first-party = ["bmds_server", "pybmds"]
 "**/main/settings/**.py" = ["F403", "F405"]
 
 [tool.pytest.ini_options]
-addopts = "--ds=bmds_server.main.settings.testing --reuse-db --nomigrations"
+addopts = "--ds=bmds_server.main.settings.testing --reuse-db --nomigrations --record-mode=once"
 testpaths = ["tests"]
 python_files = ["test_*.py"]

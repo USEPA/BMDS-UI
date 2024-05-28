@@ -1,6 +1,7 @@
 from textwrap import dedent
 
 from .. import __version__
+from .actions import get_installed_version, get_latest_version, get_version_message
 
 
 def title() -> str:
@@ -14,6 +15,14 @@ def description() -> str:
 
 
 def version_check(check: bool = False) -> str:
-    return (
-        "[b]Status:[/b] Checked (TODO - implement)" if check else "[b]Status:[/b] Not yet checked"
-    )
+    if not check:
+        return "**Status:** Ready to check - this requires an internet connection."
+    current = get_installed_version()
+    try:
+        latest_date, latest = get_latest_version("bmds")  # TODO - change to bmds-desktop, on pypi?
+    except ValueError as err:
+        return str(err)
+    try:
+        return get_version_message(current, latest, latest_date)
+    except ValueError:
+        return "Unable to compare versions."

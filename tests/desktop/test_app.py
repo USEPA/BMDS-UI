@@ -45,6 +45,29 @@ class TestApplication:
             await pilot.press("enter")
             assert app.is_running is False
 
+    @pytest.mark.vcr
+    async def test_update_check(self):
+        app = get_app()
+        async with app.run_test(size=(125, 40)) as pilot:
+            # close initial disclaimer
+            assert isinstance(app.screen, components.disclaimer.DisclaimerModal)
+            app.pop_screen()
+            assert app.screen.name == "main"
+
+            # open update check modal
+            await pilot.click("#update-modal")
+            await pilot.pause()
+            assert isinstance(app.screen, components.update_check.CheckForUpdatesModal)
+
+            # make sure we can check updates
+            await pilot.click("#btn-update-download")
+            await pilot.pause()
+
+            # make sure we can close modal
+            await pilot.click("#btn-update-cancel")
+            await pilot.pause()
+            assert app.screen.name == "main"
+
     async def test_tabs(self):
         app = get_app()
         async with app.run_test(size=(125, 40)) as pilot:

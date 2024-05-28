@@ -1,10 +1,10 @@
 from textual import on
 from textual.app import ComposeResult
-from textual.containers import Grid
+from textual.containers import Container, Horizontal
 from textual.reactive import reactive
 from textual.screen import ModalScreen
 from textual.widget import Widget
-from textual.widgets import Button, Label
+from textual.widgets import Button, Label, Markdown
 
 from .. import content
 
@@ -13,7 +13,7 @@ class UpdateTextWidget(Widget):
     text = reactive("", recompose=True)
 
     def compose(self) -> ComposeResult:
-        yield Label(self.text)
+        yield Markdown(self.text)
 
 
 class CheckForUpdatesModal(ModalScreen):
@@ -21,34 +21,44 @@ class CheckForUpdatesModal(ModalScreen):
     CheckForUpdatesModal {
       align: center middle;
     }
-    CheckForUpdatesModal Button {
-      width: 100%;
-    }
-    CheckForUpdatesModal #update-grid {
-      grid-size: 2;
-      grid-gutter: 1 3;
-      grid-rows: 1fr 3;
-      padding: 0 1;
-      width: 60;
-      height: 15;
-      border: thick $background 80%;
+    CheckForUpdatesModal #container {
       background: $surface;
+      border: thick $background 80%;
+      height: 18;
+      width: 60;
     }
-    CheckForUpdatesModal .span2 {
-      column-span: 2;
-      height: 1fr;
-      width: 1fr;
+    CheckForUpdatesModal .subheader {
+      background: $primary;
+      color: white;
+      width: 100%;
+      height: 3;
       content-align: center middle;
+    }
+    CheckForUpdatesModal #content {
+      height: 5;
+      align: center middle;
+      margin: 2 0;
+    }
+    CheckForUpdatesModal #btn-holder {
+      align: center bottom;
+      content-align: center middle;
+    }
+    CheckForUpdatesModal .btn {
+      width: 13;
+      margin: 0 8;
     }
     """
 
     def compose(self) -> ComposeResult:
-        yield Grid(
-            Label("Check online to see if a new version is available", classes="span2"),
-            UpdateTextWidget(classes="span2"),
-            Button("Check", variant="primary", id="btn-update-download"),
-            Button("Cancel", variant="default", id="btn-update-cancel"),
-            id="update-grid",
+        yield Container(
+            Label("Check if a new version is available.", classes="subheader"),
+            UpdateTextWidget(id="content"),
+            Horizontal(
+                Button("Check", variant="primary", classes="btn", id="btn-update-download"),
+                Button("Close", variant="default", classes="btn", id="btn-update-cancel"),
+                id="btn-holder",
+            ),
+            id="container",
         )
 
     def on_mount(self) -> None:

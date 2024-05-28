@@ -35,13 +35,15 @@ def test_db(django_db_setup, django_db_blocker):
 @pytest.fixture(scope="session")
 def vcr_config():
     return {
-        "filter_headers": [("authorization", "<omitted>")],
+        "filter_headers": [("authorization", "<omitted>"), ("x-api-key", "<omitted>")],
+        "filter_post_data_parameters": [("api_key", "<omitted>")],
+        "ignore_localhost": True,
     }
 
 
 @pytest.fixture(scope="module")
 def vcr_cassette_dir(request):
-    cassette_dir = Path(__file__).parent.absolute() / "cassettes" / request.module.__name__
+    cassette_dir = Path(__file__).parent.absolute() / "data/cassettes" / request.module.__name__
     return str(cassette_dir)
 
 
