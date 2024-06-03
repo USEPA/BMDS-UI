@@ -1,8 +1,8 @@
 {
-  "name": "bmds-server-frontend",
+  "name": "bmds-ui-frontend",
   "license": "MIT",
   "version": "1.0.0",
-  "description": "bmds server frontend",
+  "description": "BMDS UI Frontend",
   "scripts": {
     "clean": "rimraf ../bmds_ui/static/bundles/* && rimraf ../webpack-stats.json",
     "build": "npm run clean && webpack --config webpack.config.js",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/shapiromatron/bmds-server.git"
+    "url": "https://github.com/USEPA/bmds-ui.git"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.8",

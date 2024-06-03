@@ -24,10 +24,10 @@ cd ~/dev
 
 # clone package and execution package
 git clone https://github.com/USEPA/bmds bmds
-git clone https://github.com/USEPA/bmds-online-private bmds-server
+git clone https://github.com/USEPA/bmds-ui
 
 # create virtual environment and install requirements
-cd ~/dev/bmds-server
+cd ~/dev/bmds-ui
 python -m venv venv
 
 # activate the environment

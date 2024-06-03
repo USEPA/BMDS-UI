@@ -8,7 +8,7 @@ from ... import __version__
 from ...common.git import Commit
 from ..constants import AuthProvider, SkinStyle
 
-PROJECT_NAME = "bmds-server"
+PROJECT_NAME = "bmds-ui"
 BASE_DIR = Path(__file__).parents[2].resolve()
 ROOT_DIR = Path(__file__).parents[3].resolve()
 

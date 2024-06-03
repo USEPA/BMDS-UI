@@ -9,7 +9,7 @@
     "assets": {
         "main.97590b3096a638c665c7.js": {
             "name": "main.97590b3096a638c665c7.js",
-            "path": "/path/to/bmds-server/bmds_ui/static/bundles/main.97590b3096a638c665c7.js",
+            "path": "/path/to/bmds-ui/bmds_ui/static/bundles/main.97590b3096a638c665c7.js",
             "publicPath": "http://localhost:8110/dist/main.97590b3096a638c665c7.js"
         }
     }

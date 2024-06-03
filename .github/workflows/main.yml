@@ -24,7 +24,7 @@ jobs:
         - 6379:6379
 
     steps:
-    - name: Checkout bmds-server
+    - name: Checkout bmds-ui
       uses: actions/checkout@v4
     - name: Checkout bmds@main
       uses: actions/checkout@v4
