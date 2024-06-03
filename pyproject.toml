@@ -90,6 +90,8 @@ Source = "https://github.com/USEPA/bmds-online-private"
 manage = "bmds_server:manage"
 bmds = "bmds_server.desktop.cli:main"
 bmdsdesktop = "bmds_server.desktop.cli:main"
+"bmds_desktop" = "bmds_server.desktop.cli:main"
+"bmds-desktop" = "bmds_server.desktop.cli:main"
 
 [build-system]
 requires = ["flit_core ~=3.9"]
