@@ -7,7 +7,7 @@ from django.http import Http404
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
-from bmds_server.common.views import ExternalAuth, desktop_only, int_or_404, uuid_or_404
+from bmds_ui.common.views import ExternalAuth, desktop_only, int_or_404, uuid_or_404
 
 
 class MockExternalAuth(ExternalAuth):

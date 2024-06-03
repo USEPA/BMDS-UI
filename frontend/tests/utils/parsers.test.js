@@ -36,11 +36,11 @@ describe("Parsing", function() {
         it("handles tracebacks", function() {
             assert.deepStrictEqual(
                 parseServerErrors([
-                    'Traceback (most recent call last):\n  File "/bmds-server/bmds_server/analysis/models.py", line 246, in try_run_session\n    return AnalysisSession.run(inputs, dataset_index, option_index)\nValueError: Doses are not unique\n',
+                    'Traceback (most recent call last):\n  File "/bmds-server/bmds_ui/analysis/models.py", line 246, in try_run_session\n    return AnalysisSession.run(inputs, dataset_index, option_index)\nValueError: Doses are not unique\n',
                 ]),
                 {
                     data: [
-                        'Traceback (most recent call last):\n  File "/bmds-server/bmds_server/analysis/models.py", line 246, in try_run_session\n    return AnalysisSession.run(inputs, dataset_index, option_index)\nValueError: Doses are not unique\n',
+                        'Traceback (most recent call last):\n  File "/bmds-server/bmds_ui/analysis/models.py", line 246, in try_run_session\n    return AnalysisSession.run(inputs, dataset_index, option_index)\nValueError: Doses are not unique\n',
                     ],
                     messages: ["Doses are not unique"],
                     message: "Doses are not unique",
@@ -106,11 +106,11 @@ describe("Parsing", function() {
         it("extracts the error from a python traceback", function() {
             const tracebackErrors = [
                 [
-                    'Traceback (most recent call last):\n  File "/bmds-server/bmds_server/analysis/models.py", line 246, in try_run_session\n    return AnalysisSession.run(inputs, dataset_index, option_index)\nValueError: Doses are not unique\n',
+                    'Traceback (most recent call last):\n  File "/bmds-server/bmds_ui/analysis/models.py", line 246, in try_run_session\n    return AnalysisSession.run(inputs, dataset_index, option_index)\nValueError: Doses are not unique\n',
                     "Doses are not unique",
                 ],
                 [
-                    'Traceback (most recent call last):\n  File "/bmds-server/bmds_server/analysis/models.py", line 246, in try_run_session\n    return AnalysisSession.run(inputs, dataset_index, option_index)\nDoses are not unique\n',
+                    'Traceback (most recent call last):\n  File "/bmds-server/bmds_ui/analysis/models.py", line 246, in try_run_session\n    return AnalysisSession.run(inputs, dataset_index, option_index)\nDoses are not unique\n',
                     "Doses are not unique",
                 ],
                 ["Fallthrough - no change", "Fallthrough - no change"],

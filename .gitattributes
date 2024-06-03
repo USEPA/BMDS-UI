@@ -4,5 +4,5 @@
 
 # ignore paths from language statistics:
 # https://github.com/github/linguist#using-gitattributes
-bmds_server/static/vendor/* linguist-vendored
+bmds_ui/static/vendor/* linguist-vendored
 vendor/* linguist-vendored

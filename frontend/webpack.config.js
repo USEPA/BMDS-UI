@@ -38,13 +38,13 @@ module.exports = {
     output: {
         filename: "[name].[contenthash].js",
         chunkFilename: "[name].[contenthash].js",
-        path: path.resolve("../bmds_server/static/bundles"),
+        path: path.resolve("../bmds_ui/static/bundles"),
         publicPath: "/static/bundles/",
     },
 
     plugins: [
         new BundleTracker({
-            path: path.resolve(__dirname, "../bmds_server"),
+            path: path.resolve(__dirname, "../bmds_ui"),
             filename: "webpack-stats.json",
         }),
     ],

@@ -1,7 +1,7 @@
 import sys
 
-from bmds_server import __version__
-from bmds_server.desktop.cli import main
+from bmds_ui import __version__
+from bmds_ui.desktop.cli import main
 
 
 def test_version(capsys):

@@ -7,7 +7,7 @@
 .ruff_cache/
 .tox/
 .vscode/
-bmds_server/static/bundles/
+bmds_ui/static/bundles/
 build/
 /data/
 coverage_report/
@@ -27,9 +27,9 @@ venv/
 .coverage
 .env
 .eslintcache
-bmds_server/gitcommit.json
-bmds_server/main/settings/local.py
-bmds_server/webpack-stats.json
+bmds_ui/gitcommit.json
+bmds_ui/main/settings/local.py
+bmds_ui/webpack-stats.json
 celerybeat-schedule
 compose/nginx/conf/nginx.conf
 settings.ini

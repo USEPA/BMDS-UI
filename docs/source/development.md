@@ -133,7 +133,7 @@ Feature flags are enabled on the frontend so that if you're logged in as an admi
 Future mode can also be enabled via the local setting `ALWAYS_SHOW_FUTURE`. This will allow you to view the new features without needing to log in or enable `future` mode:
 
 ```python
-# bmds_server\main\settings\local.py
+# bmds_ui\main\settings\local.py
     ...
     # Shows future-flagged items without login/url parameter
     ALWAYS_SHOW_FUTURE = True
@@ -149,7 +149,7 @@ A test database is loaded to run unit tests. The database may need to be periodi
 
 ```bash
 # specify that we're using the unit-test settings
-export "DJANGO_SETTINGS_MODULE=bmds_server.main.settings.testing"
+export "DJANGO_SETTINGS_MODULE=bmds_ui.main.settings.testing"
 
 # load existing test
 createdb bmds-online-test
@@ -169,11 +169,11 @@ This is an optional step in development, but required in production. To run work
 ```bash
 # start the workers
 source venv/bin/activate
-celery worker --app=bmds_server.main.celery --loglevel=info --events
+celery worker --app=bmds_ui.main.celery --loglevel=info --events
 
 # start a crontab
 source venv/bin/activate
-celery beat --app=bmds_server.main.celery --loglevel=info
+celery beat --app=bmds_ui.main.celery --loglevel=info
 ```
 
 ### Integration tests
@@ -202,5 +202,5 @@ py.test -sv tests/integration/test_dichotomous.py --pdb
 ### Running Textual in developer mode
 
 ```bash
-textual run --dev bmds_server.desktop.cli:main
+textual run --dev bmds_ui.desktop.cli:main
 ```

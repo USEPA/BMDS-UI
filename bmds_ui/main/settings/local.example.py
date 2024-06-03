@@ -19,8 +19,8 @@ docker-compose -f compose/dc-build.yml --project-directory . up -d redis
 redis-cli -a default-password ping
 
 # start celery worker and beat (each in new tab)
-celery --app=bmds_server.main.celery worker --loglevel=INFO
-celery --app=bmds_server.main.celery beat --loglevel=INFO
+celery --app=bmds_ui.main.celery worker --loglevel=INFO
+celery --app=bmds_ui.main.celery beat --loglevel=INFO
 ```
 
 And then uncomment lines below:

@@ -2,7 +2,7 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 
-from bmds_server.common import diagnostics
+from bmds_ui.common import diagnostics
 
 
 @pytest.fixture

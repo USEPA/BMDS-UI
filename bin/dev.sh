@@ -3,7 +3,7 @@
 # Shell tmux script to start application
 
 # create the session to be used
-tmux new-session -d -s bmds_server
+tmux new-session -d -s bmds_ui
 
 # split the window
 tmux split-window -v

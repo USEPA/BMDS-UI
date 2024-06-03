@@ -5,8 +5,8 @@ import pytest
 from textual.widgets import TabbedContent
 from textual.widgets._tabbed_content import ContentTab
 
-from bmds_server.desktop import components
-from bmds_server.desktop.cli import get_app
+from bmds_ui.desktop import components
+from bmds_ui.desktop.cli import get_app
 
 
 @pytest.mark.asyncio

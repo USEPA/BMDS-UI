@@ -50,9 +50,9 @@ jobs:
         source ./tools/linux_ci.sh
         python setup.py bdist_wheel
         python -m pip install "$(ls dist/*.whl | head -n 1)"
-    - name: Install bmds_server
+    - name: Install bmds_ui
       run: |
-        mv tests/data/ci-webpack-stats.json bmds_server/webpack-stats.json
+        mv tests/data/ci-webpack-stats.json bmds_ui/webpack-stats.json
         python -m pip install -e ".[pg,dev]"
     - name: Setup linux environment
       run: |
@@ -114,8 +114,8 @@ jobs:
       with:
         name: webpack-build
         path: |
-          bmds_server/webpack-stats.json
-          bmds_server/static/bundles/
+          bmds_ui/webpack-stats.json
+          bmds_ui/static/bundles/
         retention-days: 1
 
   integration:
@@ -161,7 +161,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: webpack-build
-        path: bmds_server
+        path: bmds_ui
     - name: Download pybmds wheel
       uses: actions/download-artifact@v4
       with:
@@ -172,7 +172,7 @@ jobs:
         python -m pip install -U pip wheel
         source ./venv/tools/linux_ci.sh
         python -m pip install "$(ls venv/dist/*.whl | head -n 1)"
-    - name: Install bmds_server
+    - name: Install bmds_ui
       run: |
         pip install -U pip wheel
         pip install -e "venv"

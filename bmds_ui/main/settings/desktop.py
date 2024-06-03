@@ -68,8 +68,8 @@ LOGGING = {
         "": {"handlers": ["console"], "level": "INFO"},
         "django": {"handlers": ["console"], "propagate": False, "level": "INFO"},
         "django.request": {"handlers": ["console"], "level": "ERROR", "propagate": True},
-        "bmds_server": {"handlers": ["console"], "propagate": False, "level": "INFO"},
-        "bmds_server.request": {"handlers": ["console"], "propagate": False, "level": "INFO"},
+        "bmds_ui": {"handlers": ["console"], "propagate": False, "level": "INFO"},
+        "bmds_ui.request": {"handlers": ["console"], "propagate": False, "level": "INFO"},
     },
 }
 

@@ -74,8 +74,8 @@ The same approach can be done in production, except please harden the deployment
 For configurable parameters, we use environment variables which are loaded in the application configuration at runtime.  See the example [configuration file](https://github.com/USEPA/bmds-online-private/blob/main/compose/example.env) for a complete example. Many variables directly map to settings which are commonly used in django; refer to django documentation for these settings. Additional details on application-specific variables are described below:
 
 - `SESSION_DURATION` [int, default 28800 seconds or 8 hours]. The length of a user-session. After this duration is exceeded, the user must login for a new session.
-- `AUTH_PROVIDERS` [pipe-separated str of bmds_server.constants.AuthProvider, default "django"]. A list of providers which can be used for authentication. One or more providers can be used and pipe separated.
-    - The "django" authentication provider means accounts can be created in bmds_server and passwords are managed in bmds_server
-    - The "external" authentication provider assumes an upstream server handles authentication and returns appropriate user metadata for integration via ``/user/login/wam/``.  If used, ``bmds_server.analysis.views.ExternalAuth.get_user_metadata`` requires a custom implementation.
+- `AUTH_PROVIDERS` [pipe-separated str of bmds_ui.constants.AuthProvider, default "django"]. A list of providers which can be used for authentication. One or more providers can be used and pipe separated.
+    - The "django" authentication provider means accounts can be created in bmds_ui and passwords are managed in bmds_ui
+    - The "external" authentication provider assumes an upstream server handles authentication and returns appropriate user metadata for integration via ``/user/login/wam/``.  If used, ``bmds_ui.analysis.views.ExternalAuth.get_user_metadata`` requires a custom implementation.
 - `LOGOUT_REDIRECT` [str, optional]. URL to redirect to after logout. Defaults to homepage; this may need to be modified with some authentication providers.
 - `INCLUDE_ADMIN` [True/False, default True]. If true, the admin is included in the deployment. If false, it's not included. In some deployments, the admin may be deployed separately with additional security.

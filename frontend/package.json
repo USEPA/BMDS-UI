@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "bmds server frontend",
   "scripts": {
-    "clean": "rimraf ../bmds_server/static/bundles/* && rimraf ../webpack-stats.json",
+    "clean": "rimraf ../bmds_ui/static/bundles/* && rimraf ../webpack-stats.json",
     "build": "npm run clean && webpack --config webpack.config.js",
     "start": "node devServer.js",
     "lint": "eslint --cache .",

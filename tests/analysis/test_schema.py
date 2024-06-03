@@ -3,7 +3,7 @@ from copy import deepcopy
 import pytest
 from pydantic import ValidationError
 
-from bmds_server.analysis.schema import PolyKInput
+from bmds_ui.analysis.schema import PolyKInput
 
 
 class TestPolyKInput:

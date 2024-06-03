@@ -80,7 +80,7 @@ CACHES["default"].update(
 REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = ("rest_framework.renderers.JSONRenderer",)
 
 # Logging settings
-LOGGING["loggers"]["bmds_server.request"]["handlers"] = ["console", "requests"]
+LOGGING["loggers"]["bmds_ui.request"]["handlers"] = ["console", "requests"]
 
 # Celery settings
 CELERY_BROKER_URL = os.environ["DJANGO_CELERY_BROKER_URL"]

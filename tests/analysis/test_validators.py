@@ -7,9 +7,9 @@ from django.core.exceptions import ValidationError
 from pydantic import ValidationError as PydanticValidationError
 
 import pybmds
-from bmds_server.analysis import validators
-from bmds_server.analysis.validators import datasets
-from bmds_server.analysis.validators.session import BmdsVersion
+from bmds_ui.analysis import validators
+from bmds_ui.analysis.validators import datasets
+from bmds_ui.analysis.validators.session import BmdsVersion
 from pybmds.constants import Dtype, ModelClass
 
 

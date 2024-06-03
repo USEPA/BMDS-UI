@@ -2,7 +2,7 @@ import logging
 
 from django.http import HttpRequest
 
-logger = logging.getLogger("bmds_server.request")
+logger = logging.getLogger("bmds_ui.request")
 
 
 def get_user_id(user) -> int:

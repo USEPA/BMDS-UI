@@ -7,8 +7,8 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from bmds_server.analysis.models import Analysis
-from bmds_server.analysis.validators.session import BmdsVersion
+from bmds_ui.analysis.models import Analysis
+from bmds_ui.analysis.validators.session import BmdsVersion
 from pybmds.recommender import RecommenderSettings
 
 
