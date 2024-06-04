@@ -1758,7 +1758,7 @@
           model_average: null
       analysis_id: cc3ca355-a57a-4fba-9dc3-99657562df68
       bmds_python_version: 1.0.0.dev
-      bmds_server_version: e97fdcfa
+      bmds_ui_version: e97fdcfa
       analysis_schema_version: '1.0'
     errors: []
     created: 2021-12-15 18:42:28.857142+00:00
@@ -1964,7 +1964,7 @@
       bmds_python_version:
         dll: 2023.10a1
         python: 24.1a0
-      bmds_server_version: 9434971c
+      bmds_ui_version: 9434971c
       outputs:
       - bayesian:
           dataset:
@@ -5161,11 +5161,11 @@
         \       <div class=\"col-lg\">\n            <p>\n                This web-application
         executes the US EPA's benchmark dose modeling software (<a href=\"https://www.epa.gov/bmds\">BMDS</a>).\n
         \           </p>\n            <ul>\n                <li>Load example datasets
-        below to view example input files; for more information, see the <a  href=\"http://bmds-server.readthedocs.io/en/latest/\">documentation</a>\n
+        below to view example input files; for more information, see the <a  href=\"http://bmds-ui.readthedocs.io/en/latest/\">documentation</a>\n
         \               </li>\n                <li>Software is designed for automated
         BMDS execution using a\n                    programming language such as Python,
         R, or Java. To take\n                    advantage of automation, use the
-        <a href=\"/api/v1/\">API</a>,\n                    and see the <a href=\"http://bmds-server.readthedocs.io/en/latest/quickstart.html\">quickstart</a>
+        <a href=\"/api/v1/\">API</a>,\n                    and see the <a href=\"http://bmds-ui.readthedocs.io/en/latest/quickstart.html\">quickstart</a>
         section.\n                </li>\n            </ul>\n        </div>\n    </div>\n
         \   <div class=\"col-md-4\">\n        <form  action=\"{% url 'analysis_create' %}\" method=\"post\">\n            {%
         csrf_token %}\n            <label for=\"id_id\">Create a new analysis:</label>\n
@@ -5405,7 +5405,7 @@
       false, "sufficiently_close_bmdl": 3}, "bmds_version": "BMDS330", "dataset_type":
       "D", "analysis_name": "dichotomous", "dataset_options": [{"degree": 0, "enabled":
       true, "dataset_id": 0}]}, "outputs": {"analysis_id": "ded15870-8986-4d5b-b924-ef9036b2e17e",
-      "analysis_schema_version": "1.0", "bmds_server_version": "e97fdcfa", "bmds_python_version":
+      "analysis_schema_version": "1.0", "bmds_ui_version": "e97fdcfa", "bmds_python_version":
       "1.0.0.dev", "outputs": [{"metadata": {"dataset_index": 0, "option_index": 0},
       "frequentist": {"version": {"dll": "2023.03.1", "python": "23.2"}, "dataset": {"dtype": "D", "metadata": {"id": 0, "name": "Dataset
       #1", "dose_units": "", "response_units": "", "dose_name": "Dose", "response_name":
@@ -6746,7 +6746,7 @@
       0.539300473141355, 0.5442311671205726, 0.5491349249507073, 0.5540114775166944,
       0.5588605632576895, 0.5636819281449867]}, "model_indexes": [0]}, "recommender":
       null, "selected": {"model_index": null, "notes": ""}}}], "analysis_id": "ded15870-8986-4d5b-b924-ef9036b2e17e",
-      "bmds_python_version": "1.0.0.dev", "bmds_server_version": "e97fdcfa", "analysis_schema_version":
+      "bmds_python_version": "1.0.0.dev", "bmds_ui_version": "e97fdcfa", "analysis_schema_version":
       "1.0"}, "errors": [], "created": "2021-11-15T18:41:40.793Z", "started": "2021-11-15T18:42:05.518Z",
       "ended": "2021-11-15T18:42:06.176Z", "deletion_date": "2022-05-14T18:42:06.176Z"}}]'
     object_repr: dichotomous
@@ -6932,7 +6932,7 @@
       false, "sufficiently_close_bmdl": 3}, "bmds_version": "BMDS330", "dataset_type":
       "C", "analysis_name": "continuous", "dataset_options": [{"degree": 0, "enabled":
       true, "dataset_id": 0, "adverse_direction": -1}]}, "outputs": {"analysis_id":
-      "cc3ca355-a57a-4fba-9dc3-99657562df68", "analysis_schema_version": "1.0", "bmds_server_version":
+      "cc3ca355-a57a-4fba-9dc3-99657562df68", "analysis_schema_version": "1.0", "bmds_ui_version":
       "e97fdcfa", "bmds_python_version": "1.0.0.dev", "outputs": [{"metadata": {"dataset_index":
       0, "option_index": 0}, "frequentist": {"version": {"dll": "2023.03.1", "python": "23.2"}, "dataset": {"dtype": "C", "metadata":
       {"id": 0, "name": "Dataset #1", "dose_units": "", "response_units": "", "dose_name":
@@ -7420,7 +7420,7 @@
       (p-value 2 = 0), constant variance selected"], "2": []}]}}, "selected": {"model_index":
       null, "notes": "No best fitting model selected"}}, "bayesian": null}], "analysis_id":
       "cc3ca355-a57a-4fba-9dc3-99657562df68", "bmds_python_version": "1.0.0.dev",
-      "bmds_server_version": "e97fdcfa", "analysis_schema_version": "1.0"}, "errors":
+      "bmds_ui_version": "e97fdcfa", "analysis_schema_version": "1.0"}, "errors":
       [], "created": "2021-11-15T18:42:28.857Z", "started": "2021-11-15T18:42:48.876Z",
       "ended": "2021-11-15T18:42:49.109Z", "deletion_date": "2022-05-14T18:42:49.109Z"}}]'
     object_repr: continuous

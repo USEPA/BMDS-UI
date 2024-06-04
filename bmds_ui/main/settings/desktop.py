@@ -23,6 +23,13 @@ LOGS_PATH.mkdir(exist_ok=True, parents=False)
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "TIMEOUT": 60 * 10,  # 10 minutes (in seconds)
+    }
+}
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -65,8 +72,8 @@ LOGGING = {
         "": {"handlers": ["console"], "level": "INFO"},
         "django": {"handlers": ["console"], "propagate": False, "level": "INFO"},
         "django.request": {"handlers": ["console"], "level": "ERROR", "propagate": True},
-        "bmds_server": {"handlers": ["console"], "propagate": False, "level": "INFO"},
-        "bmds_server.request": {"handlers": ["console"], "propagate": False, "level": "INFO"},
+        "bmds_ui": {"handlers": ["console"], "propagate": False, "level": "INFO"},
+        "bmds_ui.request": {"handlers": ["console"], "propagate": False, "level": "INFO"},
     },
 }
 

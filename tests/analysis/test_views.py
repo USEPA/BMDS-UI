@@ -5,9 +5,9 @@ from django.urls import reverse
 from django.utils.timezone import now
 from pytest_django.asserts import assertTemplateNotUsed, assertTemplateUsed
 
-from bmds_server.analysis.models import Analysis, Collection
-from bmds_server.analysis.validators.session import BmdsVersion
-from bmds_server.analysis.views import Analytics, DesktopHome, get_analysis_or_404
+from bmds_ui.analysis.models import Analysis, Collection
+from bmds_ui.analysis.validators.session import BmdsVersion
+from bmds_ui.analysis.views import Analytics, DesktopHome, get_analysis_or_404
 
 
 @pytest.mark.django_db

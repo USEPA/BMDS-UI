@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import django
 
-from bmds_server import manage
+from bmds_ui import manage
 
 
 def test_manage(capsys):

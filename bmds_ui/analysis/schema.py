@@ -31,7 +31,7 @@ class AnalysisSessionSchema(BaseModel):
 class AnalysisOutput(BaseModel):
     analysis_id: str
     analysis_schema_version: str = "1.1"
-    bmds_server_version: str
+    bmds_ui_version: str
     bmds_python_version: VersionSchema | None = None
     outputs: list[AnalysisSessionSchema]
 

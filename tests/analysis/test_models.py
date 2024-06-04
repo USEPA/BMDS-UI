@@ -3,8 +3,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from bmds_server.analysis.models import Analysis
-from bmds_server.analysis.reporting.docx import build_docx
+from bmds_ui.analysis.models import Analysis
+from bmds_ui.analysis.reporting.docx import build_docx
 
 
 def write_excel(data: dict, path: Path):

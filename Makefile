@@ -39,7 +39,7 @@ dev: ## Start developer environment.
 test: ## This runs all of the tests.
 	# To run tests:
 	#
-	#  py.test --ds=bmds_server.settings.dev
+	#  py.test --ds=bmds_ui.settings.dev
 	#
 	#	- Use -k <MATCH> for test matching (e.g. -k test_this_thing)
 	#	- Use -s for displaying print statements (or use pdb)

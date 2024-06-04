@@ -11,7 +11,7 @@ from pybmds import __version__
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.reporting.styling import Report, write_setting_p
 
-from ... import __version__ as bmds_server_version
+from ... import __version__ as bmds_ui_version
 from ...common.docx import add_url_hyperlink
 from ...common.utils import to_timestamp
 from ..utils import get_citation
@@ -58,7 +58,7 @@ def build_docx(
     add_url_hyperlink(p, uri, "View")
 
     version_label = "BMDS Desktop Version: " if settings.IS_DESKTOP else "BMDS Online Version: "
-    write_setting_p(report, version_label, bmds_server_version)
+    write_setting_p(report, version_label, bmds_ui_version)
 
     bmds_version = analysis.get_bmds_version()
     write_setting_p(report, "BMDS Version: ", f"{bmds_version.python} ({bmds_version.dll})")

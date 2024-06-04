@@ -8,7 +8,7 @@ from ... import __version__
 from ...common.git import Commit
 from ..constants import AuthProvider, SkinStyle
 
-PROJECT_NAME = "bmds-server"
+PROJECT_NAME = "bmds-ui"
 BASE_DIR = Path(__file__).parents[2].resolve()
 ROOT_DIR = Path(__file__).parents[3].resolve()
 
@@ -35,8 +35,8 @@ INSTALLED_APPS = [
     "webpack_loader",
     "reversion",
     # Custom apps
-    "bmds_server.common",
-    "bmds_server.analysis",
+    "bmds_ui.common",
+    "bmds_ui.analysis",
 ]
 
 MIDDLEWARE = [
@@ -47,11 +47,11 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "bmds_server.common.middleware.RequestLogMiddleware",
+    "bmds_ui.common.middleware.RequestLogMiddleware",
     "reversion.middleware.RevisionMiddleware",
 ]
 
-ROOT_URLCONF = "bmds_server.main.urls"
+ROOT_URLCONF = "bmds_ui.main.urls"
 
 TEMPLATES = [
     {
@@ -64,13 +64,13 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "bmds_server.main.context_processors.from_settings",
+                "bmds_ui.main.context_processors.from_settings",
             ]
         },
     }
 ]
 
-WSGI_APPLICATION = "bmds_server.main.wsgi.application"
+WSGI_APPLICATION = "bmds_ui.main.wsgi.application"
 SECRET_KEY = "io^^q^q1))7*r0u@6i+6kx&ek!yxyf6^5vix_6io6k4kdn@@5t"  # noqa: S105
 
 DATABASES = {
@@ -157,8 +157,8 @@ LOGGING = {
             "level": "ERROR",
             "propagate": True,
         },
-        "bmds_server": {"handlers": ["console"], "propagate": False, "level": "INFO"},
-        "bmds_server.request": {"handlers": ["console"], "propagate": False, "level": "INFO"},
+        "bmds_ui": {"handlers": ["console"], "propagate": False, "level": "INFO"},
+        "bmds_ui.request": {"handlers": ["console"], "propagate": False, "level": "INFO"},
     },
 }
 
@@ -196,7 +196,7 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {"anon": "20/minute", "user": "120/minute"},
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
-        "bmds_server.common.auth.SessionCsrfAuthentication",
+        "bmds_ui.common.auth.SessionCsrfAuthentication",
     ),
 }
 

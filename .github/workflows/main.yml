@@ -24,7 +24,7 @@ jobs:
         - 6379:6379
 
     steps:
-    - name: Checkout bmds-server
+    - name: Checkout bmds-ui
       uses: actions/checkout@v4
     - name: Checkout bmds@main
       uses: actions/checkout@v4
@@ -47,20 +47,14 @@ jobs:
       run: |
         python -m pip install -U pip wheel
         cd venv
-        source ./tools/linux_ci.sh
+        source ./tools/linux_ci_setup.sh
+        source ./tools/linux_ci_env.sh
         python setup.py bdist_wheel
         python -m pip install "$(ls dist/*.whl | head -n 1)"
-    - name: Install bmds_server
+    - name: Install bmds_ui
       run: |
-        mv tests/data/ci-webpack-stats.json bmds_server/webpack-stats.json
+        mv tests/data/ci-webpack-stats.json bmds_ui/webpack-stats.json
         python -m pip install -e ".[pg,dev]"
-    - name: Setup linux environment
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install -y make libgslcblas0 libgsl-dev
-        export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib"
-        sudo cp vendor/libnlopt.so /usr/local/lib/libnlopt.so.0
-        sudo ln -s /lib/x86_64-linux-gnu/libgsl.so /usr/local/lib/libgsl.so.25
     - name: lint
       run: |
         make lint-py
@@ -114,8 +108,8 @@ jobs:
       with:
         name: webpack-build
         path: |
-          bmds_server/webpack-stats.json
-          bmds_server/static/bundles/
+          bmds_ui/webpack-stats.json
+          bmds_ui/static/bundles/
         retention-days: 1
 
   integration:
@@ -161,7 +155,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: webpack-build
-        path: bmds_server
+        path: bmds_ui
     - name: Download pybmds wheel
       uses: actions/download-artifact@v4
       with:
@@ -169,22 +163,14 @@ jobs:
         path: venv
     - name: Install pybmds
       run: |
-        python -m pip install -U pip wheel
-        source ./venv/tools/linux_ci.sh
-        python -m pip install "$(ls venv/dist/*.whl | head -n 1)"
-    - name: Install bmds_server
+        source ./venv/tools/linux_ci_setup.sh
+        source ./venv/tools/linux_ci_env.sh
+        python -m pip install "$(ls ./venv/dist/*.whl | head -n 1)"
+    - name: Install bmds_ui
       run: |
         pip install -U pip wheel
-        pip install -e "venv"
         pip install -e ".[pg,dev]"
         playwright install --with-deps chromium
-    - name: Setup linux environment
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install -y make libgslcblas0 libgsl-dev
-        export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib"
-        sudo cp vendor/libnlopt.so /usr/local/lib/libnlopt.so.0
-        sudo ln -s /lib/x86_64-linux-gnu/libgsl.so /usr/local/lib/libgsl.so.25
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run integration tests
       id: test

@@ -5,7 +5,7 @@ from .constants import SkinStyle
 
 def desktop_versions() -> dict:
     import pybmds
-    from bmds_server import __version__
+    from bmds_ui import __version__
 
     return {
         "online": __version__,

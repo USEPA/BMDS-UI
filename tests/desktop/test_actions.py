@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 from packaging.version import Version
 
-from bmds_server.desktop import actions
+from bmds_ui.desktop import actions
 
 
 @pytest.mark.vcr

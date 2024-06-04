@@ -2,7 +2,7 @@
 .mypy_cache/
 .pytest_cache/
 bin/
-bmds_server/
+bmds_ui/
 docs/
 frontend/
 logs/

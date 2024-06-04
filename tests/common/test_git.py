@@ -1,4 +1,4 @@
-from bmds_server.common.git import Commit
+from bmds_ui.common.git import Commit
 
 
 class TestCommit:

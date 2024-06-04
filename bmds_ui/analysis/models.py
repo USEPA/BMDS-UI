@@ -313,7 +313,7 @@ class Analysis(models.Model):
         # get prepare complete output object
         analysis_output = AnalysisOutput(
             analysis_id=str(self.id),
-            bmds_server_version=settings.COMMIT.sha,
+            bmds_ui_version=settings.COMMIT.sha,
             bmds_python_version=bmds_python_version,
             outputs=[output.model_dump(by_alias=True) for output in outputs],
         )
