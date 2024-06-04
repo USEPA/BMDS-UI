@@ -20,7 +20,7 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # use a memory cache if no redis location specified
 if CACHES["default"]["LOCATION"] is None:
     CACHES["default"]["BACKEND"] = "django.core.cache.backends.locmem.LocMemCache"
-    CACHES["default"].pop('OPTIONS', None)
+    CACHES["default"].pop("OPTIONS", None)
 
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True

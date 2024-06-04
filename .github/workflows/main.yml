@@ -173,13 +173,6 @@ jobs:
         pip install -e "venv"
         pip install -e ".[pg,dev]"
         playwright install --with-deps chromium
-    - name: Setup linux environment
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install -y make libgslcblas0 libgsl-dev
-        export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib"
-        sudo cp vendor/libnlopt.so /usr/local/lib/libnlopt.so.0
-        sudo ln -s /lib/x86_64-linux-gnu/libgsl.so /usr/local/lib/libgsl.so.25
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run integration tests
       id: test
