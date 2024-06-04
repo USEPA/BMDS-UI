@@ -23,8 +23,8 @@ LOGS_PATH.mkdir(exist_ok=True, parents=False)
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
 
-CACHES["default"]["BACKEND"] = "django.core.cache.backends.locmem.LocMemCache"
-CACHES["default"].pop("OPTIONS", None)
+# CACHES["default"]["BACKEND"] = "django.core.cache.backends.locmem.LocMemCache"
+# CACHES["default"].pop("OPTIONS", None)
 
 DATABASES = {
     "default": {

@@ -165,7 +165,7 @@ jobs:
       run: |
         source ./venv/tools/linux_ci_setup.sh
         source ./venv/tools/linux_ci_env.sh
-        python -m pip install "$(ls dist/*.whl | head -n 1)"
+        python -m pip install "$(ls ./venv/dist/*.whl | head -n 1)"
     - name: Install bmds_ui
       run: |
         pip install -U pip wheel
