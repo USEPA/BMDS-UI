@@ -1,7 +1,7 @@
-import pytest
+# import pytest
 from django.conf import settings
 
-from bmds_ui.common.worker_health import WorkerHealthcheck
+# from bmds_ui.common.worker_health import WorkerHealthcheck
 
 
 def has_redis():
