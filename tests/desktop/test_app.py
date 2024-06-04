@@ -1,3 +1,4 @@
+import os
 import tempfile
 from pathlib import Path
 
@@ -9,10 +10,34 @@ from bmds_ui.desktop import components
 from bmds_ui.desktop.cli import get_app
 
 
-@pytest.mark.asyncio
+@pytest.fixture
+def rollback_get_app(settings):
+    # The `get_app` method has a few side effects to django settings; fix tests so they don't persist
+    yield
+    # revert cache settings
+    os.environ.pop("DJANGO_SETTINGS_MODULE", None)
+    # revert cache settings
+    cache_location = os.getenv("DJANGO_CACHE_LOCATION")
+    cache = (
+        {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": cache_location,
+            "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
+            "TIMEOUT": 60 * 10,  # 10 minutes (in seconds)
+        }
+        if cache_location
+        else {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "TIMEOUT": 60 * 10,  # 10 minutes (in seconds)
+        }
+    )
+    settings.CACHES = {"default": cache}
+
+
 @pytest.mark.django_db
+@pytest.mark.asyncio
 class TestApplication:
-    async def test_cli_walkthrough(self):
+    async def test_cli_walkthrough(self, rollback_get_app):
         app = get_app()
         async with app.run_test(size=(125, 40)) as pilot:
             # close initial disclaimer
@@ -46,7 +71,7 @@ class TestApplication:
             assert app.is_running is False
 
     @pytest.mark.vcr
-    async def test_update_check(self):
+    async def test_update_check(self, rollback_get_app):
         app = get_app()
         async with app.run_test(size=(125, 40)) as pilot:
             # close initial disclaimer
@@ -68,7 +93,7 @@ class TestApplication:
             await pilot.pause()
             assert app.screen.name == "main"
 
-    async def test_tabs(self):
+    async def test_tabs(self, rollback_get_app):
         app = get_app()
         async with app.run_test(size=(125, 40)) as pilot:
             # close initial disclaimer
@@ -88,7 +113,7 @@ class TestApplication:
             assert tabbed_content.active == "settings"
             assert tabbed_content.active_pane.id == "settings"
 
-    async def test_db_form(self):
+    async def test_db_form(self, rollback_get_app):
         app = get_app()
         async with app.run_test(size=(125, 40)) as pilot:
             # close initial disclaimer

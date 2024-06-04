@@ -9,7 +9,7 @@ from .log import setup_logging
 
 def get_app() -> BmdsDesktopTui:
     setup_logging()
-    # os.environ["DJANGO_SETTINGS_MODULE"] = "bmds_ui.main.settings.desktop"
+    os.environ["DJANGO_SETTINGS_MODULE"] = "bmds_ui.main.settings.desktop"
     Config.get()
     return BmdsDesktopTui()
 
