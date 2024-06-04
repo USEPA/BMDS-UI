@@ -20,15 +20,23 @@ from .config import Database, DesktopConfig
 from .log import log, stream
 
 
+def sync_persistent_data():
+    """Sync persistent data to database and static file path. We do this every time a database
+    is created or an application starts, to make sure application state is consistent with files."""
+    call_command("collectstatic", interactive=False, verbosity=3, stdout=stream, stderr=stream)
+    call_command("migrate", interactive=False, verbosity=3, stdout=stream, stderr=stream)
+
+
 def setup_django_environment(db: Database):
+    """Set the active django database to the current path and setup the database."""
     desktop.DATABASES["default"]["NAME"] = str(db.path)
     django.setup()
 
 
 def _create_django_db(db):
+    """Create a django database and sync persistent state with application."""
     setup_django_environment(db)
-    call_command("collectstatic", interactive=False, verbosity=3, stdout=stream, stderr=stream)
-    call_command("migrate", interactive=False, verbosity=3, stdout=stream, stderr=stream)
+    sync_persistent_data()
 
 
 def create_django_db(config: DesktopConfig, db: Database):
@@ -58,6 +66,7 @@ class AppThread(Thread):
 
     def run(self):
         setup_django_environment(self.db)
+        sync_persistent_data()
         from ..main.wsgi import application
 
         with redirect_stdout(stream), redirect_stderr(stream):
