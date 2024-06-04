@@ -3,6 +3,7 @@
 if "%~1" == "" goto :help
 if /I %1 == help goto :help
 if /I %1 == sync-dev goto :sync-dev
+if /I %1 == build goto :build
 if /I %1 == docs goto :docs
 if /I %1 == docs-serve goto :docs-serve
 if /I %1 == docs-all goto :docs-all
@@ -21,6 +22,7 @@ goto :help
 :help
 echo.Please use `make ^<target^>` where ^<target^> is one of
 echo.  sync-dev     sync dev environment after code checkout
+echo.  build        build application (python wheel)
 echo.  docs         Build documentation {html}
 echo.  docs-serve   Realtime documentation preview
 echo.  docs-all     Build documentation {html, docx}
@@ -41,6 +43,13 @@ python -m pip install -U pip uv
 uv pip install -e ".[pg,dev]"
 yarn --cwd frontend
 manage.py migrate
+goto :eof
+
+:build
+del /f /q .\build .\dist
+call npm --prefix .\frontend run build
+python manage.py set_git_commit
+flit build --no-use-vcs --format=wheel
 goto :eof
 
 :docs
