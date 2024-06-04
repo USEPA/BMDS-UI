@@ -163,14 +163,12 @@ jobs:
         path: venv
     - name: Install pybmds
       run: |
-        python -m pip install -U pip wheel
-        source ./tools/linux_ci_setup.sh
-        source ./tools/linux_ci_env.sh
-        python -m pip install "$(ls venv/dist/*.whl | head -n 1)"
+        source ./venv/tools/linux_ci_setup.sh
+        source ./venv/tools/linux_ci_env.sh
+        python -m pip install "$(ls dist/*.whl | head -n 1)"
     - name: Install bmds_ui
       run: |
         pip install -U pip wheel
-        pip install -e "venv"
         pip install -e ".[pg,dev]"
         playwright install --with-deps chromium
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
