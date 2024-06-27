@@ -139,13 +139,14 @@ class DatabaseFormModel(ModalScreen):
                 Button("Cancel", variant="default", id="db-edit-cancel"),
                 delete_btn,
                 classes="btn-holder span4",
+                id="actions-row"
             ),
             id="grid-db-form",
         )
 
     @on(Button.Pressed, "#db-create")
     async def on_db_create(self) -> None:
-        self.get_widget_by_id("grid-db-form").loading = True
+        self.get_widget_by_id("actions-row").loading = True
         self.create_db()
 
     @work(thread=True)
@@ -164,6 +165,11 @@ class DatabaseFormModel(ModalScreen):
         Config.sync()
         create_django_db(config, db)
         self.dismiss(True)
+
+    async def on_worker_state_changed(self, message: Worker.StateChanged):
+        # ensure loading indicator is removed when finished
+        if message.worker.is_finished:
+            self.get_widget_by_id("actions-row").loading = False
 
     @on(Button.Pressed, "#db-update")
     async def on_db_update(self) -> None:
@@ -187,11 +193,6 @@ class DatabaseFormModel(ModalScreen):
         Config.sync()
         log.info(f"Config updated for {self.db}")
         self.dismiss(True)
-
-    async def on_worker_state_changed(self, message: Worker.StateChanged):
-        # ensure loading indicator is removed when finished
-        if message.worker.is_finished:
-            self.get_widget_by_id("grid-db-form").loading = False
 
     @on(Button.Pressed, "#db-delete")
     async def on_db_delete(self) -> None:
