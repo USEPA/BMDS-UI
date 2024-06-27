@@ -1,8 +1,9 @@
+import time
 from pathlib import Path
 from typing import Any
 
 from django.utils.text import slugify
-from textual import on
+from textual import on, work
 from textual.app import ComposeResult
 from textual.containers import Grid, Horizontal
 from textual.reactive import reactive
@@ -10,6 +11,7 @@ from textual.screen import ModalScreen
 from textual.validation import Function
 from textual.widget import Widget
 from textual.widgets import Button, Input, Label, Markdown
+from textual.worker import Worker, WorkerState
 
 from ..actions import create_django_db
 from ..config import Config, Database
@@ -144,6 +146,11 @@ class DatabaseFormModel(ModalScreen):
 
     @on(Button.Pressed, "#db-create")
     async def on_db_create(self) -> None:
+        self.get_widget_by_id("grid-db-form").loading = True
+        self.create_db()
+
+    @work(thread=True)
+    async def create_db(self) -> None:
         name = self.query_one("#name").value
         path = self.query_one("#path").value
         db = self.query_one("#filename").value
@@ -181,6 +188,11 @@ class DatabaseFormModel(ModalScreen):
         Config.sync()
         log.info(f"Config updated for {self.db}")
         self.dismiss(True)
+
+    async def on_worker_state_changed(self, message: Worker.StateChanged):
+        # ensure loading indicator is removed when finished
+        if message.worker.is_finished:
+            self.get_widget_by_id("grid-db-form").loading = False
 
     @on(Button.Pressed, "#db-delete")
     async def on_db_delete(self) -> None:
