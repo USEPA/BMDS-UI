@@ -1,4 +1,3 @@
-import time
 from pathlib import Path
 from typing import Any
 
@@ -11,7 +10,7 @@ from textual.screen import ModalScreen
 from textual.validation import Function
 from textual.widget import Widget
 from textual.widgets import Button, Input, Label, Markdown
-from textual.worker import Worker, WorkerState
+from textual.worker import Worker
 
 from ..actions import create_django_db
 from ..config import Config, Database
