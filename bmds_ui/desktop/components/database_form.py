@@ -139,7 +139,7 @@ class DatabaseFormModel(ModalScreen):
                 Button("Cancel", variant="default", id="db-edit-cancel"),
                 delete_btn,
                 classes="btn-holder span4",
-                id="actions-row"
+                id="actions-row",
             ),
             id="grid-db-form",
         )
