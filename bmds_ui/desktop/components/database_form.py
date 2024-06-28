@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import Any
 
-from django.utils.text import slugify
 from textual import on, work
 from textual.app import ComposeResult
 from textual.containers import Grid, Horizontal
@@ -34,7 +33,7 @@ def file_valid(value: str):
     stemmed = Path(value).stem
     if len(stemmed) == 0:
         return False
-    return slugify(stemmed) == stemmed
+    return True
 
 
 class NullWidget(Widget):
