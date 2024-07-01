@@ -30,8 +30,14 @@ def path_exists(value: str):
 def file_valid(value: str):
     if not value.endswith(".sqlite3") and not value.endswith(".sqlite"):
         return False
-    stemmed = Path(value).stem
-    if len(stemmed) == 0:
+    return True
+
+
+def check_permission(path: str, db: str):
+    db_path = (Path(path).expanduser().resolve() / db).absolute()
+    try:
+        db_path.touch()
+    except PermissionError:
         return False
     return True
 
@@ -154,7 +160,9 @@ class DatabaseFormModel(ModalScreen):
         path = self.query_one("#path").value
         db = self.query_one("#filename").value
         description = self.query_one("#description").value
-        if not all((str_exists(name), path_exists(path), file_valid(db))):
+        if not all(
+            (str_exists(name), path_exists(path), file_valid(db), check_permission(path, db))
+        ):
             self.query_one(FormError).message = "An error occurred."
             return
         db_path = (Path(path).expanduser().resolve() / db).absolute()
@@ -176,7 +184,9 @@ class DatabaseFormModel(ModalScreen):
         path = self.query_one("#path").value
         db = self.query_one("#filename").value
         description = self.query_one("#description").value
-        if not all((str_exists(name), path_exists(path), file_valid(db))):
+        if not all(
+            (str_exists(name), path_exists(path), file_valid(db), check_permission(path, db))
+        ):
             self.query_one(FormError).message = "An error occurred."
             return
 
