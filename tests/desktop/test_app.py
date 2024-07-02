@@ -148,7 +148,7 @@ class TestApplication:
                 # create a new db
                 app.query_one("#path").value = resolved_temp_dir
                 await pilot.click("#db-create")
-                await pilot.pause()
+                await pilot.pause(delay=1)  # delay for thread worker to finish
                 assert app.screen.name == "main"
 
                 # make sure a new one appears on the list page
