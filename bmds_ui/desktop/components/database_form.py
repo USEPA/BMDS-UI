@@ -171,7 +171,7 @@ class DatabaseFormModel(ModalScreen):
         config.add_db(db)
         Config.sync()
         create_django_db(config, db)
-        self.dismiss(True)
+        self.app.call_from_thread(self.dismiss, result=True)
 
     async def on_worker_state_changed(self, message: Worker.StateChanged):
         # ensure loading indicator is removed when finished
