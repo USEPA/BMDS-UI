@@ -1,5 +1,6 @@
+import collections
 from enum import IntEnum
-from typing import Any, ClassVar
+from typing import Annotated, Any, ClassVar
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -69,11 +70,18 @@ class MaxDichotomousDatasetSchema(DichotomousDatasetSchema):
 
 class MaxContinuousDatasetSchema(ContinuousDatasetSchema):
     MAX_N: ClassVar = 30
+    ns: list[Annotated[float, Field(gt=1)]]
 
 
 class MaxContinuousIndividualDatasetSchema(ContinuousIndividualDatasetSchema):
     MIN_N: ClassVar = 5
     MAX_N: ClassVar = 1000
+
+    @model_validator(mode="after")
+    def n_per_group(self):
+        for n in collections.Counter(self.doses).values():
+            if not (n > 1):
+                raise ValueError("N>1 required for each dose group")
 
 
 class MaxNestedDichotomousDatasetSchema(NestedDichotomousDatasetSchema):
