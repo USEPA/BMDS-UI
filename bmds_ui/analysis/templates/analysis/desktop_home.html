@@ -31,9 +31,9 @@
 
     </div>
 
-    <form class="form-row align-items-center bg-light py-3"  hx-get="{% url 'home' %}" hx-select="#analysis-list" hx-target="#analysis-list" hx-swap="outerHTML" hx-trigger="change" hx-sync="this:replace">
+    <form class="form-row align-items-center bg-light py-3" hx-get="{% url 'home' %}" hx-sync="this:replace" hx-select="#analysis-list" hx-target="#analysis-list" hx-swap="outerHTML" hx-trigger="change,keyup from:.typeahead changed delay:0.5s">
       <div class="col-auto">
-        <input class="form-control" name="q" value="{{q}}" type="text" placeholder="Search" />
+        <input class="form-control typeahead" name="q" value="{{q}}" type="text" placeholder="Search"/>
       </div>
       <div class="col-auto">
         <select class="form-control custom-select" name="collection" id="id_collection">
