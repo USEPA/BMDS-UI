@@ -148,7 +148,13 @@ class TestApplication:
                 # create a new db
                 app.query_one("#path").value = resolved_temp_dir
                 await pilot.click("#db-create")
-                await pilot.pause(delay=1)  # delay for thread worker to finish
+                # wait for db creation to finish or max of 60 seconds
+                max = 1
+                while max < 60 and isinstance(
+                    app.screen, components.database_form.DatabaseFormModel
+                ):
+                    await pilot.pause(delay=1)
+                    max += 1
                 assert app.screen.name == "main"
 
                 # make sure a new one appears on the list page

@@ -146,9 +146,6 @@ class DatabaseFormModel(ModalScreen):
 
     @on(Button.Pressed, "#db-create")
     async def on_db_create(self) -> None:
-        await self.create_db()
-
-    async def create_db(self) -> None:
         name = self.query_one("#name").value
         path = self.query_one("#path").value
         db = self.query_one("#filename").value
@@ -163,6 +160,7 @@ class DatabaseFormModel(ModalScreen):
 
     @work(exclusive=True)
     async def _create_django_db(self, config, db):
+        # sleeps are required for loading indicator to show/hide properly
         actions = self.get_widget_by_id("actions-row")
         actions.loading = True
         await sleep(0.1)
