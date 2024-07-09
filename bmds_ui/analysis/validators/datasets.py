@@ -4,7 +4,7 @@ from typing import Annotated, Any, ClassVar, Literal
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 import pybmds
 from pybmds.constants import Dtype
@@ -71,20 +71,27 @@ class MaxDichotomousDatasetSchema(DichotomousDatasetSchema):
 
 class MaxContinuousDatasetSchema(ContinuousDatasetSchema):
     MAX_N: ClassVar = 30
-    ns: list[Annotated[float, Field(gt=1)]]
     dtype: Literal[Dtype.CONTINUOUS]
+
+    @field_validator("ns")
+    @classmethod
+    def n_per_group(cls, ns):
+        if min(ns) <= 1:
+            raise ValueError("All N must be ≥ 1")
+        return ns
 
 
 class MaxContinuousIndividualDatasetSchema(ContinuousIndividualDatasetSchema):
     MIN_N: ClassVar = 5
     MAX_N: ClassVar = 1000
-
-    @model_validator(mode="after")
-    def n_per_group(self):
-        for n in collections.Counter(self.doses).values():
-            if not (n > 1):
-                raise ValueError("N>1 required for each dose group")
     dtype: Literal[Dtype.CONTINUOUS_INDIVIDUAL]
+
+    @field_validator("doses")
+    @classmethod
+    def n_per_group(cls, doses):
+        if min(collections.Counter(doses).values()) <= 1:
+            raise ValueError("Each dose must have at > 1 response")
+        return doses
 
 
 class MaxNestedDichotomousDatasetSchema(NestedDichotomousDatasetSchema):

@@ -394,7 +394,7 @@ class TestDatasetValidation:
 
         check = deepcopy(dataset)
         check.update(doses=[10] * 3, ns=[1] * 3, means=[0] * 3, stdevs=[0] * 3)
-        with pytest.raises(PydanticValidationError, match="Input should be greater than 1"):
+        with pytest.raises(PydanticValidationError, match="All N must be ≥ 1"):
             datasets.MaxContinuousDatasetSchema(**check)
 
         # check maximums
@@ -426,7 +426,7 @@ class TestDatasetValidation:
 
         check = deepcopy(dataset)
         check.update(doses=[1, 1, 2, 2, 3], responses=[10] * 5)
-        with pytest.raises(PydanticValidationError, match="N>1 required for each dose group"):
+        with pytest.raises(PydanticValidationError, match="Each dose must have at > 1 response"):
             datasets.MaxContinuousIndividualDatasetSchema(**check)
 
         # check maximums
