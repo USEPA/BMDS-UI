@@ -1,11 +1,13 @@
+import collections
 from enum import IntEnum
-from typing import Any, ClassVar
+from typing import Annotated, Any, ClassVar, Literal
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 import pybmds
+from pybmds.constants import Dtype
 from pybmds.datasets.continuous import ContinuousDatasetSchema, ContinuousIndividualDatasetSchema
 from pybmds.datasets.dichotomous import DichotomousDatasetSchema
 from pybmds.datasets.nested_dichotomous import NestedDichotomousDatasetSchema
@@ -69,11 +71,27 @@ class MaxDichotomousDatasetSchema(DichotomousDatasetSchema):
 
 class MaxContinuousDatasetSchema(ContinuousDatasetSchema):
     MAX_N: ClassVar = 30
+    dtype: Literal[Dtype.CONTINUOUS]
+
+    @field_validator("ns")
+    @classmethod
+    def n_per_group(cls, ns):
+        if min(ns) <= 1:
+            raise ValueError("All N must be ≥ 1")
+        return ns
 
 
 class MaxContinuousIndividualDatasetSchema(ContinuousIndividualDatasetSchema):
     MIN_N: ClassVar = 5
     MAX_N: ClassVar = 1000
+    dtype: Literal[Dtype.CONTINUOUS_INDIVIDUAL]
+
+    @field_validator("doses")
+    @classmethod
+    def n_per_group(cls, doses):
+        if min(collections.Counter(doses).values()) <= 1:
+            raise ValueError("Each dose must have at > 1 response")
+        return doses
 
 
 class MaxNestedDichotomousDatasetSchema(NestedDichotomousDatasetSchema):
@@ -85,12 +103,15 @@ class DichotomousDatasets(DatasetValidator):
     datasets: list[MaxDichotomousDatasetSchema] = Field(min_length=1, max_length=max_length)
 
 
+ContinuousDatasetType = Annotated[
+    MaxContinuousDatasetSchema | MaxContinuousIndividualDatasetSchema,
+    Field(discriminator="dtype"),
+]
+
+
 class ContinuousDatasets(DatasetValidator):
     dataset_options: list[ContinuousModelOptions] = Field(min_length=1, max_length=max_length)
-    datasets: list[MaxContinuousDatasetSchema | MaxContinuousIndividualDatasetSchema] = Field(
-        min_length=1,
-        max_length=max_length,
-    )
+    datasets: list[ContinuousDatasetType] = Field(min_length=1, max_length=max_length)
 
 
 class NestedDichotomousDataset(DatasetValidator):
