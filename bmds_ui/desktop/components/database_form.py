@@ -9,7 +9,6 @@ from textual.screen import ModalScreen
 from textual.validation import Function
 from textual.widget import Widget
 from textual.widgets import Button, Input, Label, Markdown
-from textual.worker import Worker
 
 from ..actions import create_django_db
 from ..config import Config, Database
@@ -168,15 +167,17 @@ class DatabaseFormModel(ModalScreen):
         db_path = (Path(path).expanduser().resolve() / db).absolute()
         config = Config.get()
         db = Database(name=name, description=description, path=db_path)
+        self._create_django_db(config, db)
+
+    @work(exclusive=True, thread=True)
+    def _create_django_db(self, config, db):
+        # sleeps are required for loading indicator to show/hide properly
+        self.app.call_from_thread(self.set_loading, True)
         config.add_db(db)
         Config.sync()
-        create_django_db(config, db)
-        self.app.call_from_thread(self.dismiss, result=True)
-
-    async def on_worker_state_changed(self, message: Worker.StateChanged):
-        # ensure loading indicator is removed when finished
-        if message.worker.is_finished:
-            self.get_widget_by_id("actions-row").loading = False
+        create_django_db(db)
+        self.app.call_from_thread(self.set_loading, False)
+        self.app.call_from_thread(self.dismiss, True)
 
     @on(Button.Pressed, "#db-update")
     async def on_db_update(self) -> None:
@@ -214,3 +215,6 @@ class DatabaseFormModel(ModalScreen):
     @on(Button.Pressed, "#db-edit-cancel")
     def on_db_create_cancel(self) -> None:
         self.dismiss(False)
+
+    def set_loading(self, status: bool):
+        self.get_widget_by_id("actions-row").loading = status

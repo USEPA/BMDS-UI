@@ -33,17 +33,10 @@ def setup_django_environment(db: Database):
     django.setup()
 
 
-def _create_django_db(db):
-    """Create a django database and sync persistent state with application."""
+def create_django_db(db: Database):
+    log.info(f"Creating {db}")
     setup_django_environment(db)
     sync_persistent_data()
-
-
-def create_django_db(config: DesktopConfig, db: Database):
-    log.info(f"Creating {db}")
-    thread = Thread(target=_create_django_db, args=(db,), daemon=True)
-    thread.start()
-    thread.join()
     log.info(f"Creation successful {db}")
 
 

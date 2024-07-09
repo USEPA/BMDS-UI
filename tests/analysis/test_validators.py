@@ -392,6 +392,11 @@ class TestDatasetValidation:
         with pytest.raises(PydanticValidationError, match="At least 3 groups are required"):
             datasets.MaxContinuousDatasetSchema(**check)
 
+        check = deepcopy(dataset)
+        check.update(doses=[10] * 3, ns=[1] * 3, means=[0] * 3, stdevs=[0] * 3)
+        with pytest.raises(PydanticValidationError, match="All N must be ≥ 1"):
+            datasets.MaxContinuousDatasetSchema(**check)
+
         # check maximums
         check = deepcopy(dataset)
         check.update(doses=[10] * 30, ns=[10] * 30, means=[0] * 30, stdevs=[0] * 30)
@@ -411,21 +416,28 @@ class TestDatasetValidation:
 
         # check minimums
         check = deepcopy(dataset)
-        check.update(doses=list(range(5)), responses=[10] * 5)
+        check.update(doses=[1, 1, 2, 2, 3, 3], responses=[10] * 6)
         datasets.MaxContinuousIndividualDatasetSchema(**check)
 
         check = deepcopy(dataset)
-        check.update(doses=list(range(4)), responses=[10] * 4)
+        check.update(doses=[1, 1, 2, 2], responses=[10] * 4)
         with pytest.raises(PydanticValidationError, match="At least 5 groups are required"):
+            datasets.MaxContinuousIndividualDatasetSchema(**check)
+
+        check = deepcopy(dataset)
+        check.update(doses=[1, 1, 2, 2, 3], responses=[10] * 5)
+        with pytest.raises(PydanticValidationError, match="Each dose must have at > 1 response"):
             datasets.MaxContinuousIndividualDatasetSchema(**check)
 
         # check maximums
         check = deepcopy(dataset)
-        check.update(doses=list(range(1000)), responses=[10] * 1000)
+        doses = list(range(500)) * 2
+        check.update(doses=doses, responses=[10] * 1000)
         datasets.MaxContinuousIndividualDatasetSchema(**check)
 
         check = deepcopy(dataset)
-        check.update(doses=list(range(1001)), responses=[10] * 1001)
+        doses.append(1)
+        check.update(doses=doses, responses=[10] * 1001)
         with pytest.raises(PydanticValidationError, match="A maximum of 1000 groups are allowed"):
             datasets.MaxContinuousIndividualDatasetSchema(**check)
 

@@ -31,13 +31,13 @@
 
     </div>
 
-    <form method="get" class="form-row align-items-center bg-light py-3">
+    <form class="form-row align-items-center bg-light py-3" hx-get="{% url 'home' %}" hx-sync="this:replace" hx-select="#analysis-list" hx-target="#analysis-list" hx-swap="outerHTML" hx-trigger="change,keyup from:.typeahead changed delay:0.5s">
       <div class="col-auto">
-        <input class="form-control" name="q" value="{{q}}" type="text" placeholder="Search" />
+        <input class="form-control typeahead" name="q" value="{{q}}" type="text" placeholder="Search"/>
       </div>
       <div class="col-auto">
         <select class="form-control custom-select" name="collection" id="id_collection">
-          <option>--- Collection ---</option>
+          <option value="">--- Collection ---</option>
           {% for c in collections %}
             <option value="{{c.id}}" {% if collection == c.id %}selected {% endif %}>{{c.name}}</option>
           {% endfor %}
@@ -49,14 +49,9 @@
           <label class="custom-control-label" for="starred">Starred</label>
         </div>
       </div>
-      <div class="ml-auto">
-        <a href="." class="btn btn-secondary mr-2">Reset</a>
-        <button type="submit" class="btn btn-primary px-3">
-          <span class="bi bi-search mr-1"></span>Search
-        </button>
-      </div>
     </form>
 
+    <div id="analysis-list">
     {% with objects=object_list %}
     {% if objects %}
       <table class="table table-hover table-sm analysis-list">
@@ -83,6 +78,7 @@
       <p class="text-muted">No analyses found.</p>
     {% endif %}
     {% endwith %}
+    </div>
   </div>
   <div class="col-lg-4">
     <div class="card pane mt-4">
