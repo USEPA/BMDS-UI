@@ -1,3 +1,4 @@
+from asyncio import sleep
 from pathlib import Path
 from typing import Any
 
@@ -10,7 +11,6 @@ from textual.screen import ModalScreen
 from textual.validation import Function
 from textual.widget import Widget
 from textual.widgets import Button, Input, Label, Markdown
-from textual.worker import Worker
 
 from ..actions import create_django_db
 from ..config import Config, Database
@@ -146,10 +146,8 @@ class DatabaseFormModel(ModalScreen):
 
     @on(Button.Pressed, "#db-create")
     async def on_db_create(self) -> None:
-        self.get_widget_by_id("actions-row").loading = True
-        self.create_db()
+        await self.create_db()
 
-    @work(thread=True)
     async def create_db(self) -> None:
         name = self.query_one("#name").value
         path = self.query_one("#path").value
@@ -161,15 +159,19 @@ class DatabaseFormModel(ModalScreen):
         db_path = (Path(path).expanduser().resolve() / db).absolute()
         config = Config.get()
         db = Database(name=name, description=description, path=db_path)
+        self._create_django_db(config, db)
+
+    @work(exclusive=True)
+    async def _create_django_db(self, config, db):
+        actions = self.get_widget_by_id("actions-row")
+        actions.loading = True
+        await sleep(0.1)
         config.add_db(db)
         Config.sync()
         create_django_db(config, db)
-        self.app.call_from_thread(self.dismiss, result=True)
-
-    async def on_worker_state_changed(self, message: Worker.StateChanged):
-        # ensure loading indicator is removed when finished
-        if message.worker.is_finished:
-            self.get_widget_by_id("actions-row").loading = False
+        actions.loading = False
+        await sleep(0.1)
+        self.dismiss(True)
 
     @on(Button.Pressed, "#db-update")
     async def on_db_update(self) -> None:
