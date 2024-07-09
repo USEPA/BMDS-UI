@@ -1,4 +1,3 @@
-from asyncio import sleep
 from pathlib import Path
 from typing import Any
 
@@ -158,18 +157,15 @@ class DatabaseFormModel(ModalScreen):
         db = Database(name=name, description=description, path=db_path)
         self._create_django_db(config, db)
 
-    @work(exclusive=True)
-    async def _create_django_db(self, config, db):
+    @work(exclusive=True, thread=True)
+    def _create_django_db(self, config, db):
         # sleeps are required for loading indicator to show/hide properly
-        actions = self.get_widget_by_id("actions-row")
-        actions.loading = True
-        await sleep(0.1)
+        self.app.call_from_thread(self.set_loading, True)
         config.add_db(db)
         Config.sync()
-        create_django_db(config, db)
-        actions.loading = False
-        await sleep(0.1)
-        self.dismiss(True)
+        create_django_db(db)
+        self.app.call_from_thread(self.set_loading, False)
+        self.app.call_from_thread(self.dismiss, True)
 
     @on(Button.Pressed, "#db-update")
     async def on_db_update(self) -> None:
@@ -205,3 +201,6 @@ class DatabaseFormModel(ModalScreen):
     @on(Button.Pressed, "#db-edit-cancel")
     def on_db_create_cancel(self) -> None:
         self.dismiss(False)
+
+    def set_loading(self, status: bool):
+        self.get_widget_by_id("actions-row").loading = status
