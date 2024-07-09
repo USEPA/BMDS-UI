@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any
 
 from django.utils.text import slugify
-from textual import on
+from textual import on, work
 from textual.app import ComposeResult
 from textual.containers import Grid, Horizontal
 from textual.reactive import reactive
@@ -138,6 +138,7 @@ class DatabaseFormModel(ModalScreen):
                 Button("Cancel", variant="default", id="db-edit-cancel"),
                 delete_btn,
                 classes="btn-holder span4",
+                id="actions-row",
             ),
             id="grid-db-form",
         )
@@ -154,10 +155,17 @@ class DatabaseFormModel(ModalScreen):
         db_path = (Path(path).expanduser().resolve() / db).absolute()
         config = Config.get()
         db = Database(name=name, description=description, path=db_path)
+        self._create_django_db(config, db)
+
+    @work(exclusive=True, thread=True)
+    def _create_django_db(self, config, db):
+        # sleeps are required for loading indicator to show/hide properly
+        self.app.call_from_thread(self.set_loading, True)
         config.add_db(db)
         Config.sync()
-        create_django_db(config, db)
-        self.dismiss(True)
+        create_django_db(db)
+        self.app.call_from_thread(self.set_loading, False)
+        self.app.call_from_thread(self.dismiss, True)
 
     @on(Button.Pressed, "#db-update")
     async def on_db_update(self) -> None:
@@ -193,3 +201,6 @@ class DatabaseFormModel(ModalScreen):
     @on(Button.Pressed, "#db-edit-cancel")
     def on_db_create_cancel(self) -> None:
         self.dismiss(False)
+
+    def set_loading(self, status: bool):
+        self.get_widget_by_id("actions-row").loading = status
