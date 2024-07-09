@@ -113,7 +113,6 @@ class TestApplication:
             assert tabbed_content.active == "settings"
             assert tabbed_content.active_pane.id == "settings"
 
-    @pytest.mark.xfail(message="Test is unable to complete after validation was changed.")
     async def test_db_form(self, rollback_get_app):
         app = get_app()
         async with app.run_test(size=(125, 40)) as pilot:

@@ -150,11 +150,6 @@ class DatabaseFormModel(ModalScreen):
 
     @on(Button.Pressed, "#db-create")
     async def on_db_create(self) -> None:
-        self.get_widget_by_id("actions-row").loading = True
-        self.create_db()
-
-    @work(thread=True)
-    async def create_db(self) -> None:
         name = self.query_one("#name").value
         path = self.query_one("#path").value
         db = self.query_one("#filename").value
