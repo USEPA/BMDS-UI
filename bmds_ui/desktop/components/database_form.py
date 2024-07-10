@@ -39,6 +39,12 @@ def additional_path_checks(path: Path):
     # want to do this with every pydantic database model in config; but we do want these checks
     # when we create or update our configuration file.
 
+    # check if we can even access the path
+    try:
+        path.exists()
+    except PermissionError:
+        raise ValueError(f"Permission denied: {path}")
+
     # create parent path if it doesn't already exist
     if not path.parent.exists():
         try:
