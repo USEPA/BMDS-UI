@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import ClassVar, Self
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from .. import __version__
 
@@ -15,19 +15,36 @@ def now() -> datetime:
     return datetime.now(tz=UTC)
 
 
+db_suffixes = (".db", ".sqlite", ".sqlite3")
+
+
 class Database(BaseModel):
     id: UUID = Field(default_factory=uuid4)
-    name: str = ""
+    name: str = Field(min_length=1)
     description: str = ""
     path: Path
     created: datetime = Field(default_factory=now)
     last_accessed: datetime = Field(default_factory=now)
+
+    model_config = ConfigDict(str_strip_whitespace=True)
 
     def __str__(self) -> str:
         return f"{self.name}: {self.path}"
 
     def update_last_accessed(self):
         self.last_accessed = datetime.now(tz=UTC)
+
+    @field_validator("path")
+    @classmethod
+    def path_check(cls, path: Path):
+        # resolve the fully normalized path
+        path = path.expanduser().resolve()
+
+        # check suffix
+        if path.suffix not in db_suffixes:
+            raise ValueError('Filename must end with the "sqlite" extension')
+
+        return path
 
 
 class WebServer(BaseModel):

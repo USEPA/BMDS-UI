@@ -18,7 +18,3 @@ Footer {
 .span4 {
   column-span: 4
 }
-
-.error-text {
-  color: $error;
-}
