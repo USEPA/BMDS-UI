@@ -139,7 +139,7 @@ class TestApplication:
 
             # fill out form w/ valid data
             app.query_one("#name").value = "test name"
-            app.query_one("#filename").value = "test-db.sqlite"
+            app.query_one("#filename").value = "test-db.db"
             app.query_one("#description").value = "test description"
 
             with tempfile.TemporaryDirectory() as temp_dir:
@@ -147,18 +147,12 @@ class TestApplication:
 
                 # create a new db
                 app.query_one("#path").value = resolved_temp_dir
-                await pilot.click("#db-create")
-                # wait for db creation to finish or max of 60 seconds
-                max = 1
-                while max < 60 and isinstance(
-                    app.screen, components.database_form.DatabaseFormModel
-                ):
-                    await pilot.pause(delay=1)
-                    max += 1
-                assert app.screen.name == "main"
+                await _wait_until_form_closes(pilot, app, "#db-create")
+                assert isinstance(app.screen, components.main.Main)
 
                 # make sure a new one appears on the list page
                 newly_created = list(app.query(".db-edit"))
+                first = newly_created[0]
                 assert len(newly_created) == db_items + 1
 
                 # start the application!
@@ -173,26 +167,50 @@ class TestApplication:
                 await pilot.press("enter")
 
                 # edit the newly created db
-                newly_created[0].focus()
+                first.focus()
                 await pilot.press("enter")
                 assert isinstance(app.screen, components.database_form.DatabaseFormModel)
 
                 assert app.query_one("#name").value == "test name"
-                assert app.query_one("#filename").value == "test-db.sqlite"
+                assert app.query_one("#filename").value == "test-db.db"
                 assert app.query_one("#path").value == resolved_temp_dir
                 assert app.query_one("#description").value == "test description"
 
                 # update it and save (no changes)
-                await pilot.click("#db-update")
-                await pilot.pause()
+                await _wait_until_form_closes(pilot, app, "#db-edit-cancel")
+                assert isinstance(app.screen, components.main.Main)
 
                 # edit the newly created db
-                newly_created[0].focus()
-                await pilot.press("enter")  # TODO: test fails at this point
+                first.focus()
+                await pilot.press("enter")
                 assert isinstance(app.screen, components.database_form.DatabaseFormModel)
 
+                app.query_one("#description").value = "test description #2"
+                await _wait_until_form_closes(pilot, app, "#db-update")
+                await pilot.pause()
+                assert isinstance(app.screen, components.main.Main)
+
+                # requery; update caused screen layout and removed first attribute
+                newly_created = list(app.query(".db-edit"))
+                first = newly_created[0]
+
                 # delete it
+                first.focus()
+                await pilot.press("enter")
+                assert isinstance(app.screen, components.database_form.DatabaseFormModel)
+
                 await pilot.click("#db-delete")
                 await pilot.pause()
 
                 assert len(list(app.query(".db-edit"))) == db_items
+
+
+async def _wait_until_form_closes(pilot, app, btn: str):
+    assert isinstance(app.screen, components.database_form.DatabaseFormModel)
+    await pilot.click(btn)
+    # wait for db creation to finish or max of 60 seconds
+    max = 1
+    while max < 60 and isinstance(app.screen, components.database_form.DatabaseFormModel):
+        await pilot.pause(delay=1)
+        max += 1
+    assert app.screen.name == "main"

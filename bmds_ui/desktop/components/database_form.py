@@ -34,37 +34,37 @@ def file_valid(value: str):
     return any(value.endswith(suffix) for suffix in db_suffixes)
 
 
-def additional_path_checks(db: Database):
+def additional_path_checks(path: Path):
     # Additional path checks. We don't add to the pydantic model validation because we don't
     # want to do this with every pydantic database model in config; but we do want these checks
     # when we create or update our configuration file.
 
     # create parent path if it doesn't already exist
-    if not db.path.parent.exists():
+    if not path.parent.exists():
         try:
-            db.path.parent.mkdir(parents=True)
+            path.parent.mkdir(parents=True)
         except Exception:
-            raise ValueError(f"Cannot create path {db.path.parent}")
+            raise ValueError(f"Cannot create path {path.parent}")
 
     # check path is writable
-    if not db.path.exists():
+    if not path.exists():
         try:
-            with tempfile.NamedTemporaryFile(dir=db.path.parent, delete=True, mode="w") as f:
+            with tempfile.NamedTemporaryFile(dir=path.parent, delete=True, mode="w") as f:
                 f.write("test")
                 f.flush()
         except Exception:
-            raise ValueError(f"Cannot write to {db.path.parent}")
+            raise ValueError(f"Cannot write to {path.parent}")
 
     # check existing database is loadable and writeable
-    if db.path.exists():
+    if path.exists():
         try:
-            conn = sqlite3.connect(db.path)
+            conn = sqlite3.connect(path)
             cursor = conn.cursor()
             cursor.execute("CREATE TEMP TABLE test_writable (id INTEGER)")
             conn.commit()
             conn.close()
         except (sqlite3.DatabaseError, sqlite3.OperationalError):
-            raise ValueError(f"Cannot edit database {db.path}. Is this a sqlite database?")
+            raise ValueError(f"Cannot edit database {path}. Is this a sqlite database?")
 
 
 class NullWidget(Widget):
@@ -189,7 +189,7 @@ class DatabaseFormModel(ModalScreen):
             description=self.query_one("#description").value,
             path=Path(self.query_one("#path").value) / self.query_one("#filename").value,
         )
-        additional_path_checks(db)
+        additional_path_checks(db.path)
         return db
 
     @on(Button.Pressed, "#db-create")
