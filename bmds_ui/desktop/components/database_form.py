@@ -1,6 +1,9 @@
+import sqlite3
+import tempfile
 from pathlib import Path
 from typing import Any
 
+from pydantic import ValidationError
 from textual import on, work
 from textual.app import ComposeResult
 from textual.containers import Grid, Horizontal
@@ -11,8 +14,9 @@ from textual.widget import Widget
 from textual.widgets import Button, Input, Label, Markdown
 
 from ..actions import create_django_db
-from ..config import Config, Database
+from ..config import Config, Database, db_suffixes
 from ..log import log
+from .utils import get_error_string
 
 
 def str_exists(value: str):
@@ -27,18 +31,40 @@ def path_exists(value: str):
 
 
 def file_valid(value: str):
-    if not value.endswith(".sqlite3") and not value.endswith(".sqlite"):
-        return False
-    return True
+    return any(value.endswith(suffix) for suffix in db_suffixes)
 
 
-def check_permission(path: str, db: str):
-    db_path = (Path(path).expanduser().resolve() / db).absolute()
-    try:
-        db_path.touch()
-    except PermissionError:
-        return False
-    return True
+def additional_path_checks(db: Database):
+    # Additional path checks. We don't add to the pydantic model validation because we don't
+    # want to do this with every pydantic database model in config; but we do want these checks
+    # when we create or update our configuration file.
+
+    # create parent path if it doesn't already exist
+    if not db.path.parent.exists():
+        try:
+            db.path.parent.mkdir(parents=True)
+        except Exception:
+            raise ValueError(f"Cannot create path {db.path.parent}")
+
+    # check path is writable
+    if not db.path.exists():
+        try:
+            with tempfile.NamedTemporaryFile(dir=db.path.parent, delete=True, mode="w") as f:
+                f.write("test")
+                f.flush()
+        except Exception:
+            raise ValueError(f"Cannot write to {db.path.parent}")
+
+    # check existing database is loadable and writeable
+    if db.path.exists():
+        try:
+            conn = sqlite3.connect(db.path)
+            cursor = conn.cursor()
+            cursor.execute("CREATE TEMP TABLE test_writable (id INTEGER)")
+            conn.commit()
+            conn.close()
+        except (sqlite3.DatabaseError, sqlite3.OperationalError):
+            raise ValueError(f"Cannot edit database {db.path}. Is this a sqlite database?")
 
 
 class NullWidget(Widget):
@@ -53,10 +79,19 @@ class NullWidget(Widget):
 
 
 class FormError(Widget):
+    DEFAULT_CSS = """
+    .has-error {
+      background: $error;
+      color: white;
+      width: 100%;
+      padding: 0 3;
+    }
+    """
+
     message = reactive("", recompose=True)
 
     def compose(self) -> ComposeResult:
-        yield Label(self.message)
+        yield Label(self.message, expand=True, classes="has-error" if len(self.message) > 0 else "")
 
 
 class DatabaseFormModel(ModalScreen):
@@ -97,7 +132,7 @@ class DatabaseFormModel(ModalScreen):
     """
 
     def __init__(self, *args, db: Database | None, **kw):
-        self.db = db
+        self.db: Database | None = db
         super().__init__(*args, **kw)
 
     def get_db_value(self, attr: str, default: Any):
@@ -128,16 +163,16 @@ class DatabaseFormModel(ModalScreen):
                 id="path",
                 validators=[Function(path_exists)],
             ),
-            Label("Filename (*.sqlite)"),
+            Label("Filename (*.db)"),
             Input(
-                value=path.name if path else "db.sqlite",
+                value=path.name if path else "bmds-database.db",
                 type="text",
                 id="filename",
                 validators=[Function(file_valid)],
             ),
             Label("Description"),
             Input(value=self.get_db_value("description", ""), type="text", id="description"),
-            FormError(classes="span4 error-text"),
+            FormError(classes="span4"),
             Horizontal(
                 save_btn,
                 Button("Cancel", variant="default", id="db-edit-cancel"),
@@ -148,20 +183,24 @@ class DatabaseFormModel(ModalScreen):
             id="grid-db-form",
         )
 
+    def db_valid(self) -> Database:
+        db = Database(
+            name=self.query_one("#name").value,
+            description=self.query_one("#description").value,
+            path=Path(self.query_one("#path").value) / self.query_one("#filename").value,
+        )
+        additional_path_checks(db)
+        return db
+
     @on(Button.Pressed, "#db-create")
     async def on_db_create(self) -> None:
-        name = self.query_one("#name").value
-        path = self.query_one("#path").value
-        db = self.query_one("#filename").value
-        description = self.query_one("#description").value
-        if not all(
-            (str_exists(name), path_exists(path), file_valid(db), check_permission(path, db))
-        ):
-            self.query_one(FormError).message = "An error occurred."
+        try:
+            db = self.db_valid()
+        except (ValidationError, ValueError) as err:
+            self.query_one(FormError).message = get_error_string(err)
             return
-        db_path = (Path(path).expanduser().resolve() / db).absolute()
+
         config = Config.get()
-        db = Database(name=name, description=description, path=db_path)
         self._create_django_db(config, db)
 
     @work(exclusive=True, thread=True)
@@ -176,25 +215,15 @@ class DatabaseFormModel(ModalScreen):
 
     @on(Button.Pressed, "#db-update")
     async def on_db_update(self) -> None:
-        name = self.query_one("#name").value
-        path = self.query_one("#path").value
-        db = self.query_one("#filename").value
-        description = self.query_one("#description").value
-        if not all(
-            (str_exists(name), path_exists(path), file_valid(db), check_permission(path, db))
-        ):
-            self.query_one(FormError).message = "An error occurred."
+        try:
+            db = self.db_valid()
+        except (ValidationError, ValueError) as err:
+            self.query_one(FormError).message = get_error_string(err)
             return
 
-        db_path = (Path(path).expanduser().resolve() / db).absolute()
-        if not db_path.exists():
-            message = f"Database does not exist: {db_path}"
-            self.query_one(FormError).message = message
-            return
-
-        self.db.name = name
-        self.db.path = Path(path) / db
-        self.db.description = description
+        self.db.name = db.name
+        self.db.path = db.path
+        self.db.description = db.description
         Config.sync()
         log.info(f"Config updated for {self.db}")
         self.dismiss(True)
