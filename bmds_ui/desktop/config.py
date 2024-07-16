@@ -73,27 +73,35 @@ class DesktopConfig(BaseModel):
         self.databases.remove(db)
 
 
-def get_version_path() -> str:
+def get_version_path(version: str) -> str:
     """Get major/minor version path, ignoring patch or alpha/beta markers in version name"""
-    if m := re.match(r"^(\d+).(\d+)", __version__):
+    if m := re.match(r"^(\d+).(\d+)", version):
         return f"{m[1]}_{m[2]}"
     raise ValueError("Cannot parse version string")
 
 
-def get_app_home() -> Path:
-    # if a custom path is specified, use that instead
-    if path := os.environ.get("BMDS_APP_HOME"):
-        return Path(path)
-    # otherwise fallback to standard locations based on operating system
+def get_default_config_path() -> Path:
+    # get reasonable config path defaults by OS
+    # adapted from `hatch` source code
+    # https://github.com/pypa/hatch/blob/3adae6c0dfd5c20dfe9bf6bae19b44a696c22a43/docs/config/hatch.md?plain=1#L5-L15
     app_home = Path.home()
-    version = get_version_path()
+    version = get_version_path(__version__)
     match platform.system():
         case "Windows":
-            app_home = app_home / "AppData" / "Roaming" / "bmds" / version
+            app_home = app_home / "AppData" / "Local" / "bmds" / version
         case "Darwin":
             app_home = app_home / "Library" / "Application Support" / "bmds" / version
         case "Linux" | _:
-            app_home = app_home / ".bmds" / version
+            config = Path(os.environ.get("XDG_CONFIG_HOME", "~/.config")).expanduser().resolve()
+            app_home = config / "bmds" / version
+    return app_home
+
+
+def get_app_home(path_str: str | None = None) -> Path:
+    """Get path for storing configuration data for this application."""
+    # if a custom path is specified, use that instead
+    path_str = path_str or os.environ.get("BMDS_CONFIG")
+    app_home = Path(path_str) if path_str else get_default_config_path()
     app_home.mkdir(parents=True, exist_ok=True)
     return app_home
 
