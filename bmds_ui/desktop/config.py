@@ -6,9 +6,10 @@ from pathlib import Path
 from typing import ClassVar, Self
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
 from .. import __version__
+from .exceptions import DesktopException
 
 
 def now() -> datetime:
@@ -113,28 +114,30 @@ class Config:
 
     @classmethod
     def get_config_path(cls) -> Path:
-        last_config = get_app_home() / "latest.txt"
-        if last_config.exists():
-            path = Path(last_config.read_text())
-            if path.exists():
-                return path
-        # if the path doesn't exist, create a new default configuration and persist to disk
-        default_config = get_app_home() / "config.json"
-        default_config.write_text(DesktopConfig.default().model_dump_json(indent=2))
-        last_config.write_text(str((default_config).resolve()))
-        return default_config
+        # if configuration file doesn't exist, create one. return the file
+        config = get_app_home() / "config.json"
+        if not config.exists():
+            config.write_text(DesktopConfig.default().model_dump_json(indent=2))
+        return config
 
     @classmethod
     def get(cls) -> DesktopConfig:
         if cls._config:
             return cls._config
         cls._config_path = cls.get_config_path()
-        cls._config = DesktopConfig.model_validate_json(cls._config_path.read_text())
+        if not cls._config_path.exists():
+            raise DesktopException(f"Configuration file not found: {cls._config_path}")
+        try:
+            cls._config = DesktopConfig.model_validate_json(cls._config_path.read_text())
+        except ValidationError as err:
+            raise DesktopException(
+                f"Cannot parse configuration: {cls._config_path}\n\nSpecific error:{err}"
+            )
         return cls._config
 
     @classmethod
     def sync(cls):
         # write to disk
         if cls._config is None or cls._config_path is None:
-            raise ValueError()
+            raise DesktopException()
         cls._config_path.write_text(cls._config.model_dump_json(indent=2))
