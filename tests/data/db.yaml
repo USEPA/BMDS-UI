@@ -5171,7 +5171,7 @@
         csrf_token %}\n            <label for=\"id_id\">Create a new analysis:</label>\n
         \           <button type=\"submit\" class=\"btn btn-primary btn-block mb-1\">Create
         a new BMDS analysis</button>\n            <p class=\"text-muted\">Analyses
-        are deleted after {{days_to_keep_analyses}} days.</p>\n        </form>\n    </div>\n</div>\n"
+        are deleted after {{days_to_keep_analyses}}.</p>\n        </form>\n    </div>\n</div>\n"
     created: 2021-03-01 22:39:06.328990+00:00
     last_updated: 2021-03-01 22:39:06.329015+00:00
 - model: reversion.revision
