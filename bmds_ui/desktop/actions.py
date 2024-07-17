@@ -16,7 +16,7 @@ from whitenoise import WhiteNoise
 
 from .. import __version__
 from ..main.settings import desktop
-from .config import Database, DesktopConfig
+from .config import Database, DesktopConfig, get_app_home
 from .log import log, stream
 
 
@@ -29,7 +29,23 @@ def sync_persistent_data():
 
 def setup_django_environment(db: Database):
     """Set the active django database to the current path and setup the database."""
+    app_home = get_app_home()
+
     desktop.DATABASES["default"]["NAME"] = str(db.path)
+
+    public_data_root = app_home / "public"
+    logs_path = app_home / "logs"
+
+    public_data_root.mkdir(exist_ok=True, parents=False)
+    logs_path.mkdir(exist_ok=True, parents=False)
+
+    desktop.PUBLIC_DATA_ROOT = public_data_root
+    desktop.STATIC_ROOT = public_data_root / "static"
+    desktop.MEDIA_ROOT = public_data_root / "media"
+
+    desktop.LOGS_PATH = logs_path
+    desktop.LOGGING = desktop.setup_logging(logs_path)
+
     django.setup()
 
 
