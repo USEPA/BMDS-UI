@@ -1,6 +1,8 @@
 import os
 import platform
 import re
+import socket
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import ClassVar, Self
@@ -51,6 +53,32 @@ class Database(BaseModel):
 class WebServer(BaseModel):
     host: str = "127.0.0.1"
     port: int = 5555
+
+    def is_free(self) -> bool:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            try:
+                s.bind((self.host, self.port))
+                return True
+            except OSError:
+                return False
+
+    def wait_till_free(self, timeout_sec=60):
+        seconds_slept = 0
+        while self.is_free() is False and seconds_slept <= timeout_sec:
+            time.sleep(1)
+            seconds_slept += 1
+        if seconds_slept > timeout_sec:
+            raise ValueError(f"Cannot secure connection; already in use? {self.host}:{self.port}")
+
+    def find_free_port(self):
+        while True:
+            if self.is_free():
+                return
+            self.port = self.port + 1
+
+    @property
+    def web_address(self):
+        return f"http://{self.host}:{self.port}"
 
 
 class DesktopConfig(BaseModel):

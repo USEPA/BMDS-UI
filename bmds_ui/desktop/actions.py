@@ -104,6 +104,11 @@ class AppRunner:
 
     def start(self, config: DesktopConfig, db: Database):
         if self.thread is None:
+            log.info("Searching for free ports")
+            config.server.find_free_port()
+            log.info(f"Free port found: {config.server.port}")
+            config.server.wait_till_free()
+            log.info(f"Starting application on {config.server.web_address}")
             self.thread = AppThread(config=config, db=db, daemon=True)
             self.thread.start()
 
