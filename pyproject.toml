@@ -19,10 +19,10 @@ classifiers = [
 requires-python = ">=3.11"
 dependencies = [
   # pybmds
-  "pybmds~=24.1a0",
+  "pybmds~=24.1a2",
 
   # website
-  "Django~=5.0.6",
+  "Django~=5.0.7",
   "django-anymail~=10.3",
   "django-redis~=5.4.0",
   "django-webpack-loader~=3.1.0",

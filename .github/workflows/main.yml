@@ -1,6 +1,13 @@
 name: ci-checks
 
-on: [pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+  workflow_dispatch:
 
 jobs:
   backend:
