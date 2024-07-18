@@ -107,7 +107,7 @@ class Actions extends Component {
                     ) : (
                         <p className="text-muted pl-4 mb-0">Please save and execute analysis.</p>
                     )}
-                    {(mainStore.isDesktop && mainStore.canEdit) ? (
+                    {mainStore.isDesktop && mainStore.canEdit ? (
                         <>
                             <div className="dropdown-divider"></div>
                             <span className="dropdown-header">Collections</span>

@@ -29,7 +29,7 @@ class OptionsFormList extends Component {
             <div>
                 <div className="panel panel-default">
                     <form className="form-horizontal">
-                        <table className="table table-sm text-center">
+                        <table className="table table-sm table-fixed">
                             <thead className="bg-custom">
                                 <tr>
                                     <th>Option Set #</th>
@@ -78,7 +78,7 @@ class OptionsFormList extends Component {
                                         </>
                                     ) : null}
                                     {optionsStore.canEdit ? (
-                                        <th>
+                                        <th style={{width: "55px"}}>
                                             <Button
                                                 title="Add option set."
                                                 className="btn btn-primary"
