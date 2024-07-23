@@ -7,7 +7,7 @@ from pytest_django.asserts import assertTemplateNotUsed, assertTemplateUsed
 
 from bmds_ui.analysis.models import Analysis, Collection
 from bmds_ui.analysis.validators.session import BmdsVersion
-from bmds_ui.analysis.views import Analytics, DesktopHome, get_analysis_or_404
+from bmds_ui.analysis.views import Analytics, DesktopHome, Home, get_analysis_or_404
 
 
 @pytest.mark.django_db
@@ -130,6 +130,23 @@ class TestAnalytics:
         resp = client.get(url)
         assert resp.status_code == 200
         assertTemplateUsed(resp, template)
+
+
+@pytest.mark.django_db
+class TestHome:
+    def test_views(self):
+        request = RequestFactory().get(reverse("home"))
+        response = Home.as_view()(request)
+        assert response.status_code == 200
+
+    def test_get_days_to_keep(self):
+        view = Home()
+        assert view.days_to_keep(180) == "180 days"
+        assert view.days_to_keep(365) == "1 year"
+        assert view.days_to_keep(366) == "366 days"
+        assert view.days_to_keep(730) == "2 years"
+        assert view.days_to_keep(1095) == "3 years"
+        assert view.days_to_keep(1096) == "1096 days"
 
 
 @pytest.mark.django_db

@@ -34,10 +34,17 @@ class Home(TemplateView):
         content = models.Content.get_cached_content(models.ContentType.HOMEPAGE)
         return Template(content["template"]).render(context)
 
+    def days_to_keep(self, days: int) -> str:
+        if days == 365:
+            return "1 year"
+        elif days < 365 or days % 365 > 0:
+            return f"{days} days"
+        return f"{days // 365} years"
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
-            days_to_keep_analyses=settings.DAYS_TO_KEEP_ANALYSES,
+            days_to_keep_analyses=self.days_to_keep(settings.DAYS_TO_KEEP_ANALYSES),
             citation=get_citation(),
         )
         context["page"] = self._render_template(context)

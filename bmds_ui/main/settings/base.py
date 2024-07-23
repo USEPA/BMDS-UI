@@ -209,7 +209,7 @@ WEBPACK_LOADER = {
     }
 }
 
-DAYS_TO_KEEP_ANALYSES = 180
+DAYS_TO_KEEP_ANALYSES = int(os.environ.get("ANALYSIS_RETENTION_DAYS", "365"))
 
 
 # commit information
