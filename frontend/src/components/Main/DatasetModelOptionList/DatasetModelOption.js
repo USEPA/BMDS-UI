@@ -64,7 +64,7 @@ class DatasetModelOption extends Component {
             </tr>
         ) : (
             <tr>
-                <td className="text-center">{checkOrEmpty(option.enabled)}</td>
+                <td>{checkOrEmpty(option.enabled)}</td>
                 <td>{dataset.metadata.name}</td>
                 {option.degree !== undefined ? (
                     <td>{getDegreeText(dtype, option.degree)}</td>

@@ -63,6 +63,10 @@ input[type=number] {
   visibility: visible;
 }
 
+.table-fixed {
+  table-layout: fixed;
+}
+
 /* table column text alignment */
 .col-r-1 td:nth-child(1),
 .col-r-1 th:nth-child(1),

@@ -4,7 +4,6 @@ import React, {Component} from "react";
 
 import {MODEL_MULTI_TUMOR} from "@/constants/mainConstants";
 
-import Button from "../../common/Button";
 import ModelsCheckBox from "./ModelsCheckBox";
 import ModelsCheckBoxHeader from "./ModelsCheckBoxHeader";
 
@@ -12,8 +11,7 @@ import ModelsCheckBoxHeader from "./ModelsCheckBoxHeader";
 @observer
 class ModelsCheckBoxList extends Component {
     render() {
-        const {modelsStore} = this.props,
-            mainStore = modelsStore.rootStore.mainStore;
+        const {modelsStore} = this.props;
         if (modelsStore.getModelType === MODEL_MULTI_TUMOR) {
             return (
                 <div className="alert alert-info my-3">
@@ -29,13 +27,6 @@ class ModelsCheckBoxList extends Component {
         }
         return (
             <div className="mt-2">
-                {mainStore.canEdit ? (
-                    <Button
-                        className="btn btn-sm btn-warning"
-                        onClick={mainStore.resetModelSelection}
-                        text="Reset Model Selection"
-                    />
-                ) : null}
                 <table className="table table-sm">
                     <ModelsCheckBoxHeader store={modelsStore} />
                     <ModelsCheckBox store={modelsStore} />
