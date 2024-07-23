@@ -10,7 +10,7 @@ const getData = function(model) {
     const litter = model.results.litter,
         n = _.size(litter.lsc);
     return {
-        tblClasses: "table table-sm text-right col-l-1",
+        tblClasses: "table table-sm text-right",
         headers: [
             "Dose",
             "Litter Specific Covariance",

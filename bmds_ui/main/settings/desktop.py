@@ -32,9 +32,8 @@ CACHES = {
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
+        "ENGINE": "bmds_ui.desktop.sqlite3",
         "NAME": os.getenv("BMDS_DB", APP_HOME / "bmds-desktop.db"),
-        "STARTUP_OPTIONS": {"init_command": "PRAGMA journal_mode=wal;"},
     }
 }
 

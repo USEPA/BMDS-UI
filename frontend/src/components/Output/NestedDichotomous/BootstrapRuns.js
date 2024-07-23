@@ -37,6 +37,7 @@ const getData = function(model) {
             "99th",
         ],
         subheader: "Bootstrap Runs",
+        tblClasses: "table table-sm text-right",
         rows,
     };
 };

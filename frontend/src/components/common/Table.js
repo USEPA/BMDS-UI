@@ -23,7 +23,7 @@ class Table extends Component {
                 </colgroup>
                 <thead>
                     {data.subheader ? (
-                        <tr className="bg-custom sticky-top">
+                        <tr className="bg-custom sticky-top text-left">
                             <th colSpan={nCols}>{data.subheader}</th>
                         </tr>
                     ) : null}

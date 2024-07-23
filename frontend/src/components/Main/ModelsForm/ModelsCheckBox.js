@@ -77,41 +77,30 @@ const ModelsCheckBox = observer(props => {
                     <td className="text-left align-middle">Exponential</td>
                     <CheckBoxTd store={store} type={fr} model={"Exponential"} />
                     <td></td>
-                    <CheckBoxTd store={store} type={b} model={"Exponential"} disabled={true} />
-                    <PriorWeightTd store={store} model={"Exponential"} disabled={true} />
                 </tr>
                 <tr>
                     <td className="text-left align-middle">Hill</td>
                     <CheckBoxTd store={store} type={fr} model={"Hill"} />
                     <CheckBoxTd store={store} type={fu} model={"Hill"} />
-                    <CheckBoxTd store={store} type={b} model={"Hill"} disabled={true} />
-                    <PriorWeightTd store={store} model={"Hill"} disabled={true} />
                 </tr>
                 <tr>
                     <td className="text-left align-middle">Linear</td>
                     <td></td>
                     <CheckBoxTd store={store} type={fu} model={"Linear"} />
-                    <CheckBoxTd store={store} type={b} model={"Linear"} disabled={true} />
-                    <PriorWeightTd store={store} model={"Linear"} disabled={true} />
                 </tr>
                 <tr>
                     <td className="text-left align-middle">Polynomial</td>
                     <CheckBoxTd store={store} type={fr} model={"Polynomial"} />
                     <CheckBoxTd store={store} type={fu} model={"Polynomial"} />
-                    <CheckBoxTd store={store} type={b} model={"Polynomial"} disabled={true} />
-                    <PriorWeightTd store={store} model={"Polynomial"} disabled={true} />
                 </tr>
                 <tr>
                     <td className="text-left align-middle">Power</td>
                     <CheckBoxTd store={store} type={fr} model={"Power"} />
                     <CheckBoxTd store={store} type={fu} model={"Power"} />
-                    <CheckBoxTd store={store} type={b} model={"Power"} disabled={true} />
-                    <PriorWeightTd store={store} model={"Power"} disabled={true} />
                 </tr>
             </tbody>
         );
-    }
-    if (store.getModelType === mc.MODEL_DICHOTOMOUS) {
+    } else if (store.getModelType === mc.MODEL_DICHOTOMOUS) {
         return (
             <tbody>
                 <tr>
@@ -182,8 +171,7 @@ const ModelsCheckBox = observer(props => {
                 </tr>
             </tbody>
         );
-    }
-    if (store.getModelType === mc.MODEL_NESTED_DICHOTOMOUS) {
+    } else if (store.getModelType === mc.MODEL_NESTED_DICHOTOMOUS) {
         return (
             <tbody>
                 <tr>
@@ -198,8 +186,9 @@ const ModelsCheckBox = observer(props => {
                 </tr>
             </tbody>
         );
+    } else {
+        throw `Unknown modelType: ${store.getModelType}`;
     }
-    throw `Unknown modelType: ${store.getModelType}`;
 });
 ModelsCheckBox.propTypes = {
     store: PropTypes.any,

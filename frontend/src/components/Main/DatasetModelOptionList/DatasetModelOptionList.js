@@ -26,14 +26,14 @@ class DatasetModelOptionList extends Component {
         }
 
         return (
-            <table className="table table-sm">
+            <table className="table table-sm table-fixed">
                 <thead>
                     {dtype == Dtype.CONTINUOUS || dtype == Dtype.CONTINUOUS_INDIVIDUAL ? (
                         <tr className="bg-custom">
                             <th>Enabled</th>
                             <th>Dataset</th>
                             <th>
-                                Maximum polynomial degree&nbsp;
+                                Maximum Polynomial Degree&nbsp;
                                 <HelpTextPopover content={maxDegreeText} />
                             </th>
                             <th>Adverse Direction</th>
@@ -54,7 +54,7 @@ class DatasetModelOptionList extends Component {
                             <th>Enabled</th>
                             <th>Dataset</th>
                             <th>
-                                Maximum multistage degree
+                                Maximum Multistage Degree
                                 <HelpTextPopover content={maxDegreeText} />
                             </th>
                         </tr>
