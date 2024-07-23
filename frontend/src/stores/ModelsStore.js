@@ -34,11 +34,6 @@ class ModelsStore {
         return this.rootStore.mainStore.model_type;
     }
 
-    @computed get hasBayesianModels() {
-        const modelType = this.getModelType;
-        return modelType === mc.MODEL_DICHOTOMOUS || modelType === mc.MODEL_CONTINUOUS;
-    }
-
     @action.bound setModels(models) {
         this.models = models;
         this.setDefaultsByDatasetType();
