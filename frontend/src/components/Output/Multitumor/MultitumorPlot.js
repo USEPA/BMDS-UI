@@ -34,8 +34,9 @@ const getLayout = function(datasets) {
 };
 
 const getData = function(ma, datasets, models) {
+    // models may be undefined; make sure to filter out prior to plotting
     const data = [],
-        y0 = _.mean(models.map(model => model.results.plotting.dr_y[0])),
+        y0 = _.mean(models.filter(d => _.isObject(d)).map(model => model.results.plotting.dr_y[0])),
         y1 = y0 + ma.bmdl * ma.slope_factor;
 
     // add individual datasets
@@ -57,6 +58,9 @@ const getData = function(ma, datasets, models) {
 
     // add selected models
     models.forEach((model, index) => {
+        if (_.isEmpty(model)) {
+            return;
+        }
         const dataset = datasets[index],
             {results} = model;
         data.push({
