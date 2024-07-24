@@ -57,7 +57,7 @@ dev = [
   # docs
   "Sphinx~=7.3.7",
   "myst-parser~=2.0.0",
-  "pydata-sphinx-theme~=0.15.2",
+  "furo==2024.7.18",
 
   # tests
   "pytest~=8.2.1",

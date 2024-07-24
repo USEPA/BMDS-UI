@@ -13,32 +13,11 @@ exclude_patterns = []
 
 
 # HTML settings
-html_theme = "pydata_sphinx_theme"
+html_theme = "furo"
 html_static_path = ["_static"]
 html_css_files = ["css/style.css"]
 html_sidebars = {"**": ["globaltoc.html"]}
-html_theme_options = {
-    "icon_links": [
-        {
-            "name": "GitHub",
-            "url": "https://github.com/USEPA/bmds-online-private",
-            "icon": "fa-brands fa-github",
-            "type": "fontawesome",
-        },
-        {
-            "name": "U.S. Environmental Protection Agency",
-            "url": "https://epa.gov/bmds",
-            "icon": "_static/img/epa_logo.png",
-            "type": "local",
-        },
-    ],
-    "use_edit_page_button": False,
-    "show_toc_level": 2,
-    "navbar_end": [
-        "theme-switcher.html",
-        "navbar-icon-links.html",
-    ],
-}
+html_theme_options = {}
 
 # Latex / PDF settings
 latex_elements = {
