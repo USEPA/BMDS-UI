@@ -8,7 +8,7 @@ Make sure you have the following applications installed locally:
 - [Yarn](https://yarnpkg.com/)
 - [PostgreSQL](https://www.postgresql.org/) >= 16
 
-If installing on Windows, all requirements are available using [miniconda](https://docs.conda.io/en/latest/miniconda.html), and do not require administrative access.
+If installing on Windows, these packages are available using [miniconda](https://docs.conda.io/en/latest/miniconda.html).
 
 ## Initial setup
 
@@ -79,7 +79,7 @@ npm start
 If you navigate to [localhost](http://127.0.0.1:8000/) and see a website, you're ready to begin coding!
 
 
-## Visual Studio Code settings
+## Visual Studio Code
 
 [Visual Studio Code](https://code.visualstudio.com/) is the recommended editor for this project.
 
@@ -89,35 +89,6 @@ Recommended extensions:
 - [Eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Ruff](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff)
 
-Recommended workspace settings:
-
-```json
-{
-    "restructuredtext.linter.disabled": true,
-    "[html]": {
-        "editor.formatOnSave": false
-    },
-    "[python]": {
-        "editor.formatOnSave": true,
-        "editor.formatOnPaste": false,
-        "editor.codeActionsOnSave": {
-            "source.fixAll": true
-        }
-    },
-    "[javascript]": {
-        "editor.formatOnSave": false,
-        "editor.codeActionsOnSave": {
-            "source.fixAll.eslint": true
-        }
-    },
-    "editor.formatOnSave": true,
-    "python.linting.flake8Enabled": false,
-    "python.pythonPath": "./venv/bin/python",
-    "eslint.workingDirectories": [
-        "./frontend"
-    ]
-}
-```
 ## Additional settings
 
 ### Feature flags (frontend)
@@ -134,14 +105,10 @@ Future mode can also be enabled via the local setting `ALWAYS_SHOW_FUTURE`. This
 
 ```python
 # bmds_ui\main\settings\local.py
-    ...
-    # Shows future-flagged items without login/url parameter
-    ALWAYS_SHOW_FUTURE = True
-    ...
+
+# Shows future-flagged items without login/url parameter
+ALWAYS_SHOW_FUTURE = True
 ```
-
-
-That's it! Now you should be able to view content that's coming soon!
 
 ### Building a test database
 
