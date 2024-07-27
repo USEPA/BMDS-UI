@@ -44,6 +44,14 @@
         </select>
       </div>
       <div class="col-auto">
+        <select class="form-control custom-select" name="modeltype">
+          <option value="">--- Model Type ---</option>
+          {% for k,v in model_types.items %}
+            <option value="{{k}}">{{v}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
         <div class="custom-control custom-switch">
           <input type="checkbox" class="custom-control-input" id="starred" {{starred|yesno:"checked,,"}} name="starred">
           <label class="custom-control-label" for="starred">Starred</label>
@@ -58,6 +66,7 @@
         <colgroup>
           <col width="40px" />
           <col />
+          <col width="150px" />
           <col width="100px" />
         </colgroup>
         <tbody>
@@ -68,6 +77,7 @@
               {% for collection in object.collections.all %}<span class="mr-1 badge badge-info">{{collection}}</span>{% endfor %}
               <a class="text-dark stretched-link" href="{{object.get_edit_url}}">{{object}}</a>
             </td>
+            <td>{{object.model_class_label}}</td>
             <td>{% table_time now object.timestamp %}</td>
           </tr>
           {% endfor %}

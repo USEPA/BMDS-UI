@@ -20,7 +20,7 @@ from django.views.generic import (
 )
 
 from ..common.views import HtmxView, action, desktop_only, int_or_404, uuid_or_404
-from . import forms, models
+from . import constants, forms, models
 from .reporting.analytics import get_cached_analytics
 from .utils import get_citation
 from .validators.session import BmdsVersion
@@ -70,6 +70,8 @@ class DesktopHome(ListView):
         if c := self.request.GET.get("collection"):
             if c.isnumeric():
                 qs = qs.filter(collections=c)
+        if mt := self.request.GET.get("modeltype", ""):
+            qs = qs.filter(inputs__dataset_type=mt)
         return qs.prefetch_related("collections")
 
     def get_context_data(self, **kwargs):
@@ -81,6 +83,7 @@ class DesktopHome(ListView):
             collection=int(collection) if collection.isnumeric() else "",
             collection_qs=models.Collection.objects.all().order_by("name"),
             collections=models.Collection.opts(),
+            model_types=constants.model_types,
             now=now(),
         )
         return context

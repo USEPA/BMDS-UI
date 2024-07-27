@@ -22,7 +22,7 @@ from pybmds.recommender.recommender import RecommenderSettings
 from pybmds.types.session import VersionSchema
 
 from ..common.utils import random_string
-from . import tasks, validators
+from . import constants, tasks, validators
 from .executor import AnalysisSession, MultiTumorSession, Session, deserialize
 from .reporting import excel
 from .reporting.cache import DocxReportCache, ExcelReportCache
@@ -156,6 +156,10 @@ class Analysis(models.Model):
     @property
     def model_class(self) -> ModelClass:
         return ModelClass(self.inputs["dataset_type"])
+
+    @property
+    def model_class_label(self) -> str:
+        return constants.model_types[self.inputs["dataset_type"]]
 
     def get_session(self, index: int) -> Session:
         if not self.is_finished or self.has_errors:
