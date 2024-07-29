@@ -150,3 +150,9 @@ input[type=number] {
 .show-only-child:only-child {
   display: initial;
 }
+
+.analysis-label {
+  padding: 0 5px;
+  margin-right: 5px;
+  border-radius: 5px;
+}

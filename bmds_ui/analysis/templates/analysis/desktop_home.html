@@ -12,7 +12,7 @@
       <div class="dropdown mr-2">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">Collections</button>
         <div class="dropdown-menu dropdown-menu-right">
-          <form class="p-2">
+          <form class="px-2">
             <a class="btn btn-primary float-right mr-4"
               href="#"
               hx-get="{% url 'actions' action='collection_create' %}"
@@ -74,7 +74,7 @@
           <tr>
             {% include 'analysis/fragments/td_star.html' with object=object %}
             <td class="stretched-link-parent">
-              {% for collection in object.collections.all %}<span class="mr-1 badge badge-info">{{collection}}</span>{% endfor %}
+              {% for collection in object.collections.all %}<span class="analysis-label" style="border: 3px solid {{collection.bg_color}}; background: {{collection.bg_color}}1F" >{{collection}}</span>{% endfor %}
               <a class="text-dark stretched-link" href="{{object.get_edit_url}}">{{object}}</a>
             </td>
             <td>{{object.model_class_label}}</td>

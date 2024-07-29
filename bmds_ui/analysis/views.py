@@ -135,6 +135,7 @@ class DesktopActions(HtmxView):
         if request.method == "POST" and form.is_valid():
             form.instance.save()
             return self._return_collection_list(request)
+        # TODO - fix rendering if form contains error
         return render(
             request,
             "analysis/fragments/collection_form.html",
@@ -150,6 +151,7 @@ class DesktopActions(HtmxView):
         if request.method == "POST" and form.is_valid():
             form.save()
             return self._return_collection_list(request)
+        # TODO - fix rendering if form contains error
         return render(
             request,
             "analysis/fragments/collection_form.html",

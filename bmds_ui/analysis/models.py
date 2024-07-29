@@ -382,6 +382,7 @@ class Analysis(models.Model):
 @reversion.register()
 class Collection(models.Model):
     name = models.CharField(max_length=128)
+    bg_color = models.CharField(max_length=7, default="#17A2B8")
     description = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
