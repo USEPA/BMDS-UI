@@ -81,8 +81,11 @@ class WebServer(BaseModel):
         return f"http://{self.host}:{self.port}"
 
 
+LATEST_CONFIG_VERSION = 1
+
+
 class DesktopConfig(BaseModel):
-    version: int = 1
+    version: int = LATEST_CONFIG_VERSION
     server: WebServer
     databases: list[Database] = []
     created: datetime = Field(default_factory=now)
