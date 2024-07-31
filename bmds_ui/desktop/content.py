@@ -19,7 +19,7 @@ def version_check(check: bool = False) -> str:
         return "**Status:** Ready to check - this requires an internet connection."
     current = get_installed_version()
     try:
-        latest_date, latest = get_latest_version("bmds")  # TODO - change to bmds-desktop, on pypi?
+        latest_date, latest = get_latest_version("bmds")  # TODO - change to bmds-ui
     except ValueError as err:
         return str(err)
     try:
