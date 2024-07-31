@@ -119,14 +119,15 @@ class AppRunner:
 
 
 def get_latest_version(package: str) -> tuple[datetime, Version]:
+    raise ValueError("TODO - implement when we're clear to release")
     url = f"https://pypi.org/pypi/{package}/json"
     try:
         resp = urlopen(url, timeout=5)  # noqa: S310
     except URLError:
-        parsed = urlparse("https://pypi.org/pypi/")
+        parsed = urlparse(url)
         raise ValueError(
             f"Could not check latest version; unable to reach {parsed.scheme}://{parsed.netloc}."
-        )
+        ) from URLError
     data = json.loads(resp.read().decode("utf-8"))
     latest_str = list(data["releases"].keys())[-1]
     upload_time = data["releases"][latest_str][0]["upload_time"]
