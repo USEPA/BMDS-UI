@@ -4,9 +4,6 @@ if "%~1" == "" goto :help
 if /I %1 == help goto :help
 if /I %1 == sync-dev goto :sync-dev
 if /I %1 == build goto :build
-if /I %1 == docs goto :docs
-if /I %1 == docs-serve goto :docs-serve
-if /I %1 == docs-all goto :docs-all
 if /I %1 == test goto :test
 if /I %1 == lint goto :lint
 if /I %1 == format goto :format
@@ -23,9 +20,6 @@ goto :help
 echo.Please use `make ^<target^>` where ^<target^> is one of
 echo.  sync-dev     sync dev environment after code checkout
 echo.  build        build application (python wheel)
-echo.  docs         Build documentation {html}
-echo.  docs-serve   Realtime documentation preview
-echo.  docs-all     Build documentation {html, docx}
 echo.  test         perform both test-py and test-js
 echo.  coverage     generate test coverage report
 echo.  test-py      run python tests
@@ -50,25 +44,6 @@ del /f /q .\build .\dist
 call npm --prefix .\frontend run build
 python manage.py set_git_commit
 flit build --no-use-vcs --format=wheel
-goto :eof
-
-:docs
-rmdir /s /q docs\build
-sphinx-build -b html docs/source docs/build/html
-goto :eof
-
-:docs-serve
-rmdir /s /q docs\build
-sphinx-autobuild -b html docs/source docs/build/html --port 5555
-goto :eof
-
-:docs-all
-rmdir /s /q docs\build
-sphinx-build -b html docs/source docs/build/html
-sphinx-build -b singlehtml docs/source docs/build/singlehtml
-cd docs\build\singlehtml
-pandoc -s index.html -o pybmds.docx
-cd ../../..
 goto :eof
 
 :lint
