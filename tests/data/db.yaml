@@ -5147,6 +5147,7 @@
   pk: 1
   fields:
     name: "Label #1"
+    bg_color: "#17A2B8"
     created: 2024-05-01 09:00:00.000000+00:00
     last_updated: 2024-05-01 09:00:00.000000+00:00
 - model: analysis.content

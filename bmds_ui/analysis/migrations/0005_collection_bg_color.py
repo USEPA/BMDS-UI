@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('analysis', '0004_collection_analysis_last_updated_analysis_starred_and_more'),
+        ("analysis", "0004_collection_analysis_last_updated_analysis_starred_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='collection',
-            name='bg_color',
-            field=models.CharField(default='#17A2B8', max_length=7),
+            model_name="collection",
+            name="bg_color",
+            field=models.CharField(default="#17A2B8", max_length=7),
         ),
     ]
