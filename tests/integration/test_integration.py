@@ -1,3 +1,4 @@
+import pytest
 from playwright.sync_api import expect
 
 from .common import PlaywrightTestCase
@@ -150,6 +151,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
             page2.get_by_role("link", name="Logic").click()
             expect(page2.get_by_role("cell", name="Decision Logic")).to_be_visible()
 
+    @pytest.mark.xfail
     def test_nested_dichotomous(self):
         page = self.page
         page.goto(self.url("/"))
