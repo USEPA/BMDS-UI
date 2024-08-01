@@ -24,7 +24,13 @@ export const simulateClick = function(el) {
         };
     },
     checkOrEmpty = bool => {
-        return <Icon name={bool ? "check2-square" : "square"} classes="bi-lg" />;
+        return (
+            <Icon
+                title={bool ? "checked" : "unchecked"}
+                name={bool ? "check2-square" : "square"}
+                classes="bi-lg"
+            />
+        );
     },
     getLabel = function(value, mapping) {
         return _.find(mapping, d => d.value == value).label;

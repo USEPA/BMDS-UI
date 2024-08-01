@@ -202,7 +202,7 @@ class MultiTumorSession(NamedTuple):
         model_settings = build_model_settings(
             dataset_type, PriorEnum.frequentist_restricted, options, {}
         )
-        session = Multitumor(datasets, degrees=degrees, model_settings=model_settings)
+        session = Multitumor(datasets, degrees=degrees, settings=model_settings)
         return cls(option_index=option_index, session=session)
 
     def execute(self):
