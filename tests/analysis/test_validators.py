@@ -9,7 +9,6 @@ from pydantic import ValidationError as PydanticValidationError
 import pybmds
 from bmds_ui.analysis import validators
 from bmds_ui.analysis.validators import datasets
-from bmds_ui.analysis.validators.session import BmdsVersion
 from pybmds.constants import Dtype, ModelClass
 
 
@@ -22,7 +21,6 @@ def _missing_field(err, missing_field: str):
 class TestInputValidation:
     def test_partial(self):
         data: dict[str, Any] = {
-            "bmds_version": BmdsVersion.BMDS330.value,
             "dataset_type": Dtype.CONTINUOUS,
         }
 
@@ -92,7 +90,6 @@ class TestInputValidation:
 
     def test_nested_dichotomous(self, nested_dichotomous_datasets):
         data: dict[str, Any] = {
-            "bmds_version": BmdsVersion.BMDS330.value,
             "dataset_type": Dtype.NESTED_DICHOTOMOUS,
         }
         assert validators.validate_input(data, partial=True) is None
@@ -137,7 +134,6 @@ class TestInputValidation:
 
     def test_multi_tumor(self):
         data: dict[str, Any] = {
-            "bmds_version": BmdsVersion.BMDS330.value,
             "dataset_type": ModelClass.MULTI_TUMOR,
         }
 

@@ -698,7 +698,6 @@
         recommend_viable: true
         recommend_questionable: false
         sufficiently_close_bmdl: 3
-      bmds_version: BMDS330
       dataset_type: C
       analysis_name: continuous
       dataset_options:
@@ -1775,7 +1774,6 @@
     errors: []
     inputs:
       analysis_name: dichotomous
-      bmds_version: 24.1a
       dataset_options:
       - dataset_id: 0
         degree: 3
@@ -5234,7 +5232,7 @@
     db: default
     format: json
     serialized_data: '[{"model": "analysis.analysis", "pk": "ded15870-8986-4d5b-b924-ef9036b2e17e",
-      "fields": {"password": "h3amteat0ant", "inputs": {"bmds_version": "BMDS330",
+      "fields": {"password": "h3amteat0ant", "inputs": {
       "dataset_type": "D", "datasets": [], "models": {}, "dataset_options": [], "options":
       [], "recommender": {"enabled": true, "recommend_questionable": false, "recommend_viable":
       true, "sufficiently_close_bmdl": 3.0, "rules": [{"rule_class": "gof", "failure_bin":
@@ -5292,7 +5290,7 @@
     db: default
     format: json
     serialized_data: '[{"model": "analysis.analysis", "pk": "ded15870-8986-4d5b-b924-ef9036b2e17e",
-      "fields": {"password": "h3amteat0ant", "inputs": {"bmds_version": "BMDS330",
+      "fields": {"password": "h3amteat0ant", "inputs": {
       "analysis_name": "dichotomous", "dataset_type": "D", "models": {"frequentist_restricted":
       ["LogLogistic"], "frequentist_unrestricted": ["LogProbit"], "bayesian": [{"model":
       "Multistage", "prior_weight": 1}]}, "datasets": [{"dtype": "D", "metadata":
@@ -5403,7 +5401,7 @@
       true}, {"threshold": 2, "rule_class": "control_residual_high", "failure_bin":
       0, "enabled_nested": true, "enabled_continuous": false, "enabled_dichotomous":
       true}], "enabled": true, "recommend_viable": true, "recommend_questionable":
-      false, "sufficiently_close_bmdl": 3}, "bmds_version": "BMDS330", "dataset_type":
+      false, "sufficiently_close_bmdl": 3}, "dataset_type":
       "D", "analysis_name": "dichotomous", "dataset_options": [{"degree": 0, "enabled":
       true, "dataset_id": 0}]}, "outputs": {"analysis_id": "ded15870-8986-4d5b-b924-ef9036b2e17e",
       "analysis_schema_version": "1.0", "bmds_ui_version": "e97fdcfa", "bmds_python_version":
@@ -6106,7 +6104,7 @@
       true}, {"threshold": 2, "rule_class": "control_residual_high", "failure_bin":
       0, "enabled_nested": true, "enabled_continuous": false, "enabled_dichotomous":
       true}], "enabled": true, "recommend_viable": true, "recommend_questionable":
-      false, "sufficiently_close_bmdl": 3}, "bmds_version": "BMDS330", "dataset_type":
+      false, "sufficiently_close_bmdl": 3}, "dataset_type":
       "D", "analysis_name": "dichotomous", "dataset_options": [{"degree": 0, "enabled":
       true, "dataset_id": 0}]}, "outputs": {"outputs": [{"metadata": {"dataset_index":
       0, "option_index": 0}, "frequentist": {"version": {"dll": "2023.03.1", "python": "23.2"}, "dataset": {"dtype": "D", "metadata":
@@ -6762,7 +6760,7 @@
     db: default
     format: json
     serialized_data: '[{"model": "analysis.analysis", "pk": "cc3ca355-a57a-4fba-9dc3-99657562df68",
-      "fields": {"password": "j5qbis8nf4kg", "inputs": {"bmds_version": "BMDS330",
+      "fields": {"password": "j5qbis8nf4kg", "inputs": {
       "dataset_type": "D", "datasets": [], "models": {}, "dataset_options": [], "options":
       [], "recommender": {"enabled": true, "recommend_questionable": false, "recommend_viable":
       true, "sufficiently_close_bmdl": 3.0, "rules": [{"rule_class": "gof", "failure_bin":
@@ -6820,7 +6818,7 @@
     db: default
     format: json
     serialized_data: '[{"model": "analysis.analysis", "pk": "cc3ca355-a57a-4fba-9dc3-99657562df68",
-      "fields": {"password": "j5qbis8nf4kg", "inputs": {"bmds_version": "BMDS330",
+      "fields": {"password": "j5qbis8nf4kg", "inputs": {
       "analysis_name": "continuous", "dataset_type": "C", "models": {"frequentist_restricted":
       ["Power"]}, "datasets": [{"dtype": "C", "metadata": {"id": 0, "name": "Dataset
       #1", "dose_units": "", "response_units": "", "dose_name": "Dose", "response_name":
@@ -6930,7 +6928,7 @@
       true}, {"threshold": 2, "rule_class": "control_residual_high", "failure_bin":
       0, "enabled_nested": true, "enabled_continuous": false, "enabled_dichotomous":
       true}], "enabled": true, "recommend_viable": true, "recommend_questionable":
-      false, "sufficiently_close_bmdl": 3}, "bmds_version": "BMDS330", "dataset_type":
+      false, "sufficiently_close_bmdl": 3}, "dataset_type":
       "C", "analysis_name": "continuous", "dataset_options": [{"degree": 0, "enabled":
       true, "dataset_id": 0, "adverse_direction": -1}]}, "outputs": {"analysis_id":
       "cc3ca355-a57a-4fba-9dc3-99657562df68", "analysis_schema_version": "1.0", "bmds_ui_version":
@@ -7206,7 +7204,7 @@
       true}, {"threshold": 2, "rule_class": "control_residual_high", "failure_bin":
       0, "enabled_nested": true, "enabled_continuous": false, "enabled_dichotomous":
       true}], "enabled": true, "recommend_viable": true, "recommend_questionable":
-      false, "sufficiently_close_bmdl": 3}, "bmds_version": "BMDS330", "dataset_type":
+      false, "sufficiently_close_bmdl": 3}, "dataset_type":
       "C", "analysis_name": "continuous", "dataset_options": [{"degree": 0, "enabled":
       true, "dataset_id": 0, "adverse_direction": -1}]}, "outputs": {"outputs": [{"metadata":
       {"dataset_index": 0, "option_index": 0}, "frequentist": {"version": {"dll": "2023.03.1", "python": "23.2"}, "dataset": {"dtype":
