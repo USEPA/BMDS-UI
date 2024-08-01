@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from io import BytesIO
 
 import pandas as pd
+import pydantic
 import reversion
 from django.conf import settings
 from django.core.cache import cache
@@ -21,6 +22,7 @@ from pybmds.constants import ModelClass
 from pybmds.recommender.recommender import RecommenderSettings
 from pybmds.types.session import VersionSchema
 
+from .. import __version__
 from ..common.utils import random_string
 from . import constants, tasks, validators
 from .executor import AnalysisSession, MultiTumorSession, Session, deserialize
@@ -316,7 +318,7 @@ class Analysis(models.Model):
         # get prepare complete output object
         analysis_output = AnalysisOutput(
             analysis_id=str(self.id),
-            bmds_ui_version=settings.COMMIT.sha,
+            bmds_ui_version=__version__,
             bmds_python_version=bmds_python_version,
             outputs=[output.model_dump(by_alias=True) for output in outputs],
         )
@@ -356,9 +358,12 @@ class Analysis(models.Model):
         self.deletion_date = get_deletion_date(self.deletion_date)
 
     def get_bmds_version(self) -> VersionSchema | None:
-        if not self.is_finished or self.has_errors:
+        if not self.is_finished or self.has_errors or self.outputs is None:
             return None
-        return AnalysisOutput.model_validate(self.outputs).bmds_python_version
+        try:
+            return VersionSchema.model_validate(self.outputs["bmds_python_version"])
+        except pydantic.ValidationError:
+            return None
 
     @property
     def deletion_date_str(self) -> str | None:

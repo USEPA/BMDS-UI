@@ -84,6 +84,7 @@ class DesktopHome(ListView):
             collections=models.Collection.opts(),
             model_types=constants.model_types,
             now=now(),
+            has_query=len(self.request.GET) > 0,
         )
         return context
 

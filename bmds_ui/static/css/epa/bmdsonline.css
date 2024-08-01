@@ -74,6 +74,10 @@ a.dropdown-toggle:not([href])::after {
   border-right: 0px;
   border-color: #dddddd
 }
+.analysis-list th {
+  border: 0px;
+  background-color: white;
+}
 
 /* Expand width of footer column since there is only one column */
 .bmds-desktop,.footer__column{

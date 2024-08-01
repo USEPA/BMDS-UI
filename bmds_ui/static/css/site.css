@@ -49,6 +49,9 @@ input[type=number] {
 .bg-custom {
   background-color: #b8daff;
 }
+.bg-lightblue {
+  background-color: #eaf6ff;
+}
 
 /* always above toast container */
 .toast-container {

@@ -31,8 +31,8 @@
 
     </div>
 
-    <form class="form-row align-items-center bg-light py-3" hx-get="{% url 'home' %}" hx-sync="this:replace" hx-select="#analysis-list" hx-target="#analysis-list" hx-swap="outerHTML" hx-trigger="change,keyup from:.typeahead changed delay:0.5s">
-      <div class="col-auto">
+    <form class="shadow-sm form-row align-items-center bg-lightblue p-3" hx-get="{% url 'home' %}" hx-sync="this:replace" hx-select="#analysis-list" hx-target="#analysis-list" hx-swap="outerHTML" hx-trigger="change,keyup from:.typeahead changed delay:0.5s">
+      <div class="col">
         <input class="form-control typeahead" name="q" value="{{q}}" type="text" placeholder="Search"/>
       </div>
       <div class="col-auto">
@@ -68,7 +68,14 @@
           <col />
           <col width="150px" />
           <col width="100px" />
+          <col width="100px" />
         </colgroup>
+        <thead>
+          <th colspan="2">Analysis</th>
+          <th>Type</th>
+          <th>Version</th>
+          <th>Last Updated</th>
+        </thead>
         <tbody>
           {% for object in objects %}
           <tr>
@@ -78,14 +85,17 @@
               <a class="text-dark stretched-link" href="{{object.get_edit_url}}">{{object}}</a>
             </td>
             <td>{{object.model_class_label}}</td>
+            <td>{{object.get_bmds_version.python|default:"-"}}</td>
             <td>{% table_time now object.timestamp %}</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
       {% include "includes/pagination.html" %}
-    {% else %}
-      <p class="text-muted">No analyses found.</p>
+    {% elif has_query %}
+      <div class="px-3 py-4 text-muted">
+        <p class="h4">No analyses available.</p>
+      </div>
     {% endif %}
     {% endwith %}
     </div>
@@ -99,7 +109,7 @@
         <ul class="mb-0">
           <li><a href="https://www.epa.gov/bmds" target="_blank" rel="noopener noreferrer">BMDS Home Page</a></li>
           <li><a href="https://www.epa.gov/bmds/how-modeling-dichotomous-data-bmds-online" target="_blank" rel="noopener noreferrer">BMDS Online Tutorial</a></li>
-          <li><a href="https://www.epa.gov/bmds/benchmark-dose-software-bmds-version-32-download" target="_blank" rel="noopener noreferrer">BMDS Downloads</a></li>
+          <li><a href="https://www.epa.gov/bmds/download-bmds" target="_blank" rel="noopener noreferrer">BMDS Downloads</a></li>
           <li><a href="https://ecomments.epa.gov/bmds/" target="_blank" rel="noopener noreferrer">BMDS Support</a></li>
         </ul>
       </div>
