@@ -16,7 +16,7 @@ from whitenoise import WhiteNoise
 
 from .. import __version__
 from ..main.settings import desktop
-from .config import Database, DesktopConfig, get_app_home
+from .config import Database, DesktopConfig, get_app_home, get_version_path
 from .log import log, stream
 
 
@@ -33,8 +33,9 @@ def setup_django_environment(db: Database):
 
     desktop.DATABASES["default"]["NAME"] = str(db.path)
 
-    public_data_root = app_home / "public"
-    logs_path = app_home / "logs"
+    version = get_version_path(__version__)
+    public_data_root = app_home / "public" / version
+    logs_path = app_home / "logs" / version
 
     public_data_root.mkdir(exist_ok=True, parents=False)
     logs_path.mkdir(exist_ok=True, parents=False)

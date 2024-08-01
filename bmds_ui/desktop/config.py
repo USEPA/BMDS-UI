@@ -10,7 +10,6 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
-from .. import __version__
 from .exceptions import DesktopException
 
 
@@ -117,15 +116,14 @@ def get_default_config_path() -> Path:
     # adapted from `hatch` source code
     # https://github.com/pypa/hatch/blob/3adae6c0dfd5c20dfe9bf6bae19b44a696c22a43/docs/config/hatch.md?plain=1#L5-L15
     app_home = Path.home()
-    version = get_version_path(__version__)
     match platform.system():
         case "Windows":
-            app_home = app_home / "AppData" / "Local" / "bmds" / version
+            app_home = app_home / "AppData" / "Local" / "bmds"
         case "Darwin":
-            app_home = app_home / "Library" / "Application Support" / "bmds" / version
+            app_home = app_home / "Library" / "Application Support" / "bmds"
         case "Linux" | _:
             config = Path(os.environ.get("XDG_CONFIG_HOME", "~/.config")).expanduser().resolve()
-            app_home = config / "bmds" / version
+            app_home = config / "bmds"
     return app_home
 
 
@@ -146,7 +144,7 @@ class Config:
     @classmethod
     def get_config_path(cls) -> Path:
         # if configuration file doesn't exist, create one. return the file
-        config = get_app_home() / "config.json"
+        config = get_app_home() / f"config_v{LATEST_CONFIG_VERSION}.json"
         if not config.exists():
             config.write_text(DesktopConfig.default().model_dump_json(indent=2))
         return config
