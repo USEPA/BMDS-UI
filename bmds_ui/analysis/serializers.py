@@ -6,7 +6,7 @@ from . import models, validators
 class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Collection
-        fields = ("id", "name")
+        fields = ("id", "bg_color", "name")
 
 
 class AnalysisSerializer(serializers.ModelSerializer):

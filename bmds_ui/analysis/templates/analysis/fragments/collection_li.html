@@ -1,3 +1,5 @@
-<li class="list-group-item" hx-swap="innerHTML">{{object.name}}
+<li class="list-group-item" hx-swap="outerHTML">
+    <span style="background: {{object.bg_color}}1F; border: 3px solid {{object.bg_color}};" >&emsp;</span>
+    <span class="ml-2">{{object.name}}</span>
     <a class="btn btn-primary float-right" href="#" hx-get="{% url 'actions' action='collection_update' %}?id={{object.id}}" hx-target='closest li'><span class="bi bi-pencil-square mr-1"></span>Update</a>
 </li>

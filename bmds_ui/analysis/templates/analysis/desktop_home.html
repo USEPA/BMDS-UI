@@ -12,14 +12,22 @@
       <div class="dropdown mr-2">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">Collections</button>
         <div class="dropdown-menu dropdown-menu-right">
-          <form class="px-2">
-            <a class="btn btn-primary float-right mr-4"
-              href="#"
-              hx-get="{% url 'actions' action='collection_create' %}"
-              hx-target="#collection-list"
-              hx-swap="afterbegin"><span class="bi bi-plus-square-fill mr-1"></span>Create</a>
-            <div class="clearfix"></div>
-            {% include "analysis/fragments/collection_list.html" with object_list=collection_qs no_oob=True %}
+          <form class="px-2" style="width: 500px">
+            <div class="d-flex px-3 pt-3">
+              <h3 class='mb-0'>Collections</h3>
+              <a class="btn btn-primary ml-auto align-self-start"
+                href="#"
+                hx-get="{% url 'actions' action='collection_create' %}"
+                hx-target="#collection-list"
+                hx-swap="afterbegin"><span class="bi bi-plus-square-fill mr-1"></span>Create</a>
+            </div>
+            <p class='text-muted mb-2 px-3'>Create new collections or update existing collections. Analyses can be applied to one or more collections when editing an analysis. Please refresh this page after making edits to see the changes reflected.</p>
+            <ul class="list-group mb-0" id="collection-list">
+              {% for object in collection_qs %}
+                  {% include 'analysis/fragments/collection_li.html' %}
+              {% endfor %}
+              <li class="list-group-item show-only-child text-muted">No collections. Would you like to create one?</li>
+            </ul>
           </form>
         </div>
       </div>

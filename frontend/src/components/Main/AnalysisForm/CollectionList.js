@@ -13,9 +13,12 @@ class CollectionList extends Component {
         }
 
         return (
-            <div className="">
+            <div className="mt-2">
                 {collections.map(d => (
-                    <span className="badge badge-info ml-2" key={d.id}>
+                    <span
+                        className="analysis-label"
+                        style={{border: `3px solid ${d.bg_color}`, background: `${d.bg_color}1F`}}
+                        key={d.id}>
                         {d.name}
                     </span>
                 ))}

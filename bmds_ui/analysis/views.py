@@ -99,13 +99,6 @@ class DesktopActions(HtmxView):
         "collection_delete",
     }
 
-    def _return_collection_list(self, request: HttpRequest) -> HttpResponse:
-        return render(
-            request,
-            "analysis/fragments/collection_list.html",
-            {"object_list": models.Collection.objects.all().order_by("name")},
-        )
-
     @action()
     def toggle_star(self, request: HttpRequest, **kw):
         id = uuid_or_404(request.GET.get("id", ""))
@@ -128,19 +121,33 @@ class DesktopActions(HtmxView):
             {"object": object},
         )
 
+    def _render_collection_item(self, request: HttpRequest, instance: models.Collection):
+        return render(
+            request,
+            "analysis/fragments/collection_li.html",
+            {"object": instance},
+        )
+
+    def _render_collection_form(
+        self,
+        request: HttpRequest,
+        form: forms.CollectionForm,
+        instance: models.Collection | None,
+    ):
+        return render(
+            request,
+            "analysis/fragments/collection_form.html",
+            {"form": form, "object": instance},
+        )
+
     @action(methods=("get", "post"))
     def collection_create(self, request: HttpRequest, **kw):
         data = request.POST if request.method == "POST" else None
         form = forms.CollectionForm(data=data)
         if request.method == "POST" and form.is_valid():
             form.instance.save()
-            return self._return_collection_list(request)
-        # TODO - fix rendering if form contains error
-        return render(
-            request,
-            "analysis/fragments/collection_form.html",
-            {"form": form},
-        )
+            return self._render_collection_item(request, form.instance)
+        return self._render_collection_form(request, form, None)
 
     @action(methods=("get", "post"))
     def collection_update(self, request: HttpRequest, **kw):
@@ -150,13 +157,8 @@ class DesktopActions(HtmxView):
         form = forms.CollectionForm(instance=object, data=data)
         if request.method == "POST" and form.is_valid():
             form.save()
-            return self._return_collection_list(request)
-        # TODO - fix rendering if form contains error
-        return render(
-            request,
-            "analysis/fragments/collection_form.html",
-            {"form": form, "object": object},
-        )
+            return self._render_collection_item(request, form.instance)
+        return self._render_collection_form(request, form, object)
 
     @action(methods=("delete",))
     def collection_delete(self, request: HttpRequest, **kw):
