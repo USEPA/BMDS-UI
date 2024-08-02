@@ -11,6 +11,7 @@ import reversion
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from django.db import DataError, models
 from django.urls import reverse
 from django.utils.text import slugify
@@ -29,6 +30,7 @@ from .executor import AnalysisSession, MultiTumorSession, Session, deserialize
 from .reporting import excel
 from .reporting.cache import DocxReportCache, ExcelReportCache
 from .schema import AnalysisOutput, AnalysisSessionSchema
+from .utils import re_hex_color
 
 logger = logging.getLogger(__name__)
 
@@ -385,7 +387,9 @@ class Analysis(models.Model):
 @reversion.register()
 class Collection(models.Model):
     name = models.CharField(max_length=128)
-    bg_color = models.CharField(max_length=7, default="#17A2B8")
+    bg_color = models.CharField(
+        max_length=7, default="#17A2B8", validators=[RegexValidator(regex=re_hex_color)]
+    )
     description = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

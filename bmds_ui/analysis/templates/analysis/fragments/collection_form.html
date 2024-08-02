@@ -3,11 +3,17 @@
         {% csrf_token %}
         <div class="form-group row">
             <label for="name" class="col-sm-3 col-form-label">Name</label>
-            <div class="col-sm-9">{{ form.name }}{{form.name.errors}}</div>
+            <div class="col-sm-9">
+                {{ form.name }}
+                {{ form.name.errors }}
+            </div>
         </div>
         <div class="form-group row">
             <label for="bg_color" class="col-sm-3 col-form-label">Color</label>
-            <div class="col-sm-9">{{ form.bg_color }}{{form.bg_color.errors}}</div>
+            <div class="col-sm-9">
+                {{ form.bg_color }}
+                {{form.bg_color.errors}}
+            </div>
         </div>
         <div class="form-group row d-flex justify-content-center">
             {% if object.id %}

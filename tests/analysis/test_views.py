@@ -193,9 +193,9 @@ class TestDesktopActions:
         assert resp.status_code == 200
         assertTemplateUsed(resp, "analysis/fragments/collection_form.html")
 
-        resp = desktop_client.post(url, data={"name": "hi"})
+        resp = desktop_client.post(url, data={"name": "hi", "bg_color": "#123456"})
         assert resp.status_code == 200
-        assertTemplateUsed(resp, "analysis/fragments/collection_list.html")
+        assertTemplateUsed(resp, "analysis/fragments/collection_li.html")
         obj = resp.context["object"]
 
         # UPDATE
@@ -204,9 +204,9 @@ class TestDesktopActions:
         assert resp.status_code == 200
         assertTemplateUsed(resp, "analysis/fragments/collection_form.html")
 
-        resp = desktop_client.post(url, data={"name": "hi2"})
+        resp = desktop_client.post(url, data={"name": "hi2", "bg_color": "#123456"})
         assert resp.status_code == 200
-        assertTemplateUsed(resp, "analysis/fragments/collection_list.html")
+        assertTemplateUsed(resp, "analysis/fragments/collection_li.html")
 
         # DELETE
         url = reverse("actions", kwargs=dict(action="collection_delete")) + f"?id={obj.id}"
