@@ -1,0 +1,2 @@
+class DesktopException(Exception):
+    pass

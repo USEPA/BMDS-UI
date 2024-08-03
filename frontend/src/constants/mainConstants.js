@@ -6,6 +6,6 @@ export const MODEL_CONTINUOUS = "C",
     modelTypes = [
         {name: "Continuous", value: MODEL_CONTINUOUS},
         {name: "Dichotomous", value: MODEL_DICHOTOMOUS},
-        {name: "Nested Dichotomous", value: MODEL_NESTED_DICHOTOMOUS},
+        // {name: "Nested Dichotomous", value: MODEL_NESTED_DICHOTOMOUS}, // TODO - restore
         {name: "Multistage Cancer / Multitumor", value: MODEL_MULTI_TUMOR},
     ];

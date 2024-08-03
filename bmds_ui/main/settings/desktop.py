@@ -37,43 +37,46 @@ DATABASES = {
     }
 }
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
-    "formatters": {"basic": {"format": "%(levelname)s %(asctime)s %(name)s %(message)s"}},
-    "handlers": {
-        "mail_admins": {
-            "level": "ERROR",
-            "filters": ["require_debug_false"],
-            "class": "django.utils.log.AdminEmailHandler",
+
+def setup_logging(path: Path):
+    return {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
+        "formatters": {"basic": {"format": "%(levelname)s %(asctime)s %(name)s %(message)s"}},
+        "handlers": {
+            "mail_admins": {
+                "level": "ERROR",
+                "filters": ["require_debug_false"],
+                "class": "django.utils.log.AdminEmailHandler",
+            },
+            "console": {"level": "DEBUG", "class": "logging.StreamHandler", "formatter": "basic"},
+            "file": {
+                "level": "DEBUG",
+                "class": "logging.handlers.RotatingFileHandler",
+                "formatter": "basic",
+                "filename": str(path / "django.log"),
+                "maxBytes": 10 * 1024 * 1024,  # 10 MB
+                "backupCount": 10,
+            },
+            "requests": {
+                "level": "INFO",
+                "class": "logging.handlers.RotatingFileHandler",
+                "formatter": "basic",
+                "filename": str(path / "requests.log"),
+                "maxBytes": 10 * 1024 * 1024,  # 10 MB
+                "backupCount": 10,
+            },
+            "null": {"class": "logging.NullHandler"},
         },
-        "console": {"level": "DEBUG", "class": "logging.StreamHandler", "formatter": "basic"},
-        "file": {
-            "level": "DEBUG",
-            "class": "logging.handlers.RotatingFileHandler",
-            "formatter": "basic",
-            "filename": str(LOGS_PATH / "django.log"),
-            "maxBytes": 10 * 1024 * 1024,  # 10 MB
-            "backupCount": 10,
+        "loggers": {
+            "": {"handlers": ["console"], "level": "INFO"},
+            "django": {"handlers": ["console"], "propagate": False, "level": "INFO"},
+            "django.request": {"handlers": ["console"], "level": "ERROR", "propagate": True},
+            "bmds_ui": {"handlers": ["console"], "propagate": False, "level": "INFO"},
+            "bmds_ui.request": {"handlers": ["console"], "propagate": False, "level": "INFO"},
         },
-        "requests": {
-            "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
-            "formatter": "basic",
-            "filename": str(LOGS_PATH / "requests.log"),
-            "maxBytes": 10 * 1024 * 1024,  # 10 MB
-            "backupCount": 10,
-        },
-        "null": {"class": "logging.NullHandler"},
-    },
-    "loggers": {
-        "": {"handlers": ["console"], "level": "INFO"},
-        "django": {"handlers": ["console"], "propagate": False, "level": "INFO"},
-        "django.request": {"handlers": ["console"], "level": "ERROR", "propagate": True},
-        "bmds_ui": {"handlers": ["console"], "propagate": False, "level": "INFO"},
-        "bmds_ui.request": {"handlers": ["console"], "propagate": False, "level": "INFO"},
-    },
-}
+    }
+
 
 CONTACT_US_LINK = "https://ecomments.epa.gov/bmds/"

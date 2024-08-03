@@ -16,7 +16,7 @@ from whitenoise import WhiteNoise
 
 from .. import __version__
 from ..main.settings import desktop
-from .config import Database, DesktopConfig
+from .config import Database, DesktopConfig, get_app_home, get_version_path
 from .log import log, stream
 
 
@@ -29,7 +29,24 @@ def sync_persistent_data():
 
 def setup_django_environment(db: Database):
     """Set the active django database to the current path and setup the database."""
+    app_home = get_app_home()
+
     desktop.DATABASES["default"]["NAME"] = str(db.path)
+
+    version = get_version_path(__version__)
+    public_data_root = app_home / "public" / version
+    logs_path = app_home / "logs" / version
+
+    public_data_root.mkdir(exist_ok=True, parents=False)
+    logs_path.mkdir(exist_ok=True, parents=False)
+
+    desktop.PUBLIC_DATA_ROOT = public_data_root
+    desktop.STATIC_ROOT = public_data_root / "static"
+    desktop.MEDIA_ROOT = public_data_root / "media"
+
+    desktop.LOGS_PATH = logs_path
+    desktop.LOGGING = desktop.setup_logging(logs_path)
+
     django.setup()
 
 
@@ -88,6 +105,11 @@ class AppRunner:
 
     def start(self, config: DesktopConfig, db: Database):
         if self.thread is None:
+            log.info("Searching for free ports")
+            config.server.find_free_port()
+            log.info(f"Free port found: {config.server.port}")
+            config.server.wait_till_free()
+            log.info(f"Starting application on {config.server.web_address}")
             self.thread = AppThread(config=config, db=db, daemon=True)
             self.thread.start()
 
@@ -98,14 +120,15 @@ class AppRunner:
 
 
 def get_latest_version(package: str) -> tuple[datetime, Version]:
+    raise ValueError("TODO - implement when we're clear to release")
     url = f"https://pypi.org/pypi/{package}/json"
     try:
         resp = urlopen(url, timeout=5)  # noqa: S310
     except URLError:
-        parsed = urlparse("https://pypi.org/pypi/")
+        parsed = urlparse(url)
         raise ValueError(
             f"Could not check latest version; unable to reach {parsed.scheme}://{parsed.netloc}."
-        )
+        ) from URLError
     data = json.loads(resp.read().decode("utf-8"))
     latest_str = list(data["releases"].keys())[-1]
     upload_time = data["releases"][latest_str][0]["upload_time"]
