@@ -20,10 +20,9 @@ from django.views.generic import (
 )
 
 from ..common.views import HtmxView, action, desktop_only, int_or_404, uuid_or_404
-from . import forms, models
+from . import constants, forms, models
 from .reporting.analytics import get_cached_analytics
 from .utils import get_citation
-from .validators.session import BmdsVersion
 
 
 class Home(TemplateView):
@@ -70,6 +69,8 @@ class DesktopHome(ListView):
         if c := self.request.GET.get("collection"):
             if c.isnumeric():
                 qs = qs.filter(collections=c)
+        if mt := self.request.GET.get("modeltype", ""):
+            qs = qs.filter(inputs__dataset_type=mt)
         return qs.prefetch_related("collections")
 
     def get_context_data(self, **kwargs):
@@ -81,7 +82,9 @@ class DesktopHome(ListView):
             collection=int(collection) if collection.isnumeric() else "",
             collection_qs=models.Collection.objects.all().order_by("name"),
             collections=models.Collection.opts(),
+            model_types=constants.model_types,
             now=now(),
+            has_query=len(self.request.GET) > 0,
         )
         return context
 
@@ -95,13 +98,6 @@ class DesktopActions(HtmxView):
         "collection_update",
         "collection_delete",
     }
-
-    def _return_collection_list(self, request: HttpRequest) -> HttpResponse:
-        return render(
-            request,
-            "analysis/fragments/collection_list.html",
-            {"object_list": models.Collection.objects.all().order_by("name")},
-        )
 
     @action()
     def toggle_star(self, request: HttpRequest, **kw):
@@ -125,18 +121,33 @@ class DesktopActions(HtmxView):
             {"object": object},
         )
 
+    def _render_collection_item(self, request: HttpRequest, instance: models.Collection):
+        return render(
+            request,
+            "analysis/fragments/collection_li.html",
+            {"object": instance},
+        )
+
+    def _render_collection_form(
+        self,
+        request: HttpRequest,
+        form: forms.CollectionForm,
+        instance: models.Collection | None,
+    ):
+        return render(
+            request,
+            "analysis/fragments/collection_form.html",
+            {"form": form, "object": instance},
+        )
+
     @action(methods=("get", "post"))
     def collection_create(self, request: HttpRequest, **kw):
         data = request.POST if request.method == "POST" else None
         form = forms.CollectionForm(data=data)
         if request.method == "POST" and form.is_valid():
             form.instance.save()
-            return self._return_collection_list(request)
-        return render(
-            request,
-            "analysis/fragments/collection_form.html",
-            {"form": form},
-        )
+            return self._render_collection_item(request, form.instance)
+        return self._render_collection_form(request, form, None)
 
     @action(methods=("get", "post"))
     def collection_update(self, request: HttpRequest, **kw):
@@ -146,12 +157,8 @@ class DesktopActions(HtmxView):
         form = forms.CollectionForm(instance=object, data=data)
         if request.method == "POST" and form.is_valid():
             form.save()
-            return self._return_collection_list(request)
-        return render(
-            request,
-            "analysis/fragments/collection_form.html",
-            {"form": form, "object": object},
-        )
+            return self._render_collection_item(request, form.instance)
+        return self._render_collection_form(request, form, object)
 
     @action(methods=("delete",))
     def collection_delete(self, request: HttpRequest, **kw):
@@ -237,7 +244,6 @@ class AnalysisDetail(DetailView):
                 "executeResetUrl": self.object.get_api_execute_reset_url(),
                 "deleteDateStr": self.object.deletion_date_str,
                 "deletionDaysUntilDeletion": self.object.days_until_deletion,
-                "bmdsVersion": BmdsVersion.latest(),
                 "collections": models.Collection.opts(),
             }
         return context

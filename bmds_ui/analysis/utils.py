@@ -1,3 +1,4 @@
+import re
 from textwrap import dedent
 
 from django.conf import settings
@@ -20,3 +21,6 @@ def get_citation() -> str:
         f"""\
         United States Environmental Protection Agency. ({year}). BMDS Online ({__version__}; pybmds {version.python}; bmdscore {version.dll}) [Web App]. Available from {uri}. Accessed {accessed}."""
     )
+
+
+re_hex_color = re.compile("^#(?:[0-9a-fA-F]{3}){1,2}$")

@@ -6,7 +6,6 @@ from django.utils.timezone import now
 from pytest_django.asserts import assertTemplateNotUsed, assertTemplateUsed
 
 from bmds_ui.analysis.models import Analysis, Collection
-from bmds_ui.analysis.validators.session import BmdsVersion
 from bmds_ui.analysis.views import Analytics, DesktopHome, Home, get_analysis_or_404
 
 
@@ -70,7 +69,6 @@ class TestAnalysisDetail:
                 "executeUrl": f"/api/v1/analysis/{pk}/execute/",
                 "executeResetUrl": f"/api/v1/analysis/{pk}/execute-reset/",
                 "deleteDateStr": "June 14, 2022",
-                "bmdsVersion": BmdsVersion.latest(),
                 "collections": [{"id": 1, "name": "Label #1"}],
             },
         }
@@ -195,9 +193,9 @@ class TestDesktopActions:
         assert resp.status_code == 200
         assertTemplateUsed(resp, "analysis/fragments/collection_form.html")
 
-        resp = desktop_client.post(url, data={"name": "hi"})
+        resp = desktop_client.post(url, data={"name": "hi", "bg_color": "#123456"})
         assert resp.status_code == 200
-        assertTemplateUsed(resp, "analysis/fragments/collection_list.html")
+        assertTemplateUsed(resp, "analysis/fragments/collection_li.html")
         obj = resp.context["object"]
 
         # UPDATE
@@ -206,9 +204,9 @@ class TestDesktopActions:
         assert resp.status_code == 200
         assertTemplateUsed(resp, "analysis/fragments/collection_form.html")
 
-        resp = desktop_client.post(url, data={"name": "hi2"})
+        resp = desktop_client.post(url, data={"name": "hi2", "bg_color": "#123456"})
         assert resp.status_code == 200
-        assertTemplateUsed(resp, "analysis/fragments/collection_list.html")
+        assertTemplateUsed(resp, "analysis/fragments/collection_li.html")
 
         # DELETE
         url = reverse("actions", kwargs=dict(action="collection_delete")) + f"?id={obj.id}"

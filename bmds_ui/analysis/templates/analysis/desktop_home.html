@@ -12,14 +12,22 @@
       <div class="dropdown mr-2">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">Collections</button>
         <div class="dropdown-menu dropdown-menu-right">
-          <form class="p-2">
-            <a class="btn btn-primary float-right mr-4"
-              href="#"
-              hx-get="{% url 'actions' action='collection_create' %}"
-              hx-target="#collection-list"
-              hx-swap="afterbegin"><span class="bi bi-plus-square-fill mr-1"></span>Create</a>
-            <div class="clearfix"></div>
-            {% include "analysis/fragments/collection_list.html" with object_list=collection_qs no_oob=True %}
+          <form class="px-2" style="width: 500px">
+            <div class="d-flex px-3 pt-3">
+              <h3 class='mb-0'>Collections</h3>
+              <a class="btn btn-primary ml-auto align-self-start"
+                href="#"
+                hx-get="{% url 'actions' action='collection_create' %}"
+                hx-target="#collection-list"
+                hx-swap="afterbegin"><span class="bi bi-plus-square-fill mr-1"></span>Create</a>
+            </div>
+            <p class='text-muted mb-2 px-3'>Create new collections or update existing collections. Analyses can be applied to one or more collections when editing an analysis. Please refresh this page after making edits to see the changes reflected.</p>
+            <ul class="list-group mb-0" id="collection-list">
+              {% for object in collection_qs %}
+                  {% include 'analysis/fragments/collection_li.html' %}
+              {% endfor %}
+              <li class="list-group-item show-only-child text-muted">No collections. Would you like to create one?</li>
+            </ul>
           </form>
         </div>
       </div>
@@ -31,8 +39,8 @@
 
     </div>
 
-    <form class="form-row align-items-center bg-light py-3" hx-get="{% url 'home' %}" hx-sync="this:replace" hx-select="#analysis-list" hx-target="#analysis-list" hx-swap="outerHTML" hx-trigger="change,keyup from:.typeahead changed delay:0.5s">
-      <div class="col-auto">
+    <form class="shadow-sm form-row align-items-center bg-lightblue p-3" hx-get="{% url 'home' %}" hx-sync="this:replace" hx-select="#analysis-list" hx-target="#analysis-list" hx-swap="outerHTML" hx-trigger="change,keyup from:.typeahead changed delay:0.5s">
+      <div class="col">
         <input class="form-control typeahead" name="q" value="{{q}}" type="text" placeholder="Search"/>
       </div>
       <div class="col-auto">
@@ -40,6 +48,14 @@
           <option value="">--- Collection ---</option>
           {% for c in collections %}
             <option value="{{c.id}}" {% if collection == c.id %}selected {% endif %}>{{c.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <select class="form-control custom-select" name="modeltype">
+          <option value="">--- Model Type ---</option>
+          {% for k,v in model_types.items %}
+            <option value="{{k}}">{{v}}</option>
           {% endfor %}
         </select>
       </div>
@@ -58,24 +74,36 @@
         <colgroup>
           <col width="40px" />
           <col />
+          <col width="150px" />
+          <col width="100px" />
           <col width="100px" />
         </colgroup>
+        <thead>
+          <th colspan="2">Analysis</th>
+          <th>Type</th>
+          <th>Desktop Version</th>
+          <th>Last Updated</th>
+        </thead>
         <tbody>
           {% for object in objects %}
           <tr>
             {% include 'analysis/fragments/td_star.html' with object=object %}
             <td class="stretched-link-parent">
-              {% for collection in object.collections.all %}<span class="mr-1 badge badge-info">{{collection}}</span>{% endfor %}
+              {% for collection in object.collections.all %}<span class="analysis-label" style="border: 3px solid {{collection.bg_color}}; background: {{collection.bg_color}}1F" >{{collection}}</span>{% endfor %}
               <a class="text-dark stretched-link" href="{{object.get_edit_url}}">{{object}}</a>
             </td>
+            <td>{{object.model_class_label}}</td>
+            <td>{{object.outputs.bmds_ui_version|default:"-"}}</td>
             <td>{% table_time now object.timestamp %}</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
       {% include "includes/pagination.html" %}
-    {% else %}
-      <p class="text-muted">No analyses found.</p>
+    {% elif has_query %}
+      <div class="px-3 py-4 text-muted">
+        <p class="h4">No analyses available.</p>
+      </div>
     {% endif %}
     {% endwith %}
     </div>
@@ -89,7 +117,7 @@
         <ul class="mb-0">
           <li><a href="https://www.epa.gov/bmds" target="_blank" rel="noopener noreferrer">BMDS Home Page</a></li>
           <li><a href="https://www.epa.gov/bmds/how-modeling-dichotomous-data-bmds-online" target="_blank" rel="noopener noreferrer">BMDS Online Tutorial</a></li>
-          <li><a href="https://www.epa.gov/bmds/benchmark-dose-software-bmds-version-32-download" target="_blank" rel="noopener noreferrer">BMDS Downloads</a></li>
+          <li><a href="https://www.epa.gov/bmds/download-bmds" target="_blank" rel="noopener noreferrer">BMDS Downloads</a></li>
           <li><a href="https://ecomments.epa.gov/bmds/" target="_blank" rel="noopener noreferrer">BMDS Support</a></li>
         </ul>
       </div>

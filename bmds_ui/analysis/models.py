@@ -6,10 +6,12 @@ from datetime import datetime, timedelta
 from io import BytesIO
 
 import pandas as pd
+import pydantic
 import reversion
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from django.db import DataError, models
 from django.urls import reverse
 from django.utils.text import slugify
@@ -21,13 +23,14 @@ from pybmds.constants import ModelClass
 from pybmds.recommender.recommender import RecommenderSettings
 from pybmds.types.session import VersionSchema
 
+from .. import __version__
 from ..common.utils import random_string
-from . import tasks, validators
+from . import constants, tasks, validators
 from .executor import AnalysisSession, MultiTumorSession, Session, deserialize
 from .reporting import excel
 from .reporting.cache import DocxReportCache, ExcelReportCache
 from .schema import AnalysisOutput, AnalysisSessionSchema
-from .validators.session import BmdsVersion
+from .utils import re_hex_color
 
 logger = logging.getLogger(__name__)
 
@@ -156,6 +159,10 @@ class Analysis(models.Model):
     @property
     def model_class(self) -> ModelClass:
         return ModelClass(self.inputs["dataset_type"])
+
+    @property
+    def model_class_label(self) -> str:
+        return constants.model_types[self.inputs["dataset_type"]]
 
     def get_session(self, index: int) -> Session:
         if not self.is_finished or self.has_errors:
@@ -313,7 +320,7 @@ class Analysis(models.Model):
         # get prepare complete output object
         analysis_output = AnalysisOutput(
             analysis_id=str(self.id),
-            bmds_ui_version=settings.COMMIT.sha,
+            bmds_ui_version=__version__,
             bmds_python_version=bmds_python_version,
             outputs=[output.model_dump(by_alias=True) for output in outputs],
         )
@@ -341,7 +348,6 @@ class Analysis(models.Model):
 
     def default_input(self) -> dict:
         return {
-            "bmds_version": BmdsVersion.latest(),
             "dataset_type": ModelClass.CONTINUOUS,
             "datasets": [],
             "models": {},
@@ -354,9 +360,12 @@ class Analysis(models.Model):
         self.deletion_date = get_deletion_date(self.deletion_date)
 
     def get_bmds_version(self) -> VersionSchema | None:
-        if not self.is_finished or self.has_errors:
+        if not self.is_finished or self.has_errors or self.outputs is None:
             return None
-        return AnalysisOutput.model_validate(self.outputs).bmds_python_version
+        try:
+            return VersionSchema.model_validate(self.outputs["bmds_python_version"])
+        except pydantic.ValidationError:
+            return None
 
     @property
     def deletion_date_str(self) -> str | None:
@@ -378,6 +387,9 @@ class Analysis(models.Model):
 @reversion.register()
 class Collection(models.Model):
     name = models.CharField(max_length=128)
+    bg_color = models.CharField(
+        max_length=7, default="#17A2B8", validators=[RegexValidator(regex=re_hex_color)]
+    )
     description = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

@@ -4,7 +4,6 @@ import pytest
 from django.core.management import call_command
 from django.test import Client
 
-from bmds_ui.analysis.validators.session import BmdsVersion
 from pybmds.recommender import RecommenderSettings
 
 
@@ -50,7 +49,6 @@ def vcr_cassette_dir(request):
 @pytest.fixture
 def complete_continuous():
     return {
-        "bmds_version": BmdsVersion.BMDS330.value,
         "dataset_type": "C",
         "models": {
             "frequentist_restricted": ["Power"],
@@ -86,7 +84,6 @@ def complete_continuous():
 def complete_continuous_individual():
     # fmt: off
     return {
-        "bmds_version": BmdsVersion.BMDS330.value,
         "dataset_type": "C",
         "models": {
             "frequentist_restricted": ["Power"],
@@ -136,7 +133,6 @@ def complete_continuous_individual():
 @pytest.fixture
 def complete_dichotomous():
     return {
-        "bmds_version": BmdsVersion.BMDS330.value,
         "dataset_type": "D",
         "models": {
             "frequentist_unrestricted": ["Logistic"],
@@ -193,7 +189,6 @@ def nested_dichotomous_datasets():
 @pytest.fixture
 def bmds_complete_nd():
     return {
-        "bmds_version": BmdsVersion.BMDS330.value,
         "dataset_type": "ND",
         "models": {
             "frequentist_restricted": ["Nested Logistic"],
@@ -258,7 +253,6 @@ def bmds_complete_nd():
 @pytest.fixture
 def bmds_complete_mt():
     return {
-        "bmds_version": BmdsVersion.BMDS330.value,
         "dataset_type": "MT",
         "models": {
             "frequentist_restricted": ["Multistage"],

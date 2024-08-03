@@ -1,23 +1,36 @@
-<form class="form-inline" hx-target="closest li" hx-swap="outerHTML">
-    {% csrf_token %}
-    <div class="form-group">{{ form.name }}</div>
-    <div class="form-group d-flex">
-        {% if object.id %}
-            <a class="btn btn-primary" type="submit"
-                hx-target="#collection-list"
-                hx-post="{% url 'actions' action='collection_update' %}?id={{object.id}}">Update</a>
-            <a class="btn btn-light" href="#"
-                hx-get="{% url 'actions' action='collection_detail' %}?id={{object.id}}">Cancel</a>
-            <a class="btn btn-danger" href="#"
-                hx-confirm="Are you sure you wish to delete?"
-                hx-delete="{% url 'actions' action='collection_delete' %}?id={{object.id}}"
-                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>Delete</a>
-        {% else %}
-            <button class="btn btn-primary" type="submit"
-                hx-target="#collection-list"
-                hx-post="{% url 'actions' action='collection_create' %}">Create</button>
-            <button class="btn btn-light" type='button'
-                onclick="$(this).closest('form').remove()">Cancel</button>
-        {% endif %}
-    </div>
-</form>
+<li class="list-group-item bg-lightblue" hx-target="this" hx-swap="outerHTML">
+    <form>
+        {% csrf_token %}
+        <div class="form-group row">
+            <label for="name" class="col-sm-3 col-form-label">Name</label>
+            <div class="col-sm-9">
+                {{ form.name }}
+                {{ form.name.errors }}
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="bg_color" class="col-sm-3 col-form-label">Color</label>
+            <div class="col-sm-9">
+                {{ form.bg_color }}
+                {{form.bg_color.errors}}
+            </div>
+        </div>
+        <div class="form-group row d-flex justify-content-center">
+            {% if object.id %}
+                <button class="btn btn-primary" type="submit"
+                    hx-post="{% url 'actions' action='collection_update' %}?id={{object.id}}">Update</button>
+                <a class="btn btn-light mx-4" href="#"
+                    hx-get="{% url 'actions' action='collection_detail' %}?id={{object.id}}">Cancel</a>
+                <a class="btn btn-danger" href="#"
+                    hx-confirm="Are you sure you wish to delete?"
+                    hx-delete="{% url 'actions' action='collection_delete' %}?id={{object.id}}"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>Delete</a>
+            {% else %}
+                <button class="btn btn-primary mr-3" type="submit"
+                    hx-post="{% url 'actions' action='collection_create' %}">Create</button>
+                <button class="btn btn-light" type="button"
+                    onclick="$(this).closest('.list-group-item').remove(); event.stopPropagation();">Cancel</button>
+            {% endif %}
+        </div>
+    </form>
+</li>

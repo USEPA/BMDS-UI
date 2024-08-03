@@ -68,3 +68,8 @@ a.btn-warning:visited, a.badge-warning:visited {
 .bmds-header .nav-link {
   padding: 0 0 0 1em;
 }
+
+/* remove extra padding on bottom of list group */
+.list-group-item {
+  margin-bottom: 0;
+}

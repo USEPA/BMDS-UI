@@ -49,6 +49,9 @@ input[type=number] {
 .bg-custom {
   background-color: #b8daff;
 }
+.bg-lightblue {
+  background-color: #eaf6ff;
+}
 
 /* always above toast container */
 .toast-container {
@@ -149,4 +152,16 @@ input[type=number] {
 }
 .show-only-child:only-child {
   display: initial;
+}
+
+.analysis-label {
+  padding: 0 5px;
+  margin-right: 5px;
+  border-radius: 5px;
+}
+
+.errorlist{
+  color: red;
+  list-style: none;
+  padding-left: 0;
 }
