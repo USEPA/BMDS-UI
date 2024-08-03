@@ -21,7 +21,6 @@ class CreateAnalysisForm(forms.ModelForm):
 class CollectionForm(forms.ModelForm):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
-        self.fields["bg_color"].widget.attrs["width"] = "30px"
         for field in self.fields.values():
             field.widget.attrs["class"] = "form-control"
 

@@ -81,7 +81,7 @@
         <thead>
           <th colspan="2">Analysis</th>
           <th>Type</th>
-          <th>Version</th>
+          <th>Desktop Version</th>
           <th>Last Updated</th>
         </thead>
         <tbody>
@@ -93,7 +93,7 @@
               <a class="text-dark stretched-link" href="{{object.get_edit_url}}">{{object}}</a>
             </td>
             <td>{{object.model_class_label}}</td>
-            <td>{{object.get_bmds_version.python|default:"-"}}</td>
+            <td>{{object.outputs.bmds_ui_version|default:"-"}}</td>
             <td>{% table_time now object.timestamp %}</td>
           </tr>
           {% endfor %}
