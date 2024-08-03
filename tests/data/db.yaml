@@ -1961,7 +1961,7 @@
       analysis_schema_version: '1.1'
       bmds_python_version:
         dll: 2023.10a1
-        python: 24.1a2
+        python: 24.1a3
       bmds_ui_version: 9434971c
       outputs:
       - bayesian:
@@ -3421,7 +3421,7 @@
             notes: ''
           version:
             dll: 2023.10a1
-            python: 24.1a2
+            python: 24.1a3
         dataset_index: 0
         error: null
         frequentist:
@@ -5137,7 +5137,7 @@
             notes: ''
           version:
             dll: 2023.10a1
-            python: 24.1a2
+            python: 24.1a3
         option_index: 0
     starred: false
     started: 2024-05-14 19:18:13.442351+00:00
