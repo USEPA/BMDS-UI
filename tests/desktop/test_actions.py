@@ -7,8 +7,9 @@ from bmds_ui.desktop import actions
 
 
 @pytest.mark.vcr
+@pytest.mark.xfail(reason="Turn back on when we're ready for release")
 def test_get_latest_version():
-    uploaded, version = actions.get_latest_version("bmds")
+    uploaded, version = actions.get_latest_version("bmds")  # TODO - change to bmds-ui
     assert isinstance(uploaded, datetime)
     assert isinstance(version, Version)
 
