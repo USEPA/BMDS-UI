@@ -144,7 +144,7 @@ class Config:
     @classmethod
     def get_config_path(cls) -> Path:
         # if configuration file doesn't exist, create one. return the file
-        config = get_app_home() / f"config_v{LATEST_CONFIG_VERSION}.json"
+        config = get_app_home() / f"config-v{LATEST_CONFIG_VERSION}.json"
         if not config.exists():
             config.write_text(DesktopConfig.default().model_dump_json(indent=2))
         return config
