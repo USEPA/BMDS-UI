@@ -11,27 +11,32 @@ export const parseServerErrors = errors => {
         let errorWasParsed = false;
 
         const container = {
-            data: [],
-            messages: [],
-            message: "",
-        };
+                data: [],
+                messages: [],
+                message: "",
+            },
+            parseError = error => {
+                try {
+                    const msg = JSON.parse(error);
+                    container.messages.push(...parsePydanticError(msg));
+                    container.data.push(...msg);
+                } catch {
+                    try {
+                        container.messages.push(extractErrorFromTraceback(error));
+                        container.data.push(error);
+                    } catch {
+                        return false;
+                    }
+                }
+                return true;
+            };
 
         console.warn(`Complete errors:\n\n ${errors}`);
 
         if (Array.isArray(errors)) {
             errors.map(error => {
                 if (typeof error === "string") {
-                    const lower = error.toLowerCase();
-                    if (lower.includes("pydantic")) {
-                        errorWasParsed = true;
-                        const msg = JSON.parse(error);
-                        container.data.push(...msg);
-                        container.messages.push(...parsePydanticError(msg));
-                    } else if (lower.includes("traceback")) {
-                        errorWasParsed = true;
-                        container.data.push(error);
-                        container.messages.push(extractErrorFromTraceback(error));
-                    }
+                    errorWasParsed = parseError(error);
                 }
             });
         }
