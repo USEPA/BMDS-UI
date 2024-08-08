@@ -16,7 +16,7 @@ class PriorEnum(StrEnum):
     bayesian = "bayesian"
 
 
-bmd3_prior_map = {
+bmd3_prior_map: dict[str, PriorClass] = {
     PriorEnum.frequentist_restricted: PriorClass.frequentist_restricted,
     PriorEnum.frequentist_unrestricted: PriorClass.frequentist_unrestricted,
     PriorEnum.bayesian: PriorClass.bayesian,
@@ -34,14 +34,14 @@ def build_model_settings(
     options: dict,
     dataset_options: dict,
 ) -> DichotomousModelSettings | ContinuousModelSettings | NestedDichotomousModelSettings:
-    prior_class = bmd3_prior_map[prior_class]
+    prior_cls = bmd3_prior_map[prior_class]
     if dataset_type == pybmds.constants.Dtype.DICHOTOMOUS:
         return DichotomousModelSettings(
             bmr=options["bmr_value"],
             alpha=round(1.0 - options["confidence_level"], 3),
             bmr_type=options["bmr_type"],
             degree=dataset_options["degree"],
-            priors=prior_class,
+            priors=prior_cls,
         )
     elif dataset_type in pybmds.constants.Dtype.CONTINUOUS_DTYPES():
         return ContinuousModelSettings(
@@ -52,18 +52,17 @@ def build_model_settings(
             disttype=options["dist_type"],
             degree=dataset_options["degree"],
             is_increasing=is_increasing_map[dataset_options["adverse_direction"]],
-            priors=prior_class,
+            priors=prior_cls,
         )
     elif dataset_type == pybmds.constants.Dtype.NESTED_DICHOTOMOUS:
-        is_restricted = prior_class == PriorClass.frequentist_restricted
         return NestedDichotomousModelSettings(
             bmr_type=options["bmr_type"],
             bmr=options["bmr_value"],
             alpha=round(1.0 - options["confidence_level"], 3),
             litter_specific_covariate=options["litter_specific_covariate"],
-            restricted=is_restricted,
             bootstrap_iterations=options["bootstrap_iterations"],
             bootstrap_seed=options["bootstrap_seed"],
+            priors=prior_cls,
         )
     elif dataset_type == pybmds.constants.ModelClass.MULTI_TUMOR:
         return DichotomousModelSettings(
