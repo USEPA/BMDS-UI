@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import TwoColumnTable from "@/components/common/TwoColumnTable";
-import {ff} from "@/utils/formatters";
+import {ff, fractionalFormatter} from "@/utils/formatters";
 
 @observer
 class BootstrapResult extends Component {
@@ -12,16 +12,16 @@ class BootstrapResult extends Component {
             data = [
                 ["# Iterations", settings.bootstrap_iterations],
                 ["Bootstrap Seed", ff(settings.bootstrap_seed)],
-                ["-2 * Log(Likelihood Ratio)", ff(results.ll)], // TODO - what label to use?
-                ["Observed Chi-square", ff(results.obs_chi_sq)],
+                ["Log-likelihood", ff(results.ll)],
+                ["Observed Chi²", ff(results.obs_chi_sq)],
                 [
                     <span key={0}>
                         Combined <i>P</i>-Value
                     </span>,
-                    ff(results.combined_pvalue),
+                    fractionalFormatter(results.combined_pvalue),
                 ],
             ];
-        return <TwoColumnTable data={data} label="Bootstrap Results" colwidths={[40, 60]} />;
+        return <TwoColumnTable data={data} label="Bootstrap Results" colwidths={[50, 50]} />;
     }
 }
 BootstrapResult.propTypes = {

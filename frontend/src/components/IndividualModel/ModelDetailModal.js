@@ -258,17 +258,17 @@ class NestedDichotomousModalBody extends Component {
                             data={outputStore.drIndividualPlotData}
                         />
                     </Col>
-                    <Col xs={6}>
-                        <BootstrapResults model={model} />
-                    </Col>
-                    <Col xs={6}>
-                        <BootstrapRuns model={model} />
-                    </Col>
-                    <Col xs={6}>
+                    <Col xs={5}>
                         <ModelParameters isNestedDichotomous={true} model={model} />
                     </Col>
-                    <Col xs={6}>
+                    <Col xs={7}>
                         <ScaledResidual model={model} />
+                    </Col>
+                    <Col xs={5}>
+                        <BootstrapResults model={model} />
+                    </Col>
+                    <Col xs={7}>
+                        <BootstrapRuns model={model} />
                     </Col>
                     <Col xs={12}>
                         <LitterData model={model} />

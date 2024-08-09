@@ -73,15 +73,15 @@ class ModelOptionsTable extends Component {
                 ["Bootstrap Seed", model.settings.bootstrap_seed],
                 ["Bootstrap Iterations", model.settings.bootstrap_iterations],
                 [
-                    "Intralitter Correlation",
-                    getLabel(model.settings.intralitter_correlation, intralitterCorrelation),
-                ],
-                [
                     "Litter Specific Covariate",
                     getLabel(
                         model.settings.litter_specific_covariate,
                         litterSpecificCovariateOptions
                     ),
+                ],
+                [
+                    "Intralitter Correlation",
+                    getLabel(model.settings.intralitter_correlation, intralitterCorrelation),
                 ],
             ];
         } else {

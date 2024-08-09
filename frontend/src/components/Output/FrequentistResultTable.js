@@ -293,9 +293,6 @@ class FrequentistResultTable extends Component {
         const {models} = selectedFrequentist,
             restrictedModels = _.chain(models)
                 .map((model, index) => {
-                    if (isNestedDichotomous) {
-                        return model.settings.restricted ? {model, index} : null;
-                    }
                     if (model.settings.priors.prior_class === priorClass.frequentist_restricted) {
                         return {model, index};
                     }
@@ -305,9 +302,6 @@ class FrequentistResultTable extends Component {
                 .value(),
             unrestrictedModels = _.chain(models)
                 .map((model, index) => {
-                    if (isNestedDichotomous) {
-                        return !model.settings.restricted ? {model, index} : null;
-                    }
                     if (model.settings.priors.prior_class === priorClass.frequentist_unrestricted) {
                         return {model, index};
                     }
