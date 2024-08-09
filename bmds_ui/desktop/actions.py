@@ -170,7 +170,7 @@ def show_version():
 def _write_startup_script(app_path: Path, python_path: Path, template_text: str) -> str:
     from pybmds import __version__ as pybmds_version
 
-    show_prerelease = any(v in pybmds_version for v in ["a", "b", "rc"])
+    show_prerelease = get_installed_version().is_prerelease
     if not app_path.exists() or not python_path.exists():
         raise ValueError("Cannot write shortcut; items not found")
     engine = django.template.engine.Engine()

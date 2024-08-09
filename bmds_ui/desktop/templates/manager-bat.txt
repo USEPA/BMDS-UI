@@ -8,7 +8,7 @@ echo --------------------------------
 echo:
 echo 1) Start BMDS Desktop
 echo 2) Update BMDS Desktop
-{% if show_prerelease %}echo 2p) Update BMDS Desktop (prerelease){% endif %}
+{% if show_prerelease %}echo 2p) Update BMDS Desktop (prerelease - EPA VPN required){% endif %}
 echo 3) Show diagnostic information
 echo:
 
@@ -28,18 +28,35 @@ goto :loop
 goto :beginning
 
 :update
-echo Updating BMDS Desktop ...
-"{{ python_path }}" -m pip install -U pip
-"{{ python_path }}" -m pip install -U bmds-ui
+echo Updating BMDS Desktop
+"{{ python_path }}" -m pip install -U -q pip
+echo:
+echo Current version:
+"{{ python_path }}" -m pip show bmds-ui pybmds
+echo:
+echo This may take a while, wait until you see "Update complete!"
+echo Updating ...
+"{{ python_path }}" -m pip install -U -q bmds-ui
+"{{ python_path }}" -m pip show bmds-ui pybmds
+echo:
 echo Update complete!
 pause
 goto :beginning
 
 {% if show_prerelease %}
 :update-prerelease
-echo Updating BMDS Desktop (prerelease - EPA VPN required) ...
-"{{ python_path }}" -m pip install -U pip
-"{{ python_path }}" -m pip install -U bmds-ui --index-url {{prerelease_url}}
+echo Updating BMDS Desktop (prerelease - EPA VPN required)
+echo:
+"{{ python_path }}" -m pip install -U -q pip
+echo:
+echo Current version:
+"{{ python_path }}" -m pip show bmds-ui pybmds
+echo:
+echo This may take a while, wait until you see "Update complete!"
+echo Updating ...
+"{{ python_path }}" -m pip install -q -U bmds-ui --index-url {{prerelease_url}}
+"{{ python_path }}" -m pip show bmds-ui pybmds
+echo:
 echo Update complete!
 pause
 goto :beginning
