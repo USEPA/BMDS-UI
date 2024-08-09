@@ -24,7 +24,11 @@ def get_app(config: str | None = None) -> BmdsDesktopTui:
 def main():
     parser = argparse.ArgumentParser(description=f"BMDS Desktop ({__version__})")
     parser.add_argument("--version", "-V", action="store_true", help="Show version")
-    parser.add_argument("--create-shortcut", action="store_true", help="Create a shortcut")
+    parser.add_argument(
+        "--create-shortcut",
+        action="store_true",
+        help="Create a shortcut to the BMDS Desktop Manager",
+    )
     parser.add_argument(
         "--config",
         metavar="config",
