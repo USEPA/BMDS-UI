@@ -1,0 +1,103 @@
+#!/bin/bash
+
+set -e
+
+write_instructions(){
+echo
+echo "--------------------------------"
+echo "      BMDS Desktop Manager"
+echo "--------------------------------"
+echo
+echo "1) Start BMDS Desktop"
+echo "2) Update BMDS Desktop"
+{% if show_prerelease %}echo "2p) Update BMDS Desktop (prerelease - EPA VPN required)"{% endif %}
+echo "3) Show diagnostic information"
+echo
+}
+
+pause(){
+read -n 1 -p "Press any key to continue..."
+}
+
+start(){
+"{{ bmds_desktop_path }}"
+write_instructions
+}
+
+update(){
+echo "Updating BMDS Desktop"
+echo "---------------------"
+"{{ python_path }}" -m ensurepip &> /dev/null
+"{{ python_path }}" -m pip install -U -q pip
+echo
+echo Current version:
+"{{ python_path }}" -m pip show bmds-ui pybmds
+echo
+echo "This may take a while, wait until you see \"Update complete!\""
+echo "Updating ..."
+"{{ python_path }}" -m pip install -U -q bmds-ui
+"{{ python_path }}" -m pip show bmds-ui pybmds
+echo
+echo "Update complete!"
+pause
+write_instructions
+}
+
+{% if show_prerelease %}update_pre(){
+echo "Updating BMDS Desktop (prerelease - EPA VPN required)"
+echo "-----------------------------------------------------"
+echo
+"{{ python_path }}" -m ensurepip &> /dev/null
+"{{ python_path }}" -m pip install -U -q pip
+echo
+echo "Current version:"
+"{{ python_path }}" -m pip show bmds-ui pybmds
+echo
+echo "This may take a while, wait until you see \"Update complete!\""
+echo "Updating ..."
+"{{ python_path }}" -m pip install -q -U bmds-ui --index-url {{prerelease_url}}
+"{{ python_path }}" -m pip show bmds-ui pybmds
+echo
+echo "Update complete!"
+pause
+write_instructions
+}{% endif %}
+
+diagnostic(){
+echo
+echo "Diagnostic Installation Information:"
+echo "------------------------------------"
+echo
+echo "Python Version: {{ python_version }}"
+echo "Python Path: {{ python_path }}"
+echo "BMDS Desktop (bmds-ui) Version: {{ bmds_ui_version }}"
+echo "pybmds Version: Version: {{ pybmds_version }}"
+echo
+pause
+write_instructions
+}
+
+valid_input=0
+write_instructions
+while [ $valid_input -eq 0 ]; do
+    read -p "Enter a number above, or q to quit: " user_input
+    if [[ $user_input == "q" || $user_input == "Q" || $user_input == "quit"  || $user_input == "exit" ]]; then
+        valid_input=1
+    fi
+    if [[ $user_input == "help" ]]; then
+        write_instructions
+    fi
+    if [[ $user_input == "1" ]]; then
+        start
+    fi
+    if [[ $user_input == "2" ]]; then
+        update
+    fi
+    {% if show_prerelease %}if [[ $user_input == "2p" ]]; then
+        update_pre
+    fi{%endif%}
+    if [[ $user_input == "3" ]]; then
+        diagnostic
+    fi
+done
+pause

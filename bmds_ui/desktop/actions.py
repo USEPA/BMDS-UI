@@ -192,7 +192,6 @@ def _write_startup_script(app_path: Path, python_path: Path, template_text: str)
 def create_shortcut():
     shortcut_path = Path(os.curdir).resolve() / "bmds-desktop"
     shortcut_path.mkdir(exist_ok=True)
-    shortcut = shortcut_path / "bmds-desktop-manager.bat"
     system = platform.system()
     match system:
         case "Windows":
@@ -200,11 +199,20 @@ def create_shortcut():
             app_path = python_path.parent / "bmds-desktop.exe"
             if not app_path.exists():
                 app_path = Path(sys.argv[0]).parent / "bmds-desktop.exe"
+            shortcut = shortcut_path / "bmds-desktop-manager.bat"
             template_text = (Path(__file__).parent / "templates/manager-bat.txt").read_text()
             script = _write_startup_script(app_path, python_path, template_text)
             shortcut.write_text(script)
         case "Darwin" | "Linux" | _:
-            shortcut.write_text("TODO")
+            python_path = Path(sys.executable)
+            app_path = python_path.parent / "bmds-desktop"
+            if not app_path.exists():
+                app_path = Path(sys.argv[0]).parent / "bmds-desktop"
+            shortcut = shortcut_path / "bmds-desktop-manager.sh"
+            template_text = (Path(__file__).parent / "templates/manager-sh.txt").read_text()
+            script = _write_startup_script(app_path, python_path, template_text)
+            shortcut.touch(mode=0o755, exist_ok=True)
+            shortcut.write_text(script)
 
     console = Console()
     console.print("BMDS Desktop Manger Created:", style="magenta")

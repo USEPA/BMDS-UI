@@ -29,6 +29,7 @@ goto :beginning
 
 :update
 echo Updating BMDS Desktop
+"{{ python_path }}" -m ensurepip > nul 2>&1
 "{{ python_path }}" -m pip install -U -q pip
 echo:
 echo Current version:
@@ -47,6 +48,7 @@ goto :beginning
 :update-prerelease
 echo Updating BMDS Desktop (prerelease - EPA VPN required)
 echo:
+"{{ python_path }}" -m ensurepip > nul 2>&1
 "{{ python_path }}" -m pip install -U -q pip
 echo:
 echo Current version:
