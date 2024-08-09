@@ -212,17 +212,17 @@ class FrequentistRow extends Component {
                         modelClasses={modelClasses}
                     />
                     <td>
-                        <FloatingPointHover value={results.summary.bmdl} />
+                        <FloatingPointHover value={results.bmdl} />
                     </td>
                     <td>
-                        <FloatingPointHover value={results.summary.bmd} />
+                        <FloatingPointHover value={results.bmd} />
                     </td>
                     <td>
-                        <FloatingPointHover value={results.summary.bmdu} />
+                        <FloatingPointHover value={results.bmdu} />
                     </td>
                     <td>{ff(results.combined_pvalue)}</td>
                     <td>
-                        <FloatingPointHover value={results.summary.aic} />
+                        <FloatingPointHover value={results.aic} />
                     </td>
                     <td>-</td>
                     <td>-</td>
