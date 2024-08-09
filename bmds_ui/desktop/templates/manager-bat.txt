@@ -1,0 +1,61 @@
+@echo off
+
+:beginning
+echo:
+echo --------------------------------
+echo       BMDS Desktop Manager
+echo --------------------------------
+echo:
+echo 1) Start BMDS Desktop
+echo 2) Update BMDS Desktop
+{% if show_prerelease %}echo 2p) Update BMDS Desktop (prerelease){% endif %}
+echo 3) Show diagnostic information
+echo:
+
+:loop
+set /p "id=Enter a number above, or q to quit: "
+if %id% == 1 goto :start
+if %id% == 2 goto :update
+{% if show_prerelease %}if %id% == 2p goto :update-prerelease{% endif %}
+if %id% == 3 goto :diagnostics
+if %id% == help goto :beginning
+if %id% == q goto :quit
+if %id% == Q goto :quit
+goto :loop
+
+:start
+"{{ bmds_desktop_path }}"
+goto :beginning
+
+:update
+echo Updating BMDS Desktop ...
+"{{ python_path }}" -m pip install -U pip
+"{{ python_path }}" -m pip install -U bmds-ui
+echo Update complete!
+pause
+goto :beginning
+
+{% if show_prerelease %}
+:update-prerelease
+echo Updating BMDS Desktop (prerelease - EPA VPN required) ...
+"{{ python_path }}" -m pip install -U pip
+"{{ python_path }}" -m pip install -U bmds-ui --index-url {{prerelease_url}}
+echo Update complete!
+pause
+goto :beginning
+{% endif %}
+
+:diagnostics
+echo:
+echo Diagnostic Installation Information:
+echo:
+echo Python Version: {{ python_version }}
+echo Python Path: {{ python_path }}
+echo BMDS Desktop (bmds-ui) Version: {{ bmds_ui_version }}
+echo pybmds Version: Version: {{ pybmds_version }}
+echo:
+pause
+goto :beginning
+
+:quit
+pause

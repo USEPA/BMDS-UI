@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 from .. import __version__
+from .actions import create_shortcut, show_version
 from .app import BmdsDesktopTui
 from .config import Config, get_default_config_path
 from .exceptions import DesktopException
@@ -20,14 +21,10 @@ def get_app(config: str | None = None) -> BmdsDesktopTui:
     return BmdsDesktopTui()
 
 
-def show_version():
-    """Show the version for BMDS Desktop"""
-    print(__version__)  # noqa: T201
-
-
 def main():
     parser = argparse.ArgumentParser(description=f"BMDS Desktop ({__version__})")
     parser.add_argument("--version", "-V", action="store_true", help="Show version")
+    parser.add_argument("--create-shortcut", action="store_true", help="Create a shortcut")
     parser.add_argument(
         "--config",
         metavar="config",
@@ -38,6 +35,8 @@ def main():
     args = parser.parse_args()
     if args.version:
         return show_version()
+    if args.create_shortcut:
+        return create_shortcut()
     try:
         get_app(config=args.config).run()
     except DesktopException as err:
