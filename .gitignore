@@ -7,6 +7,7 @@
 .ruff_cache/
 .tox/
 .vscode/
+/bmds-desktop/
 bmds_ui/static/bundles/
 build/
 /data/

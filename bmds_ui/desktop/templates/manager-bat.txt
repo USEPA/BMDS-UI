@@ -24,7 +24,7 @@ if %id% == Q goto :quit
 goto :loop
 
 :start
-"{{ bmds_desktop_path }}"
+"{{ python_path }}" -m bmds_ui
 goto :beginning
 
 :update

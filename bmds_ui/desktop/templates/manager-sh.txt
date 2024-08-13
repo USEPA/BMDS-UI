@@ -20,7 +20,7 @@ read -n 1 -p "Press any key to continue..."
 }
 
 start(){
-"{{ bmds_desktop_path }}"
+"{{ python_path }}" -m bmds_ui
 write_instructions
 }
 

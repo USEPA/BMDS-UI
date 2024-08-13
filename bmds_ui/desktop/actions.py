@@ -14,10 +14,10 @@ from webbrowser import open_new_tab
 from wsgiref.simple_server import WSGIServer, make_server
 
 import django
-import django.template
-import django.template.engine
 from django.conf import settings
 from django.core.management import call_command
+from django.template import Context, Template
+from django.template.engine import Engine
 from packaging.version import Version, parse
 from rich.console import Console
 from whitenoise import WhiteNoise
@@ -167,50 +167,43 @@ def show_version():
     console.print(__version__)
 
 
-def _write_startup_script(app_path: Path, python_path: Path, template_text: str) -> str:
+def render_template(template_text: str, context: dict) -> str:
+    template = Template(template_text, engine=Engine())
+    return template.render(Context(context))
+
+
+def write_startup_script(template: str) -> str:
     from pybmds import __version__ as pybmds_version
 
+    python_path = Path(sys.executable)
     show_prerelease = get_installed_version().is_prerelease
-    if not app_path.exists() or not python_path.exists():
-        raise ValueError("Cannot write shortcut; items not found")
-    engine = django.template.engine.Engine()
-    template = django.template.Template(template_text, engine=engine)
-    context = django.template.Context(
+    return render_template(
+        template,
         {
             "prerelease_url": PRERELEASE_URL,
             "show_prerelease": show_prerelease,
-            "bmds_desktop_path": app_path,
             "python_path": python_path,
             "python_version": platform.python_version(),
             "bmds_ui_version": __version__,
             "pybmds_version": pybmds_version,
-        }
+        },
     )
-    return template.render(context)
 
 
-def create_shortcut():
+def create_shortcut(no_input: bool = False):
     shortcut_path = Path(os.curdir).resolve() / "bmds-desktop"
     shortcut_path.mkdir(exist_ok=True)
     system = platform.system()
     match system:
         case "Windows":
-            python_path = Path(sys.executable)
-            app_path = python_path.parent / "bmds-desktop.exe"
-            if not app_path.exists():
-                app_path = Path(sys.argv[0]).parent / "bmds-desktop.exe"
             shortcut = shortcut_path / "bmds-desktop-manager.bat"
-            template_text = (Path(__file__).parent / "templates/manager-bat.txt").read_text()
-            script = _write_startup_script(app_path, python_path, template_text)
+            template = (Path(__file__).parent / "templates/manager-bat.txt").read_text()
+            script = write_startup_script(template)
             shortcut.write_text(script)
         case "Darwin" | "Linux" | _:
-            python_path = Path(sys.executable)
-            app_path = python_path.parent / "bmds-desktop"
-            if not app_path.exists():
-                app_path = Path(sys.argv[0]).parent / "bmds-desktop"
             shortcut = shortcut_path / "bmds-desktop-manager.sh"
-            template_text = (Path(__file__).parent / "templates/manager-sh.txt").read_text()
-            script = _write_startup_script(app_path, python_path, template_text)
+            template = (Path(__file__).parent / "templates/manager-sh.txt").read_text()
+            script = write_startup_script(template)
             shortcut.touch(mode=0o755, exist_ok=True)
             shortcut.write_text(script)
 
@@ -220,15 +213,16 @@ def create_shortcut():
     console.print(shortcut, style="cyan")
     console.print("\nOpening this file will start BMDS Desktop.")
     console.print("You can move this file or create a shortcut to it.\n")
-    resp = console.input(
-        f'Would you like to open the folder to view "{shortcut.name}"? ([cyan]y/n[/cyan])  '
-    )
 
-    if resp.lower()[0] == "y":
-        match system:
-            case "Windows":
-                os.startfile(str(shortcut_path))  # noqa: S606
-            case "Darwin":
-                subprocess.run(["open", str(shortcut_path)])  # noqa: S603, S607
-            case "Linux" | _:
-                console.print("Sorry, you'll have to open the folder manually.")
+    if not no_input:  # pragma: no cover
+        resp = console.input(
+            f'Would you like to open the folder to view "{shortcut.name}"? ([cyan]y/n[/cyan])  '
+        )
+        if resp.lower()[0] == "y":
+            match system:
+                case "Windows":
+                    os.startfile(str(shortcut_path))  # noqa: S606
+                case "Darwin":
+                    subprocess.run(["open", str(shortcut_path)])  # noqa: S603, S607
+                case "Linux" | _:
+                    console.print("Sorry, you'll have to open the folder manually.")
