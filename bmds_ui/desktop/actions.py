@@ -1,6 +1,11 @@
 import json
+import os
+import platform
+import subprocess
+import sys
 from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
+from pathlib import Path
 from threading import Thread
 from urllib.error import URLError
 from urllib.parse import urlparse
@@ -11,13 +16,18 @@ from wsgiref.simple_server import WSGIServer, make_server
 import django
 from django.conf import settings
 from django.core.management import call_command
+from django.template import Context, Template
+from django.template.engine import Engine
 from packaging.version import Version, parse
+from rich.console import Console
 from whitenoise import WhiteNoise
 
 from .. import __version__
 from ..main.settings import desktop
 from .config import Database, DesktopConfig, get_app_home, get_version_path
 from .log import log, stream
+
+PRERELEASE_URL = "https://gitlab.epa.gov/api/v4/projects/1508/packages/pypi/simple"
 
 
 def sync_persistent_data():
@@ -149,3 +159,65 @@ def get_version_message(current: Version, latest: Version, latest_date: datetime
     elif current > latest:
         return f"You have a newer version than what's currently available, {latest} (released {latest_date:%b %d, %Y})."
     raise ValueError("Cannot compare versions")
+
+
+def show_version():
+    """Show the version for BMDS Desktop"""
+    console = Console()
+    console.print(__version__)
+
+
+def render_template(template_text: str, context: dict) -> str:
+    template = Template(template_text, engine=Engine())
+    return template.render(Context(context))
+
+
+def write_startup_script(template: str) -> str:
+    python_path = Path(sys.executable)
+    show_prerelease = get_installed_version().is_prerelease
+    return render_template(
+        template,
+        {
+            "prerelease_url": PRERELEASE_URL,
+            "show_prerelease": show_prerelease,
+            "python_path": python_path,
+        },
+    )
+
+
+def create_shortcut(no_input: bool = False):
+    shortcut_path = Path(os.curdir).resolve() / "bmds-desktop"
+    shortcut_path.mkdir(exist_ok=True)
+    system = platform.system()
+    match system:
+        case "Windows":
+            shortcut = shortcut_path / "bmds-desktop-manager.bat"
+            template = (Path(__file__).parent / "templates/manager-bat.txt").read_text()
+            script = write_startup_script(template)
+            shortcut.write_text(script)
+        case "Darwin" | "Linux" | _:
+            shortcut = shortcut_path / "bmds-desktop-manager.sh"
+            template = (Path(__file__).parent / "templates/manager-sh.txt").read_text()
+            script = write_startup_script(template)
+            shortcut.touch(mode=0o755, exist_ok=True)
+            shortcut.write_text(script)
+
+    console = Console()
+    console.print("BMDS Desktop Manger Created:", style="magenta")
+    console.print("----------------------------", style="magenta")
+    console.print(shortcut, style="cyan")
+    console.print("\nOpening this file will start BMDS Desktop.")
+    console.print("You can move this file or create a shortcut to it.\n")
+
+    if not no_input:  # pragma: no cover
+        resp = console.input(
+            f'Would you like to open the folder to view "{shortcut.name}"? ([cyan]y/n[/cyan])  '
+        )
+        if resp.lower()[0] == "y":
+            match system:
+                case "Windows":
+                    os.startfile(str(shortcut_path))  # noqa: S606
+                case "Darwin":
+                    subprocess.run(["open", str(shortcut_path)])  # noqa: S603, S607
+                case "Linux" | _:
+                    console.print("Sorry, you'll have to open the folder manually.")

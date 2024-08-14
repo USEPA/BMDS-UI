@@ -22,26 +22,26 @@ dependencies = [
   "pybmds==24.1a3",
 
   # website
-  "Django~=5.0.7",
-  "django-anymail~=10.3",
+  "Django~=5.1.0",
+  "django-anymail~=11.1",
   "django-redis~=5.4.0",
   "django-webpack-loader~=3.1.0",
-  "djangorestframework~=3.15.1",
+  "djangorestframework~=3.15.2",
   "uritemplate~=4.1.1",
-  "django-reversion~=5.0.12",
-  "PyYAML~=6.0.1",
+  "django-reversion~=5.1.0",
+  "PyYAML~=6.0.2",
 
   # tasks
   "celery~=5.4.0",
   "billiard~=4.2.0",
-  "kombu~=5.3.7",
+  "kombu~=5.4.0",
   "plotly~=5.22.0",
-  "redis~=5.0.4",
+  "redis~=5.0.8",
 
   # desktop
   "packaging~=24.0",
-  "textual~=0.72.0",
-  "whitenoise~=6.6.0",
+  "textual==0.72.0",
+  "whitenoise~=6.7.0",
 ]
 
 [project.optional-dependencies]
@@ -50,31 +50,31 @@ dev = [
   "flit~=3.9.0",
 
   # debug
-  "django-debug-toolbar~=4.3.0",
+  "django-debug-toolbar~=4.4.6",
   "django_extensions==3.2.3",
-  "django-browser-reload==1.12.1",
+  "django-browser-reload==1.13.0",
 
   # tests
-  "pytest~=8.2.1",
+  "pytest~=8.3.2",
   "pytest-django~=4.8.0",
   "vcrpy~=6.0.1",
   "pytest-recording~=0.13.1",
-  "pytest-asyncio==0.23.7",
-  "coverage==7.5.1",
+  "pytest-asyncio==0.23.8",
+  "coverage==7.6.1",
 
   # integration tests
-  "playwright==1.44.0",
-  "pytest-playwright==0.5.0",
+  "playwright==1.46.0",
+  "pytest-playwright==0.5.1",
 
   # lint and formatting tools
-  "ruff~=0.4.4",
+  "ruff~=0.5.7",
 ]
 pg = [
   "psycopg2-binary~=2.9.9",
 ]
 prod = [
-  "gunicorn~=22.0.0",
-  "sentry-sdk~=2.2.0",
+  "gunicorn~=23.0.0",
+  "sentry-sdk~=2.13.0",
 ]
 
 [project.urls]

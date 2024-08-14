@@ -34,3 +34,17 @@ def test_get_version_message():
     latest = Version("1.0.0")
     resp = actions.get_version_message(current, latest, latest_date)
     assert "You have a newer version than what's currently available" in resp
+
+
+def test_render_template():
+    assert actions.render_template("Hello {{name}}!", context={"name": "world"}) == "Hello world!"
+
+
+def test_write_startup_script():
+    assert actions.write_startup_script("test") == "test"
+
+
+def test_create_shortcut(capsys):
+    actions.create_shortcut(no_input=True)
+    captured = capsys.readouterr()
+    assert "BMDS Desktop Manger Created" in captured.out
