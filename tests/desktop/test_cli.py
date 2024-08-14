@@ -1,4 +1,3 @@
-import shlex
 import subprocess
 import sys
 
@@ -14,6 +13,6 @@ def test_version(capsys):
 
 
 def test_main():
-    commands = [shlex.quote(sys.executable), "-m", "bmds_ui", "--version"]
+    commands = [sys.executable, "-m", "bmds_ui", "--version"]
     resp = subprocess.run(commands, capture_output=True)  # noqa: S603
     assert __version__ in resp.stdout.decode()
