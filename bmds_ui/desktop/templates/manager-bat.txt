@@ -1,0 +1,85 @@
+@echo off
+
+:beginning
+echo:
+echo --------------------------------
+echo       BMDS Desktop Manager
+echo --------------------------------
+echo:
+echo 1) Start BMDS Desktop
+echo 2) Update BMDS Desktop
+{% if show_prerelease %}echo 2p) Update BMDS Desktop (prerelease - EPA VPN required){% endif %}
+echo 3) Show diagnostic information
+echo:
+
+:loop
+set /p "id=Enter a number above, or q to quit: "
+if %id% == 1 goto :start
+if %id% == 2 goto :update
+{% if show_prerelease %}if %id% == 2p goto :update-prerelease{% endif %}
+if %id% == 3 goto :diagnostics
+if %id% == help goto :beginning
+if %id% == q goto :quit
+if %id% == Q goto :quit
+goto :loop
+
+:start
+"{{ python_path }}" -m bmds_ui
+goto :beginning
+
+:update
+echo Updating BMDS Desktop
+"{{ python_path }}" -m ensurepip > nul 2>&1
+"{{ python_path }}" -m pip install -U -q pip
+echo:
+echo Current version:
+"{{ python_path }}" -m pip show bmds-ui pybmds
+echo:
+echo This may take a while, wait until you see "Update complete!"
+echo Updating ...
+"{{ python_path }}" -m pip install -U -q bmds-ui
+"{{ python_path }}" -m pip show bmds-ui pybmds
+echo:
+echo Update complete!
+pause
+goto :beginning
+
+{% if show_prerelease %}
+:update-prerelease
+echo Updating BMDS Desktop (prerelease - EPA VPN required)
+echo:
+"{{ python_path }}" -m ensurepip > nul 2>&1
+"{{ python_path }}" -m pip install -U -q pip
+echo:
+echo Current version:
+"{{ python_path }}" -m pip show bmds-ui pybmds
+echo:
+echo This may take a while, wait until you see "Update complete!"
+echo Updating ...
+"{{ python_path }}" -m pip install -q -U bmds-ui --index-url {{prerelease_url}}
+"{{ python_path }}" -m pip show bmds-ui pybmds
+echo:
+echo Update complete!
+pause
+goto :beginning
+{% endif %}
+
+:diagnostics
+echo:
+echo Diagnostic Installation Information:
+echo ------------------------------------
+echo:
+echo Python Version:
+"{{ python_path }}" --version -VV
+echo:
+echo Python Path:
+echo {{ python_path }}
+echo:
+echo BMDS UI + pybmds Version:
+"{{ python_path }}" -m pip show bmds-ui pybmds
+echo:
+pause
+goto :beginning
+
+:quit
+pause

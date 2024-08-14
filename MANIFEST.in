@@ -1,4 +1,5 @@
 recursive-include bmds_ui/ *css *.js *.json *.html *.md *.py
 recursive-include bmds_ui/static *
 recursive-include bmds_ui/templates *
+recursive-include bmds_ui/desktop/templates *
 global-exclude .DS_Store .gitkeep __pycache__ *.pyc
