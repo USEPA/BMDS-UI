@@ -54,13 +54,13 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Sess
                     model_options.degree = degree
                     session.add_model(model_name, settings=model_options)
             elif dataset_type == ModelClass.NESTED_DICHOTOMOUS:
-                # run all permutations of intralitter correlation and litter specific covariate
-                for lsc_on, ilc in itertools.product([False, True], IntralitterCorrelation):
+                for lsc, ilc in itertools.product(
+                    [LitterSpecificCovariate.Unused, 999],
+                    [IntralitterCorrelation.Zero, IntralitterCorrelation.Estimate],
+                ):
                     settings = model_options.model_copy()
                     settings.litter_specific_covariate = (
-                        settings.litter_specific_covariate
-                        if lsc_on
-                        else LitterSpecificCovariate.Unused
+                        settings.litter_specific_covariate if lsc == 999 else lsc
                     )
                     settings.intralitter_correlation = ilc
                     session.add_model(model_name, settings=settings)
