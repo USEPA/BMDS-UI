@@ -68,10 +68,14 @@ echo
 echo "Diagnostic Installation Information:"
 echo "------------------------------------"
 echo
-echo "Python Version: {{ python_version }}"
-echo "Python Path: {{ python_path }}"
-echo "BMDS Desktop (bmds-ui) Version: {{ bmds_ui_version }}"
-echo "pybmds Version: Version: {{ pybmds_version }}"
+echo "Python Version:"
+"{{ python_path }}" --version -VV
+echo
+echo "Python Path:"
+echo "{{ python_path }}"
+echo
+echo "BMDS UI + pybmds Version:"
+"{{ python_path }}" -m pip show bmds-ui pybmds
 echo
 pause
 write_instructions

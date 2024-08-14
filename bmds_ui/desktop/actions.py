@@ -173,8 +173,6 @@ def render_template(template_text: str, context: dict) -> str:
 
 
 def write_startup_script(template: str) -> str:
-    from pybmds import __version__ as pybmds_version
-
     python_path = Path(sys.executable)
     show_prerelease = get_installed_version().is_prerelease
     return render_template(
@@ -183,9 +181,6 @@ def write_startup_script(template: str) -> str:
             "prerelease_url": PRERELEASE_URL,
             "show_prerelease": show_prerelease,
             "python_path": python_path,
-            "python_version": platform.python_version(),
-            "bmds_ui_version": __version__,
-            "pybmds_version": pybmds_version,
         },
     )
 
