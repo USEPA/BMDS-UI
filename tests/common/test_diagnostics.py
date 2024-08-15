@@ -6,7 +6,6 @@ from bmds_ui.common import diagnostics
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def admin_client():
     client = Client()
     client.login(username="admin@bmdsonline.org", password="pw")
