@@ -15,22 +15,29 @@ describe("Parsing", function() {
         });
 
         it("handles an unknown format", function() {
-            const expected = {
+            assert.deepStrictEqual(parseServerErrors("ERROR"), {
+                data: ["ERROR"],
                 messages: ["An error has occurred"],
                 message: "An error has occurred",
-            };
+            });
 
-            expected.data = ["ERROR"];
-            assert.deepStrictEqual(parseServerErrors("ERROR"), expected);
+            assert.deepStrictEqual(parseServerErrors(["ERROR"]), {
+                data: ["ERROR"],
+                messages: ["ERROR"],
+                message: "ERROR",
+            });
 
-            expected.data = [["ERROR"]];
-            assert.deepStrictEqual(parseServerErrors(["ERROR"]), expected);
+            assert.deepStrictEqual(parseServerErrors({err: "ERROR"}), {
+                data: [{err: "ERROR"}],
+                messages: ["An error has occurred"],
+                message: "An error has occurred",
+            });
 
-            expected.data = [{err: "ERROR"}];
-            assert.deepStrictEqual(parseServerErrors({err: "ERROR"}), expected);
-
-            expected.data = [[{err: "ERROR"}]];
-            assert.deepStrictEqual(parseServerErrors([{err: "ERROR"}]), expected);
+            assert.deepStrictEqual(parseServerErrors([{err: "ERROR"}]), {
+                data: [[{err: "ERROR"}]],
+                messages: ["An error has occurred"],
+                message: "An error has occurred",
+            });
         });
 
         it("handles tracebacks", function() {
