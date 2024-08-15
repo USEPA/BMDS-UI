@@ -113,15 +113,10 @@ omit = [
 
 [tool.ruff]
 line-length = 100
-target-version = "py311"
-
-[tool.ruff.lint]
-select = ["F", "E", "W", "I", "UP", "S", "B", "T20", "ERA", "NPY", "RUF", "PTH"]
-ignore = ["E501"]
-unfixable = ["F401", "F841"]
-
-[tool.ruff.lint.isort]
-known-first-party = ["bmds_ui", "pybmds"]
+lint.select = ["F", "E", "W", "I", "UP", "S", "B", "T20", "ERA", "NPY", "RUF", "PTH"]
+lint.ignore = ["E501"]
+lint.unfixable = ["F401", "F841"]
+lint.isort.known-first-party = ["bmds_ui", "pybmds"]
 
 [tool.ruff.lint.per-file-ignores]
 "test_*.py" = ["S101", "S106"]
