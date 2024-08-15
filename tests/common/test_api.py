@@ -45,7 +45,7 @@ class TestHealthcheckViewset:
 
         # success - admin
         url = reverse("api:healthcheck-throttle")
-        for i in range(5):
+        for _ in range(5):
             resp = admin.get(url)
             assert resp.status_code == 200
             assert "identity" in resp.data

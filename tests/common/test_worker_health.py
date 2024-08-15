@@ -19,7 +19,7 @@ def test_worker_healthcheck():
 
     # has recent data; should be healthy
     worker.MAX_SIZE = 5
-    for i in range(worker.MAX_SIZE + 2):
+    for _ in range(worker.MAX_SIZE + 2):
         worker.push()
     assert worker.healthy() is True
     assert worker.series().size == worker.MAX_SIZE
