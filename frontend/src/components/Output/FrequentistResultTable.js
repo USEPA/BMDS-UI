@@ -59,6 +59,37 @@ const getModelBinLabel = function(output, index) {
         }
         return fns;
     },
+    getRestricted = function(models) {
+        return _.chain(models)
+            .map((model, index) => {
+                if (model.settings.priors.prior_class === priorClass.frequentist_restricted) {
+                    return {model, index};
+                }
+                return null;
+            })
+            .compact()
+            .value();
+    },
+    getUnrestricted = function(models) {
+        return _.chain(models)
+            .map((model, index) => {
+                if (model.settings.priors.prior_class === priorClass.frequentist_unrestricted) {
+                    return {model, index};
+                }
+                return null;
+            })
+            .compact()
+            .value();
+    },
+    getColWidths = function(store) {
+        if (store.isNestedDichotomous) {
+            return store.recommendationEnabled ? [20, 12, 12, 12, 12, 32] : [20, 20, 20, 20, 20];
+        } else {
+            return store.recommendationEnabled
+                ? [12, 8, 8, 8, 8, 8, 10, 10, 28]
+                : [20, 10, 10, 10, 10, 10, 15, 15];
+        }
+    },
     TableFootnotes = props => {
         const {items, colSpan} = props;
         if (items.length == 0) {
@@ -212,20 +243,15 @@ class FrequentistRow extends Component {
                         modelClasses={modelClasses}
                     />
                     <td>
-                        <FloatingPointHover value={results.summary.bmdl} />
+                        <FloatingPointHover value={results.bmdl} />
                     </td>
                     <td>
-                        <FloatingPointHover value={results.summary.bmd} />
-                    </td>
-                    <td>
-                        <FloatingPointHover value={results.summary.bmdu} />
+                        <FloatingPointHover value={results.bmd} />
                     </td>
                     <td>{ff(results.combined_pvalue)}</td>
                     <td>
-                        <FloatingPointHover value={results.summary.aic} />
+                        <FloatingPointHover value={results.aic} />
                     </td>
-                    <td>-</td>
-                    <td>-</td>
                     <RecommendationTd
                         store={store}
                         data={data}
@@ -291,43 +317,20 @@ class FrequentistResultTable extends Component {
         }
 
         const {models} = selectedFrequentist,
-            restrictedModels = _.chain(models)
-                .map((model, index) => {
-                    if (isNestedDichotomous) {
-                        return model.settings.restricted ? {model, index} : null;
-                    }
-                    if (model.settings.priors.prior_class === priorClass.frequentist_restricted) {
-                        return {model, index};
-                    }
-                    return null;
-                })
-                .compact()
-                .value(),
-            unrestrictedModels = _.chain(models)
-                .map((model, index) => {
-                    if (isNestedDichotomous) {
-                        return !model.settings.restricted ? {model, index} : null;
-                    }
-                    if (model.settings.priors.prior_class === priorClass.frequentist_unrestricted) {
-                        return {model, index};
-                    }
-                    return null;
-                })
-                .compact()
-                .value(),
-            numCols = store.recommendationEnabled ? 9 : 8,
-            colWidths = store.recommendationEnabled
-                ? [12, 8, 8, 8, 8, 8, 10, 10, 28]
-                : [20, 10, 10, 10, 10, 10, 15, 15],
+            restrictedModels = getRestricted(models),
+            unrestrictedModels = getUnrestricted(models),
+            colWidths = getColWidths(store),
+            numCols = colWidths.length,
             recommendedModelIndex = store.recommendationEnabled
                 ? selectedFrequentist.recommender.results.recommended_model_index
                 : null,
-            footnotes = getFootnotes(recommendedModelIndex, selectedFrequentist.selected);
+            footnotes = getFootnotes(recommendedModelIndex, selectedFrequentist.selected),
+            reClass = store.recommendationEnabled ? ` col-l-${numCols}` : "";
 
         return (
             <table
                 id="frequentist-model-result"
-                className="table table-sm text-right col-l-1 col-l-9">
+                className={`table table-sm text-right col-l-1 ${reClass}`}>
                 <colgroup>
                     {_.map(colWidths).map((value, idx) => (
                         <col key={idx} width={`${value}%`}></col>
@@ -338,13 +341,13 @@ class FrequentistResultTable extends Component {
                         <th>Model</th>
                         <th>BMDL</th>
                         <th>BMD</th>
-                        <th>BMDU</th>
+                        {isNestedDichotomous ? null : <th>BMDU</th>}
                         <th>
                             <i>P</i>-Value
                         </th>
                         <th>AIC</th>
-                        <th>Scaled Residual at Control</th>
-                        <th>Scaled Residual near BMD</th>
+                        {isNestedDichotomous ? null : <th>Scaled Residual at Control</th>}
+                        {isNestedDichotomous ? null : <th>Scaled Residual near BMD</th>}
                         {store.recommendationEnabled ? (
                             <th>
                                 <Button

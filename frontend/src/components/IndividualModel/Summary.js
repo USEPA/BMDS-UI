@@ -16,9 +16,8 @@ class Summary extends Component {
         if (outputStore.isNestedDichotomous) {
             data = [
                 ["BMD", ff(model.results.bmd), model.results.bmd],
-                ["BMDL", ff(model.results.summary.bmdl), model.results.summary.bmdl],
-                ["BMDU", ff(model.results.summary.bmdu), model.results.summary.bmdu],
-                ["AIC", ff(model.results.summary.aic), model.results.summary.aic],
+                ["BMDL", ff(model.results.bmdl), model.results.bmdl],
+                ["AIC", ff(model.results.aic), model.results.aic],
                 [
                     <span key={0}>
                         <i>P</i>-value
@@ -26,12 +25,7 @@ class Summary extends Component {
                     fractionalFormatter(model.results.combined_pvalue),
                 ],
                 ["Model d.f.", ff(model.results.dof)],
-                [
-                    <span key={1}>
-                        Chi<sup>2</sup>
-                    </span>,
-                    ff(model.results.summary.chi_squared),
-                ],
+                [<span key={1}>Chi²</span>, ff(model.results.chi_squared)],
             ];
         } else {
             const isContinuous = outputStore.getModelType === mc.MODEL_CONTINUOUS,

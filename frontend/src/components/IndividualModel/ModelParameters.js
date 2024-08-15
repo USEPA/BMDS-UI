@@ -50,7 +50,7 @@ const getData = function(model) {
         return {
             tblClasses: "table table-sm text-right col-l-1",
             headers: ["Variable", "Estimate"],
-            rows: _.range(_.size(names)).map(i => [names[i], values[i]]),
+            rows: _.range(_.size(names)).map(i => [names[i], parameterFormatter(values[i])]),
             subheader: "Model Parameters",
         };
     };
