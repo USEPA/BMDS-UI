@@ -43,14 +43,14 @@ def additional_path_checks(path: Path):
     try:
         path.exists()
     except PermissionError:
-        raise ValueError(f"Permission denied: {path}")
+        raise ValueError(f"Permission denied: {path}") from None
 
     # create parent path if it doesn't already exist
     if not path.parent.exists():
         try:
             path.parent.mkdir(parents=True)
         except Exception:
-            raise ValueError(f"Cannot create path {path.parent}")
+            raise ValueError(f"Cannot create path {path.parent}") from None
 
     # check path is writable
     if not path.exists():
@@ -59,7 +59,7 @@ def additional_path_checks(path: Path):
                 f.write("test")
                 f.flush()
         except Exception:
-            raise ValueError(f"Cannot write to {path.parent}")
+            raise ValueError(f"Cannot write to {path.parent}") from None
 
     # check existing database is loadable and writeable
     if path.exists():
@@ -70,7 +70,7 @@ def additional_path_checks(path: Path):
             conn.commit()
             conn.close()
         except (sqlite3.DatabaseError, sqlite3.OperationalError):
-            raise ValueError(f"Cannot edit database {path}. Is this a sqlite database?")
+            raise ValueError(f"Cannot edit database {path}. Is this a sqlite database?") from None
 
 
 class NullWidget(Widget):

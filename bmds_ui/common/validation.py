@@ -23,4 +23,4 @@ def pydantic_validate(data: Any, model: type[T]) -> T:
     try:
         return model.model_validate(data)
     except PydanticValidationError as err:
-        raise ValidationError(err.json())
+        raise ValidationError(err.json()) from None

@@ -159,9 +159,7 @@ class Config:
         try:
             cls._config = DesktopConfig.model_validate_json(cls._config_path.read_text())
         except ValidationError as err:
-            raise DesktopException(
-                f"Cannot parse configuration: {cls._config_path}\n\nSpecific error:{err}"
-            )
+            raise DesktopException(f"Cannot parse configuration: {cls._config_path}") from err
         return cls._config
 
     @classmethod

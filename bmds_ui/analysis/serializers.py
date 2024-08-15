@@ -65,5 +65,5 @@ class AnalysisSerializer(serializers.ModelSerializer):
         try:
             validators.validate_input(value)
         except ValueError as err:
-            raise serializers.ValidationError(err)
+            raise serializers.ValidationError("Validation failed") from err
         return value

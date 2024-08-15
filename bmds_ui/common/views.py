@@ -214,11 +214,11 @@ def uuid_or_404(value: str) -> UUID:
     try:
         return UUID(value)
     except ValueError:
-        raise Http404()
+        raise Http404() from None
 
 
 def int_or_404(value: str) -> int:
     try:
         return int(value)
     except ValueError:
-        raise Http404()
+        raise Http404() from None
