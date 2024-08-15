@@ -53,17 +53,13 @@ export const options = {
         {value: 3, label: "Lognormal"},
     ],
     litterSpecificCovariateOptions = [
-        {value: 0, label: "Unused"},
+        {value: 0, label: "Not Used"},
         {value: 1, label: "Overall Mean"},
         {value: 2, label: "Control Group Mean"},
     ],
     intralitterCorrelation = [
-        {value: 0, label: "Zero"},
+        {value: 0, label: "Assume Zero"},
         {value: 1, label: "Estimate"},
-    ],
-    backgroundOptions = [
-        {value: 0, label: "Zero"},
-        {value: 1, label: "Estimated"},
     ],
     bmrForBmrTypeContinuous = {
         2: 1,

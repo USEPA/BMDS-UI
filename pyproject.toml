@@ -96,6 +96,12 @@ build-backend = "flit_core.buildapi"
 include = ["bmds_ui/"]
 exclude = ["bmds_ui/main/settings/local.py"]
 
+[tool.coverage.report]
+exclude_also = [
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
 [tool.coverage.run]
 omit = [
     "../bmds/*",

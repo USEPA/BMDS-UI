@@ -3,20 +3,26 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import TwoColumnTable from "@/components/common/TwoColumnTable";
-
+import {ff} from "@/utils/formatters";
 @observer
 class ScaledResidual extends Component {
     render() {
         const residuals = this.props.model.results.scaled_residuals,
             data = [
-                ["Minimum scaled residual for dose group nearest the BMD", residuals[0]],
-                ["Minimum ABS(scaled residual) for dose group nearest the BMD", residuals[1]],
-                ["Average Scaled residual for dose group nearest the BMD", residuals[2]],
-                ["Average ABS(scaled residual) for dose group nearest the BMD", residuals[3]],
-                ["Maximum scaled residual for dose group nearest the BMD", residuals[4]],
-                ["Maximum ABS(scaled residual) for dose group nearest the BMD", residuals[5]],
+                ["Minimum scaled residual", ff(residuals.min)],
+                ["Minimum ABS(scaled residual)", ff(residuals.min_abs)],
+                ["Average Scaled residual", ff(residuals.avg)],
+                ["Average ABS(scaled residual)", ff(residuals.avg_abs)],
+                ["Maximum scaled residual", ff(residuals.max)],
+                ["Maximum ABS(scaled residual)", ff(residuals.max_abs)],
             ];
-        return <TwoColumnTable label="Scaled Residuals" data={data} colwidths={[70, 30]} />;
+        return (
+            <TwoColumnTable
+                label="Scaled Residuals (for dose group nearest the BMD)"
+                data={data}
+                colwidths={[60, 40]}
+            />
+        );
     }
 }
 ScaledResidual.propTypes = {
