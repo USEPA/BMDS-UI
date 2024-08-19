@@ -14,4 +14,4 @@ def test_get_version_path():
 
 def test_get_app_home():
     assert "bmds" in str(config.get_app_home())
-    assert Path(".") == config.get_app_home(path_str=".")
+    assert Path() == config.get_app_home(path_str=".")

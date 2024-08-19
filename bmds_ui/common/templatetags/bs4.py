@@ -8,8 +8,7 @@ from uuid import uuid4
 
 from django import template
 from django.utils import timezone
-from django.utils.html import escapejs
-from django.utils.safestring import mark_safe
+from django.utils.html import escapejs, format_html
 from plotly.graph_objs._figure import Figure
 
 register = template.Library()
@@ -39,7 +38,7 @@ class CardWrapperNode(template.Node):
 
 @register.simple_tag
 def icon(name: str):
-    return mark_safe(f'<span class="bi bi-{name}" aria-hidden="true"></span>')
+    return format_html('<span class="bi bi-{name}" aria-hidden="true"></span>', name=name)
 
 
 @register.simple_tag()
@@ -48,18 +47,18 @@ def plotly(fig: Figure) -> str | None:
     if fig is None:
         return ""
     id = uuid4()
-    return mark_safe(
-        dedent(
-            f"""
+    return format_html(
+        dedent("""
     <div id="{id}"><span class="text-muted">Loading...</span></div>
     <script>
         document.addEventListener("DOMContentLoaded", startup, false);
         function startup () {{
-            const data = JSON.parse("{escapejs(fig.to_json())}")
+            const data = JSON.parse("{json}")
             window.app.renderPlotlyFigure(document.getElementById("{id}"), data);
         }};
-    </script>"""
-        )
+    </script>"""),
+        id=id,
+        json=escapejs(fig.to_json()),
     )
 
 

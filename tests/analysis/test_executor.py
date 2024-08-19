@@ -72,14 +72,14 @@ class TestAnalysisSession:
             degrees = set([model.settings.degree for model in session.frequentist.models])
             assert degrees == set(list(range(1, n + 1)))
 
-        # degree = 1
+        # check when degree = 1
         data = deepcopy(complete_dichotomous)
         data["models"] = {"frequentist_restricted": ["Multistage"]}
         data["dataset_options"][0]["degree"] = 1
         session = AnalysisSession.create(data, 0, 0)
         _expected_degree(session, 1)
 
-        # degree = 2
+        # check when degree = 2
         data = deepcopy(complete_dichotomous)
         data["models"] = {"frequentist_restricted": ["Multistage"]}
         data["dataset_options"][0]["degree"] = 2

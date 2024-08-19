@@ -52,7 +52,7 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         try:
             validators.validate_input(data, partial=partial)
         except ValidationError as err:
-            raise exceptions.ValidationError(err.message)
+            raise exceptions.ValidationError(err.message) from None
 
         instance.reset_execution()
         instance.inputs = data
@@ -207,7 +207,7 @@ class PolyKViewset(viewsets.GenericViewSet):
         try:
             settings = pydantic_validate(request.data, schema.PolyKInput)
         except ValidationError as err:
-            raise exceptions.ValidationError(err.message)
+            raise exceptions.ValidationError(err.message) from None
         return settings.calculate()
 
     def create(self, request, *args, **kwargs):
