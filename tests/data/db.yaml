@@ -1960,8 +1960,8 @@
       analysis_id: cc3ca355-a57a-4fba-9dc3-99657562df68
       analysis_schema_version: '1.1'
       bmds_python_version:
-        dll: 2023.10a1
-        python: 24.1a3
+        dll: 24.1a4
+        python: 24.1a4
       bmds_ui_version: 9434971c
       outputs:
       - bayesian:
@@ -3420,8 +3420,8 @@
             model_index: null
             notes: ''
           version:
-            dll: 2023.10a1
-            python: 24.1a3
+            dll: 24.1a4
+            python: 24.1a4
         dataset_index: 0
         error: null
         frequentist:
@@ -5136,8 +5136,8 @@
             model_index: null
             notes: ''
           version:
-            dll: 2023.10a1
-            python: 24.1a3
+            dll: 24.1a4
+            python: 24.1a4
         option_index: 0
     starred: false
     started: 2024-05-14 19:18:13.442351+00:00
