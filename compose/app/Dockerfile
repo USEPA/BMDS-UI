@@ -1,48 +1,39 @@
-FROM python:3.11-slim-bullseye
+FROM quay.io/centos/centos:stream9-minimal
 
-ENV BMDS_UI_VERSION=24.1a4
-ENV BMDS_VERSION=24.1a4
-ENV EXTRA_BMDS_BUILD_ARGS=
+ENV PYTHON_VERSION=3.12 \
+    PYTHONBUFFERED=1 \
+    PYTHONIOENCODING=UTF-8 \
+    PYTHONFAULTHANDLER=1 \
+    PIP_NO_CACHE=off \
+    LANG=C.UTF-8
 
 RUN groupadd -g 555 -r app && \
     useradd -u 555 -r -g app app
-
-# dependencies wait-for: netcat
-# dependencies bmds: libgslcblas0 libgsl-dev
-RUN apt-get update -y && \
-    apt-get install -y netcat libgslcblas0 libgsl-dev
 
 COPY ./compose/app/wait-for.sh /app/bin/wait-for.sh
 COPY ./compose/app/sync.sh /app/bin/sync.sh
 COPY ./compose/app/web.sh /app/bin/web.sh
 COPY ./compose/app/workers.sh /app/bin/workers.sh
 COPY ./compose/app/cron.sh /app/bin/cron.sh
-COPY ./compose/app/test.py /app/test.py
-
-# used in some dev/staging environments
 COPY ./tests/data/db.yaml /app/test-db-fixture.yaml
-
-# 1) install start-scripts
-# 2) install fonts
-# 3) create logs path
-RUN mkdir -p /app/logs && \
-    mkdir -p /app/public/media
-
 COPY ./dist /dist
 
-RUN pip install -U pip && \
-    pip install "${EXTRA_BMDS_BUILD_ARGS} pybmds==${BMDS_VERSION}" --no-cache-dir && \
-    pip install "dist/bmds_ui-${BMDS_UI_VERSION}-py3-none-any.whl[pg,prod]" --no-cache-dir && \
+# security updates
+# https://pythonspeed.com/articles/system-packages-docker/
+RUN INSTALL_PKGS="python${PYTHON_VERSION} nc" && \
+    VERIFY_PKGS="python${PYTHON_VERSION}" && \
+    microdnf -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
+    rpm -V $VERIFY_PKGS && \
+    microdnf -y clean all --enablerepo='*' && \
+    ln -s /usr/bin/"python${PYTHON_VERSION}" /usr/local/bin/python
+
+RUN python -m ensurepip --upgrade && \
+    python -m pip install -U pip && \
+    for file in dist/bmds_ui-*.whl; do python -m pip install "$file[pg,prod]" --no-cache-dir ; done && \
     \
     rm -rf /dist && \
-    pip uninstall -y pip
+    python -m pip uninstall -y pip && \
+    chown -R app:app /app
 
 WORKDIR /app
-
-RUN chown -R app:app /app
 USER app
-
-ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-
-RUN ldd /usr/local/lib/python3.11/site-packages/pybmds/bmdscore.cpython-*-x86_64-linux-gnu.so && \
-    python /app/test.py
