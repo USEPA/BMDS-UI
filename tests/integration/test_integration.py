@@ -151,7 +151,6 @@ class TestContinuousIntegration(PlaywrightTestCase):
             page2.get_by_role("link", name="Logic").click()
             expect(page2.get_by_role("cell", name="Decision Logic")).to_be_visible()
 
-    @pytest.mark.xfail
     def test_nested_dichotomous(self):
         page = self.page
         page.goto(self.url("/"))
@@ -186,7 +185,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
             expect(page.locator("#frequentist-model-result tbody tr")).to_have_count(5)
 
             # check one result
-            page.get_by_role("link", name="Nested Logistic (lsc+ilc-)*").click()
+            page.get_by_role("link", name="Nested Logistic (lsc+ilc-)").click()
             expect(page.get_by_role("dialog")).to_contain_text("Nested Logistic (lsc+ilc-)")
             page.locator("#close-modal").click()
 
