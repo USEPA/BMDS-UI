@@ -252,8 +252,9 @@ class TestContinuousIntegration(PlaywrightTestCase):
             page.locator("#close-modal").click()
 
             # check one result (individual)
-            page.get_by_role("link", name="Multistage 1*").click()
-            expect(page.get_by_role("dialog")).to_contain_text("Multistage 1")
+            expect(page.get_by_role("link", name="Multistage 2*")).to_have_count(3)
+            page.get_by_role("link", name="Multistage 2*").nth(1).click()
+            expect(page.get_by_role("dialog")).to_contain_text("Multistage 2")
             page.locator("#close-modal").click()
 
             # Read-only

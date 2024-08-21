@@ -51,7 +51,7 @@ class Summary extends Component {
             }
         }
 
-        return <TwoColumnTable id="info-table" data={data} label="Modeling Summary" />;
+        return <TwoColumnTable data={data} label="Modeling Summary" />;
     }
 }
 Summary.propTypes = {
