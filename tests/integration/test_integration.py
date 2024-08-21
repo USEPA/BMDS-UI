@@ -1,11 +1,10 @@
-import pytest
 from playwright.sync_api import expect
 
 from .common import PlaywrightTestCase
 
 
 class TestContinuousIntegration(PlaywrightTestCase):
-    def test_continuous(self):
+    def _test_continuous(self, option: str):
         page = self.page
         page.goto(self.url("/"))
 
@@ -22,6 +21,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
 
         # view data tab
         page.get_by_role("link", name="Data").click()
+        page.locator("#datasetType").select_option(option)
         page.get_by_role("button", name="New").click()
         page.get_by_role("button", name="Load an example dataset").click()
 
@@ -70,6 +70,12 @@ class TestContinuousIntegration(PlaywrightTestCase):
 
             page2.get_by_role("link", name="Logic").click()
             expect(page2.get_by_role("cell", name="Decision Logic")).to_be_visible()
+
+    def test_continuous_summary(self):
+        self._test_continuous(option="CS")
+
+    def test_continuous_individual(self):
+        self._test_continuous(option="I")
 
     def test_dichotomous(self):
         page = self.page
