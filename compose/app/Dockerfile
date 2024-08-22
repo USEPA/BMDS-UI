@@ -29,11 +29,15 @@ RUN INSTALL_PKGS="python${PYTHON_VERSION} nc" && \
 
 RUN python -m ensurepip --upgrade && \
     python -m pip install -U pip && \
+    for file in dist/pybmds-*.whl; do python -m pip install "$file" --no-cache-dir ; done && \
     for file in dist/bmds_ui-*.whl; do python -m pip install "$file[pg,prod]" --no-cache-dir ; done && \
     \
     rm -rf /dist && \
     python -m pip uninstall -y pip && \
     chown -R app:app /app
+
+COPY ./tests/test.py /app/test.py
+RUN python /app/test.py
 
 WORKDIR /app
 USER app
