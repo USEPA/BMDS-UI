@@ -5,7 +5,6 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test import TestCase
 from playwright.sync_api import Page
 
-CAN_EXECUTE = os.getenv("CI") is None
 RUN_INTEGRATION = os.environ.get("INTEGRATION_TESTS") is not None
 if RUN_INTEGRATION:
     os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
@@ -25,7 +24,6 @@ class PlaywrightTestCase(StaticLiveServerTestCase, TestCase):
 
     @pytest.fixture(autouse=True)
     def set_fixtures(self, page: Page):
-        self.can_execute: bool = CAN_EXECUTE
         self.page: Page = page
 
     def url(self, path: str) -> str:
