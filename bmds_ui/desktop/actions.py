@@ -203,8 +203,8 @@ def create_shortcut(no_input: bool = False):
             shortcut.write_text(script)
 
     console = Console()
-    console.print("BMDS Desktop Manger Created:", style="magenta")
-    console.print("----------------------------", style="magenta")
+    console.print("BMDS Desktop Manager Created:", style="magenta")
+    console.print("-----------------------------", style="magenta")
     console.print(shortcut, style="cyan")
     console.print("\nOpening this file will start BMDS Desktop.")
     console.print("You can move this file or create a shortcut to it.\n")

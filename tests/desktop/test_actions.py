@@ -47,4 +47,4 @@ def test_write_startup_script():
 def test_create_shortcut(capsys):
     actions.create_shortcut(no_input=True)
     captured = capsys.readouterr()
-    assert "BMDS Desktop Manger Created" in captured.out
+    assert "BMDS Desktop Manager Created" in captured.out
