@@ -1,6 +1,16 @@
 from playwright.sync_api import Page, expect
 
+from bmds_ui.analysis.models import Analysis
+
 from .common import PlaywrightTestCase
+
+analysis_pks = [
+    ("432a6083-f9aa-4de2-a71f-a6488b4c5bf1", "dichotomous"),
+    ("cfe458aa-2313-44c0-9346-f4931567bef0", "continuous summary"),
+    ("09c09d22-2e1a-413c-b350-6b19969f6533", "continuous individual"),
+    ("4459f728-05f7-4057-a27c-174822a0313d", "nested dichotomous"),
+    ("2f86f324-911d-4194-97d1-fc7c3f5d0c72", "multitumor"),
+]
 
 
 class TestContinuousIntegration(PlaywrightTestCase):
@@ -72,12 +82,15 @@ class TestContinuousIntegration(PlaywrightTestCase):
         expect(page2.get_by_role("cell", name="Decision Logic")).to_be_visible()
 
     def test_continuous_summary(self):
+        # create new analysis and make sure we can execute, view results, and view read-only page
         self._test_continuous(option="CS")
 
     def test_continuous_individual(self):
+        # create new analysis and make sure we can execute, view results, and view read-only page
         self._test_continuous(option="I")
 
     def test_dichotomous(self):
+        # create new analysis and make sure we can execute, view results, and view read-only page
         page = self._create_new_analysis()
 
         # set main input
@@ -152,6 +165,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         expect(page2.get_by_role("cell", name="Decision Logic")).to_be_visible()
 
     def test_nested_dichotomous(self):
+        # create new analysis and make sure we can execute, view results, and view read-only page
         page = self._create_new_analysis()
 
         # set main input
@@ -203,6 +217,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         expect(page2.get_by_role("cell", name="Decision Logic")).to_be_visible()
 
     def test_multi_tumor(self):
+        # create new analysis and make sure we can execute, view results, and view read-only page
         page = self._create_new_analysis()
 
         # set main input
@@ -260,3 +275,17 @@ class TestContinuousIntegration(PlaywrightTestCase):
 
         page2.get_by_role("link", name="Output").click()
         expect(page2.get_by_text("Model Results")).to_be_visible()
+
+    def test_read_view(self):
+        # load existing analyses in our database and confirm we can view everything in read-only mode
+        for pk, _ in analysis_pks:
+            a = Analysis.objects.get(pk=pk)
+            self.page.goto(self.url(a.get_absolute_url()))
+            # TODO - add actual checks
+
+    def test_edit_view(self):
+        # load existing analyses in our database and confirm we can view everything in editable mode
+        for pk, _ in analysis_pks:
+            a = Analysis.objects.get(pk=pk)
+            self.page.goto(self.url(a.get_edit_url()))
+            # TODO - add actual checks
