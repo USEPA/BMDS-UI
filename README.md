@@ -5,13 +5,11 @@ BMDS UI is a user interface for running [pybmds](https://pypi.org/project/pybmds
 * It can deployed as a web application, such as [BMDS Online](https://bmdsonline.epa.gov)
 * It can be deployed locally as a desktop application, which we call **BMDS Desktop**.
 
-
 **BMDS Desktop application home screen:**
 ![](./docs/img/bmds-desktop.jpg)
 
 **An example of the the user interface for model results:**
 ![](./docs/img/bmds-output.jpg)
-
 
 ## BMDS Online vs. BMDS Desktop
 
@@ -29,3 +27,12 @@ Database technology|Uses a sqlite database file (single file)|Uses a PostgreSQL 
 
 The BMDS Desktop has a startup screen where you can select which database file you'd like to use in your application. You can have multiple databases on your computer, one per project for example:
 ![](./docs/img/desktop-startup.jpg)
+
+## Build Notes
+
+To build containers for deployment:
+
+```bash
+make build
+docker compose -f compose/build.yml --project-directory . build
+```
