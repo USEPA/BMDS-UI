@@ -4,6 +4,7 @@ from bmds_ui.analysis.models import Analysis
 
 from .common import PlaywrightTestCase
 
+# current version: {"analysis_schema_version": "1.1"}
 analysis_pks = [
     ("432a6083-f9aa-4de2-a71f-a6488b4c5bf1", "dichotomous"),
     ("cfe458aa-2313-44c0-9346-f4931567bef0", "continuous summary"),
@@ -278,14 +279,52 @@ class TestContinuousIntegration(PlaywrightTestCase):
 
     def test_read_view(self):
         # load existing analyses in our database and confirm we can view everything in read-only mode
-        for pk, _ in analysis_pks:
+        page = self.page
+        for pk, model_type in analysis_pks:
             a = Analysis.objects.get(pk=pk)
             self.page.goto(self.url(a.get_absolute_url()))
-            # TODO - add actual checks
+
+            # check main tab loads
+            expect(page.get_by_role("cell", name="Analysis Name:")).to_be_visible()
+
+            # check data tab loads
+            page.get_by_role("link", name="Data").click()
+            expect(page.get_by_text("Dataset Name:")).to_be_visible()
+
+            # check output tab loads
+            page.get_by_role("link", name="Output").click()
+            if model_type == "multitumor":
+                expect(page.get_by_role("heading", name="Model Results")).to_be_visible()
+            else:
+                expect(page.locator("#frequentist-model-result")).to_be_visible()
+
+            # check logic tab loads (not present with multitumor)
+            if model_type != "multitumor":
+                page.get_by_role("link", name="Logic").click()
+                expect(page.get_by_role("cell", name="Decision Logic")).to_be_visible()
 
     def test_edit_view(self):
         # load existing analyses in our database and confirm we can view everything in editable mode
-        for pk, _ in analysis_pks:
+        page = self.page
+        for pk, model_type in analysis_pks:
             a = Analysis.objects.get(pk=pk)
             self.page.goto(self.url(a.get_edit_url()))
-            # TODO - add actual checks
+
+            # check main tab loads
+            expect(page.locator("#analysis_name")).to_be_visible()
+
+            # check data tab loads
+            page.get_by_role("link", name="Data").click()
+            expect(page.get_by_role("button", name="New")).to_be_visible()
+
+            # check output tab loads
+            page.get_by_role("link", name="Output").click()
+            if model_type == "multitumor":
+                expect(page.get_by_role("heading", name="Model Results")).to_be_visible()
+            else:
+                expect(page.locator("#frequentist-model-result")).to_be_visible()
+
+            # check logic tab loads (not present with multitumor)
+            if model_type != "multitumor":
+                page.get_by_role("link", name="Logic").click()
+                expect(page.get_by_role("cell", name="Decision Logic")).to_be_visible()
