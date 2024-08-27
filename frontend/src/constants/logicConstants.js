@@ -46,6 +46,7 @@ export const RULES = Object.freeze({
         RULES.CONTROL_STDEV_FIT,
         RULES.DOF_ZERO,
     ],
+    optionalRules = [RULES.GOF_CANCER],
     ruleLookups = {
         [RULES.BMD_MISSING]: {
             notes: val => "BMD not estimated",
