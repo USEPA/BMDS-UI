@@ -1,9 +1,9 @@
 # BMDS UI
 
-BMDS UI is a user interface for running [pybmds](https://pypi.org/project/pybmds/), a python package for dose-response modeling using the US EPA's Benchmark Dose Modeling Software ([BMDS](https://www.epa.gov/bmds)).  The user interface is a web application, but has two different deployment options:
+BMDS UI is a user interface for running [pybmds](https://pypi.org/project/pybmds/), a Python package for dose-response modeling using the US EPA's Benchmark Dose Modeling Software ([BMDS](https://www.epa.gov/bmds)).  The user interface is a web application, but has two different deployment options:
 
+* It can be deployed locally as a desktop application, which we call **BMDS Desktop**
 * It can deployed as a web application, such as [BMDS Online](https://bmdsonline.epa.gov)
-* It can be deployed locally as a desktop application, which we call **BMDS Desktop**.
 
 **BMDS Desktop application home screen:**
 ![](./docs/img/bmds-desktop.jpg)
@@ -28,15 +28,6 @@ Database technology|Uses a sqlite database file (single file)|Uses a PostgreSQL 
 The BMDS Desktop has a startup screen where you can select which database file you'd like to use in your application. You can have multiple databases on your computer, one per project for example:
 ![](./docs/img/desktop-startup.jpg)
 
-## Build Notes
-
-To build containers for deployment:
-
-```bash
-make build
-docker compose -f compose/build.yml --project-directory . build
-```
-
 ## Disclaimer
 
-This software/application has been approved for release by the U.S. Environmental Protection Agency (USEPA). Although the software has been subjected to rigorous review, the USEPA reserves the right to update the software as needed pursuant to further analysis and review. No warranty, expressed or implied, is made by the USEPA or the U.S. Government as to the functionality of the software and related material nor shall the fact of release constitute any such warranty. Furthermore, the software is released on condition that neither the USEPA nor the U.S. Government shall be held liable for any damages resulting from its authorized or unauthorized use.
+The United States Environmental Protection Agency (EPA) GitHub project code is provided on an "as is" basis and the user assumes responsibility for its use.  EPA has relinquished control of the information and no longer has responsibility to protect the integrity , confidentiality, or availability of the information.  Any reference to specific commercial products, processes, or services by service mark, trademark, manufacturer, or otherwise, does not constitute or imply their endorsement, recommendation or favoring by EPA.  The EPA seal and logo shall not be used in any manner to imply endorsement of any commercial product or activity by EPA or the United States Government.  Any reference to specific commercial products, processes, or services by service mark, trademark, manufacturer, or otherwise, does not constitute or imply their endorsement, recommendation or favoring by EPA.  The EPA seal and logo shall not be used in any manner to imply endorsement of any commercial product or activity by EPA or the United States Government.

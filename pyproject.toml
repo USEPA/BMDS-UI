@@ -1,7 +1,11 @@
 [project]
 name = "bmds_ui"
 license = {text = "MIT License"}
-authors = [{name = "Andy Shapiro", email = "shapiro.andy@epa.gov"}]
+authors = [
+  {name = "Andy Shapiro", email = "shapiro.andy@epa.gov"},
+  {name = "Allen Davis"},
+  {name = "Jeff Gift"},
+]
 readme = "README.md"
 description = "U.S. EPA Dose Response Modeling Software User Interface"
 dynamic = ["version"]
@@ -78,13 +82,16 @@ prod = [
 ]
 
 [project.urls]
-Source = "https://github.com/USEPA/bmds-ui"
+"Source" = "https://github.com/USEPA/bmds-ui"
+"Changes" = "https://github.com/USEPA/bmds-ui/blob/main/HISTORY.md"
+"Issue Tracker" = "https://github.com/USEPA/bmds-ui/issues"
+"Download" = "https://pypi.org/project/bmds-ui/"
 
 [project.scripts]
 "manage.py" = "bmds_ui:manage"
-manage = "bmds_ui:manage"
-bmds = "bmds_ui.desktop.cli:main"
-bmdsdesktop = "bmds_ui.desktop.cli:main"
+"manage" = "bmds_ui:manage"
+"bmds" = "bmds_ui.desktop.cli:main"
+"bmdsdesktop" = "bmds_ui.desktop.cli:main"
 "bmds_desktop" = "bmds_ui.desktop.cli:main"
 "bmds-desktop" = "bmds_ui.desktop.cli:main"
 
