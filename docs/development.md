@@ -171,3 +171,12 @@ py.test -sv tests/integration/test_dichotomous.py --pdb
 ```bash
 textual run --dev bmds_ui.desktop.cli:main
 ```
+
+## Deployment
+
+To build containers for deployment:
+
+```bash
+make build
+docker compose -f compose/build.yml --project-directory . build
+```
