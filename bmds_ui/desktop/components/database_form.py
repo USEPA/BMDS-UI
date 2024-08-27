@@ -73,6 +73,18 @@ def additional_path_checks(path: Path):
             raise ValueError(f"Cannot edit database {path}. Is this a sqlite database?") from None
 
 
+def check_duplicates(dbs: list[Database], db: Database):
+    duplicate = next((el for el in dbs if el.id != db.id and el.path == db.path), None)
+    if duplicate:
+        raise ValueError(
+            f"An existing project ({duplicate.name}) already exists with this filename: {db.path}"
+        )
+
+    duplicate = next((el for el in dbs if el.id != db.id and el.name == db.name), None)
+    if duplicate:
+        raise ValueError(f"An existing project already exists with this name: {db.name}")
+
+
 class NullWidget(Widget):
     DEFAULT_CSS = """
     NullWidget {
@@ -190,12 +202,19 @@ class DatabaseFormModel(ModalScreen):
         )
 
     def db_valid(self) -> Database:
-        db = Database(
+        kw = dict(
             name=self.query_one("#name").value,
             description=self.query_one("#description").value,
             path=Path(self.query_one("#path").value) / self.query_one("#filename").value,
         )
+        if self.db is None:
+            db = Database(**kw)
+        else:
+            db = self.db.model_copy()
+            for key, value in kw.items():
+                setattr(db, key, value)
         additional_path_checks(db.path)
+        check_duplicates(Config.get().databases, db)
         return db
 
     @on(Button.Pressed, "#db-create")

@@ -4,7 +4,6 @@ from typing import NamedTuple, Self
 
 import pybmds
 from pybmds.constants import DistType, ModelClass
-from pybmds.models.multi_tumor import Multitumor
 from pybmds.session import Session
 from pybmds.types.nested_dichotomous import IntralitterCorrelation, LitterSpecificCovariate
 
@@ -179,7 +178,7 @@ class MultiTumorSession(NamedTuple):
     """
 
     option_index: int
-    session: Multitumor | None
+    session: pybmds.Multitumor | None
 
     @classmethod
     def run(cls, inputs: dict, option_index: int) -> AnalysisSessionSchema:
@@ -202,7 +201,7 @@ class MultiTumorSession(NamedTuple):
         model_settings = build_model_settings(
             dataset_type, PriorEnum.frequentist_restricted, options, {}
         )
-        session = Multitumor(datasets, degrees=degrees, settings=model_settings)
+        session = pybmds.Multitumor(datasets, degrees=degrees, settings=model_settings)
         return cls(option_index=option_index, session=session)
 
     def execute(self):
@@ -213,7 +212,7 @@ class MultiTumorSession(NamedTuple):
         obj = AnalysisSessionSchema.model_validate(data)
         return cls(
             option_index=obj.option_index,
-            session=Multitumor.from_serialized(obj.frequentist),
+            session=pybmds.Multitumor.from_serialized(obj.frequentist),
         )
 
     def to_schema(self) -> AnalysisSessionSchema:

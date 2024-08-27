@@ -20,9 +20,9 @@ class SelectModelType extends Component {
                     text="New"
                     onClick={dataStore.addDataset}
                 />
-                <LabelInput label="New dataset" htmlFor="idFilteredDatasets" />{" "}
+                <LabelInput label="New dataset" htmlFor="datasetType" />
                 <SelectInput
-                    id="idFilteredDatasets"
+                    id="datasetType"
                     onChange={value => dataStore.setModelType(value)}
                     value={dataStore.model_type}
                     choices={dataStore.getFilteredDatasetTypes.map(item => {

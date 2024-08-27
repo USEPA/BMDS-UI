@@ -1,4 +1,5 @@
 import os
+import secrets
 import tempfile
 from pathlib import Path
 
@@ -138,7 +139,7 @@ class TestApplication:
             await pilot.pause()
 
             # fill out form w/ valid data
-            app.query_one("#name").value = "test name"
+            app.query_one("#name").value = f"Test {secrets.token_urlsafe(8)}"
             app.query_one("#filename").value = "test-db.db"
             app.query_one("#description").value = "test description"
 
@@ -171,7 +172,7 @@ class TestApplication:
                 await pilot.press("enter")
                 assert isinstance(app.screen, components.database_form.DatabaseFormModel)
 
-                assert app.query_one("#name").value == "test name"
+                assert app.query_one("#name").value.startswith("Test ")
                 assert app.query_one("#filename").value == "test-db.db"
                 assert app.query_one("#path").value == resolved_temp_dir
                 assert app.query_one("#description").value == "test description"

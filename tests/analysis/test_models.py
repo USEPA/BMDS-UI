@@ -95,7 +95,6 @@ class TestExecution:
             write_excel(df, data_path / "reports/dichotomous.xlsx")
             (data_path / "reports/dichotomous.docx").write_bytes(docx.getvalue())
 
-    @pytest.mark.xfail
     def test_nested_dichotomous(self, bmds_complete_nd, data_path, rewrite_data_files):
         analysis = Analysis.objects.create(inputs=bmds_complete_nd)
 

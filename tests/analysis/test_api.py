@@ -17,6 +17,15 @@ def check_error(response: dict, type: str, loc: list, msg: str):
     assert response["msg"] == msg
 
 
+analyses = [
+    "432a6083-f9aa-4de2-a71f-a6488b4c5bf1",  # dichotomous
+    "cfe458aa-2313-44c0-9346-f4931567bef0",  # continuous summary
+    "09c09d22-2e1a-413c-b350-6b19969f6533",  # continuous individual
+    "4459f728-05f7-4057-a27c-174822a0313d",  # nested dichotomous
+    "2f86f324-911d-4194-97d1-fc7c3f5d0c72",  # multitumor
+]
+
+
 @pytest.mark.django_db
 class TestAnalysisViewSet:
     def test_auth(self, complete_continuous):
@@ -245,16 +254,18 @@ class TestAnalysisViewSet:
         value = response.data["outputs"]["outputs"][0]["frequentist"]["selected"]
         assert value == {"model_index": None, "notes": "no notes"}
 
-    def test_excel(self):
+    @pytest.mark.parametrize("pk", analyses)
+    def test_excel(self, pk):
         client = APIClient()
-        analysis = Analysis.objects.get(pk="ded15870-8986-4d5b-b924-ef9036b2e17e")
+        analysis = Analysis.objects.get(pk=pk)
         url = reverse("api:analysis-excel", args=(analysis.id,))
         resp = client.get(url)
         assert resp.status_code == 200
 
-    def test_word(self):
+    @pytest.mark.parametrize("pk", analyses)
+    def test_word(self, pk):
         client = APIClient()
-        analysis = Analysis.objects.get(pk="ded15870-8986-4d5b-b924-ef9036b2e17e")
+        analysis = Analysis.objects.get(pk=pk)
         url = reverse("api:analysis-word", args=(analysis.id,))
         resp = client.get(url)
         assert resp.status_code == 200
