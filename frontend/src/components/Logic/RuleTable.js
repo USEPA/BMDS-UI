@@ -3,7 +3,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
-import {ruleOrder} from "@/constants/logicConstants";
+import {optionalRules, ruleOrder} from "@/constants/logicConstants";
 
 import RuleRow from "./RuleRow";
 
@@ -32,6 +32,9 @@ class RuleList extends Component {
                 <tbody>
                     {ruleOrder.map(ruleName => {
                         const ruleIndex = _.findIndex(rules, d => d.rule_class === ruleName);
+                        if (ruleIndex === -1 && _.includes(optionalRules, ruleName)) {
+                            return null;
+                        }
                         return (
                             <RuleRow
                                 key={ruleName}
