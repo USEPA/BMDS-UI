@@ -7,7 +7,7 @@ interactions:
       Host:
       - pypi.org
       User-Agent:
-      - Python-urllib/3.12
+      - Python-urllib/3.11
     method: GET
     uri: https://pypi.org/pypi/bmds/json
   response:
