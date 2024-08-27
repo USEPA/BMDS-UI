@@ -2,9 +2,7 @@
 name = "bmds_ui"
 license = {text = "MIT License"}
 authors = [
-  {name = "Andy Shapiro", email = "shapiro.andy@epa.gov"},
-  {name = "Allen Davis"},
-  {name = "Jeff Gift"},
+  {name = "Andy Shapiro", email = "shapiro.andy@epa.gov"}
 ]
 readme = "README.md"
 description = "U.S. EPA Dose Response Modeling Software User Interface"
