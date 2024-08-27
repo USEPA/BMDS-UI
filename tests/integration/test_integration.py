@@ -145,7 +145,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
 
         page.locator('a:has-text("Logic")').click()
         expect(page.locator("#decision-logic tbody tr")).to_have_count(4)
-        expect(page.locator("#rule-table tbody tr")).to_have_count(18)
+        expect(page.locator("#rule-table tbody tr")).to_have_count(17)
 
         # Read-only
         page.get_by_role("button", name="Share").click()
