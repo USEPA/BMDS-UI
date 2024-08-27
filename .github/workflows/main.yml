@@ -42,9 +42,8 @@ jobs:
         token: ${{ secrets.USEPA_BMDS_PRIVATE_PAT }}
     - uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
-        architecture: 'x64'
-        cache: 'pip'
+        python-version: "3.12"
+        cache: pip
     - name: loc
       run: |
         sudo apt-get install -y cloc
@@ -52,7 +51,7 @@ jobs:
         make loc >> $GITHUB_STEP_SUMMARY
     - name: Install pybmds
       run: |
-        python -m pip install -U pip wheel
+        python -m pip install -U pip wheel setuptools
         cd venv
         source ./tools/linux_ci_setup.sh
         source ./tools/linux_ci_env.sh
@@ -155,9 +154,8 @@ jobs:
         token: ${{ secrets.USEPA_BMDS_PRIVATE_PAT }}
     - uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
-        architecture: 'x64'
-        cache: 'pip'
+        python-version: "3.12"
+        cache: pip
     - name: Download webpack build
       uses: actions/download-artifact@v4
       with:
