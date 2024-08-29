@@ -180,7 +180,7 @@ class OutputTabs extends Component {
                             textToCopy={copyText}
                             onCopy={e => {
                                 alert(
-                                    'Data copied to your clipboard! You can paste into Excel, or paste into an a BMDS analysis creating a new dataset and pressing the "Load dataset from Excel" button.'
+                                    'Data copied to your clipboard! For your Multistage/Multitumor analysis, return to the Data tab, select the "Load dataset from Excel" button, and paste the clipboard contents to create a new dataset. Or, paste the clipboard contents into Excel for further analysis.'
                                 );
                             }}
                             className="btn btn-link my-1"
