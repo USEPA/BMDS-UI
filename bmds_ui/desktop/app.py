@@ -9,6 +9,7 @@ from .components.quit import QuitModal
 
 
 class BmdsDesktopTui(App):
+    ENABLE_COMMAND_PALETTE = False
     CSS_PATH = "components/style.tcss"
 
     BINDINGS: ClassVar = [

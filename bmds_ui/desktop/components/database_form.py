@@ -12,6 +12,7 @@ from textual.screen import ModalScreen
 from textual.validation import Function
 from textual.widget import Widget
 from textual.widgets import Button, Input, Label, Markdown
+from textual.worker import Worker, WorkerState
 
 from ..actions import create_django_db
 from ..config import Config, Database, db_suffixes
@@ -150,6 +151,7 @@ class DatabaseFormModel(ModalScreen):
     """
 
     def __init__(self, *args, db: Database | None, **kw):
+        kw.setdefault("name", "db_form")
         self.db: Database | None = db
         super().__init__(*args, **kw)
 
@@ -228,7 +230,7 @@ class DatabaseFormModel(ModalScreen):
         config = Config.get()
         self._create_django_db(config, db)
 
-    @work(exclusive=True, thread=True)
+    @work(exclusive=True, thread=True, group="modify-db")
     def _create_django_db(self, config, db):
         # sleeps are required for loading indicator to show/hide properly
         self.app.call_from_thread(self.set_loading, True)
@@ -236,7 +238,11 @@ class DatabaseFormModel(ModalScreen):
         Config.sync()
         create_django_db(db)
         self.app.call_from_thread(self.set_loading, False)
-        self.app.call_from_thread(self.dismiss, True)
+
+    def on_worker_state_changed(self, event: Worker.StateChanged) -> None:
+        """Called when the worker state changes."""
+        if event.worker.group == "modify-db" and event.state == WorkerState.SUCCESS:
+            self.dismiss(True)
 
     @on(Button.Pressed, "#db-update")
     async def on_db_update(self) -> None:
