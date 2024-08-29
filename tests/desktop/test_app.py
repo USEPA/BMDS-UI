@@ -188,7 +188,7 @@ class TestApplication:
 
 
 async def click_first_button(pilot, app, query):
-    list(query)[0].focus()
+    next(iter(query)).focus()
     await pilot.press("enter")
     await pilot.pause()
 
