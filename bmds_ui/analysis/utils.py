@@ -1,5 +1,4 @@
 import re
-from textwrap import dedent
 
 from django.conf import settings
 from django.utils.timezone import now
@@ -13,14 +12,12 @@ def get_citation() -> str:
     """
     Return a citation for the software.
     """
-    year = now().strftime("%Y")
+    year = "20" + __version__[:2]
     accessed = now().strftime("%B %d, %Y")
     version = get_version()
-    uri = settings.WEBSITE_URI
-    return dedent(
-        f"""\
-        United States Environmental Protection Agency. ({year}). BMDS Online ({__version__}; pybmds {version.python}; bmdscore {version.dll}) [Web App]. Available from {uri}. Accessed {accessed}."""
-    )
+    application = "BMDS Desktop" if settings.IS_DESKTOP else "BMDS Online"
+    uri = "https://pypi.org/project/bmds-ui/" if settings.IS_DESKTOP else settings.WEBSITE_URI
+    return f"U.S. Environmental Protection Agency. ({year}). {application} ({__version__}; pybmds {version.python}; bmdscore {version.dll}) [Software]. Available from {uri}. Accessed {accessed}."
 
 
 re_hex_color = re.compile("^#(?:[0-9a-fA-F]{3}){1,2}$")
