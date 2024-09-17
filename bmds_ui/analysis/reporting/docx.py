@@ -58,10 +58,12 @@ def build_docx(
     add_url_hyperlink(p, uri, "View")
 
     version_label = "BMDS Desktop Version: " if settings.IS_DESKTOP else "BMDS Online Version: "
-    write_setting_p(report, version_label, bmds_ui_version)
-
     bmds_version = analysis.get_bmds_version()
-    write_setting_p(report, "BMDS Version: ", f"{bmds_version.python} ({bmds_version.dll})")
+    write_setting_p(
+        report,
+        version_label,
+        f"{bmds_ui_version} (pybmds {bmds_version.python}; bmdscore {bmds_version.dll})",
+    )
 
     if not analysis.is_finished:
         report.document.add_paragraph("Execution is incomplete; no report could be generated")
