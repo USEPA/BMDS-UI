@@ -52,10 +52,11 @@ def build_docx(
 
     write_setting_p(report, "Report Generated: ", to_timestamp(now()))
 
-    p = report.document.add_paragraph()
-    p.add_run(ANALYSIS_URL).bold = True
-    uri += analysis.get_absolute_url()
-    add_url_hyperlink(p, uri, "View")
+    if not settings.IS_DESKTOP:
+        p = report.document.add_paragraph()
+        p.add_run(ANALYSIS_URL).bold = True
+        uri += analysis.get_absolute_url()
+        add_url_hyperlink(p, uri, "View")
 
     version_label = "BMDS Desktop Version: " if settings.IS_DESKTOP else "BMDS Online Version: "
     bmds_version = analysis.get_bmds_version()
