@@ -13,7 +13,7 @@ class BootstrapResult extends Component {
                 ["# Iterations", settings.bootstrap_iterations],
                 ["Bootstrap Seed", ff(settings.bootstrap_seed)],
                 ["Log-likelihood", ff(results.ll)],
-                ["Observed Chi²", ff(results.obs_chi_sq)],
+                ["Observed Chi²", ff(results.chi_squared)],
                 [
                     <span key={0}>
                         Combined <i>P</i>-Value
