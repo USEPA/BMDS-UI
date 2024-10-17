@@ -159,7 +159,11 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         if response.status is ReportStatus.COMPLETE:
             cache.delete()  # destroy from cache; request is now complete
             edit = instance.password == request.query_params.get("editKey", "")
-            data = add_update_url(instance, response.content, uri) if edit else response.content
+            data = (
+                add_update_url(instance, response.content, uri)
+                if edit and not settings.IS_DESKTOP
+                else response.content
+            )
             return Response(renderers.BinaryFile(data=data, filename=instance.slug))
 
         return Response(response.model_dump(), content_type="application/json")

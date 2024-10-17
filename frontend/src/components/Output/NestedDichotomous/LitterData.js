@@ -15,7 +15,7 @@ const getData = function(model) {
             "Dose",
             "Litter Specific Covariance",
             "Estimated Probability",
-            "Liter Size",
+            "Litter Size",
             "Expected",
             "Observed",
             "Scaled Residual",
