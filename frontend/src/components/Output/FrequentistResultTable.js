@@ -83,7 +83,9 @@ const getModelBinLabel = function(output, index) {
     },
     getColWidths = function(store) {
         if (store.isNestedDichotomous) {
-            return store.recommendationEnabled ? [20, 12, 12, 12, 12, 32] : [20, 20, 20, 20, 20];
+            return store.recommendationEnabled
+                ? [20, 11, 11, 11, 11, 11, 25]
+                : [20, 16, 16, 16, 16, 16];
         } else {
             return store.recommendationEnabled
                 ? [12, 8, 8, 8, 8, 8, 10, 10, 28]
@@ -248,6 +250,9 @@ class FrequentistRow extends Component {
                     <td>
                         <FloatingPointHover value={results.bmd} />
                     </td>
+                    <td>
+                        <FloatingPointHover value={results.bmdu} />
+                    </td>
                     <td>{ff(results.combined_pvalue)}</td>
                     <td>
                         <FloatingPointHover value={results.aic} />
@@ -341,7 +346,7 @@ class FrequentistResultTable extends Component {
                         <th>Model</th>
                         <th>BMDL</th>
                         <th>BMD</th>
-                        {isNestedDichotomous ? null : <th>BMDU</th>}
+                        <th>BMDU</th>
                         <th>
                             <i>P</i>-Value
                         </th>
