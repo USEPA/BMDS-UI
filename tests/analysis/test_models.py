@@ -14,6 +14,32 @@ def write_excel(data: dict, path: Path):
 
 
 @pytest.mark.django_db()
+class TestAnalysis:
+    def test_maybe_hanging(self):
+        qs = Analysis.maybe_hanging(queryset=Analysis.objects.all())
+        assert qs.count() == 1
+        assert str(qs[0].id) == "bb5ada91-8f32-4a24-aedf-dcecbe5044f6"
+
+    def test_model_class_label(self):
+        a = Analysis.objects.get(id="cc3ca355-a57a-4fba-9dc3-99657562df68")
+        assert a.model_class_label == "Continuous"
+
+    def test_timestamp(self):
+        a = Analysis.objects.get(id="cc3ca355-a57a-4fba-9dc3-99657562df68")
+        assert str(a.timestamp) == "2021-12-15 18:42:49.109397+00:00"
+
+    def test_delete_old_analyses(self):
+        n_before = Analysis.objects.count()
+        assert Analysis.objects.filter(id="1b4360dd-27ae-46f1-ad7e-45796d44be8c").exists()
+
+        Analysis.delete_old_analyses()
+
+        n_after = Analysis.objects.count()
+        assert n_before - n_after == 1
+        assert not Analysis.objects.filter(id="1b4360dd-27ae-46f1-ad7e-45796d44be8c").exists()
+
+
+@pytest.mark.django_db()
 class TestExecution:
     def test_continuous(self, complete_continuous, data_path, rewrite_data_files):
         analysis = Analysis.objects.create(inputs=complete_continuous)

@@ -1763,12 +1763,12 @@
     created: 2021-12-15 18:42:28.857142+00:00
     started: 2021-12-15 18:42:48.876358+00:00
     ended: 2021-12-15 18:42:49.109397+00:00
-    deletion_date: 2022-06-14 18:42:49.109397+00:00
+    deletion_date: 2045-12-31 23:23:23.232323+00:00
 - model: analysis.analysis
   pk: ded15870-8986-4d5b-b924-ef9036b2e17e
   fields:
     created: 2024-05-14 19:17:13.442351+00:00
-    deletion_date: 2024-11-10 19:18:13.839491+00:00
+    deletion_date: 2045-12-31 23:23:23.232323+00:00
     ended: 2024-05-14 19:18:13.839482+00:00
     errors: []
     inputs:
@@ -10294,7 +10294,6 @@
               bmd: 13.190689586371025
               cov: []
               dof: 36.0
-              max: 0.0
               bmdl: 9.824944175804669
               bmdu: -9999.0
               litter:
@@ -10855,7 +10854,6 @@
                 - 0.995
                 - 0.9973333333333333
               fixed_lsc: 11.692307692307692
-              obs_chi_sq: 0.0
               parameters:
               - 0.144138836294475
               - -4.7767358236974005
@@ -10956,7 +10954,6 @@
               bmd: 13.190689586371025
               cov: []
               dof: 36.0
-              max: 0.0
               bmdl: 9.824944175804765
               bmdu: -9999.0
               litter:
@@ -11517,7 +11514,6 @@
                 - 0.995
                 - 0.9973333333333333
               fixed_lsc: 11.692307692307692
-              obs_chi_sq: 0.0
               parameters:
               - 0.144138836294475
               - -4.7767358236974005
@@ -11618,7 +11614,6 @@
               bmd: 12.951178803705256
               cov: []
               dof: 35.0
-              max: 0.0
               bmdl: 9.646361865829302
               bmdu: -9999.0
               litter:
@@ -12179,7 +12174,6 @@
                 - 0.994
                 - 0.996
               fixed_lsc: 11.692307692307692
-              obs_chi_sq: 0.0
               parameters:
               - 0.08472920680181548
               - -4.1096589164749755
@@ -12280,7 +12274,6 @@
               bmd: 12.951182313338903
               cov: []
               dof: 35.0
-              max: 0.0
               bmdl: 9.646362099673082
               bmdu: -9999.0
               litter:
@@ -12841,7 +12834,6 @@
                 - 0.999
                 - 0.9996666666666667
               fixed_lsc: 11.692307692307692
-              obs_chi_sq: 0.0
               parameters:
               - 0.08472962434038567
               - -4.1096619680341115
@@ -14548,6 +14540,217 @@
     deletion_date: null
     starred: false
     collections: [1]
+- model: analysis.analysis
+  pk: 1b4360dd-27ae-46f1-ad7e-45796d44be8c
+  fields:
+    password: 8t47uf4epmuf
+    inputs:
+      analysis_name: should be deleted (expired)
+      dataset_options:
+      - dataset_id: 0
+        degree: 3
+        enabled: true
+      dataset_type: D
+      datasets:
+      - doses:
+        - 0
+        - 50
+        - 100
+        - 200
+        - 400
+        dtype: D
+        incidences:
+        - 0
+        - 0
+        - 1
+        - 4
+        - 11
+        metadata:
+          dose_name: Dose
+          dose_units: ''
+          id: 0
+          name: 'Dataset #1'
+          response_name: Incidence
+          response_units: ''
+        ns:
+        - 20
+        - 20
+        - 20
+        - 20
+        - 20
+      models:
+        bayesian:
+        - model: Multistage
+          prior_weight: 1
+        frequentist_restricted:
+        - LogLogistic
+        frequentist_unrestricted:
+        - LogProbit
+      options:
+      - bmr_type: 1
+        bmr_value: 0.1
+        confidence_level: 0.95
+      recommender:
+        enabled: true
+        recommend_questionable: false
+        recommend_viable: true
+        rules:
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 1
+          rule_class: gof
+          threshold: 0.1
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 1
+          rule_class: dof_zero
+          threshold: null
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 0
+          rule_class: high_bmd
+          threshold: 1
+        - enabled_continuous: false
+          enabled_dichotomous: false
+          enabled_nested: false
+          failure_bin: 1
+          rule_class: warnings
+          threshold: null
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 0
+          rule_class: high_bmdl
+          threshold: 1
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 1
+          rule_class: roi_large
+          threshold: 2
+        - enabled_continuous: false
+          enabled_dichotomous: false
+          enabled_nested: false
+          failure_bin: 1
+          rule_class: gof_cancer
+          threshold: 0.05
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 2
+          rule_class: aic_missing
+          threshold: null
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 2
+          rule_class: bmd_missing
+          threshold: null
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 2
+          rule_class: roi_missing
+          threshold: null
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 2
+          rule_class: bmdl_missing
+          threshold: null
+        - enabled_continuous: false
+          enabled_dichotomous: false
+          enabled_nested: false
+          failure_bin: 1
+          rule_class: bmdu_missing
+          threshold: null
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 1
+          rule_class: low_bmd_fail
+          threshold: 10
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 0
+          rule_class: low_bmd_warn
+          threshold: 3
+        - enabled_continuous: true
+          enabled_dichotomous: false
+          enabled_nested: false
+          failure_bin: 1
+          rule_class: variance_fit
+          threshold: 0.05
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 1
+          rule_class: low_bmdl_fail
+          threshold: 10
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 0
+          rule_class: low_bmdl_warn
+          threshold: 3
+        - enabled_continuous: false
+          enabled_dichotomous: false
+          enabled_nested: false
+          failure_bin: 1
+          rule_class: variance_type
+          threshold: 0.05
+        - enabled_continuous: true
+          enabled_dichotomous: false
+          enabled_nested: false
+          failure_bin: 0
+          rule_class: control_stdev_fit
+          threshold: 1.5
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 1
+          rule_class: bmd_bmdl_ratio_fail
+          threshold: 20
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 0
+          rule_class: bmd_bmdl_ratio_warn
+          threshold: 3
+        - enabled_continuous: true
+          enabled_dichotomous: true
+          enabled_nested: true
+          failure_bin: 0
+          rule_class: control_residual_high
+          threshold: 2
+        sufficiently_close_bmdl: 3
+    outputs: {}
+    errors: []
+    created: 2024-08-22 01:23:45.123456+00:00
+    last_updated: 2024-08-22 01:23:45.123456+00:00
+    started: 2024-08-22 01:23:45.123456+00:00
+    ended: 2024-08-22 01:23:45.123456+00:00
+    deletion_date: 2024-08-22 01:23:45.123456+00:00
+    starred: false
+    collections: []
+- model: analysis.analysis
+  pk: bb5ada91-8f32-4a24-aedf-dcecbe5044f6
+  fields:
+    password: u1c1ekxgu1uq
+    inputs: {}
+    outputs: {}
+    errors: []
+    created: 2024-08-22 01:23:45.123456+00:00
+    last_updated: 2024-08-22 01:23:45.123456+00:00
+    started: 2024-08-22 01:23:45.123456+00:00
+    ended: null
+    deletion_date: null
+    starred: false
+    collections: []
 - model: analysis.collection
   pk: 1
   fields:
