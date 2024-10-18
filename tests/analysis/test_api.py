@@ -75,6 +75,12 @@ class TestAnalysisViewSet:
             response = client.patch(write_url, payload, format="json")
             assert response.status_code == 200
 
+    def test_default_input(self):
+        client = APIClient()
+        url = reverse("api:analysis-default")
+        response = client.get(url, format="json")
+        assert response.json()["dataset_type"] == "C"
+
     def test_patch_auth(self):
         client = APIClient()
         analysis = Analysis.objects.create()

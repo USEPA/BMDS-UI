@@ -17,6 +17,7 @@ class Summary extends Component {
             data = [
                 ["BMD", ff(model.results.bmd), model.results.bmd],
                 ["BMDL", ff(model.results.bmdl), model.results.bmdl],
+                ["BMDU", ff(model.results.bmdu), model.results.bmdu],
                 ["AIC", ff(model.results.aic), model.results.aic],
                 [
                     <span key={0}>
