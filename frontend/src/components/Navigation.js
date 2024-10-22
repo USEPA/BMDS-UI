@@ -78,8 +78,5 @@ class Navigation extends Component {
 }
 Navigation.propTypes = {
     mainStore: PropTypes.object,
-    wordUrl: PropTypes.string,
-    ExcelUrl: PropTypes.string,
-    config: PropTypes.object,
 };
 export default Navigation;

@@ -42,3 +42,16 @@ class DocxRenderer(BaseRenderer):
         response = renderer_context["response"]
         response["Content-Disposition"] = f'attachment; filename="{dataset.filename}.docx"'
         return dataset.data.getvalue()
+
+
+class ZipRenderer(BaseRenderer):
+    media_type = "application/zip"
+    format = "zip"
+
+    def render(self, dataset: dict | BinaryFile, media_type=None, renderer_context=None):
+        if isinstance(dataset, dict):
+            return json.dumps(dataset).encode()
+
+        response = renderer_context["response"]
+        response["Content-Disposition"] = f'attachment; filename="{dataset.filename}.zip"'
+        return dataset.data.getvalue()

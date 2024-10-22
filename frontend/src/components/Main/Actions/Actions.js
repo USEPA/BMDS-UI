@@ -86,14 +86,22 @@ class Actions extends Component {
                                 className="dropdown-item"
                                 onClick={() => mainStore.downloadReport("excelUrl")}
                                 icon="file-excel"
-                                text="Download data"
+                                text="Download Data"
                             />
                             <Button
                                 className="dropdown-item"
                                 onClick={mainStore.showWordReportOptionModal}
                                 icon="file-word"
-                                text="Download report"
+                                text="Download Word Report"
                             />
+                            {mainStore.isFuture ? (
+                                <Button
+                                    className="dropdown-item"
+                                    onClick={() => mainStore.downloadReport("excelReportUrl")}
+                                    icon="file-zip"
+                                    text="Download Excel Report (zip)"
+                                />
+                            ) : null}
                             <a
                                 className="dropdown-item"
                                 href="#"

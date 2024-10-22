@@ -224,6 +224,7 @@ class AnalysisDetail(DetailView):
             "apiUrl": self.object.get_api_url(),
             "url": self.object.get_absolute_url(),
             "excelUrl": self.object.get_excel_url(),
+            "excelReportUrl": self.object.get_excel_report_url(),
             "wordUrl": self.object.get_word_url(),
             "future": settings.ALWAYS_SHOW_FUTURE
             or (self.request.user.is_staff and bool(self.request.GET.get("future"))),
