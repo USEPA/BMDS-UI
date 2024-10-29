@@ -155,8 +155,13 @@ class TestApplication:
                 assert len(newly_created) == db_items + 1
 
                 # START/STOP APPLICATION
-                await click_first_button(pilot, app, app.query(".db-start"))
-                await click_first_button(pilot, app, app.query(".db-stop"))
+                btn = app.query_one(".db-start")
+                await pilot.click(btn)
+                await pilot.pause()
+
+                btn = app.query_one(".db-stop")
+                await pilot.click(btn)
+                await pilot.pause()
 
                 # CANCEL UPDATE
                 await assert_change_screen(pilot, app, first, "main", "db_form")
@@ -187,15 +192,8 @@ class TestApplication:
                 assert len(list(app.query(".db-edit"))) == db_items
 
 
-async def click_first_button(pilot, app, query):
-    next(iter(query)).focus()
-    await pilot.press("enter")
-    await pilot.pause()
-
-
 async def assert_change_screen(pilot, app, btn: Button, current_screen: str, new_screen: str):
     assert app.screen.name == current_screen
-    btn.focus()
-    await pilot.press("enter")
+    await pilot.click(btn)
     await pilot.pause()
     assert app.screen.name == new_screen
