@@ -75,6 +75,15 @@ echo:
 echo Python Path:
 echo {{ python_path }}
 echo:
+{% if env_type == "venv" %}
+echo To activate your environment, open a new terminal and run:
+echo {{env}}
+echo:
+{% elif env_type == "conda" %}
+echo To activate your environment, open a new terminal and run:
+echo conda activate {{env}}
+echo:
+{% endif %}
 echo BMDS UI + pybmds Version:
 "{{ python_path }}" -m pip show bmds-ui pybmds
 echo:
