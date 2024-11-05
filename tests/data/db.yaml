@@ -9827,9 +9827,7 @@
                   model_form_str: P[dose] = g + (1 - g) * (1 - exp(-b1 * dose^1 - b2 * dose^2 - ...))
             ll_constant: -53.61379314894958
             slope_factor: 0.001931509751027665
-            valid_result:
-            - true
-            - true
+            valid_result: true
             selected_model_indexes:
             - 0
             - 0
