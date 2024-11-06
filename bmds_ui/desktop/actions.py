@@ -31,8 +31,11 @@ PRERELEASE_URL = "https://gitlab.epa.gov/api/v4/projects/1508/packages/pypi/simp
 
 
 def sync_persistent_data():
-    """Sync persistent data to database and static file path. We do this every time a database
-    is created or an application starts, to make sure application state is consistent with files."""
+    """Sync persistent data to database and static file path.
+
+    We do this every time a database is created or an application starts, to make sure application
+    state is consistent with files.
+    """
     call_command("collectstatic", interactive=False, verbosity=3, stdout=stream, stderr=stream)
     call_command("migrate", interactive=False, verbosity=3, stdout=stream, stderr=stream)
 
@@ -172,8 +175,30 @@ def render_template(template_text: str, context: dict) -> str:
     return template.render(Context(context))
 
 
+def get_activate_script() -> tuple[str, str]:
+    """Try to determine how to activate the environment.
+
+    First check if we're in a python virtual environment with an activate script, next try to
+    determine if we're in a conda  environment. If neither, return unknown.
+
+    Returns:
+        tuple[str, str]: (environment_type {venv, conda, unknown}, path/name)
+    """
+    python_path = Path(sys.executable)
+    bin_path = python_path.parent
+    if (bin_path / "activate").exists():
+        return "venv", str(bin_path / "activate")
+    elif (bin_path / "activate.bat").exists():
+        return "venv", str(bin_path / "activate.bat")
+    elif "CONDA_PREFIX" in os.environ and Path(os.environ["CONDA_PREFIX"]).exists():
+        return "conda", Path(os.environ["CONDA_PREFIX"]).name
+    else:
+        return "unknown", ""
+
+
 def write_startup_script(template: str) -> str:
     python_path = Path(sys.executable)
+    env_type, env = get_activate_script()
     show_prerelease = get_installed_version().is_prerelease
     return render_template(
         template,
@@ -181,6 +206,8 @@ def write_startup_script(template: str) -> str:
             "prerelease_url": PRERELEASE_URL,
             "show_prerelease": show_prerelease,
             "python_path": python_path,
+            "env_type": env_type,
+            "env": env,
         },
     )
 
