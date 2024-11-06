@@ -31,8 +31,11 @@ PRERELEASE_URL = "https://gitlab.epa.gov/api/v4/projects/1508/packages/pypi/simp
 
 
 def sync_persistent_data():
-    """Sync persistent data to database and static file path. We do this every time a database
-    is created or an application starts, to make sure application state is consistent with files."""
+    """Sync persistent data to database and static file path.
+
+    We do this every time a database is created or an application starts, to make sure application
+    state is consistent with files.
+    """
     call_command("collectstatic", interactive=False, verbosity=3, stdout=stream, stderr=stream)
     call_command("migrate", interactive=False, verbosity=3, stdout=stream, stderr=stream)
 
@@ -175,7 +178,8 @@ def render_template(template_text: str, context: dict) -> str:
 def get_activate_script() -> tuple[str, str]:
     """Try to determine how to activate the environment.
 
-    First check if we're in a python virtual environment with an activate script, next try to determine if we're in a conda  environment. If neither, return unknown.
+    First check if we're in a python virtual environment with an activate script, next try to
+    determine if we're in a conda  environment. If neither, return unknown.
 
     Returns:
         tuple[str, str]: (environment_type {venv, conda, unknown}, path/name)
