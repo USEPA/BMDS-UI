@@ -32,7 +32,7 @@ class Summary extends Component {
             const isContinuous = outputStore.getModelType === mc.MODEL_CONTINUOUS,
                 results = model.bmd ? model : model.results,
                 p_value = isContinuous ? results.tests.p_values[3] : results.gof.p_value,
-                df = isContinuous ? results.tests.p_values[3] : results.gof.df;
+                df = isContinuous ? results.tests.dfs[3] : results.gof.df;
             data = [
                 ["BMD", ff(results.bmd), results.bmd],
                 ["BMDL", ff(results.bmdl), results.bmdl],
