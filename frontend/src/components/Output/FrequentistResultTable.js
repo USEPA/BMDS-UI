@@ -131,7 +131,7 @@ class FrequentistRowSet extends Component {
         return (
             <>
                 <tr>
-                    <td colSpan={colSpan}>
+                    <td colSpan={colSpan} headers="m-name">
                         <b>
                             <u>{label}</u>
                         </b>
@@ -165,7 +165,7 @@ class ModelNameTd extends Component {
     render() {
         const {store, data, rowIcon, modelClasses} = this.props;
         return (
-            <td>
+            <td headers="m-name">
                 <a
                     id={`freq-result-${data.index}`}
                     href="#"
@@ -204,13 +204,17 @@ class RecommendationTd extends Component {
                     .join("<br/>") || "<i>No notes.</i>";
 
         return store.showInlineNotes ? (
-            <td>
+            <td headers="rec">
                 <u>{getModelBinLabel(selectedFrequentist, data.index)}</u>
                 <br />
                 {getRecommenderText(selectedFrequentist, data.index)}
             </td>
         ) : (
-            <Popover element="td" title={popoverTitle} content={popoverContent}>
+            <Popover
+                element="td"
+                title={popoverTitle}
+                content={popoverContent}
+                attrs={{headers: "rec"}}>
                 <u>{getModelBinLabel(selectedFrequentist, data.index)}</u>
             </Popover>
         );
@@ -244,17 +248,17 @@ class FrequentistRow extends Component {
                         rowIcon={rowIcon}
                         modelClasses={modelClasses}
                     />
-                    <td>
+                    <td headers="bmdl">
                         <FloatingPointHover value={results.bmdl} />
                     </td>
-                    <td>
+                    <td headers="bmd">
                         <FloatingPointHover value={results.bmd} />
                     </td>
-                    <td>
+                    <td headers="bmdu">
                         <FloatingPointHover value={results.bmdu} />
                     </td>
-                    <td>{ff(results.combined_pvalue)}</td>
-                    <td>
+                    <td headers="p_value">{ff(results.combined_pvalue)}</td>
+                    <td headers="aic">
                         <FloatingPointHover value={results.aic} />
                     </td>
                     <RecommendationTd
@@ -277,21 +281,21 @@ class FrequentistRow extends Component {
                     rowIcon={rowIcon}
                     modelClasses={modelClasses}
                 />
-                <td>
+                <td headers="bmdl">
                     <FloatingPointHover value={results.bmdl} />
                 </td>
-                <td>
+                <td headers="bmd">
                     <FloatingPointHover value={results.bmd} />
                 </td>
-                <td>
+                <td headers="bmdu">
                     <FloatingPointHover value={results.bmdu} />
                 </td>
-                <td>{fractionalFormatter(getPValue(dataset.dtype, results))}</td>
-                <td>
+                <td headers="p_value">{fractionalFormatter(getPValue(dataset.dtype, results))}</td>
+                <td headers="aic">
                     <FloatingPointHover value={results.fit.aic} />
                 </td>
-                <td>{ff(results.gof.residual[0])}</td>
-                <td>{ff(results.gof.roi)}</td>
+                <td headers="roi0">{ff(results.gof.residual[0])}</td>
+                <td headers="roi1">{ff(results.gof.roi)}</td>
                 <RecommendationTd
                     store={store}
                     data={data}
@@ -343,18 +347,18 @@ class FrequentistResultTable extends Component {
                 </colgroup>
                 <thead>
                     <tr className="bg-custom">
-                        <th>Model</th>
-                        <th>BMDL</th>
-                        <th>BMD</th>
-                        <th>BMDU</th>
-                        <th>
+                        <th id="m-name">Model</th>
+                        <th id="bmdl">BMDL</th>
+                        <th id="bmd">BMD</th>
+                        <th id="bmdu">BMDU</th>
+                        <th id="p_value">
                             <i>P</i>-Value
                         </th>
-                        <th>AIC</th>
-                        {isNestedDichotomous ? null : <th>Scaled Residual at Control</th>}
-                        {isNestedDichotomous ? null : <th>Scaled Residual near BMD</th>}
+                        <th id="aic">AIC</th>
+                        {isNestedDichotomous ? null : <th id="roi0">Scaled Residual at Control</th>}
+                        {isNestedDichotomous ? null : <th id="roi1">Scaled Residual near BMD</th>}
                         {store.recommendationEnabled ? (
-                            <th>
+                            <th id="rec">
                                 <Button
                                     title="Toggle showing notes inline or popover"
                                     className="btn btn-info btn-sm float-right"

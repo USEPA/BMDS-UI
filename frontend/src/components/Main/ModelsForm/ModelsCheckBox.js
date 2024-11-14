@@ -32,34 +32,46 @@ const isModelChecked = function(models, type, model) {
     },
     PriorWeightTd = observer(props => {
         const {store, model, disabled} = props;
-        return store.canEdit ? (
-            <td>
-                <FloatInput
-                    disabled={disabled}
-                    value={getPriorWeightValue(store.models, model)}
-                    onChange={value => store.setPriorWeight(model, value)}
-                />
+        return (
+            <td headers="b-p">
+                {store.canEdit ? (
+                    <FloatInput
+                        disabled={disabled}
+                        value={getPriorWeightValue(store.models, model)}
+                        onChange={value => store.setPriorWeight(model, value)}
+                    />
+                ) : (
+                    getPriorWeightValue(store.models, model)
+                )}
             </td>
-        ) : (
-            <td>{getPriorWeightValue(store.models, model)}</td>
         );
     }),
     CheckBoxTd = observer(props => {
-        const {store, type, model, disabled} = props,
-            id = `${type}-${model}`;
-        return store.canEdit ? (
-            <td key={id}>
-                <CheckboxInput
-                    id={id}
-                    disabled={disabled}
-                    onChange={value => store.setModelSelection(type, model, value)}
-                    checked={isModelChecked(store.models, type, model)}
-                />
+        const {store, type, model, disabled, headers} = props,
+            key = `${type}-${model}`;
+        return (
+            <td key={key} headers={headers}>
+                {store.canEdit ? (
+                    <CheckboxInput
+                        id={key}
+                        disabled={disabled}
+                        onChange={value => store.setModelSelection(type, model, value)}
+                        checked={isModelChecked(store.models, type, model)}
+                    />
+                ) : (
+                    checkOrEmpty(isModelChecked(store.models, type, model))
+                )}
             </td>
-        ) : (
-            <td key={id}>{checkOrEmpty(isModelChecked(store.models, type, model))}</td>
         );
     }),
+    ModelHeaderTd = ({name, extra}) => {
+        return (
+            <td className="text-left align-middle" headers="m-name">
+                {name}
+                {extra ? extra : null}
+            </td>
+        );
+    },
     multistageHelpText = `All Multistage model polynomial degrees will be run up to a maximum
         degree as specified by the user. For Bayesian Model Averaging, only the 2nd degree
         Multistage model is used (see User Manual for details).`,
@@ -74,29 +86,29 @@ const ModelsCheckBox = observer(props => {
         return (
             <tbody>
                 <tr>
-                    <td className="text-left align-middle">Exponential</td>
-                    <CheckBoxTd store={store} type={fr} model={"Exponential"} />
-                    <td></td>
+                    <ModelHeaderTd name="Exponential" />
+                    <CheckBoxTd store={store} type={fr} headers="mle-r" model={"Exponential"} />
+                    <td id="mle-u"></td>
                 </tr>
                 <tr>
-                    <td className="text-left align-middle">Hill</td>
-                    <CheckBoxTd store={store} type={fr} model={"Hill"} />
-                    <CheckBoxTd store={store} type={fu} model={"Hill"} />
+                    <ModelHeaderTd name="Hill" />
+                    <CheckBoxTd store={store} type={fr} headers="mle-r" model={"Hill"} />
+                    <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Hill"} />
                 </tr>
                 <tr>
-                    <td className="text-left align-middle">Linear</td>
-                    <td></td>
-                    <CheckBoxTd store={store} type={fu} model={"Linear"} />
+                    <ModelHeaderTd name="Linear" />
+                    <td id="mle-r"></td>
+                    <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Linear"} />
                 </tr>
                 <tr>
-                    <td className="text-left align-middle">Polynomial</td>
-                    <CheckBoxTd store={store} type={fr} model={"Polynomial"} />
-                    <CheckBoxTd store={store} type={fu} model={"Polynomial"} />
+                    <ModelHeaderTd name="Polynomial" />
+                    <CheckBoxTd store={store} type={fr} headers="mle-r" model={"Polynomial"} />
+                    <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Polynomial"} />
                 </tr>
                 <tr>
-                    <td className="text-left align-middle">Power</td>
-                    <CheckBoxTd store={store} type={fr} model={"Power"} />
-                    <CheckBoxTd store={store} type={fu} model={"Power"} />
+                    <ModelHeaderTd name="Power" />
+                    <CheckBoxTd store={store} type={fr} headers="mle-r" model={"Power"} />
+                    <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Power"} />
                 </tr>
             </tbody>
         );
@@ -104,69 +116,79 @@ const ModelsCheckBox = observer(props => {
         return (
             <tbody>
                 <tr>
-                    <td className="text-left align-middle">Dichotomous Hill</td>
-                    <CheckBoxTd store={store} type={fr} model={"Dichotomous-Hill"} />
-                    <CheckBoxTd store={store} type={fu} model={"Dichotomous-Hill"} />
-                    <CheckBoxTd store={store} type={b} model={"Dichotomous-Hill"} />
+                    <ModelHeaderTd name="Dichotomous Hill" />
+                    <CheckBoxTd
+                        store={store}
+                        type={fr}
+                        headers="mle-r"
+                        model={"Dichotomous-Hill"}
+                    />
+                    <CheckBoxTd
+                        store={store}
+                        type={fu}
+                        headers="mle-u"
+                        model={"Dichotomous-Hill"}
+                    />
+                    <CheckBoxTd store={store} type={b} headers="b-i" model={"Dichotomous-Hill"} />
                     <PriorWeightTd store={store} model={"Dichotomous-Hill"} />
                 </tr>
                 <tr>
-                    <td className="text-left align-middle">Gamma</td>
-                    <CheckBoxTd store={store} type={fr} model={"Gamma"} />
-                    <CheckBoxTd store={store} type={fu} model={"Gamma"} />
-                    <CheckBoxTd store={store} type={b} model={"Gamma"} />
+                    <ModelHeaderTd name="Gamma" />
+                    <CheckBoxTd store={store} type={fr} headers="mle-r" model={"Gamma"} />
+                    <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Gamma"} />
+                    <CheckBoxTd store={store} type={b} headers="b-i" model={"Gamma"} />
                     <PriorWeightTd store={store} model={"Gamma"} />
                 </tr>
                 <tr>
-                    <td className="text-left align-middle">Logistic</td>
-                    <td></td>
-                    <CheckBoxTd store={store} type={fu} model={"Logistic"} />
-                    <CheckBoxTd store={store} type={b} model={"Logistic"} />
+                    <ModelHeaderTd name="Logistic" />
+                    <td headers="mle-r"></td>
+                    <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Logistic"} />
+                    <CheckBoxTd store={store} type={b} headers="b-i" model={"Logistic"} />
                     <PriorWeightTd store={store} model={"Logistic"} />
                 </tr>
                 <tr>
-                    <td className="text-left align-middle">Log Logistic</td>
-                    <CheckBoxTd store={store} type={fr} model={"LogLogistic"} />
-                    <CheckBoxTd store={store} type={fu} model={"LogLogistic"} />
-                    <CheckBoxTd store={store} type={b} model={"LogLogistic"} />
+                    <ModelHeaderTd name="Log Logistic" />
+                    <CheckBoxTd store={store} type={fr} headers="mle-r" model={"LogLogistic"} />
+                    <CheckBoxTd store={store} type={fu} headers="mle-u" model={"LogLogistic"} />
+                    <CheckBoxTd store={store} type={b} headers="b-i" model={"LogLogistic"} />
                     <PriorWeightTd store={store} model={"LogLogistic"} />
                 </tr>
                 <tr>
-                    <td className="text-left align-middle">LogProbit</td>
-                    <CheckBoxTd store={store} type={fr} model={"LogProbit"} />
-                    <CheckBoxTd store={store} type={fu} model={"LogProbit"} />
-                    <CheckBoxTd store={store} type={b} model={"LogProbit"} />
+                    <ModelHeaderTd name="Log Probit" />
+                    <CheckBoxTd store={store} type={fr} headers="mle-r" model={"LogProbit"} />
+                    <CheckBoxTd store={store} type={fu} headers="mle-u" model={"LogProbit"} />
+                    <CheckBoxTd store={store} type={b} headers="b-i" model={"LogProbit"} />
                     <PriorWeightTd store={store} model={"LogProbit"} />
                 </tr>
                 <tr>
-                    <td className="text-left align-middle">
-                        Multistage
-                        {writeMode ? <HelpTextPopover content={multistageHelpText} /> : null}
-                    </td>
-                    <CheckBoxTd store={store} type={fr} model={"Multistage"} />
-                    <CheckBoxTd store={store} type={fu} model={"Multistage"} />
-                    <CheckBoxTd store={store} type={b} model={"Multistage"} />
+                    <ModelHeaderTd
+                        name="Multistage"
+                        extra={writeMode ? <HelpTextPopover content={multistageHelpText} /> : null}
+                    />
+                    <CheckBoxTd store={store} type={fr} headers="mle-r" model={"Multistage"} />
+                    <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Multistage"} />
+                    <CheckBoxTd store={store} type={b} headers="b-i" model={"Multistage"} />
                     <PriorWeightTd store={store} model={"Multistage"} />
                 </tr>
                 <tr>
-                    <td className="text-left align-middle">Probit</td>
-                    <td></td>
-                    <CheckBoxTd store={store} type={fu} model={"Probit"} />
-                    <CheckBoxTd store={store} type={b} model={"Probit"} />
+                    <ModelHeaderTd name="Probit" />
+                    <td headers="mle-r"></td>
+                    <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Probit"} />
+                    <CheckBoxTd store={store} type={b} headers="b-i" model={"Probit"} />
                     <PriorWeightTd store={store} model={"Probit"} />
                 </tr>
                 <tr>
-                    <td className="text-left align-middle">Quantal Linear</td>
-                    <td></td>
-                    <CheckBoxTd store={store} type={fu} model={"Quantal Linear"} />
-                    <CheckBoxTd store={store} type={b} model={"Quantal Linear"} />
+                    <ModelHeaderTd name="Quantal Linear" />
+                    <td headers="mle-r"></td>
+                    <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Quantal Linear"} />
+                    <CheckBoxTd store={store} type={b} headers="b-i" model={"Quantal Linear"} />
                     <PriorWeightTd store={store} model={"Quantal Linear"} />
                 </tr>
                 <tr>
-                    <td className="text-left align-middle">Weibull</td>
-                    <CheckBoxTd store={store} type={fr} model={"Weibull"} />
-                    <CheckBoxTd store={store} type={fu} model={"Weibull"} />
-                    <CheckBoxTd store={store} type={b} model={"Weibull"} />
+                    <ModelHeaderTd name="Weibull" />
+                    <CheckBoxTd store={store} type={fr} headers="mle-r" model={"Weibull"} />
+                    <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Weibull"} />
+                    <CheckBoxTd store={store} type={b} headers="b-i" model={"Weibull"} />
                     <PriorWeightTd store={store} model={"Weibull"} />
                 </tr>
             </tbody>
@@ -175,14 +197,26 @@ const ModelsCheckBox = observer(props => {
         return (
             <tbody>
                 <tr>
-                    <td className="text-left align-middle">Nested Logistic</td>
-                    <CheckBoxTd store={store} type={fr} model={"Nested Logistic"} />
-                    <CheckBoxTd store={store} type={fu} model={"Nested Logistic"} />
+                    <ModelHeaderTd name="Nested Logistic" />
+                    <CheckBoxTd store={store} type={fr} headers="mle-r" model={"Nested Logistic"} />
+                    <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Nested Logistic"} />
                 </tr>
                 <tr>
-                    <td className="text-left align-middle">NCTR</td>
-                    <CheckBoxTd store={store} type={fr} model={"NCTR"} disabled={true} />
-                    <CheckBoxTd store={store} type={fu} model={"NCTR"} disabled={true} />
+                    <ModelHeaderTd name="NCTR" />
+                    <CheckBoxTd
+                        store={store}
+                        type={fr}
+                        headers="mle-r"
+                        model={"NCTR"}
+                        disabled={true}
+                    />
+                    <CheckBoxTd
+                        store={store}
+                        type={fu}
+                        headers="mle-u"
+                        model={"NCTR"}
+                        disabled={true}
+                    />
                 </tr>
             </tbody>
         );
@@ -192,5 +226,9 @@ const ModelsCheckBox = observer(props => {
 });
 ModelsCheckBox.propTypes = {
     store: PropTypes.any,
+};
+ModelHeaderTd.propTypes = {
+    name: PropTypes.string.isRequired,
+    extra: PropTypes.node,
 };
 export default ModelsCheckBox;

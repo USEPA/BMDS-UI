@@ -49,7 +49,7 @@ const ModelsCheckBoxHeader = observer(props => {
             <ModelColGroup hasBayesianModels={hasBayesianModels} />
             <thead className="bg-custom">
                 <tr>
-                    <th className="align-top" rowSpan="2">
+                    <th className="align-top" rowSpan="2" id="m-name">
                         Model
                         {canEdit ? (
                             <>
@@ -65,7 +65,7 @@ const ModelsCheckBoxHeader = observer(props => {
                     {hasBayesianModels ? <th colSpan="2">Bayesian Model Averaging</th> : null}
                 </tr>
                 <tr>
-                    <th>
+                    <th id="mle-r">
                         Restricted
                         {canEdit ? (
                             <>
@@ -78,7 +78,7 @@ const ModelsCheckBoxHeader = observer(props => {
                             </>
                         ) : null}
                     </th>
-                    <th>
+                    <th id="mle-ur">
                         Unrestricted
                         {canEdit ? (
                             <>
@@ -93,7 +93,7 @@ const ModelsCheckBoxHeader = observer(props => {
                     </th>
                     {hasBayesianModels ? (
                         <>
-                            <th>
+                            <th id="b-i">
                                 Include
                                 {canEdit ? (
                                     <>
@@ -106,7 +106,7 @@ const ModelsCheckBoxHeader = observer(props => {
                                     </>
                                 ) : null}
                             </th>
-                            <th>
+                            <th id="b-p">
                                 <span className="mb-1">Prior Weight</span>
                             </th>
                         </>
