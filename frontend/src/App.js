@@ -36,7 +36,7 @@ class App extends Component {
 
         return this.props.mainStore.isUpdateComplete ? (
             <HashRouter>
-                <h3>
+                <h2>
                     {getHeader()}
                     {isFuture ? (
                         <span
@@ -47,7 +47,7 @@ class App extends Component {
                             <Icon name="lightning-fill" />
                         </span>
                     ) : null}
-                </h3>
+                </h2>
                 <Navigation />
             </HashRouter>
         ) : null;
