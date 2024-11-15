@@ -36,6 +36,7 @@ class NestedDichotomousOption(BaseModel):
     litter_specific_covariate: LitterSpecificCovariate
     bootstrap_iterations: int
     bootstrap_seed: int
+    estimate_background: bool
 
 
 class DichotomousOptions(BaseModel):

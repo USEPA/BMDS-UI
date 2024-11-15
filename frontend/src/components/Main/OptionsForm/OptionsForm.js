@@ -10,6 +10,7 @@ import {
 } from "@/constants/optionsConstants";
 
 import Button from "../../common/Button";
+import CheckboxInput from "../../common/CheckboxInput";
 import FloatInput from "../../common/FloatInput";
 import IntegerInput from "../../common/IntegerInput";
 import SelectInput from "../../common/SelectInput";
@@ -97,6 +98,14 @@ const OptionsForm = props => {
                                 .map(option => {
                                     return {value: option.value, text: option.label};
                                 })}
+                        />
+                    </td>
+                    <td>
+                        <CheckboxInput
+                            checked={props.options.estimate_background}
+                            onChange={value =>
+                                props.saveOptions("estimate_background", value, props.idx)
+                            }
                         />
                     </td>
                     <td>

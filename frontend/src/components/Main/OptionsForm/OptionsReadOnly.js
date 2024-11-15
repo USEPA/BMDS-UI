@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import {getLabel} from "@/common";
+import {checkOrEmpty} from "@/common";
 import {
     MODEL_CONTINUOUS,
     MODEL_DICHOTOMOUS,
@@ -48,6 +49,7 @@ const OptionsReadOnly = props => {
                             litterSpecificCovariateOptions
                         )}
                     </td>
+                    <td>{checkOrEmpty(options.estimate_background)}</td>
                     <td>{options.bootstrap_iterations}</td>
                     <td>{options.bootstrap_seed}</td>
                 </>

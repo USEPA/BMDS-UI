@@ -127,6 +127,7 @@ class TestInputValidation:
                 "litter_specific_covariate": 1,
                 "bootstrap_iterations": 1000,
                 "bootstrap_seed": 0,
+                "estimate_background": True,
             }
         ]
         assert validators.validate_input(data, partial=True) is None

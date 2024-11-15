@@ -69,6 +69,7 @@ class OptionsFormList extends Component {
                                                 <br />
                                                 Covariate
                                             </th>
+                                            <th>Estimate Background</th>
                                             <th>
                                                 Bootstrap
                                                 <br />
