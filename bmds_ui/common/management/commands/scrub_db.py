@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
-from django.db.models import Value
+from django.db.models import CharField, Value
 from django.db.models.functions import Concat
 
 
@@ -41,10 +41,10 @@ class Command(BaseCommand):
 
         # save all programs
         get_user_model().objects.update(
-            first_name=Concat(Value("first-"), "id"),
-            last_name=Concat(Value("last-"), "id"),
-            username=Concat(Value("username-"), "id"),
-            email=Concat(Value("user-"), "id", Value("@bmdsonline.org")),
+            first_name=Concat(Value("f-"), "id", output_field=CharField()),
+            last_name=Concat(Value("l-"), "id", output_field=CharField()),
+            username=Concat(Value("u-"), "id", output_field=CharField()),
+            email=Concat(Value("e-"), "id", Value("@bmdsonline.org"), output_field=CharField()),
             password=hash_password,
         )
 
