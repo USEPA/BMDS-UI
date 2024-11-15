@@ -72,10 +72,10 @@ class ModelOptionsTable extends Component {
                 ["Confidence Level (one sided)", ff(1 - model.settings.alpha)],
                 [
                     "Litter Specific Covariate",
-                    getLabel(
+                    `${getLabel(
                         model.settings.litter_specific_covariate,
                         litterSpecificCovariateOptions
-                    ),
+                    )} (${ff(model.results.fixed_lsc)})`,
                 ],
                 [
                     "Intralitter Correlation",
