@@ -72,7 +72,7 @@ class OptionSetTable extends Component {
                 ["BMR Type", getLabel(selectedModelOptions.bmr_type, dichotomousBmrOptions)],
                 ["BMR", ff(selectedModelOptions.bmr_value)],
                 ["Confidence Level (one sided)", ff(selectedModelOptions.confidence_level)],
-                ["Degree Setting", outputStore.multitumorDegreeInputSettings.join(", ")],
+                ["Degree Setting", outputStore.multitumorDegreesUsed.join(", ")],
             ];
         } else {
             throw `Unknown model type: ${getModelType}`;
