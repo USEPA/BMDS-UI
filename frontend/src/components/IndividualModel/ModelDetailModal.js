@@ -62,7 +62,7 @@ class ModelBody extends Component {
                         />
                     </Col>
                     <Col xl={4}>
-                        <Summary store={outputStore} />
+                        <Summary />
                     </Col>
                     <Col xl={8}>
                         <DoseResponsePlot
@@ -194,7 +194,7 @@ class MultitumorModalBody extends Component {
                         />
                     </Col>
                     <Col xl={4}>
-                        <Summary model={model} />
+                        <Summary />
                     </Col>
                     <Col xs={8}>
                         <DoseResponsePlot
@@ -250,7 +250,7 @@ class NestedDichotomousModalBody extends Component {
                         <ModelOptionsTable dtype={dtype} model={model} />
                     </Col>
                     <Col xs={6}>
-                        <Summary results={model.results} />
+                        <Summary />
                     </Col>
                     <Col xs={6}>
                         <DoseResponsePlot
