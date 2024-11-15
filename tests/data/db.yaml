@@ -9965,6 +9965,7 @@
         confidence_level: 0.95
         bootstrap_iterations: 1000
         litter_specific_covariate: 1
+        estimate_background: false
       datasets:
       - doses:
         - 0
@@ -10930,7 +10931,7 @@
               bmr_type: 1
               bootstrap_n: 3
               bootstrap_seed: 4
-              estimate_background: true
+              estimate_background: false
               bootstrap_iterations: 1000
               intralitter_correlation: 0
               litter_specific_covariate: 0
@@ -11590,7 +11591,7 @@
               bmr_type: 1
               bootstrap_n: 3
               bootstrap_seed: 4
-              estimate_background: true
+              estimate_background: false
               bootstrap_iterations: 1000
               intralitter_correlation: 1
               litter_specific_covariate: 0
@@ -12250,7 +12251,7 @@
               bmr_type: 1
               bootstrap_n: 3
               bootstrap_seed: 4
-              estimate_background: true
+              estimate_background: false
               bootstrap_iterations: 1000
               intralitter_correlation: 0
               litter_specific_covariate: 1
@@ -12910,7 +12911,7 @@
               bmr_type: 1
               bootstrap_n: 3
               bootstrap_seed: 4
-              estimate_background: true
+              estimate_background: false
               bootstrap_iterations: 1000
               intralitter_correlation: 1
               litter_specific_covariate: 1
