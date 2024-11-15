@@ -1,4 +1,4 @@
-from rest_framework import permissions, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle
@@ -20,12 +20,3 @@ class HealthcheckViewset(viewsets.ViewSet):
         is_healthy = worker_healthcheck.healthy()
         status_code = status.HTTP_200_OK if is_healthy else status.HTTP_503_SERVICE_UNAVAILABLE
         return Response({"healthy": is_healthy}, status=status_code)
-
-    @action(
-        detail=False,
-        permission_classes=(permissions.IsAdminUser,),
-        throttle_classes=(FivePerMinuteThrottle,),
-    )
-    def throttle(self, request):
-        throttle = self.get_throttles()[0]
-        return Response({"identity": throttle.get_ident(request)})
