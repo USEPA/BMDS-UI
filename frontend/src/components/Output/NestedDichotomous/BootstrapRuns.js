@@ -40,7 +40,6 @@ const getData = function(model) {
                       ff(results.p99[idx]),
                   ];
         });
-    rows.push();
 
     return {
         headers: [
