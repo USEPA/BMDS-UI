@@ -39,7 +39,6 @@ class MainStore {
         // word export options setting
         if (this.isMultiTumorOrNestedDichotomous) {
             this.changeReportOptions("datasetFormatLong", false);
-            this.changeReportOptions("allModels", true);
         }
         this.rootStore.modelsStore.setDefaultsByDatasetType(true);
         this.rootStore.optionsStore.setDefaultsByDatasetType(true);
