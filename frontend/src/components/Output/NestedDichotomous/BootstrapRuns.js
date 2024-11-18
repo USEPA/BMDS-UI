@@ -8,34 +8,15 @@ import {ff, fractionalFormatter} from "@/utils/formatters";
 
 const getData = function(model) {
     const results = model.results.bootstrap,
-        rows = _.range(results.p_value.length).map(run => [
-            run + 1,
-            fractionalFormatter(results.p_value[run]),
-            ff(results.p50[run]),
-            ff(results.p90[run]),
-            ff(results.p95[run]),
-            ff(results.p99[run]),
+        finalIdx = results.p_value.length - 1,
+        rows = _.range(results.p_value.length).map(idx => [
+            idx === finalIdx ? "Combined" : idx + 1,
+            fractionalFormatter(results.p_value[idx]),
+            ff(results.p50[idx]),
+            ff(results.p90[idx]),
+            ff(results.p95[idx]),
+            ff(results.p99[idx]),
         ]);
-    rows.push([
-        <span key={0} className="font-weight-bold">
-            Combined
-        </span>,
-        <span key={1} className="font-weight-bold">
-            {fractionalFormatter(results.p_value[3])}
-        </span>,
-        <span key={2} className="font-weight-bold">
-            {ff(results.p50[3])}
-        </span>,
-        <span key={3} className="font-weight-bold">
-            {ff(results.p90[3])}
-        </span>,
-        <span key={4} className="font-weight-bold">
-            {ff(results.p95[3])}
-        </span>,
-        <span key={5} className="font-weight-bold">
-            {ff(results.p99[3])}
-        </span>,
-    ]);
 
     return {
         headers: [

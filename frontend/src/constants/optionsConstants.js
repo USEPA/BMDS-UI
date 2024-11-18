@@ -25,6 +25,7 @@ export const options = {
             litter_specific_covariate: 1,
             bootstrap_iterations: 1000,
             bootstrap_seed: 0,
+            estimate_background: true,
         },
         [MODEL_MULTI_TUMOR]: {
             bmr_type: 1,

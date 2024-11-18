@@ -197,7 +197,7 @@ class AboutModal extends Component {
                             that each animal provides to the denominator
                         </li>
                     </ol>
-                    <h4>References:</h4>
+                    <h2>References:</h2>
                     <p>
                         Kissling GE, Portier CJ, Huff J. (2008) MtBE and cancer in animals:
                         statistical issues with poly-3 survival adjustments for lifetime studies.

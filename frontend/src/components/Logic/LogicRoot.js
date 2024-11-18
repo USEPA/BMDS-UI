@@ -23,6 +23,7 @@ class Logic extends Component {
         return (
             <div className="container-fluid">
                 <DecisionLogic />
+                <h3>Model Recommendation and Bin Placement Logic</h3>
                 <RuleTable />
             </div>
         );

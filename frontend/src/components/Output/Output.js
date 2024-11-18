@@ -120,7 +120,7 @@ class Output extends Component {
                     outputStore.isMultiTumor ? (
                         <div className="row">
                             <div className="col-lg-12">
-                                <h4>Model Results</h4>
+                                <h3>Model Results</h3>
                                 <MultitumorResultTable />
                                 <MultitumorPlot />
                             </div>
@@ -128,7 +128,7 @@ class Output extends Component {
                     ) : (
                         <div className="row py-2">
                             <div className="col-lg-8">
-                                <h4>Maximum Likelihood Approach Model Results</h4>
+                                <h3>Maximum Likelihood Approach Model Results</h3>
                                 <FrequentistResultTable />
                                 {canEdit ? <SelectModel /> : null}
                             </div>
@@ -145,7 +145,7 @@ class Output extends Component {
                 {selectedBayesian ? (
                     <div className="row py-2">
                         <div className="col-lg-12">
-                            <h4>Bayesian Model Results</h4>
+                            <h3>Bayesian Model Results</h3>
                             <BayesianResultTable />
                         </div>
                         <div className="col-lg-12">

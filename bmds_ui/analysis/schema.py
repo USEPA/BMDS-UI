@@ -95,17 +95,4 @@ def add_schema_to_path(schema: dict, path: str, verb: str, name: str):
 
 
 class ApiSchemaGenerator(SchemaGenerator):
-    def get_schema(self, *args, **kwargs):
-        schema = super().get_schema(*args, **kwargs)
-        add_schemas(schema, [EditKeySchema, WrappedAnalysisSelectedSchema])
-        add_schema_to_path(schema, "/api/v1/analysis/{id}/execute/", "post", EditKeySchema.__name__)
-        add_schema_to_path(
-            schema, "/api/v1/analysis/{id}/execute-reset/", "post", EditKeySchema.__name__
-        )
-        add_schema_to_path(
-            schema,
-            "/api/v1/analysis/{id}/select-model/",
-            "post",
-            WrappedAnalysisSelectedSchema.__name__,
-        )
-        return schema
+    pass

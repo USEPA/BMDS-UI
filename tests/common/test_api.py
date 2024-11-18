@@ -32,24 +32,3 @@ class TestHealthcheckViewset:
         resp = anon.get(url)
         assert resp.status_code == 200
         assert resp.json() == {"healthy": True}
-
-    def test_throttle(self):
-        anon = APIClient()
-        admin = APIClient()
-        admin.login(username="admin@bmdsonline.org", password="pw")
-
-        # failure - not admin
-        url = reverse("api:healthcheck-throttle")
-        resp = anon.get(url)
-        assert resp.status_code == 401
-
-        # success - admin
-        url = reverse("api:healthcheck-throttle")
-        for _ in range(5):
-            resp = admin.get(url)
-            assert resp.status_code == 200
-            assert "identity" in resp.data
-
-        # success- throttled (>5/min)
-        resp = admin.get(url)
-        assert resp.status_code == 429

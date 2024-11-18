@@ -135,6 +135,12 @@ class OutputStore {
             .map(d => (d.degree === 0 ? "auto" : d.degree));
     }
 
+    @computed get multitumorDegreesUsed() {
+        return this.selectedFrequentist.results.models.map(models =>
+            _.max(models.map(model => model.settings.degree))
+        );
+    }
+
     @computed get recommendationEnabled() {
         return (
             this.selectedOutput.frequentist &&

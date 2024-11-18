@@ -2,7 +2,7 @@ import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
-import {getLabel} from "@/common";
+import {checkOrEmpty, getLabel} from "@/common";
 import TwoColumnTable from "@/components/common/TwoColumnTable";
 import {Dtype} from "@/constants/dataConstants";
 import {hasDegrees} from "@/constants/modelConstants";
@@ -70,19 +70,20 @@ class ModelOptionsTable extends Component {
                 ["BMR Type", getLabel(model.settings.bmr_type, dichotomousBmrOptions)],
                 ["BMR", ff(model.settings.bmr)],
                 ["Confidence Level (one sided)", ff(1 - model.settings.alpha)],
-                ["Bootstrap Seed", model.settings.bootstrap_seed],
-                ["Bootstrap Iterations", model.settings.bootstrap_iterations],
                 [
                     "Litter Specific Covariate",
-                    getLabel(
+                    `${getLabel(
                         model.settings.litter_specific_covariate,
                         litterSpecificCovariateOptions
-                    ),
+                    )} (${ff(model.results.fixed_lsc)})`,
                 ],
                 [
                     "Intralitter Correlation",
                     getLabel(model.settings.intralitter_correlation, intralitterCorrelation),
                 ],
+                ["Estimate Background", checkOrEmpty(model.settings.estimate_background)],
+                ["Bootstrap Iterations", model.settings.bootstrap_iterations],
+                ["Bootstrap Seed", model.settings.bootstrap_seed],
             ];
         } else {
             throw "Unknown dtype";

@@ -16,7 +16,7 @@ class Popover extends Component {
         $(this.domNode.current).popover("dispose");
     }
     render() {
-        const {children, content, title, element} = this.props;
+        const {children, content, title, element, attrs} = this.props;
         let props = _.fromPairs([
             ["ref", this.domNode],
             ["title", title],
@@ -25,6 +25,9 @@ class Popover extends Component {
             ["data-toggle", "popover"],
             ["data-content", content],
         ]);
+        if (attrs) {
+            _.extend(props, attrs);
+        }
         return React.createElement(element, props, children);
     }
 }
@@ -33,6 +36,7 @@ Popover.propTypes = {
     content: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     children: PropTypes.node.isRequired,
+    attrs: PropTypes.object,
 };
 Popover.defaultProps = {
     element: "div",

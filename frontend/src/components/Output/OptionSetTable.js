@@ -3,7 +3,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
-import {getLabel} from "@/common";
+import {checkOrEmpty, getLabel} from "@/common";
 import {adverseDirectionOptions, allDegreeOptions} from "@/constants/dataConstants";
 import {MODEL_CONTINUOUS, MODEL_DICHOTOMOUS} from "@/constants/mainConstants";
 import {
@@ -56,8 +56,6 @@ class OptionSetTable extends Component {
                 ["BMR Type", getLabel(selectedModelOptions.bmr_type, dichotomousBmrOptions)],
                 ["BMR", ff(selectedModelOptions.bmr_value)],
                 ["Confidence Level (one sided)", ff(selectedModelOptions.confidence_level)],
-                ["Bootstrap Seed", selectedModelOptions.bootstrap_seed],
-                ["Bootstrap Iterations", selectedModelOptions.bootstrap_iterations],
                 [
                     "Litter Specific Covariate",
                     getLabel(
@@ -65,13 +63,16 @@ class OptionSetTable extends Component {
                         litterSpecificCovariateOptions
                     ),
                 ],
+                ["Estimate Background", checkOrEmpty(selectedModelOptions.estimate_background)],
+                ["Bootstrap Seed", selectedModelOptions.bootstrap_seed],
+                ["Bootstrap Iterations", selectedModelOptions.bootstrap_iterations],
             ];
         } else if (outputStore.isMultiTumor) {
             rows = [
                 ["BMR Type", getLabel(selectedModelOptions.bmr_type, dichotomousBmrOptions)],
                 ["BMR", ff(selectedModelOptions.bmr_value)],
                 ["Confidence Level (one sided)", ff(selectedModelOptions.confidence_level)],
-                ["Degree Setting", outputStore.multitumorDegreeInputSettings.join(", ")],
+                ["Degree Setting", outputStore.multitumorDegreesUsed.join(", ")],
             ];
         } else {
             throw `Unknown model type: ${getModelType}`;

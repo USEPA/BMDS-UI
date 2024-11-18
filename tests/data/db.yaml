@@ -1959,8 +1959,8 @@
       analysis_id: cc3ca355-a57a-4fba-9dc3-99657562df68
       analysis_schema_version: '1.1'
       bmds_python_version:
-        dll: 24.1a5
-        python: 24.1a5
+        dll: 24.1a6
+        python: 24.1a6
       bmds_ui_version: 9434971c
       outputs:
       - bayesian:
@@ -3419,8 +3419,8 @@
             model_index: null
             notes: ''
           version:
-            dll: 24.1a5
-            python: 24.1a5
+            dll: 24.1a6
+            python: 24.1a6
         dataset_index: 0
         error: null
         frequentist:
@@ -5135,8 +5135,8 @@
             model_index: null
             notes: ''
           version:
-            dll: 24.1a5
-            python: 24.1a5
+            dll: 24.1a6
+            python: 24.1a6
         option_index: 0
     starred: false
     started: 2024-05-14 19:18:13.442351+00:00
@@ -6837,8 +6837,8 @@
             - 10.0
             - 19.0
           version:
-            dll: 24.1a5
-            python: 24.1a5
+            dll: 24.1a6
+            python: 24.1a6
           selected:
             notes: ''
             model_index: null
@@ -6999,10 +6999,10 @@
         option_index: 0
         dataset_index: 0
       analysis_id: 432a6083-f9aa-4de2-a71f-a6488b4c5bf1
-      bmds_ui_version: 24.1a5
+      bmds_ui_version: 24.1a6
       bmds_python_version:
-        dll: 24.1a5
-        python: 24.1a5
+        dll: 24.1a6
+        python: 24.1a6
       analysis_schema_version: '1.1'
     errors: []
     created: 2024-08-22 15:46:25.966993+00:00
@@ -7942,8 +7942,8 @@
               - 8.24
               - 9.23
           version:
-            dll: 24.1a5
-            python: 24.1a5
+            dll: 24.1a6
+            python: 24.1a6
           selected:
             notes: User selected best fitting model
             model_index: 0
@@ -8100,10 +8100,10 @@
         option_index: 0
         dataset_index: 0
       analysis_id: cfe458aa-2313-44c0-9346-f4931567bef0
-      bmds_ui_version: 24.1a5
+      bmds_ui_version: 24.1a6
       bmds_python_version:
-        dll: 24.1a5
-        python: 24.1a5
+        dll: 24.1a6
+        python: 24.1a6
       analysis_schema_version: '1.1'
     errors: []
     created: 2024-08-22 15:45:08.929260+00:00
@@ -9832,8 +9832,8 @@
             - 0
             - 0
           version:
-            dll: 24.1a5
-            python: 24.1a5
+            dll: 24.1a6
+            python: 24.1a6
           datasets:
           - ns:
             - 20.0
@@ -9936,10 +9936,10 @@
         option_index: 0
         dataset_index: -1
       analysis_id: 2f86f324-911d-4194-97d1-fc7c3f5d0c72
-      bmds_ui_version: 24.1a5
+      bmds_ui_version: 24.1a6
       bmds_python_version:
-        dll: 24.1a5
-        python: 24.1a5
+        dll: 24.1a6
+        python: 24.1a6
       analysis_schema_version: '1.1'
     errors: []
     created: 2024-08-22 15:26:02.720355+00:00
@@ -9965,6 +9965,7 @@
         confidence_level: 0.95
         bootstrap_iterations: 1000
         litter_specific_covariate: 1
+        estimate_background: false
       datasets:
       - doses:
         - 0
@@ -10930,7 +10931,7 @@
               bmr_type: 1
               bootstrap_n: 3
               bootstrap_seed: 4
-              estimate_background: true
+              estimate_background: false
               bootstrap_iterations: 1000
               intralitter_correlation: 0
               litter_specific_covariate: 0
@@ -11590,7 +11591,7 @@
               bmr_type: 1
               bootstrap_n: 3
               bootstrap_seed: 4
-              estimate_background: true
+              estimate_background: false
               bootstrap_iterations: 1000
               intralitter_correlation: 1
               litter_specific_covariate: 0
@@ -12250,7 +12251,7 @@
               bmr_type: 1
               bootstrap_n: 3
               bootstrap_seed: 4
-              estimate_background: true
+              estimate_background: false
               bootstrap_iterations: 1000
               intralitter_correlation: 0
               litter_specific_covariate: 1
@@ -12910,7 +12911,7 @@
               bmr_type: 1
               bootstrap_n: 3
               bootstrap_seed: 4
-              estimate_background: true
+              estimate_background: false
               bootstrap_iterations: 1000
               intralitter_correlation: 1
               litter_specific_covariate: 1
@@ -13095,8 +13096,8 @@
             - 8.0
             - 10.0
           version:
-            dll: 24.1a5
-            python: 24.1a5
+            dll: 24.1a6
+            python: 24.1a6
           selected:
             notes: User selected best fitting model
             model_index: 1
@@ -13265,10 +13266,10 @@
         option_index: 0
         dataset_index: 0
       analysis_id: 4459f728-05f7-4057-a27c-174822a0313d
-      bmds_ui_version: 24.1a5
+      bmds_ui_version: 24.1a6
       bmds_python_version:
-        dll: 24.1a5
-        python: 24.1a5
+        dll: 24.1a6
+        python: 24.1a6
       analysis_schema_version: '1.1'
     errors: []
     created: 2024-08-22 15:25:20.345600+00:00
@@ -14367,8 +14368,8 @@
             - 15.1564
             - 15.0368
           version:
-            dll: 24.1a5
-            python: 24.1a5
+            dll: 24.1a6
+            python: 24.1a6
           selected:
             notes: User selected best fitting model
             model_index: 0
@@ -14525,10 +14526,10 @@
         option_index: 0
         dataset_index: 0
       analysis_id: 09c09d22-2e1a-413c-b350-6b19969f6533
-      bmds_ui_version: 24.1a5
+      bmds_ui_version: 24.1a6
       bmds_python_version:
-        dll: 24.1a5
-        python: 24.1a5
+        dll: 24.1a6
+        python: 24.1a6
       analysis_schema_version: '1.1'
     errors: []
     created: 2024-08-22 15:23:53.050405+00:00
