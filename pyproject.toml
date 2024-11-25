@@ -2,7 +2,7 @@
 name = "bmds_ui"
 license = {text = "MIT License"}
 authors = [
-  {name = "BMDS development team"},
+  {name = "BMDS Development Team"},
   {name = "Andy Shapiro", email = "shapiro.andy@epa.gov"}
 ]
 readme = "README.md"
