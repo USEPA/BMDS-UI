@@ -1,8 +1,8 @@
 # History
 
-## v24.1 (TBD)
+## v24.1
 
-*Released on 2024-XX-XX.*
+*Released on 2024-11-25.*
 
 * Added BMDS Desktop mode for execution
 * Added support for Multitumor modeling
