@@ -7,9 +7,9 @@ interactions:
       Host:
       - pypi.org
       User-Agent:
-      - Python-urllib/3.11
+      - Python-urllib/3.12
     method: GET
-    uri: https://pypi.org/pypi/bmds/json
+    uri: https://pypi.org/pypi/bmds-ui/json
   response:
     body:
       string: '{"info":{"author":"Andy Shapiro","author_email":"shapiromatron@gmail.com","bugtrack_url":null,"classifiers":["Intended

@@ -2,7 +2,7 @@
 name = "bmds_ui"
 license = {text = "MIT License"}
 authors = [
-  {name = "BMDS development team"},
+  {name = "BMDS Development Team"},
   {name = "Andy Shapiro", email = "shapiro.andy@epa.gov"}
 ]
 readme = "README.md"
@@ -24,7 +24,7 @@ classifiers = [
 requires-python = ">=3.11"
 dependencies = [
   # pybmds
-  "pybmds==24.1a6",
+  "pybmds==24.1",
 
   # website
   "Django~=5.1.2",

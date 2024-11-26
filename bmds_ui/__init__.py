@@ -1,7 +1,7 @@
 import os
 import sys
 
-__version__ = "24.1a6"
+__version__ = "24.1"
 
 
 def manage():
