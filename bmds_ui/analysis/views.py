@@ -228,6 +228,7 @@ class AnalysisDetail(DetailView):
             "future": settings.ALWAYS_SHOW_FUTURE
             or (self.request.user.is_staff and bool(self.request.GET.get("future"))),
             "is_desktop": settings.IS_DESKTOP,
+            "cloneUrl": self.object.get_clone_url(),
         }
         if self.can_edit:
             context["config"]["editSettings"] = {
@@ -255,6 +256,20 @@ class AnalysisRenew(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         analysis, _ = get_analysis_or_404(self.kwargs["pk"], self.kwargs["password"])
         analysis.renew()
+        analysis.save()
+        return analysis.get_edit_url()
+
+
+class AnalysisClone(RedirectView):
+    """Clone the current analysis"""
+
+    def get_redirect_url(self, *args, **kwargs):
+        analysis, _ = get_analysis_or_404(self.kwargs["pk"])
+        analysis.id = None
+        analysis.inputs["analysis_name"] = analysis.inputs.get("analysis_name", "") + " (clone)"
+        analysis.inputs["analysis_description"] = (
+            analysis.inputs.get("analysis_description", "") + f" (cloned from {kwargs['pk']})"
+        )
         analysis.save()
         return analysis.get_edit_url()
 

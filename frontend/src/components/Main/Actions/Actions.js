@@ -33,9 +33,9 @@ class Actions extends Component {
                     className="dropdown-menu dropdown-menu-right"
                     style={{minWidth: 360}}
                     aria-labelledby="bmdSessionActions">
+                    <span className="dropdown-header">Edit settings</span>
                     {mainStore.canEdit ? (
                         <>
-                            <span className="dropdown-header">Edit settings</span>
                             <div className="dropdown-item form-group mb-0">
                                 <label
                                     htmlFor="loadAnalysisFile"
@@ -76,9 +76,12 @@ class Actions extends Component {
                                     <Icon name="trash3-fill" text="Delete analysis" />
                                 </a>
                             ) : null}
-                            <div className="dropdown-divider"></div>
                         </>
                     ) : null}
+                    <a className="dropdown-item" href={config.cloneUrl}>
+                        <Icon name="files" text="Clone analysis" />
+                    </a>
+                    <div className="dropdown-divider"></div>
                     <span className="dropdown-header">Reporting</span>
                     {mainStore.analysisSavedAndValidated && mainStore.hasOutputs ? (
                         <>
