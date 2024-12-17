@@ -4,6 +4,7 @@ import uuid
 from copy import deepcopy
 from datetime import datetime, timedelta
 from io import BytesIO
+from zipfile import ZipFile
 
 import pandas as pd
 import pydantic
@@ -115,6 +116,9 @@ class Analysis(models.Model):
     def get_excel_url(self):
         return reverse("api:analysis-excel", args=(str(self.id),))
 
+    def get_excel_report_url(self):
+        return reverse("api:analysis-excel-report", args=(str(self.id),))
+
     def get_word_url(self):
         return reverse("api:analysis-word", args=(str(self.id),))
 
@@ -222,6 +226,13 @@ class Analysis(models.Model):
             data = self.to_df()
             for name, df in data.items():
                 df.to_excel(writer, sheet_name=name, index=False)
+        return f
+
+    def to_excel_reports(self) -> BytesIO:
+        f = BytesIO()
+        with ZipFile(f, "w") as zip_file:
+            zip_file.writestr("file1.txt", "This is the content of file1.")
+            zip_file.writestr("file2.txt", "This is the content of file2.")
         return f
 
     def update_selection(self, selection: validators.AnalysisSelectedSchema):

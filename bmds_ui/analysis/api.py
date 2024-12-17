@@ -142,6 +142,12 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         return Response(response.model_dump(), content_type="application/json")
 
+    @action(detail=True, renderer_classes=(renderers.ZipRenderer,), url_path="excel-report")
+    def excel_report(self, request, *args, **kwargs):
+        instance = self.get_object()
+        data = renderers.BinaryFile(data=instance.to_excel_reports(), filename=instance.slug)
+        return Response(data)
+
     @action(detail=True, renderer_classes=(renderers.DocxRenderer,))
     def word(self, request, *args, **kwargs):
         """
