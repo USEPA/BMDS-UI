@@ -272,3 +272,7 @@ class AnalysisDelete(DeleteView):
 
 class PolyKAdjustment(TemplateView):
     template_name: str = "analysis/polyk.html"
+
+
+class RaoScottAdjustment(TemplateView):
+    template_name: str = "analysis/rao-scott.html"

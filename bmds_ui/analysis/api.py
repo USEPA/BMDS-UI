@@ -235,3 +235,36 @@ class PolyKViewset(viewsets.GenericViewSet):
         f = build_polyk_docx(analysis)
         data = BinaryFile(f, "polyk-adjustment")
         return Response(data)
+
+
+import pandas as pd
+
+
+class RaoScottViewset(viewsets.GenericViewSet):
+    queryset = models.Analysis.objects.none()
+    serializer_class = UnusedSerializer
+    schema = AutoSchema(operation_id_base="RaoScott")
+
+    def _run_analysis(self, request) -> bool:
+        return True
+
+    def create(self, request, *args, **kwargs):
+        _ = self._run_analysis(request)
+        return Response(
+            {
+                "df": pd.DataFrame(data={"a": [1, 2, 3], "b": [4, 5, 6]}),
+            }
+        )
+
+    @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
+    def excel(self, request, *args, **kwargs):
+        analysis = self._run_analysis(request)
+        data = BinaryFile(analysis.to_excel(), "rao-scott-adjustment")
+        return Response(data)
+
+    @action(detail=False, methods=["POST"], renderer_classes=(renderers.DocxRenderer,))
+    def word(self, request, *args, **kwargs):
+        analysis = self._run_analysis(request)
+        f = build_polyk_docx(analysis)
+        data = BinaryFile(f, "rao-scott-adjustment")
+        return Response(data)
