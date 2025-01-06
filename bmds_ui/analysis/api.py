@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
+from pybmds.datasets.transforms.raoscott import RaoScott
 
 from ..common import renderers
 from ..common.renderers import BinaryFile
@@ -237,24 +238,22 @@ class PolyKViewset(viewsets.GenericViewSet):
         return Response(data)
 
 
-import pandas as pd
-
-
 class RaoScottViewset(viewsets.GenericViewSet):
     queryset = models.Analysis.objects.none()
     serializer_class = UnusedSerializer
     schema = AutoSchema(operation_id_base="RaoScott")
 
-    def _run_analysis(self, request) -> bool:
-        return True
+    def _run_analysis(self, request) -> RaoScott:
+        try:
+            settings = pydantic_validate(request.data, schema.RaoScottInput)
+        except ValidationError as err:
+            raise exceptions.ValidationError(err.message) from None
+        analysis = settings.calculate()
+        return analysis
 
     def create(self, request, *args, **kwargs):
-        _ = self._run_analysis(request)
-        return Response(
-            {
-                "df": pd.DataFrame(data={"a": [1, 2, 3], "b": [4, 5, 6]}),
-            }
-        )
+        analysis = self._run_analysis(request)
+        return Response({"df": analysis.to_df()})
 
     @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
     def excel(self, request, *args, **kwargs):

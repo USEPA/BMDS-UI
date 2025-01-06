@@ -4,12 +4,13 @@ import React, {Component} from "react";
 
 import AboutModal from "./AboutModal";
 import InputForm from "./InputForm";
+import OutputTabs from "./Output";
 
 @inject("store")
 @observer
 class App extends Component {
     render() {
-        const {showAboutModal, setAboutModal} = this.props.store;
+        const {showAboutModal, setAboutModal, outputs} = this.props.store;
         return (
             <div className="container py-3">
                 <div className="d-flex justify-content-between">
@@ -25,6 +26,7 @@ class App extends Component {
                 <p className="text-muted col-lg-8">...</p>
                 <h3>Settings</h3>
                 <InputForm />
+                {outputs ? <OutputTabs /> : null}
             </div>
         );
     }

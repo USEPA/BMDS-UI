@@ -5,7 +5,7 @@ import React, {Component} from "react";
 import Button from "../../common/Button";
 import SelectInput from "../../common/SelectInput";
 import TextAreaInput from "../../common/TextAreaInput";
-import {designChoices, speciesChoices} from "./constants";
+import {speciesChoices} from "./constants";
 
 @inject("store")
 @observer
@@ -33,15 +33,6 @@ class InputForm extends Component {
                         <p className="text-muted mb-0">...</p>
                     </div>
                     <div className="col-lg-4">
-                        <SelectInput
-                            label="Design Choice"
-                            choices={designChoices}
-                            value={settings.design}
-                            onChange={value => updateSettings("design", value)}
-                        />
-                        <p className="text-muted mb-0">...</p>
-                    </div>
-                    <div className="col-lg-4 offset-lg-2">
                         <TextAreaInput
                             rows={6}
                             label="Dataset"
@@ -70,7 +61,8 @@ class InputForm extends Component {
                             &nbsp;example data.
                         </p>
                     </div>
-                    <div className="col-lg-4 align-self-center">
+                    <div className="col-lg-4">
+                        <label>&nbsp;</label>
                         <Button
                             className="btn btn-primary btn-block py-3"
                             onClick={submit}

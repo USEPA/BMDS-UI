@@ -12,7 +12,6 @@ class Store {
     @observable settings = {
         dataset: "",
         species: "rat",
-        design: "average",
     };
     @observable error = null;
     @observable errorObject = null;
@@ -81,7 +80,6 @@ class Store {
         this.settings = {
             dataset: "",
             species: "rat",
-            design: "average",
         };
         this.error = null;
         this.outputs = null;
