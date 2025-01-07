@@ -34,4 +34,10 @@ export const simulateClick = function(el) {
     },
     getLabel = function(value, mapping) {
         return _.find(mapping, d => d.value == value).label;
+    },
+    getBlob = function(response, defaultName) {
+        const header = response.headers.get("Content-Disposition"),
+            match = header.match(/filename="(.*)"/),
+            filename = match ? match[1] : defaultName;
+        return response.blob().then(blob => ({blob, filename}));
     };

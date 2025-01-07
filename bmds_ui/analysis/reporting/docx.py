@@ -9,6 +9,7 @@ from django.utils.timezone import now
 
 from pybmds import __version__
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
+from pybmds.datasets.transforms.raoscott import RaoScott
 from pybmds.reporting.styling import Report, write_setting_p
 
 from ... import __version__ as bmds_ui_version
@@ -129,8 +130,25 @@ def build_polyk_docx(analysis: PolyKAdjustment) -> BytesIO:
     # build custom title section
     report.document.add_heading("Poly K Adjustment", 1)
     write_setting_p(report, "Report generated: ", to_timestamp(now()))
-    write_setting_p(report, "BMDS version: ", __version__)
-    write_setting_p(report, "BMDS online version: ", str(settings.COMMIT))
+    write_setting_p(report, "BMDS Version: ", __version__)  # TODO - change version
+    write_setting_p(report, "BMDS Online Version: ", str(settings.COMMIT))  # TODO - change version
+
+    # return generic report
+    document = analysis.to_docx(report=report, show_title=False)
+
+    f = BytesIO()
+    document.save(f)
+    return f
+
+
+def build_raoscott_docx(analysis: RaoScott) -> BytesIO:
+    report = Report.build_default()
+
+    # build custom title section
+    report.document.add_heading("Rao Scott Adjustment", 1)
+    write_setting_p(report, "Report generated: ", to_timestamp(now()))
+    write_setting_p(report, "BMDS Version: ", __version__)  # TODO - change version
+    write_setting_p(report, "BMDS Online version: ", str(settings.COMMIT))  # TODO - change version
 
     # return generic report
     document = analysis.to_docx(report=report, show_title=False)

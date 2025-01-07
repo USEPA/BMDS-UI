@@ -7,7 +7,7 @@ from rest_framework.schemas.openapi import SchemaGenerator
 
 from pybmds.datasets.dichotomous import DichotomousDataset
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
-from pybmds.datasets.transforms.raoscott import Design, RaoScott, Species
+from pybmds.datasets.transforms.raoscott import RaoScott, Species
 from pybmds.types.session import VersionSchema
 
 from .validators import AnalysisSelectedSchema

@@ -1,7 +1,7 @@
 import {saveAs} from "file-saver";
 import {action, computed, observable} from "mobx";
 
-import {getHeaders} from "../../../common";
+import {getBlob, getHeaders} from "../../../common";
 import {exampleData} from "./constants";
 
 class Store {
@@ -73,6 +73,22 @@ class Store {
                 this.error = true;
                 console.error(error);
             });
+    }
+
+    @action.bound
+    async downloadExcel() {
+        const url = "/api/v1/rao-scott/excel/";
+        await fetch(url, this.submissionRequest)
+            .then(response => getBlob(response))
+            .then(({blob, filename}) => saveAs(blob, filename));
+    }
+
+    @action.bound
+    async downloadWord() {
+        const url = "/api/v1/rao-scott/word/";
+        await fetch(url, this.submissionRequest)
+            .then(response => getBlob(response))
+            .then(({blob, filename}) => saveAs(blob, filename));
     }
 
     @action.bound

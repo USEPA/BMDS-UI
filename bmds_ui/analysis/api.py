@@ -16,7 +16,7 @@ from ..common.utils import get_bool
 from ..common.validation import pydantic_validate
 from . import models, schema, serializers, validators
 from .reporting.cache import DocxReportCache, ExcelReportCache
-from .reporting.docx import add_update_url, build_polyk_docx
+from .reporting.docx import add_update_url, build_polyk_docx, build_raoscott_docx
 
 
 class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -253,7 +253,7 @@ class RaoScottViewset(viewsets.GenericViewSet):
 
     def create(self, request, *args, **kwargs):
         analysis = self._run_analysis(request)
-        return Response({"df": analysis.to_df()})
+        return Response({"df": analysis.df})
 
     @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
     def excel(self, request, *args, **kwargs):
@@ -264,6 +264,6 @@ class RaoScottViewset(viewsets.GenericViewSet):
     @action(detail=False, methods=["POST"], renderer_classes=(renderers.DocxRenderer,))
     def word(self, request, *args, **kwargs):
         analysis = self._run_analysis(request)
-        f = build_polyk_docx(analysis)
+        f = build_raoscott_docx(analysis)
         data = BinaryFile(f, "rao-scott-adjustment")
         return Response(data)
