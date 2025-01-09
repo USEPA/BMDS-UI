@@ -21,61 +21,18 @@ class SummaryPlots extends Component {
                         data={[
                             {
                                 x: df.dose,
-                                y: df.incidence,
-                                type: "scatter",
-                                mode: "lines+markers",
-                                marker: {color: "MidnightBlue"},
-                                name: "Original Incidence",
-                            },
-                            {
-                                x: df.dose,
-                                y: df.scaled_incidence,
-                                type: "scatter",
-                                mode: "lines+markers",
-                                marker: {color: "LightSkyBlue"},
-                                name: "Adjusted Incidence",
-                            },
-                        ]}
-                        layout={{
-                            height: 400,
-                            hovermode: "x unified",
-                            title: "Original Incidence vs Adjusted Incidence",
-                            legend: {
-                                x: 0.03,
-                                y: 1,
-                            },
-                            xaxis: {
-                                title: {
-                                    text: "Dose",
-                                },
-                            },
-                            yaxis: {
-                                title: {
-                                    text: "Incidence",
-                                },
-                            },
-                        }}
-                        style={{width: "100%"}}
-                        useResizeHandler={true}
-                    />
-                </div>
-                <div className="col-lg-6">
-                    <Plot
-                        data={[
-                            {
-                                x: df.dose,
                                 y: df.n,
                                 type: "scatter",
                                 mode: "lines+markers",
-                                marker: {color: "LightSeaGreen"},
+                                marker: {color: "FireBrick", symbol: "circle", size: 12},
                                 name: "Original N",
                             },
                             {
                                 x: df.dose,
-                                y: df.scaled_n,
+                                y: df.n_adjusted,
                                 type: "scatter",
                                 mode: "lines+markers",
-                                marker: {color: "Aquamarine"},
+                                marker: {color: "LightSalmon", symbol: "diamond", size: 12},
                                 name: "Adjusted N",
                             },
                         ]}
@@ -95,6 +52,49 @@ class SummaryPlots extends Component {
                             yaxis: {
                                 title: {
                                     text: "N",
+                                },
+                            },
+                        }}
+                        style={{width: "100%"}}
+                        useResizeHandler={true}
+                    />
+                </div>
+                <div className="col-lg-6">
+                    <Plot
+                        data={[
+                            {
+                                x: df.dose,
+                                y: df.incidence,
+                                type: "scatter",
+                                mode: "lines+markers",
+                                marker: {color: "MidnightBlue", symbol: "circle", size: 12},
+                                name: "Original Incidence",
+                            },
+                            {
+                                x: df.dose,
+                                y: df.incidence_adjusted,
+                                type: "scatter",
+                                mode: "lines+markers",
+                                marker: {color: "LightSkyBlue", symbol: "diamond", size: 12},
+                                name: "Adjusted Incidence",
+                            },
+                        ]}
+                        layout={{
+                            height: 400,
+                            hovermode: "x unified",
+                            title: "Original Incidence vs Adjusted Incidence",
+                            legend: {
+                                x: 0.03,
+                                y: 1,
+                            },
+                            xaxis: {
+                                title: {
+                                    text: "Dose",
+                                },
+                            },
+                            yaxis: {
+                                title: {
+                                    text: "Incidence",
                                 },
                             },
                         }}
@@ -168,10 +168,10 @@ class OutputTabs extends Component {
                                     rows: _.range(df.dose.length).map(i => [
                                         df.dose[i],
                                         df.n[i],
-                                        df.scaled_n[i].toFixed(4),
+                                        df.n_adjusted[i].toFixed(4),
                                         df.incidence[i],
-                                        df.scaled_incidence[i].toFixed(4),
-                                        (df.scaled_incidence[i] / df.scaled_n[i]).toFixed(3),
+                                        df.incidence_adjusted[i].toFixed(4),
+                                        df.fraction_affected[i].toFixed(3),
                                     ]),
                                     tblClasses:
                                         "table table-sm table-striped table-hover text-right",
