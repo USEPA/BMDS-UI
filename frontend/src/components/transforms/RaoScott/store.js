@@ -1,4 +1,5 @@
 import {saveAs} from "file-saver";
+import _ from "lodash";
 import {action, computed, observable} from "mobx";
 
 import {getBlob, getHeaders} from "../../../common";
@@ -73,6 +74,13 @@ class Store {
                 this.error = true;
                 console.error(error);
             });
+    }
+
+    @computed get clipboardData() {
+        const {df} = this.outputs;
+        return _.zip(df.dose, df.n_adjusted, df.incidence_adjusted)
+            .map(d => `${d[0]}\t${d[1].toFixed(4)}\t${d[2]}`)
+            .join("\n");
     }
 
     @action.bound

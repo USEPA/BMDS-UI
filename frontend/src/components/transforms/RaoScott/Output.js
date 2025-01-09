@@ -7,6 +7,7 @@ import Tabs from "react-bootstrap/Tabs";
 import Plot from "react-plotly.js";
 
 import Button from "@/components/common/Button";
+import ClipboardButton from "@/components/common/ClipboardButton";
 import Table from "@/components/common/Table";
 
 @inject("store")
@@ -114,7 +115,7 @@ SummaryPlots.propTypes = {
 @observer
 class OutputTabs extends Component {
     render() {
-        const {outputs, downloadExcel, downloadWord} = this.props.store,
+        const {outputs, downloadExcel, downloadWord, clipboardData} = this.props.store,
             {df} = outputs;
         return (
             <>
@@ -176,6 +177,18 @@ class OutputTabs extends Component {
                                     tblClasses:
                                         "table table-sm table-striped table-hover text-right",
                                 }}
+                            />
+                        </div>
+                        <div className="d-flex flex-row-reverse">
+                            <ClipboardButton
+                                text="Copy Data for BMDS Modeling"
+                                textToCopy={clipboardData}
+                                onCopy={e => {
+                                    alert(
+                                        'Data copied to your clipboard! For your dichotomous analysis, return to the Data tab, select the "Load dataset from Excel" button, and paste the clipboard contents to create a new dataset. Or, paste the clipboard contents into Excel for further analysis.'
+                                    );
+                                }}
+                                className="btn btn-link my-1"
                             />
                         </div>
                         <SummaryPlots />
