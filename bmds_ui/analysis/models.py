@@ -359,14 +359,6 @@ class Analysis(models.Model):
     def renew(self):
         self.deletion_date = get_deletion_date(self.deletion_date)
 
-    def get_bmds_version(self) -> VersionSchema | None:
-        if not self.is_finished or self.has_errors or self.outputs is None:
-            return None
-        try:
-            return VersionSchema.model_validate(self.outputs["bmds_python_version"])
-        except pydantic.ValidationError:
-            return None
-
     @property
     def deletion_date_str(self) -> str | None:
         if self.deletion_date is None:
