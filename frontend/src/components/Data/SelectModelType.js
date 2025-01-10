@@ -21,14 +21,16 @@ class SelectModelType extends Component {
                     onClick={dataStore.addDataset}
                 />
                 <LabelInput label="New dataset" htmlFor="datasetType" />
-                <SelectInput
-                    id="datasetType"
-                    onChange={value => dataStore.setModelType(value)}
-                    value={dataStore.model_type}
-                    choices={dataStore.getFilteredDatasetTypes.map(item => {
-                        return {value: item.value, text: item.name};
-                    })}
-                />
+                {dataStore.showDatasetTypeSelector ? (
+                    <SelectInput
+                        id="datasetType"
+                        onChange={value => dataStore.setModelType(value)}
+                        value={dataStore.model_type}
+                        choices={dataStore.getFilteredDatasetTypes.map(item => {
+                            return {value: item.value, text: item.name};
+                        })}
+                    />
+                ) : null}
                 {dataStore.canAddNewDataset ? null : (
                     <p className="text-danger">
                         Can have a maximum of {dataStore.maxItems} datasets per analysis.
