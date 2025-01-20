@@ -81,6 +81,21 @@ class TestAnalysisViewSet:
         response = client.get(url, format="json")
         assert response.json()["dataset_type"] == "C"
 
+    def test_migrate(self, data_path):
+        client = APIClient()
+        url = reverse("api:analysis-migrate")
+
+        response = client.post(url, data={}, format="json")
+
+        assert response.status_code == 400
+        assert response.json() == ["Invalid data for migration"]
+
+        # test v1.1
+        data = json.loads((data_path / "analyses" / "v1.1.json").read_text())
+        response = client.post(url, data={"data": data}, format="json")
+        assert response.status_code == 200
+        assert response.json()["analysis"]["outputs"]["analysis_schema_version"] == "1.1"
+
     def test_patch_auth(self):
         client = APIClient()
         analysis = Analysis.objects.create()

@@ -172,4 +172,5 @@ class AnalysisMigrator:
     @classmethod
     def to_1_1(cls, data: dict) -> dict:
         logger.debug("Migrating from 1.0 to 1.1")
+        data["outputs"]["analysis_schema_version"] = "1.1"
         return data
