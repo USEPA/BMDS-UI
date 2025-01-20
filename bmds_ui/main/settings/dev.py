@@ -2,6 +2,7 @@ from .base import *
 
 INSTALLED_APPS += (
     "debug_toolbar",
+    "dj_watchfiles",
     "django_browser_reload",
 )
 MIDDLEWARE += (
