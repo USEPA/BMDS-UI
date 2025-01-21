@@ -260,18 +260,26 @@ class MainStore {
         this.analysisSavedAndValidated = data.inputs_valid;
     }
     @action.bound loadAnalysisFromFile(file) {
-        let reader = new FileReader();
-        reader.readAsText(file);
+        const {csrfToken} = this.config.editSettings,
+            reader = new FileReader(),
+            migrateUrl = "/api/v1/analysis/migrate/";
         reader.onload = e => {
-            let settings = JSON.parse(e.target.result);
-            /*
-            Set `inputs_valid` to false to show that the data has not yet been saved and validated
-            from the server. This is required so that even though you can view results in the
-            user interface, you cannot download reports or other things from the server.
-            */
-            settings.inputs_valid = false;
-            this.updateModelStateFromApi(settings);
+            const payload = {data: JSON.parse(e.target.result)};
+            fetch(migrateUrl, {
+                method: "POST",
+                mode: "cors",
+                headers: getHeaders(csrfToken),
+                body: JSON.stringify(payload),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    this.updateModelStateFromApi(data.analysis);
+                    // this.analysisSavedAndValidated = false; // TODO - add another state here?
+                    simulateClick(document.getElementById("navlink-output"));
+                })
+                .catch(error => console.error("Error:", error));
         };
+        reader.readAsText(file);
     }
     @action.bound async saveAnalysisToFile() {
         const apiUrl = this.config.apiUrl;

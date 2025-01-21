@@ -48,3 +48,8 @@ class TestPolyKInput:
             ValidationError, match="`has_tumor` must include only the values {0, 1}"
         ):
             PolyKInput.model_validate(settings)
+
+
+class TestSchemaMigrator:
+    def test_invalid_versions(self):
+        pass
