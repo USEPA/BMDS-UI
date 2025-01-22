@@ -11,6 +11,7 @@ import {MsComboInfo, MsComboSummary} from "../Output/Multitumor/MsCombo";
 import MultitumorPlot from "../Output/Multitumor/MultitumorPlot";
 import BootstrapResults from "../Output/NestedDichotomous/BootstrapResults";
 import BootstrapRuns from "../Output/NestedDichotomous/BootstrapRuns";
+import InputParameter from "../Output/NestedDichotomous/InputParameter";
 import LitterData from "../Output/NestedDichotomous/LitterData";
 import ScaledResidual from "../Output/NestedDichotomous/ScaledResidual";
 import CDFPlot from "./CDFPlot";
@@ -245,6 +246,7 @@ class NestedDichotomousModalBody extends Component {
                 <Row>
                     <Col xs={6}>
                         <InfoTable />
+                        <InputParameter model={model} />
                     </Col>
                     <Col xs={6}>
                         <ModelOptionsTable dtype={dtype} model={model} />
