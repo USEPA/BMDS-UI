@@ -247,14 +247,10 @@ class NestedDichotomousModalBody extends Component {
                     <Col xs={6}>
                         <InfoTable />
                         <InputParameter model={model} />
-                    </Col>
-                    <Col xs={6}>
-                        <ModelOptionsTable dtype={dtype} model={model} />
-                    </Col>
-                    <Col xs={6}>
                         <Summary />
                     </Col>
                     <Col xs={6}>
+                        <ModelOptionsTable dtype={dtype} model={model} />
                         <DoseResponsePlot
                             layout={outputStore.drIndividualPlotLayout}
                             data={outputStore.drIndividualPlotData}
