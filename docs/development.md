@@ -54,26 +54,17 @@ In one terminal, start the the python webserver:
 source ./venv/bin/activate
 
 # install latest packages and requirements from code
-make sync-dev
-
-# sync db state with application state
-manage.py migrate
+poe sync-dev
 
 # run development webserver
-manage.py runserver
+poe run-py
 ```
 
 In another terminal, start the node frontend webserver:
 
 ```bash
-# navigate to frontend folder
-cd ./frontend
-
-# install javascript dependencies
-yarn
-
 # start node hot-reloading server
-npm start
+poe run-js
 ```
 
 If you navigate to [localhost](http://127.0.0.1:8000/) and see a website, you're ready to begin coding!
@@ -149,7 +140,7 @@ Integration tests use [playwright](https://playwright.dev/python/). By default, 
 
 ```bash
 # to run all
-make test-integration
+poe test-integration
 
 # or a custom method to run a single test
 INTEGRATION_TESTS=1 py.test -sv tests/integration/test_dichotomous.py --pdb
@@ -158,7 +149,7 @@ INTEGRATION_TESTS=1 py.test -sv tests/integration/test_dichotomous.py --pdb
 When editing integration tests, use the interactive mode to capture user operations:
 
 ```bash
-make test-integration-debug
+poe test-integration-debug
 
 # use set instead of export on windows
 export INTEGRATION_TESTS=1
@@ -177,6 +168,6 @@ textual run --dev bmds_ui.desktop.cli:main
 To build containers for deployment:
 
 ```bash
-make build
+poe build
 docker compose -f compose/build.yml --project-directory . build
 ```
