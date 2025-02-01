@@ -48,7 +48,7 @@ jobs:
       run: |
         sudo apt-get install -y cloc
         echo "# Lines of Code Report" >> $GITHUB_STEP_SUMMARY
-        make loc >> $GITHUB_STEP_SUMMARY
+        poe loc >> $GITHUB_STEP_SUMMARY
     - name: Install pybmds
       run: |
         python -m pip install -U pip wheel setuptools
@@ -63,7 +63,7 @@ jobs:
         python -m pip install -e ".[pg,dev]"
     - name: lint
       run: |
-        make lint-py
+        poe lint-py
     - name: test
       env:
         DJANGO_DB_NAME: bmds-online-test
