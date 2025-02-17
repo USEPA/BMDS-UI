@@ -13,6 +13,7 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import DataError, models
+from django.db.models.functions import Lower
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.timezone import now
@@ -394,12 +395,15 @@ class Collection(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = (Lower("name"), "id")
+
     def __str__(self):
         return self.name
 
     @classmethod
     def opts(cls):
-        return list(cls.objects.values("id", "name").order_by("name"))
+        return list(cls.objects.values("id", "name"))
 
 
 class ContentType(models.IntegerChoices):

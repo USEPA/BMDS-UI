@@ -3,7 +3,7 @@ from collections.abc import Iterable
 from functools import wraps
 from pprint import pformat
 from textwrap import dedent
-from typing import Any
+from typing import Any, ClassVar
 from uuid import UUID
 
 from django.conf import settings
@@ -196,7 +196,7 @@ class HtmxView(View):
     is a full page, while all other pages are fragments.
     """
 
-    actions: set[str]
+    actions: ClassVar[set[str]] = {"index"}
     default_action: str = "index"
 
     def get_handler(self, request: HttpRequest):
