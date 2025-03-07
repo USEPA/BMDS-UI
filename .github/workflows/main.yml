@@ -59,7 +59,7 @@ jobs:
       run: |
         sudo apt-get install -y cloc
         echo "# Lines of Code Report" >> $GITHUB_STEP_SUMMARY
-        poe loc >> $GITHUB_STEP_SUMMARY
+        poe -q loc >> $GITHUB_STEP_SUMMARY
     - name: lint
       run: |
         poe lint-py
