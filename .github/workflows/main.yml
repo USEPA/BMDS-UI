@@ -36,10 +36,9 @@ jobs:
     - name: Checkout bmds@main
       uses: actions/checkout@v4
       with:
-        repository: USEPA/bmds
+        repository: USEPA/BMDS
         path: venv
         ref: main
-        token: ${{ secrets.USEPA_BMDS_PRIVATE_PAT }}
     - uses: actions/setup-python@v5
       with:
         python-version: "3.12"
@@ -152,13 +151,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Checkout bmds@main
-      uses: actions/checkout@v4
-      with:
-        repository: USEPA/bmds-private
-        path: venv
-        ref: main
-        token: ${{ secrets.USEPA_BMDS_PRIVATE_PAT }}
     - uses: actions/setup-python@v5
       with:
         python-version: "3.12"
