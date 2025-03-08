@@ -53,6 +53,7 @@ dependencies = [
 dev = [
   # build
   "flit~=3.9.0",
+  "poethepoet~=0.32.2",
 
   # debug
   "django-debug-toolbar~=4.4.6",
@@ -140,3 +141,97 @@ lint.isort.known-first-party = ["bmds_ui", "pybmds"]
 addopts = "--ds=bmds_ui.main.settings.testing --reuse-db --nomigrations --record-mode=once"
 testpaths = ["tests"]
 python_files = ["test_*.py"]
+
+[tool.poe.tasks.sync-dev]
+help = "Sync dev environment after code checkout"
+sequence = [
+  {cmd = 'uv pip install -e ".[dev,pg]"'},
+  {cmd = "yarn --cwd frontend"},
+  {cmd = "python manage.py migrate"},
+]
+
+[tool.poe.tasks.run-py]
+help = "Run python developer environment"
+cmd = "python manage.py runserver 8100"
+
+[tool.poe.tasks.run-js]
+help = "Run javascript developer environment"
+cmd = "npm --prefix ./frontend run start"
+
+[tool.poe.tasks.test]
+help = "Run python tests"
+cmd = "py.test"
+
+[tool.poe.tasks.test-integration]
+help = "Run integration tests (requires `npm run start`)"
+sequence = [
+  {cmd = "playwright install --with-deps chromium"},
+  {shell = "INTEGRATION_TESTS=1 py.test -sv tests/integration/"},
+]
+
+[tool.poe.tasks.test-integration-debug]
+help = "Run integration tests in debug mode (requires `npm run start`)"
+sequence = [
+  {cmd = "playwright install --with-deps chromium"},
+  {shell = "INTEGRATION_TESTS=1 PWDEBUG=1 py.test -sv tests/integration/"},
+]
+
+[tool.poe.tasks.test-js]
+help = "Run javascript tests"
+cmd = "npm --prefix ./frontend run test"
+
+[tool.poe.tasks.format]
+help = "Fix formatting issues where possible"
+sequence = ["format-py", "format-js"]
+
+[tool.poe.tasks.format-py]
+help = "Fix python formatting issues where possible"
+sequence = [
+  {cmd = "ruff format ."},
+  {cmd = "ruff check . --fix --show-fixes"},
+]
+
+[tool.poe.tasks.format-js]
+help = "Fix javascript formatting issues where possible"
+cmd = "npm --prefix ./frontend run format"
+
+[tool.poe.tasks.lint]
+help = "Check formatting issues"
+sequence = ["lint-py", "lint-js"]
+
+[tool.poe.tasks.lint-py]
+help = "Check python formatting issues"
+sequence = [
+  {cmd = "ruff format . --check"},
+  {cmd = "ruff check ."},
+]
+
+[tool.poe.tasks.lint-js]
+help = "Check javascript formatting issues"
+cmd = "npm --prefix ./frontend run lint"
+
+[tool.poe.tasks.build]
+help = "Build package"
+sequence = [
+  {cmd = "npm --prefix ./frontend run build"},
+  {cmd = "python manage.py set_git_commit"},
+  {cmd = "uv build"},
+]
+
+[tool.poe.tasks.coverage]
+help = "Run python coverage and create HTML report"
+sequence = [
+  {cmd = "coverage run -m pytest"},
+  {cmd = "coverage html -d coverage_html -i"},
+]
+
+[tool.poe.tasks.loc]
+help = "Generate lines of code report"
+cmd = """cloc \
+		--exclude-dir=build,dist,migrations,node_modules,logs,private,public,scripts,vendor,venv \
+		--exclude-ext=json,yaml,svg,toml,ini \
+		--vcs=git \
+		--counted loc-files.txt \
+		--md \
+		.
+"""
