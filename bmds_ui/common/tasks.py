@@ -3,6 +3,7 @@ from celery.utils.log import get_task_logger
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
+from .vacuum import is_sqlite, should_vacuum, vacuum
 from .worker_health import worker_healthcheck
 
 logger = get_task_logger(__name__)
@@ -18,3 +19,13 @@ def diagnostic_celery_task(id_: str):
 @shared_task
 def worker_healthcheck_push():
     worker_healthcheck.push()
+
+
+@shared_task
+def maybe_vacuum():
+    if not is_sqlite():
+        return
+    logger.info("Checking vacuuum")
+    if should_vacuum():
+        logger.info("Vacuuum database")
+        vacuum()

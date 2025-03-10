@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from ...utils import vacuum
+from ...vacuum import vacuum
 
 
 class Command(BaseCommand):
