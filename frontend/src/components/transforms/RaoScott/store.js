@@ -79,7 +79,7 @@ class Store {
     @computed get clipboardData() {
         const {df} = this.outputs;
         return _.zip(df.dose, df.n_adjusted, df.incidence_adjusted)
-            .map(d => `${d[0]}\t${d[1].toFixed(4)}\t${d[2]}`)
+            .map(d => `${d[0]}\t${d[1].toFixed(4)}\t${d[2].toFixed(4)}`)
             .join("\n");
     }
 

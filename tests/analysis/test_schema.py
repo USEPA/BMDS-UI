@@ -23,6 +23,12 @@ class TestPolyKInput:
         with pytest.raises(ValidationError, match="Field required"):
             PolyKInput.model_validate(settings)
 
+        # no dataset
+        settings = deepcopy(polyk_dataset)
+        settings["dataset"] = " "
+        with pytest.raises(ValidationError, match="Empty dataset"):
+            PolyKInput.model_validate(settings)
+
         # columns
         settings = deepcopy(polyk_dataset)
         settings["dataset"] = settings["dataset"].replace("dose,day,has_tumor", "dose,day,BAD")
@@ -64,6 +70,12 @@ class TestRaoScottInput:
         settings = deepcopy(raoscott_dataset)
         settings.pop("dataset")
         with pytest.raises(ValidationError, match="Field required"):
+            RaoScottInput.model_validate(settings)
+
+        # no dataset
+        settings = deepcopy(raoscott_dataset)
+        settings["dataset"] = " "
+        with pytest.raises(ValidationError, match="Empty dataset"):
             RaoScottInput.model_validate(settings)
 
         # columns

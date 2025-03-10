@@ -53,7 +53,10 @@ class PolyKInput(BaseModel):
         # replace tabs or spaces with commas
         value = re.sub(r"[,\t ]+", ",", value.strip())
 
-        df = pd.read_csv(StringIO(value))
+        try:
+            df = pd.read_csv(StringIO(value))
+        except pd.errors.EmptyDataError:
+            raise ValueError("Empty dataset") from None
 
         required_columns = ["dose", "day", "has_tumor"]
         if df.columns.tolist() != required_columns:
@@ -96,7 +99,10 @@ class RaoScottInput(BaseModel):
         # replace tabs or spaces with commas
         value = re.sub(r"[,\t ]+", ",", value.strip())
 
-        df = pd.read_csv(StringIO(value))
+        try:
+            df = pd.read_csv(StringIO(value))
+        except pd.errors.EmptyDataError:
+            raise ValueError("Empty dataset") from None
 
         required_columns = ["dose", "n", "incidence"]
         if df.columns.tolist() != required_columns:
