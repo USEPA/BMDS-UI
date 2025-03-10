@@ -73,7 +73,7 @@ dev = [
   "pytest-playwright~=0.7.0",
 
   # lint and formatting tools
-  "ruff~=0.7.1",
+  "ruff~=0.9.10",
 ]
 pg = [
   "psycopg2-binary~=2.9.10",
