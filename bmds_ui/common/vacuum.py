@@ -34,6 +34,7 @@ def is_sqlite() -> bool:
 
 
 def vacuum() -> bool:
+    """Vacuum if the database is SQLite, return True if a vacuum completed. Set cache timestamp."""
     if is_sqlite():
         with connection.cursor() as cursor:
             logger.info("VACUUM database...")

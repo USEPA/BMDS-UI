@@ -8,4 +8,4 @@ from .models import Analysis
 
 @receiver(post_save, sender=Analysis)
 def vacuum_database(**kwargs):
-    transaction.on_commit(lambda: maybe_vacuum.delay())
+    transaction.on_commit(lambda: maybe_vacuum.delay(), robust=True)
