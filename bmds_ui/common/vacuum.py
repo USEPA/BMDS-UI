@@ -12,6 +12,15 @@ logger = logging.getLogger(__name__)
 VACUUM_TIMESTAMP_CACHE_KEY = "db-vacuum-timestamp"
 
 
+def clear_vacuum_cache():
+    cache.delete(VACUUM_TIMESTAMP_CACHE_KEY)
+
+
+def is_sqlite() -> bool:
+    """Is the current database a SQLite database?"""
+    return "sqlite" in settings.DATABASES["default"]["ENGINE"]
+
+
 def should_vacuum() -> bool:
     """Returns True if last vacuum if a vacuum is required based on timestamp of last vacuum."""
     now = timezone.now()
@@ -26,11 +35,6 @@ def should_vacuum() -> bool:
         logger.info(f"VACUUM required; last vacuum {last_vacuum_seconds} seconds ago")
         return True
     return False
-
-
-def is_sqlite() -> bool:
-    """Is the current database a SQLite database?"""
-    return "sqlite" in settings.DATABASES["default"]["ENGINE"]
 
 
 def vacuum() -> bool:
