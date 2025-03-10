@@ -1,8 +1,4 @@
-import {
-    ff,
-    fractionalFormatter,
-    parameterFormatter,
-} from "../../src/utils/formatters";
+import {ff, fractionalFormatter, parameterFormatter} from "../../src/utils/formatters";
 import assert from "../helpers";
 
 const check = function(func, input, output) {
