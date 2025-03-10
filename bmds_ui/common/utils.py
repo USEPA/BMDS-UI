@@ -5,7 +5,9 @@ from collections.abc import Callable
 from datetime import datetime
 from functools import wraps
 
+from django.conf import settings
 from django.core.cache import cache
+from django.db import connection
 
 _random_string_pool = string.ascii_lowercase + string.digits
 logger = logging.getLogger(__name__)
@@ -51,3 +53,15 @@ def timeout_cache(key: str, timeout: int) -> Callable:
         return wrapper
 
     return decorator
+
+
+def is_sqlite() -> bool:
+    return "sqlite" in settings.DATABASES["default"]["ENGINE"]
+
+
+def vacuum() -> bool:
+    if is_sqlite():
+        with connection.cursor() as cursor:
+            cursor.execute("VACUUM;")
+        return True
+    return False
