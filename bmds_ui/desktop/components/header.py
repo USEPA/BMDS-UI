@@ -25,6 +25,9 @@ class Header(Static):
     Header .col1 {
       width: 75fr;
     }
+    Header .col1 Markdown {
+      background: $background;
+    }
     Header .col2 {
       width: 25fr;
       padding: 0 2 0 0;
