@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Poly K Adjustment | {{block.super}}{% endblock title %}
+{% block title %}Rao Scott Adjustment | {{block.super}}{% endblock title %}
 
 {% block content %}
 {% csrf_token %}
@@ -10,6 +10,6 @@
 {% block extra-js %}
 <script type="text/javascript">
     const token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
-    window.app.polyk(document.getElementById('main'), token);
+    window.app.raoScott(document.getElementById('main'), token);
 </script>
 {% endblock extra-js %}
