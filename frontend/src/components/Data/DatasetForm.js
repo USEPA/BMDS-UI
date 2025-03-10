@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import {columnHeaders, columns} from "@/constants/dataConstants";
-import {MODEL_MULTI_TUMOR} from "@/constants/mainConstants";
+import {MODEL_DICHOTOMOUS, MODEL_MULTI_TUMOR} from "@/constants/mainConstants";
 
 import Button from "../common/Button";
 import ErrorMessage from "../common/ErrorMessage";
@@ -170,6 +170,15 @@ class DatasetForm extends Component {
                             target="_blank"
                             rel="noopener noreferrer">
                             <Icon name="calculator" text="Poly K Adjustment" />
+                        </a>
+                    ) : null}
+                    {dataStore.rootStore.mainStore.model_type == MODEL_DICHOTOMOUS ? (
+                        <a
+                            className="ml-auto"
+                            href="/transforms/rao-scott/"
+                            target="_blank"
+                            rel="noopener noreferrer">
+                            <Icon name="calculator" text="Rao Scott Adjustment" />
                         </a>
                     ) : null}
                 </div>

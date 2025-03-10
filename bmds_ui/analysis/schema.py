@@ -5,7 +5,9 @@ import pandas as pd
 from pydantic import BaseModel, Field, field_validator
 from rest_framework.schemas.openapi import SchemaGenerator
 
+from pybmds.datasets.dichotomous import DichotomousDataset
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
+from pybmds.datasets.transforms.rao_scott import RaoScott, Species
 from pybmds.types.session import VersionSchema
 
 from .validators import AnalysisSelectedSchema
@@ -51,7 +53,10 @@ class PolyKInput(BaseModel):
         # replace tabs or spaces with commas
         value = re.sub(r"[,\t ]+", ",", value.strip())
 
-        df = pd.read_csv(StringIO(value))
+        try:
+            df = pd.read_csv(StringIO(value))
+        except pd.errors.EmptyDataError:
+            raise ValueError("Empty dataset") from None
 
         required_columns = ["dose", "day", "has_tumor"]
         if df.columns.tolist() != required_columns:
@@ -79,6 +84,53 @@ class PolyKInput(BaseModel):
             max_day=self.duration,
             dose_units=self.dose_units,
         )
+
+
+class RaoScottInput(BaseModel):
+    dataset: str
+    species: Species
+
+    @field_validator("dataset")
+    @classmethod
+    def check_dataset(cls, value):
+        if len(value) > 10_000:
+            raise ValueError("Dataset too large")
+
+        # replace tabs or spaces with commas
+        value = re.sub(r"[,\t ]+", ",", value.strip())
+
+        try:
+            df = pd.read_csv(StringIO(value))
+        except pd.errors.EmptyDataError:
+            raise ValueError("Empty dataset") from None
+
+        required_columns = ["dose", "n", "incidence"]
+        if df.columns.tolist() != required_columns:
+            raise ValueError(f"Bad column names; requires {required_columns}")
+
+        if not (df.dose >= 0).all():
+            raise ValueError("`dose` must be ≥ 0")
+
+        if not (df.n > 0).all():
+            raise ValueError("`n` must be > 0")
+
+        if not (df.incidence >= 0).all():
+            raise ValueError("`incidence` must be ≥ 0")
+
+        min_non_incidence = (df.n - df.incidence).min()
+        if min_non_incidence < 0:
+            raise ValueError("`incidence` must be ≤ `n`")
+
+        return value
+
+    def calculate(self) -> RaoScott:
+        df = pd.read_csv(StringIO(self.dataset)).sort_values(["dose"])
+        dataset = DichotomousDataset(
+            doses=df.dose.tolist(),
+            ns=df.n.tolist(),
+            incidences=df.incidence.tolist(),
+        )
+        return RaoScott(dataset=dataset, species=self.species)
 
 
 def add_schemas(schema: dict, models: list):
