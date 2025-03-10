@@ -122,6 +122,9 @@ class Analysis(models.Model):
     def get_star_url(self):
         return reverse("api:analysis-star", args=(str(self.id),))
 
+    def get_clone_url(self):
+        return reverse("analysis_clone", args=(str(self.id),))
+
     def get_collections_url(self):
         return reverse("api:analysis-collections", args=(str(self.id),))
 
