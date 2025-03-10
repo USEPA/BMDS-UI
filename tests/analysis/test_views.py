@@ -41,6 +41,7 @@ class TestAnalysisDetail:
             "url": f"/analysis/{pk}/",
             "excelUrl": f"/api/v1/analysis/{pk}/excel/",
             "wordUrl": f"/api/v1/analysis/{pk}/word/",
+            "cloneUrl": "/analysis/cc3ca355-a57a-4fba-9dc3-99657562df68/clone/",
             "future": False,
             "is_desktop": False,
         }
@@ -55,6 +56,7 @@ class TestAnalysisDetail:
             "url": f"/analysis/{pk}/",
             "excelUrl": f"/api/v1/analysis/{pk}/excel/",
             "wordUrl": f"/api/v1/analysis/{pk}/word/",
+            "cloneUrl": "/analysis/cc3ca355-a57a-4fba-9dc3-99657562df68/clone/",
             "future": False,
             "is_desktop": False,
             "editSettings": {
@@ -87,6 +89,21 @@ class TestAnalysisDetail:
         assert client.login(username="admin@bmdsonline.org", password="pw")
         response = client.get(url)
         assert response.context["config"]["future"] is True
+
+
+@pytest.mark.django_db
+class TestAnalysisClone:
+    def test_success(self):
+        client = Client()
+        pk = "cc3ca355-a57a-4fba-9dc3-99657562df68"
+        analysis = Analysis.objects.get(pk=pk)
+        url = analysis.get_clone_url()
+
+        response = client.get(url, follow=True)
+
+        analysis2 = response.context["object"]
+        assert str(analysis.id) != str(analysis2.id)
+        assert analysis2.inputs["analysis_name"] == f"{analysis.inputs['analysis_name']} (clone)"
 
 
 @pytest.mark.django_db
