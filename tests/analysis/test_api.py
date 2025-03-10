@@ -269,6 +269,14 @@ class TestAnalysisViewSet:
         assert resp.status_code == 200
 
     @pytest.mark.parametrize("pk", analyses)
+    def test_excel_reports(self, pk):
+        client = APIClient()
+        analysis = Analysis.objects.get(pk=pk)
+        url = reverse("api:analysis-excel-report", args=(analysis.id,))
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+    @pytest.mark.parametrize("pk", analyses)
     def test_word(self, pk):
         client = APIClient()
         analysis = Analysis.objects.get(pk=pk)
