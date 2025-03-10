@@ -8,7 +8,7 @@ from django.conf import settings
 from django.utils.timezone import now
 
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
-from pybmds.datasets.transforms.raoscott import RaoScott
+from pybmds.datasets.transforms.rao_scott import RaoScott
 from pybmds.reporting.styling import Report, write_setting_p
 from pybmds.utils import get_version
 

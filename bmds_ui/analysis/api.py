@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
-from pybmds.datasets.transforms.raoscott import RaoScott
+from pybmds.datasets.transforms.rao_scott import RaoScott
 
 from ..common import renderers
 from ..common.renderers import BinaryFile
