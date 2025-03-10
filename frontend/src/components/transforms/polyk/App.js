@@ -45,7 +45,7 @@ class App extends Component {
                     <>
                         <div className="d-flex">
                             <h3 className="pt-3">Results</h3>
-                            <div className="dropdown ml-auto align-self-start">
+                            <div className="dropdown ml-auto align-self-start z-index-10000">
                                 <Button
                                     text="Actions&nbsp;"
                                     className="btn btn-primary dropdown-toggle"

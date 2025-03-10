@@ -318,3 +318,31 @@ class TestPolyKViewSet:
         # assert docx loads
         doc = docx.Document(BytesIO(response.content))
         assert isinstance(doc, docx.document.Document)
+
+
+@pytest.mark.django_db
+class TestRaoScottViewSet:
+    def test_create(self, raoscott_dataset):
+        client = APIClient()
+        url = reverse("api:rao-scott-list")
+        response = client.post(url, raoscott_dataset, format="json")
+        assert response.status_code == 200
+        assert list(response.json().keys()) == ["df"]
+
+    def test_excel(self, raoscott_dataset):
+        client = APIClient()
+        url = reverse("api:rao-scott-excel")
+        response = client.post(url, raoscott_dataset, format="json")
+        assert response.status_code == 200
+        # ensure that response is a valid workbook with two worksheets
+        data = pd.read_excel(BytesIO(response.content), sheet_name=["data"])
+        assert isinstance(data["data"], pd.DataFrame)
+
+    def test_word(self, raoscott_dataset):
+        client = APIClient()
+        url = reverse("api:rao-scott-word")
+        response = client.post(url, raoscott_dataset, format="json")
+        assert response.status_code == 200
+        # assert docx loads
+        doc = docx.Document(BytesIO(response.content))
+        assert isinstance(doc, docx.document.Document)
