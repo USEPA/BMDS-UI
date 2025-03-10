@@ -36,19 +36,13 @@ jobs:
     - name: Checkout bmds@main
       uses: actions/checkout@v4
       with:
-        repository: USEPA/bmds
+        repository: USEPA/BMDS
         path: venv
         ref: main
-        token: ${{ secrets.USEPA_BMDS_PRIVATE_PAT }}
     - uses: actions/setup-python@v5
       with:
         python-version: "3.12"
         cache: pip
-    - name: loc
-      run: |
-        sudo apt-get install -y cloc
-        echo "# Lines of Code Report" >> $GITHUB_STEP_SUMMARY
-        make loc >> $GITHUB_STEP_SUMMARY
     - name: Install pybmds
       run: |
         python -m pip install -U pip wheel setuptools
@@ -61,9 +55,14 @@ jobs:
       run: |
         mv tests/data/ci-webpack-stats.json bmds_ui/webpack-stats.json
         python -m pip install -e ".[pg,dev]"
+    - name: loc
+      run: |
+        sudo apt-get install -y cloc
+        echo "# Lines of Code Report" >> $GITHUB_STEP_SUMMARY
+        poe -q loc >> $GITHUB_STEP_SUMMARY
     - name: lint
       run: |
-        make lint-py
+        poe lint-py
     - name: test
       env:
         DJANGO_DB_NAME: bmds-online-test
@@ -152,13 +151,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Checkout bmds@main
-      uses: actions/checkout@v4
-      with:
-        repository: USEPA/bmds-private
-        path: venv
-        ref: main
-        token: ${{ secrets.USEPA_BMDS_PRIVATE_PAT }}
     - uses: actions/setup-python@v5
       with:
         python-version: "3.12"

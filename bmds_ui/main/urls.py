@@ -38,6 +38,7 @@ urlpatterns = [
     # analysis
     path("analysis/create/", views.AnalysisCreate.as_view(), name="analysis_create"),
     path("analysis/<uuid:pk>/", views.AnalysisDetail.as_view(), name="analysis"),
+    path("analysis/<uuid:pk>/clone/", views.AnalysisClone.as_view(), name="analysis_clone"),
     path(edit_pattern, views.AnalysisDetail.as_view(), name="analysis_edit"),
     path(f"{edit_pattern}renew/", views.AnalysisRenew.as_view(), name="analysis_renew"),
     path(f"{edit_pattern}delete/", views.AnalysisDelete.as_view(), name="analysis_delete"),
