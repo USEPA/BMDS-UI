@@ -53,11 +53,7 @@ class Home(TemplateView):
 class DesktopHome(ListView):
     template_name = "analysis/desktop_home.html"
     model = models.Analysis
-    queryset = (
-        models.Analysis.objects.defer("outputs", "errors")
-        .all()
-        .order_by("-last_updated", "-created")
-    )
+    queryset = models.Analysis.objects.all()
     paginate_by = 20
 
     def get_queryset(self) -> QuerySet:
@@ -71,7 +67,7 @@ class DesktopHome(ListView):
                 qs = qs.filter(collections=c)
         if mt := self.request.GET.get("modeltype", ""):
             qs = qs.filter(inputs__dataset_type=mt)
-        return qs.prefetch_related("collections")
+        return qs.prefetch_related("collections").order_by("-last_updated", "-created")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -80,7 +76,7 @@ class DesktopHome(ListView):
             q=self.request.GET.get("q", ""),
             starred=len(self.request.GET.get("starred", "")) > 0,
             collection=int(collection) if collection.isnumeric() else "",
-            collection_qs=models.Collection.objects.all().order_by("name"),
+            collection_qs=models.Collection.objects.all(),
             collections=models.Collection.opts(),
             model_types=constants.model_types,
             now=now(),
@@ -91,7 +87,7 @@ class DesktopHome(ListView):
 
 @method_decorator(desktop_only, name="dispatch")
 class DesktopActions(HtmxView):
-    actions: ClassVar = {
+    actions: ClassVar[set[str]] = {
         "toggle_star",
         "collection_detail",
         "collection_create",
