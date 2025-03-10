@@ -22,17 +22,14 @@ def test_should_vacuum():
     assert vacuum.should_vacuum() is True
 
     # vacuum if last cache was older than threshold
-    cache.set(
-        vacuum.VACUUM_TIMESTAMP_CACHE_KEY,
-        (timezone.now() - timedelta(seconds=settings.DB_VACUUM_INTERVAL_SECONDS + 1)).isoformat(),
-    )
+    now = timezone.now()
+    last_vacuum = (now - timedelta(seconds=settings.DB_VACUUM_INTERVAL_SECONDS + 30)).isoformat()
+    cache.set(vacuum.VACUUM_TIMESTAMP_CACHE_KEY, last_vacuum)
     assert vacuum.should_vacuum() is True
 
     # vacuum if last cache was newer than threshold
-    cache.set(
-        vacuum.VACUUM_TIMESTAMP_CACHE_KEY,
-        (timezone.now() - timedelta(seconds=settings.DB_VACUUM_INTERVAL_SECONDS - 1)).isoformat(),
-    )
+    last_vacuum = (now - timedelta(seconds=settings.DB_VACUUM_INTERVAL_SECONDS - 30)).isoformat()
+    cache.set(vacuum.VACUUM_TIMESTAMP_CACHE_KEY, last_vacuum)
     assert vacuum.should_vacuum() is False
 
 

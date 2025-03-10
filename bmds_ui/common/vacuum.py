@@ -46,3 +46,8 @@ def vacuum() -> bool:
             cache.set(VACUUM_TIMESTAMP_CACHE_KEY, timezone.now().isoformat())
         return True
     return False
+
+
+def maybe_vacuum():
+    if is_sqlite() and should_vacuum():
+        vacuum()
