@@ -30,6 +30,8 @@ CACHES = {
     }
 }
 
+DB_VACUUM_INTERVAL_SECONDS = 120  # interval (in seconds)
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",

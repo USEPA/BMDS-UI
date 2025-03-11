@@ -8,6 +8,7 @@ import {
     getDefaultDataset,
     getExampleData,
 } from "@/constants/dataConstants";
+import {MODEL_CONTINUOUS} from "@/constants/mainConstants";
 import {getDrDatasetPlotData, getDrLayout} from "@/constants/plotting";
 
 let validateTabularData = function(text, columns) {
@@ -180,6 +181,10 @@ class DataStore {
     @action.bound setDatasets(datasets) {
         this.datasets = datasets;
         this.selectedDatasetId = datasets.length > 0 ? datasets[0].metadata.id : null;
+    }
+
+    @computed get showDatasetTypeSelector() {
+        return this.getModelType == MODEL_CONTINUOUS;
     }
 
     @computed get selectedDataset() {
