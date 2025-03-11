@@ -139,7 +139,7 @@ class Analysis(models.Model):
 
     @property
     def is_finished(self) -> bool:
-        return self.ended and len(self.outputs) > 0 or len(self.errors) > 0
+        return (self.ended and len(self.outputs) > 0) or len(self.errors) > 0
 
     @property
     def has_errors(self):
