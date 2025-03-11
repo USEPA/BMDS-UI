@@ -25,10 +25,20 @@ class CustomQuerysetsFilter(SimpleListFilter):
 
 @admin.register(models.Analysis)
 class AnalysisAdmin(VersionAdmin):
-    list_display = ("__str__", "view_url", "edit_url", "created", "is_finished", "deletion_date")
+    list_display = (
+        "__str__",
+        "view_url",
+        "edit_url",
+        "created",
+        "started",
+        "ended",
+        "is_finished",
+        "deletion_date",
+    )
     readonly_fields = ("password",)
     list_filter = (
         CustomQuerysetsFilter,
+        "created",
         "started",
         "ended",
         "deletion_date",

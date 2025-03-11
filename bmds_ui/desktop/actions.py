@@ -104,6 +104,7 @@ class AppThread(Thread):
             except KeyboardInterrupt:
                 log.info(f"Stopping {url}")
             finally:
+                call_command("vacuum_db", stdout=stream, stderr=stream)
                 self._shutdown()
 
     def stop(self):
