@@ -8,7 +8,6 @@ import {ff} from "@/utils/formatters";
 @observer
 class ParameterPriorTable extends Component {
     render() {
-        // TODO - improve; this doesn't show overrides or true # of parameters
         const {priors} = this.props.model.settings.priors;
         return (
             <Table
