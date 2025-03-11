@@ -71,7 +71,7 @@
   {% endblock content %}
   </div>
 </section>
-{% cache 3600 footer %}
+{% cache 3600 footer desktop_versions.db_path %}
   {% if SKIN == 0 %}
     {% include "./includes/base/footer.html" %}
   {% elif SKIN == 1 %}
