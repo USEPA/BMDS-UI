@@ -34,8 +34,8 @@ class NestedDichotomousOption(BaseModel):
     bmr_value: float
     confidence_level: float = Field(gt=0.5, lt=1)
     litter_specific_covariate: LitterSpecificCovariate
-    bootstrap_iterations: int
-    bootstrap_seed: int
+    bootstrap_iterations: int = Field(ge=10, le=10_000)
+    bootstrap_seed: int = Field(ge=0, le=1_000)
     estimate_background: bool
 
 
@@ -61,6 +61,6 @@ def validate_options(dataset_type: str, data: Any):
     elif dataset_type == pybmds.constants.ModelClass.MULTI_TUMOR:
         schema = DichotomousOptions
     else:
-        ValidationError(f"Unknown `dataset_type`: {dataset_type}")
+        raise ValidationError(f"Unknown `dataset_type`: {dataset_type}")
 
     pydantic_validate({"options": data}, schema)
