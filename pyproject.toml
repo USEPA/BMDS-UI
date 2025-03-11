@@ -40,47 +40,47 @@ dependencies = [
   "celery~=5.4.0",
   "billiard~=4.2.1",
   "kombu~=5.4.2",
-  "plotly~=5.24.1",
-  "redis~=5.1.1",
+  "plotly~=6.0.0",
+  "redis~=5.2.1",
 
   # desktop
   "packaging~=24.1",
-  "textual==0.85.1",
-  "whitenoise~=6.8.1",
+  "textual==2.1.2",
+  "whitenoise~=6.9.0",
 ]
 
 [project.optional-dependencies]
 dev = [
   # build
-  "flit~=3.9.0",
-  "poethepoet~=0.32.2",
+  "flit~=3.11.0",
+  "poethepoet~=0.33.0",
 
   # debug
-  "django-debug-toolbar~=4.4.6",
+  "django-debug-toolbar~=5.0.1",
   "django_extensions~=3.2.3",
-  "django-browser-reload~=1.17.0",
+  "django-browser-reload~=1.18.0",
 
   # tests
   "pytest~=8.3.3",
-  "pytest-django~=4.9.0",
-  "vcrpy~=6.0.2",
+  "pytest-django~=4.10.0",
+  "vcrpy~=7.0.0",
   "pytest-recording~=0.13.2",
-  "pytest-asyncio~=0.24.0",
+  "pytest-asyncio~=0.25.3",
   "coverage~=7.6.4",
 
   # integration tests
-  "playwright~=1.48.0",
-  "pytest-playwright~=0.5.2",
+  "playwright~=1.50.0",
+  "pytest-playwright~=0.7.0",
 
   # lint and formatting tools
-  "ruff~=0.7.1",
+  "ruff~=0.9.10",
 ]
 pg = [
   "psycopg2-binary~=2.9.10",
 ]
 prod = [
   "gunicorn~=23.0.0",
-  "sentry-sdk~=2.17.0",
+  "sentry-sdk~=2.22.0",
 ]
 
 [project.urls]
@@ -141,6 +141,8 @@ lint.isort.known-first-party = ["bmds_ui", "pybmds"]
 addopts = "--ds=bmds_ui.main.settings.testing --reuse-db --nomigrations --record-mode=once"
 testpaths = ["tests"]
 python_files = ["test_*.py"]
+asyncio_mode="auto"
+asyncio_default_fixture_loop_scope="function"
 
 [tool.poe.tasks.sync-dev]
 help = "Sync dev environment after code checkout"

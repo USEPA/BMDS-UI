@@ -29,10 +29,6 @@ class Main(Screen):
         """Exit the application."""
         self.app.push_screen(QuitModal(classes="modal-window"))
 
-    def action_toggle_dark(self):
-        """An action to toggle dark mode."""
-        self.dark = not self.dark
-
     def action_show_disclaimer(self):
         """An action to show the disclaimer."""
         self.app.push_screen(DisclaimerModal())

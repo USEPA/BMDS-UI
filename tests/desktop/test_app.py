@@ -46,13 +46,6 @@ class TestApplication:
             await pilot.press("enter")
             assert isinstance(app.screen, components.main.Main)
 
-            # light/dark
-            initial = app.dark
-            await pilot.press("l")
-            assert app.dark is not initial
-            await pilot.press("l")
-            assert app.dark is initial
-
             # disclaimer
             await pilot.press("d")
             assert isinstance(app.screen, components.disclaimer.DisclaimerModal)
