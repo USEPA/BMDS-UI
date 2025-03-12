@@ -14,7 +14,7 @@ class App extends Component {
         return (
             <div className="container py-3">
                 <div className="d-flex justify-content-between">
-                    <h2>Rao Scott Adjustment</h2>
+                    <h2>Rao-Scott Transformation</h2>
                     <button
                         type="button"
                         className="btn btn-primary"
@@ -23,7 +23,9 @@ class App extends Component {
                     </button>
                 </div>
                 <>{showAboutModal ? <AboutModal store={this.props.store} /> : null}</>
-                <p className="text-muted col-lg-8">...</p>
+                <p className="text-muted col-lg-8">Account for intralitter correlation commonly observed in developmental toxicity studies when only dose-level incidence data is available. For more details, review the software <a href="#" onClick={() => setAboutModal(true)}>
+                        description
+                    </a>.</p>
                 <h3>Settings</h3>
                 <InputForm />
                 {outputs ? <OutputTabs /> : null}

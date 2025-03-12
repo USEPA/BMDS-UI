@@ -178,7 +178,7 @@ class DatasetForm extends Component {
                             href="/transforms/rao-scott/"
                             target="_blank"
                             rel="noopener noreferrer">
-                            <Icon name="calculator" text="Rao Scott Adjustment" />
+                            <Icon name="calculator" text="Rao-Scott Transformation" />
                         </a>
                     ) : null}
                 </div>

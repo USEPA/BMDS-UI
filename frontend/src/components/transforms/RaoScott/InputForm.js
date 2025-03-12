@@ -30,7 +30,7 @@ class InputForm extends Component {
                             value={settings.species}
                             onChange={value => updateSettings("species", value)}
                         />
-                        <p className="text-muted mb-0">...</p>
+                        <p className="text-muted mb-0">Please select the species that effects were observed in. The Rao-Scott transformation is available for rats, mice, and rabbits.</p>
                     </div>
                     <div className="col-lg-4">
                         <TextAreaInput
