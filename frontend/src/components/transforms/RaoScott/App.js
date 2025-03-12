@@ -23,9 +23,15 @@ class App extends Component {
                     </button>
                 </div>
                 <>{showAboutModal ? <AboutModal store={this.props.store} /> : null}</>
-                <p className="text-muted col-lg-8">Account for intralitter correlation commonly observed in developmental toxicity studies when only dose-level incidence data is available. For more details, review the software <a href="#" onClick={() => setAboutModal(true)}>
+                <p className="text-muted col-lg-8">
+                    Account for intralitter correlation commonly observed in developmental toxicity
+                    studies when only dose-level incidence data is available. For more details,
+                    review the software{" "}
+                    <a href="#" onClick={() => setAboutModal(true)}>
                         description
-                    </a>.</p>
+                    </a>
+                    .
+                </p>
                 <h3>Settings</h3>
                 <InputForm />
                 {outputs ? <OutputTabs /> : null}

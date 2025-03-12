@@ -8,7 +8,7 @@ import Button from "@/components/common/Button";
 import ClipboardButton from "@/components/common/ClipboardButton";
 import Table from "@/components/common/Table";
 
-const plotLayout = (title, xAxis, yAxis) =>{
+const plotLayout = (title, xAxis, yAxis) => {
     return {
         height: 400,
         margin: {l: 50, r: 5, t: 75, b: 50},
@@ -17,8 +17,8 @@ const plotLayout = (title, xAxis, yAxis) =>{
         legend: {x: 0.1, y: 1},
         xaxis: {title: {text: xAxis}},
         yaxis: {title: {text: yAxis}},
-    }
-}
+    };
+};
 
 @inject("store")
 @observer
@@ -72,7 +72,11 @@ class SummaryPlots extends Component {
                                 name: "Adjusted Incidence",
                             },
                         ]}
-                        layout={plotLayout("Original Incidence vs Adjusted Incidence", "Dose", "Incidence")}
+                        layout={plotLayout(
+                            "Original Incidence vs Adjusted Incidence",
+                            "Dose",
+                            "Incidence"
+                        )}
                         style={{width: "100%"}}
                         useResizeHandler={true}
                     />
