@@ -4,10 +4,14 @@ import React, {Component} from "react";
 import {Modal} from "react-bootstrap";
 
 import ExternalAnchor from "@/components/common/ExternalAnchor";
+import IM, {typesetMath} from "@/components/common/InlineMath";
 
 @inject("store")
 @observer
 class AboutModal extends Component {
+    componentDidMount() {
+        typesetMath();
+    }
     render() {
         const {store} = this.props;
         return (
@@ -37,18 +41,21 @@ class AboutModal extends Component {
                         for individual dams) in order to account for the tendency of pups from one
                         litter to respond more alike one another than pups from other litters. This
                         behavior is commonly termed the <i>litter effect</i> or{" "}
-                        <i>intralitter correlation</i>. However, it is frequently the case that
-                        dose-response modelers will be modeling data reported in the peer-reviewed
-                        literature and it is rarely the case that individual litter data is reported
-                        in peer-reviewed articles or provided as supplemental materials. Instead,
-                        peer-reviewed articles typically report the dose-level summary data: the
-                        total number of fetuses and the number of fetuses responding to treatment
-                        per dose group, irrespective of litter membership.
+                        <i>intralitter correlation</i>.
+                    </p>
+                    <p>
+                        However, it is frequently the case that dose-response modelers will be
+                        modeling data reported in the peer-reviewed literature and it is rarely the
+                        case that individual litter data is reported in peer-reviewed articles or
+                        provided as supplemental materials. Instead, peer-reviewed articles
+                        typically report the dose-level summary data: the total number of fetuses
+                        and the number of fetuses responding to treatment per dose group,
+                        irrespective of litter membership.
                     </p>
                     <div className="alert alert-info my-3">
-                        If individual-level developmental toxicity data are available for modeling,
-                        model a Nested Dichotomous endpoint instead of transforming data to model as
-                        a Dichotomous endpoint.
+                        <strong>Note:</strong> If individual-level developmental toxicity data are
+                        available for modeling, model a Nested Dichotomous endpoint instead of
+                        transforming data to model as a Dichotomous endpoint.
                     </div>
                     <p>
                         As reported in{" "}
@@ -57,42 +64,48 @@ class AboutModal extends Component {
                             "Fox et al., 2017"
                         )}
                         , multiple statistical studies have researched the concept of the design
-                        effect, ZZZZ, as a strategy to reduce overdispersion arising from clustered
-                        study design via a simple dose-response transformation. The core concept is
-                        that correlated data can be transformed via scaling and then modeled with
-                        standard dichotomous models as if they were not correlated.
+                        effect, <IM f="D" />, as a strategy to reduce overdispersion arising from
+                        clustered study design via a simple dose-response transformation. The core
+                        concept is that correlated data can be transformed via scaling and then
+                        modeled with standard dichotomous models as if they were not correlated.
                     </p>
                     <p>
                         In order to apply the Rao-Scott transformation, both the numerator and
-                        denominator of a dose-level proportion are divided by ZZZZ. This results in
-                        what can be described as the <i>effective</i> sample size ZZZZ and the{" "}
-                        <i>effective</i> affected fetuses ZZZZ.
+                        denominator of a dose-level proportion are divided by <IM f="D" />. This
+                        results in what can be described as the <i>effective</i> sample size{" "}
+                        <IM f="\left({N_{f}}_{RS} = \frac{N_{f}}{D}\right)" />
+                        and the <i>effective</i> affected fetuses{" "}
+                        <IM f="\left({A_{f}}_{RS} = \frac{A_{f}}{D}\right)" />.
                     </p>
                     <p>
-                        In order to provide BMDS users an approach to approximate ZZZZ for summary
-                        data,{" "}
+                        In order to provide BMDS users an approach to approximate <IM f="D" /> for
+                        summary data,{" "}
                         {ExternalAnchor(
                             "https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/3392311",
                             "Fox et al., 2017"
                         )}{" "}
                         conducted an analysis of 55 developmental toxicity studies for which
-                        individual level data were available and used the regression equation ZZZZ
-                        to establish the relationship between ZZZZ for studies that used either
-                        rats, mice, or rabbits as their test species. This analysis used both
-                        least-squares and orthogonal regression. The table below reports the
-                        species-specific regression coefficients for the established relationship
-                        betweenZZZZ and ZZZZ.
+                        individual level data were available and used the regression equation{" "}
+                        <IM f="\ln(D) = a + b \times\ln(P_{f})" />
+                        to establish the relationship between <IM f="D" /> and
+                        <IM f="P_{f}" /> for studies that used either rats, mice, or rabbits as
+                        their test species. This analysis used both least-squares and orthogonal
+                        regression. The table below reports the species-specific regression
+                        coefficients for the established relationship between <IM f="D" /> and{" "}
+                        <IM f="P_{f}" />.
                     </p>
                     <table className="table table-condensed table-striped">
                         <thead>
                             <tr>
                                 <th>Species</th>
                                 <th>Method</th>
-                                <th>n Studies</th>
-                                <th>n Dose Groups</th>
+                                <th>$n$, Studies</th>
+                                <th>$n$, Dose Groups</th>
                                 <th>$a$</th>
                                 <th>$b$</th>
-                                <th>$\sigma_res^2$</th>
+                                <th>
+                                    <IM f="\sigma_{res}^2" />
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -154,16 +167,18 @@ class AboutModal extends Component {
                     </table>
                     <p>
                         From these regression coefficients, the design effect can be calculated as
-                        ZZZZ. Given there is no strong methodological preference using the design
-                        effect calculated using linear least squares regression (ZZZZ) vs the design
-                        effect calculated using orthogonal regression (ZZZZ), by practice the design
-                        effect estimated using these two regression approaches is averaged to
-                        generate the average design effect (ZZZZ) actually used in the scaling
-                        ofZZZZ and ZZZZ.
+                        <IM f="D = e^{\left\lbrack a + b \times \ln(P_{f})+0.5\sigma_{res}^{2} \right\rbrack}" />
+                        . Given there is no strong methodological preference using the design effect
+                        calculated using linear least squares regression (<IM f="D_{LS}" />) vs the
+                        design effect calculated using orthogonal regression (<IM f="D_{OR}" />
+                        ), by practice the design effect estimated using these two regression
+                        approaches is averaged to generate the average design effect (
+                        <IM f="D_{average}" />) actually used in the scaling of <IM f="N_{f}" /> and{" "}
+                        <IM f="A_{f}" />.
                     </p>
                     <p>
-                        For modeling the transformed data in BMDS, scaled ZZZZ and ZZZZ values would
-                        be entered as the modeling inputs.
+                        For modeling the transformed data in BMDS, scaled <IM f="{N_{f}}_{RS}" />{" "}
+                        and <IM f="{A_{f}}_{RS}" /> values would be entered as the modeling inputs.
                     </p>
                     <p>
                         The ultimate consequence of the Rao-Scott transformation will be the
