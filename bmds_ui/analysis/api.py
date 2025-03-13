@@ -258,12 +258,12 @@ class RaoScottViewset(viewsets.GenericViewSet):
     @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
     def excel(self, request, *args, **kwargs):
         analysis = self._run_analysis(request)
-        data = BinaryFile(analysis.to_excel(), "rao-scott-adjustment")
+        data = BinaryFile(analysis.to_excel(), "rao-scott-transformation")
         return Response(data)
 
     @action(detail=False, methods=["POST"], renderer_classes=(renderers.DocxRenderer,))
     def word(self, request, *args, **kwargs):
         analysis = self._run_analysis(request)
         f = build_raoscott_docx(analysis)
-        data = BinaryFile(f, "rao-scott-adjustment")
+        data = BinaryFile(f, "rao-scott-transformation")
         return Response(data)

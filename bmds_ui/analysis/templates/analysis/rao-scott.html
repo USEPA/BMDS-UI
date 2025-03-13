@@ -8,6 +8,7 @@
 {% endblock content %}
 
 {% block extra-js %}
+{% include "fragments/mathjax.html" %}
 <script type="text/javascript">
     const token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
     window.app.raoScott(document.getElementById('main'), token);

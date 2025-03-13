@@ -3,13 +3,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {Modal} from "react-bootstrap";
 
-const externalReference = (href, text, classes) => {
-    return (
-        <a target="blank" className={classes} href={href}>
-            {text}
-        </a>
-    );
-};
+import ExternalAnchor from "@/components/common/ExternalAnchor";
 
 @inject("store")
 @observer
@@ -25,7 +19,7 @@ class AboutModal extends Component {
                     <p>
                         The poly-k adjustment is an approach (based on the poly-k trend test
                         developed by&nbsp;
-                        {externalReference(
+                        {ExternalAnchor(
                             "https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/93236",
                             "Portier and Bailer (1989)"
                         )}
@@ -125,7 +119,7 @@ class AboutModal extends Component {
                         until the end of the experiment, where k is the exponent for the polynomial
                         function describing the cumulative rate of tumor onset as a function of
                         time.&nbsp;
-                        {externalReference(
+                        {ExternalAnchor(
                             "https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/4998",
                             "Portier and Bailer (1986)"
                         )}
@@ -159,7 +153,7 @@ class AboutModal extends Component {
                         <li>
                             Duration – the duration of the study in days. By default (if empty), the
                             maximum reported day in the dataset. In&nbsp;
-                            {externalReference(
+                            {ExternalAnchor(
                                 "https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/708980",
                                 "Kissling et al. (2008)"
                             )}
@@ -202,12 +196,12 @@ class AboutModal extends Component {
                         Kissling GE, Portier CJ, Huff J. (2008) MtBE and cancer in animals:
                         statistical issues with poly-3 survival adjustments for lifetime studies.
                         Regul Toxicol Pharmacol. 50(3):428-429.
-                        {externalReference(
+                        {ExternalAnchor(
                             "https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/708980",
                             "HERO",
                             "p-2 mx-1 badge badge-info"
                         )}
-                        {externalReference(
+                        {ExternalAnchor(
                             "https://pubmed.ncbi.nlm.nih.gov/17905498/",
                             "PubMed",
                             "p-2 mx-1 badge badge-info"
@@ -216,12 +210,12 @@ class AboutModal extends Component {
                     <p>
                         Portier CJ, Bailer AJ. (1989). Testing for increased carcinogenicity using a
                         survival-adjusted quantal response test. Fund Appl Toxicol 12(4):731-737.
-                        {externalReference(
+                        {ExternalAnchor(
                             "https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/93236",
                             "HERO",
                             "p-2 mx-1 badge badge-info"
                         )}
-                        {externalReference(
+                        {ExternalAnchor(
                             "https://pubmed.ncbi.nlm.nih.gov/2744275/",
                             "PubMed",
                             "p-2 mx-1 badge badge-info"
@@ -231,12 +225,12 @@ class AboutModal extends Component {
                         Portier CJ, Hedges JC, Hoel DG. (1986). Age-specific models of mortality and
                         tumor onset for historical control animals in the National Toxicology
                         Program’s carcinogenicity experiments. Cancer Research 46: 4372-4378.
-                        {externalReference(
+                        {ExternalAnchor(
                             "https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/4998",
                             "HERO",
                             "p-2 mx-1 badge badge-info"
                         )}
-                        {externalReference(
+                        {ExternalAnchor(
                             "https://pubmed.ncbi.nlm.nih.gov/3731095/",
                             "PubMed",
                             "p-2 mx-1 badge badge-info"

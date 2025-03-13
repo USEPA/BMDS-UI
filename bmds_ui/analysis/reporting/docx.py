@@ -150,7 +150,7 @@ def build_polyk_docx(analysis: PolyKAdjustment) -> BytesIO:
 def build_raoscott_docx(analysis: RaoScott) -> BytesIO:
     report = Report.build_default()
 
-    report.document.add_heading("Rao Scott Adjustment", 1)
+    report.document.add_heading("Rao-Scott Transformation", 1)
     write_setting_p(report, "Report generated: ", to_timestamp(now()))
     write_current_version_p(report)
     analysis.to_docx(report=report, show_title=False)
