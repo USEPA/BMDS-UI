@@ -192,7 +192,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         # view output summary tables
         page.locator('a:has-text("Output")').click()
         # num rows in results table
-        expect(page.locator("#frequentist-model-result tbody tr")).to_have_count(5)
+        expect(page.locator("#frequentist-model-result tbody tr")).to_have_count(9)
 
         # check one result
         page.get_by_role("link", name="Nested Logistic (lsc+ilc-)").click()
