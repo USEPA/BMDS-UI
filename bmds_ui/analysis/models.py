@@ -6,13 +6,13 @@ from datetime import datetime, timedelta
 from io import BytesIO
 
 import pandas as pd
-import pydantic
 import reversion
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import DataError, models
+from django.db.models.functions import Lower
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.timezone import now
@@ -21,7 +21,6 @@ import pybmds
 from pybmds.batch import BatchBase, BatchSession, MultitumorBatch
 from pybmds.constants import ModelClass
 from pybmds.recommender.recommender import RecommenderSettings
-from pybmds.types.session import VersionSchema
 
 from .. import __version__
 from ..common.utils import random_string
@@ -121,6 +120,9 @@ class Analysis(models.Model):
     def get_star_url(self):
         return reverse("api:analysis-star", args=(str(self.id),))
 
+    def get_clone_url(self):
+        return reverse("analysis_clone", args=(str(self.id),))
+
     def get_collections_url(self):
         return reverse("api:analysis-collections", args=(str(self.id),))
 
@@ -137,7 +139,7 @@ class Analysis(models.Model):
 
     @property
     def is_finished(self) -> bool:
-        return self.ended and len(self.outputs) > 0 or len(self.errors) > 0
+        return (self.ended and len(self.outputs) > 0) or len(self.errors) > 0
 
     @property
     def has_errors(self):
@@ -359,14 +361,6 @@ class Analysis(models.Model):
     def renew(self):
         self.deletion_date = get_deletion_date(self.deletion_date)
 
-    def get_bmds_version(self) -> VersionSchema | None:
-        if not self.is_finished or self.has_errors or self.outputs is None:
-            return None
-        try:
-            return VersionSchema.model_validate(self.outputs["bmds_python_version"])
-        except pydantic.ValidationError:
-            return None
-
     @property
     def deletion_date_str(self) -> str | None:
         if self.deletion_date is None:
@@ -394,12 +388,15 @@ class Collection(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = (Lower("name"), "id")
+
     def __str__(self):
         return self.name
 
     @classmethod
     def opts(cls):
-        return list(cls.objects.values("id", "name").order_by("name"))
+        return list(cls.objects.values("id", "name"))
 
 
 class ContentType(models.IntegerChoices):

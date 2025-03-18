@@ -1,9 +1,4 @@
-import {
-    ff,
-    fourDecimalFormatter,
-    fractionalFormatter,
-    parameterFormatter,
-} from "../../src/utils/formatters";
+import {ff, fractionalFormatter, parameterFormatter} from "../../src/utils/formatters";
 import assert from "../helpers";
 
 const check = function(func, input, output) {
@@ -47,35 +42,6 @@ describe("common", function() {
             check(ff, 0.001, "1.00e-3");
             check(ff, 0.0001, "1.00e-4");
             check(ff, 0.0000123, "1.23e-5");
-        });
-    });
-
-    describe("fourDecimalFormatter", function() {
-        it("formats as expected", function() {
-            // special cases
-            check(fourDecimalFormatter, -9999, "-");
-            check(fourDecimalFormatter, Infinity, "-");
-            check(fourDecimalFormatter, 0, "0");
-
-            // normal range
-            check(fourDecimalFormatter, 99.9999, "99.9999");
-            check(fourDecimalFormatter, 10.23456, "10.2346");
-            check(fourDecimalFormatter, 1.23456, "1.2346");
-            check(fourDecimalFormatter, 0.23456, "0.2346");
-            check(fourDecimalFormatter, -0.23456, "-0.2346");
-            check(fourDecimalFormatter, -10.23456, "-10.2346");
-
-            // big numbers (boundary)
-            check(fourDecimalFormatter, 99.99996, "100.0000");
-            check(fourDecimalFormatter, 100, "100");
-
-            // small numbers
-            check(fourDecimalFormatter, 0.01, "0.0100");
-            check(fourDecimalFormatter, 0.001, "0.0010");
-            check(fourDecimalFormatter, 0.0001, "0.0001");
-            check(fourDecimalFormatter, 0.000099999, "<0.0001");
-            check(fourDecimalFormatter, 0.00001, "<0.0001");
-            check(fourDecimalFormatter, 1e-8, "<0.0001");
         });
     });
 

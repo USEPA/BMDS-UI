@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import App from "@/App";
 import {renderPlotlyFigure} from "@/components/common/PlotlyFigure";
 import polyk from "@/components/transforms/polyk";
+import raoScott from "@/components/transforms/RaoScott";
 import rootStore from "@/stores/RootStore";
 import history from "@/utils/localHistory";
 
@@ -32,4 +33,5 @@ window.app = {
     history,
     renderPlotlyFigure,
     polyk,
+    raoScott,
 };

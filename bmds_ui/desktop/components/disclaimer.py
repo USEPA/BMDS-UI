@@ -20,7 +20,7 @@ class DisclaimerModal(ModalScreen):
     DisclaimerModal #disclaimer-container {
       background: $surface;
       border: thick $background 80%;
-      height: 21;
+      height: 22;
       width: 80;
     }
     DisclaimerModal #disclaimer-title {
@@ -35,7 +35,6 @@ class DisclaimerModal(ModalScreen):
     }
     DisclaimerModal #ok {
       align-horizontal: center;
-      height: 3;
     }"""
 
     def compose(self) -> ComposeResult:

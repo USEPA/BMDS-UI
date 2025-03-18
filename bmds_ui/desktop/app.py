@@ -15,7 +15,6 @@ class BmdsDesktopTui(App):
     BINDINGS: ClassVar = [
         ("q", "quit", "Exit"),
         ("d", "show_disclaimer", "Disclaimer"),
-        ("l", "toggle_dark", "Light/Dark"),
     ]
 
     def __init__(self, **kw):
@@ -29,10 +28,6 @@ class BmdsDesktopTui(App):
     def action_quit(self):
         """Exit the application."""
         self.push_screen(QuitModal(classes="modal-window"))
-
-    def action_toggle_dark(self):
-        """An action to toggle dark mode."""
-        self.dark = not self.dark
 
     def action_show_disclaimer(self):
         """An action to show the disclaimer."""

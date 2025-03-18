@@ -7,7 +7,15 @@ import HelpTextPopover from "@/components/common/HelpTextPopover";
 import Table from "@/components/common/Table";
 import {parameterFormatter} from "@/utils/formatters";
 
-const getData = function(model) {
+const seFootnote = (
+        <p className="text-sm">
+            Standard errors estimates are not generated for parameters estimated on corresponding
+            bounds, although sampling error is present for all parameters, as a rule. Standard error
+            estimates may not be reliable as a basis for confidence intervals or tests when one or
+            more parameters are on bounds.
+        </p>
+    ),
+    getData = function(model) {
         const parameters = model.results.parameters,
             indexes = _.range(parameters.names.length),
             anyBounded = _.sum(parameters.bounded) > 0;
@@ -34,24 +42,37 @@ const getData = function(model) {
                     bounded ? "Not Reported" : parameterFormatter(parameters.se[i]),
                 ];
             }),
-            footnotes: anyBounded ? (
-                <p className="text-sm">
-                    Standard errors estimates are not generated for parameters estimated on
-                    corresponding bounds, although sampling error is present for all parameters, as
-                    a rule. Standard error estimates may not be reliable as a basis for confidence
-                    intervals or tests when one or more parameters are on bounds.
-                </p>
-            ) : null,
+            footnotes: anyBounded ? seFootnote : null,
         };
     },
     getNestedData = function(model) {
         const names = model.results.parameter_names,
-            values = model.results.parameters;
+            values = model.results.parameters,
+            bounded = model.results.bounded,
+            se = model.results.std_err,
+            anyBounded = _.some(bounded);
         return {
             tblClasses: "table table-sm text-right col-l-1",
-            headers: ["Variable", "Estimate"],
-            rows: _.range(_.size(names)).map(i => [names[i], parameterFormatter(values[i])]),
+            headers: ["Variable", "Estimate", "Standard Error"],
             subheader: "Model Parameters",
+            rows: _.range(names.length).map(i => {
+                return [
+                    names[i],
+                    bounded[i] ? (
+                        <>
+                            <span>On Bound</span>
+                            <HelpTextPopover
+                                title="On Bound"
+                                content={`The value of this parameter, ${values[i]}, is within the tolerance of the bound`}
+                            />
+                        </>
+                    ) : (
+                        parameterFormatter(values[i])
+                    ),
+                    bounded[i] ? "Not Reported" : parameterFormatter(se[i]),
+                ];
+            }),
+            footnotes: anyBounded ? seFootnote : null,
         };
     };
 

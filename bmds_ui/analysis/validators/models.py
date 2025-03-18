@@ -56,8 +56,8 @@ ContinuousModelSchema = ModelTypeSchema(
 )
 
 NestedDichotomousModelSchema = ModelTypeSchema(
-    restricted={Models.NestedLogistic},
-    unrestricted={Models.NestedLogistic},
+    restricted={Models.NestedLogistic, Models.NCTR},
+    unrestricted={Models.NestedLogistic, Models.NCTR},
     bayesian=set(),
 )
 

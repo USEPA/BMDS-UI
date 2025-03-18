@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Rao Scott Adjustment | {{block.super}}{% endblock title %}
+
+{% block content %}
+{% csrf_token %}
+<div id="main"></div>
+{% endblock content %}
+
+{% block extra-js %}
+{% include "fragments/mathjax.html" %}
+<script type="text/javascript">
+    const token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    window.app.raoScott(document.getElementById('main'), token);
+</script>
+{% endblock extra-js %}

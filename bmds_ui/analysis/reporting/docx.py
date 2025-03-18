@@ -7,9 +7,10 @@ import docx
 from django.conf import settings
 from django.utils.timezone import now
 
-from pybmds import __version__
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
+from pybmds.datasets.transforms.rao_scott import RaoScott
 from pybmds.reporting.styling import Report, write_setting_p
+from pybmds.utils import get_version
 
 from ... import __version__ as bmds_ui_version
 from ...common.docx import add_url_hyperlink
@@ -20,6 +21,12 @@ if TYPE_CHECKING:
     from ..models import Analysis
 
 ANALYSIS_URL = "Analysis URL: "
+
+
+def write_version_p(report: Report, bmds_ui: str, pybmds: str, bmdscore):
+    version_label = "BMDS Desktop Version: " if settings.IS_DESKTOP else "BMDS Online Version: "
+    version_str = f"{bmds_ui} (pybmds {pybmds}; bmdscore {bmdscore})"
+    write_setting_p(report, version_label, version_str)
 
 
 def build_docx(
@@ -58,12 +65,11 @@ def build_docx(
         uri += analysis.get_absolute_url()
         add_url_hyperlink(p, uri, "View")
 
-    version_label = "BMDS Desktop Version: " if settings.IS_DESKTOP else "BMDS Online Version: "
-    bmds_version = analysis.get_bmds_version()
-    write_setting_p(
+    write_version_p(
         report,
-        version_label,
-        f"{bmds_ui_version} (pybmds {bmds_version.python}; bmdscore {bmds_version.dll})",
+        analysis.outputs["bmds_ui_version"],
+        analysis.outputs["bmds_python_version"]["python"],
+        analysis.outputs["bmds_python_version"]["dll"],
     )
 
     if not analysis.is_finished:
@@ -123,18 +129,32 @@ def add_update_url(analysis: Analysis, data: BytesIO, uri: str) -> BytesIO:
     return f
 
 
+def write_current_version_p(report):
+    versions = get_version()
+    write_version_p(report, bmds_ui_version, versions.python, versions.dll)
+
+
 def build_polyk_docx(analysis: PolyKAdjustment) -> BytesIO:
     report = Report.build_default()
 
-    # build custom title section
     report.document.add_heading("Poly K Adjustment", 1)
     write_setting_p(report, "Report generated: ", to_timestamp(now()))
-    write_setting_p(report, "BMDS version: ", __version__)
-    write_setting_p(report, "BMDS online version: ", str(settings.COMMIT))
-
-    # return generic report
-    document = analysis.to_docx(report=report, show_title=False)
+    write_current_version_p(report)
+    analysis.to_docx(report=report, show_title=False)
 
     f = BytesIO()
-    document.save(f)
+    report.document.save(f)
+    return f
+
+
+def build_raoscott_docx(analysis: RaoScott) -> BytesIO:
+    report = Report.build_default()
+
+    report.document.add_heading("Rao-Scott Transformation", 1)
+    write_setting_p(report, "Report generated: ", to_timestamp(now()))
+    write_current_version_p(report)
+    analysis.to_docx(report=report, show_title=False)
+
+    f = BytesIO()
+    report.document.save(f)
     return f
