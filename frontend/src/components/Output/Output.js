@@ -18,9 +18,9 @@ import MultitumorResultTable from "./Multitumor/ResultTable";
 import OptionSetTable from "./OptionSetTable";
 import SelectModel from "./SelectModel";
 
-const OutputErrorComponent = ({title, children}) => {
+const OutputErrorComponent = ({title, children, alertClass}) => {
     return (
-        <div className="alert alert-danger offset-lg-2 col-lg-8 mt-4">
+        <div className={`alert ${alertClass} offset-lg-2 col-lg-8 mt-4`}>
             <p>
                 <strong>
                     <Icon name="exclamation-triangle-fill" text={title} />
@@ -33,6 +33,10 @@ const OutputErrorComponent = ({title, children}) => {
 OutputErrorComponent.propTypes = {
     title: PropTypes.string.isRequired,
     children: PropTypes.node.isRequired,
+    alertClass: PropTypes.string,
+};
+OutputErrorComponent.defaultProps = {
+    alertClass: "alert-danger",
 };
 
 @inject("outputStore")
@@ -54,14 +58,8 @@ class Output extends Component {
 
     render() {
         const {outputStore} = this.props,
-            {
-                canEdit,
-                hasNoResults,
-                hasAnyError,
-                selectedFrequentist,
-                selectedBayesian,
-            } = outputStore,
-            {analysisSavedAndValidated} = outputStore.rootStore.mainStore;
+            {hasNoResults, hasAnyError, selectedFrequentist, selectedBayesian} = outputStore,
+            {analysisSavedAndValidated, canSelectModel} = outputStore.rootStore.mainStore;
 
         if (hasAnyError) {
             return (
@@ -82,20 +80,22 @@ class Output extends Component {
             );
         }
 
-        if (!analysisSavedAndValidated) {
-            return (
-                <OutputErrorComponent title="Output cannot be displayed">
-                    <p>
-                        There are unsaved changes made to the inputs, and the existing outputs can
-                        no longer be displayed. Please save and execute again to the view updated
-                        outputs, or refresh the page to reset your current changes.
-                    </p>
-                </OutputErrorComponent>
-            );
-        }
-
         return (
             <div className="container-fluid mb-3">
+                {!analysisSavedAndValidated ? (
+                    <div className="row py-2">
+                        <OutputErrorComponent
+                            title="Outputs may be out of date"
+                            alertClass="alert-warning">
+                            <p>
+                                There are unsaved changes made to the inputs, and the existing
+                                outputs may be out of date. Please save and execute again to the
+                                view updated outputs, or refresh the page to reset your current
+                                changes.
+                            </p>
+                        </OutputErrorComponent>
+                    </div>
+                ) : null}
                 <div className="row py-2">
                     {outputStore.outputs.length > 1 ? (
                         <div className="col-lg-2">
@@ -130,7 +130,7 @@ class Output extends Component {
                             <div className="col-lg-8">
                                 <h3>Maximum Likelihood Approach Model Results</h3>
                                 <FrequentistResultTable />
-                                {canEdit ? <SelectModel /> : null}
+                                {canSelectModel ? <SelectModel /> : null}
                             </div>
                             <div className="align-items-center d-flex col-lg-4">
                                 <DoseResponsePlot
