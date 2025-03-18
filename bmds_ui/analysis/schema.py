@@ -3,7 +3,7 @@ import re
 from copy import deepcopy
 from datetime import datetime
 from io import StringIO
-from typing import ClassVar
+from typing import ClassVar, Literal
 from uuid import UUID
 
 import pandas as pd
@@ -35,6 +35,10 @@ class AnalysisSessionSchema(BaseModel):
     frequentist: dict | None = None
     bayesian: dict | None = None
     error: str | None = None
+
+
+AnalysisSchemaVersions = ["1.0", "1.1"]
+AnalysisSchemaVersionType = Literal["1.0", "1.1"]
 
 
 class AnalysisOutput(BaseModel):
@@ -187,19 +191,26 @@ class SchemaMigrationException(Exception):
     pass
 
 
+class AnalysisSchemaVersionOutputs(BaseModel):
+    analysis_schema_version: AnalysisSchemaVersionType
+
+
+class AnalysisSchemaVersion(BaseModel):
+    outputs: AnalysisSchemaVersionOutputs
+
+
 class AnalysisMigrator:
-    migration_chain: ClassVar = ["1.0", "1.1"]
+    migration_chain: ClassVar = AnalysisSchemaVersions
 
     @classmethod
     def migrate(cls, data: dict) -> AnalysisMigration:
-        if not isinstance(data, dict):
-            raise SchemaMigrationException("Data must be a dictionary")
-
-        initial_version = data.get("outputs", {}).get("analysis_schema_version")
-        if initial_version is None or initial_version not in cls.migration_chain:
-            raise SchemaMigrationException("Cannot migrate; invalid version")
+        try:
+            asv = AnalysisSchemaVersion.model_validate(data)
+        except ValidationError as err:
+            raise SchemaMigrationException("Cannot migrate; invalid data") from err
 
         initial = deepcopy(data)
+        initial_version = asv.outputs.analysis_schema_version
         initial_index = cls.migration_chain.index(initial_version)
         for idx in range(initial_index + 1, len(cls.migration_chain)):
             migration = cls.migration_chain[idx]
@@ -224,5 +235,6 @@ class AnalysisMigrator:
     @classmethod
     def to_1_1(cls, data: dict) -> dict:
         logger.debug("Migrating from 1.0 to 1.1")
+        data["outputs"]["bmds_ui_version"] = "2023.03"  # 1.0 bmds_ui_version
         data["outputs"]["analysis_schema_version"] = "1.1"
         return data

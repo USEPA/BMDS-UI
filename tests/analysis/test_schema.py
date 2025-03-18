@@ -1,9 +1,15 @@
+import json
 from copy import deepcopy
 
 import pytest
 from pydantic import ValidationError
 
-from bmds_ui.analysis.schema import PolyKInput, RaoScottInput
+from bmds_ui.analysis.schema import (
+    AnalysisMigrator,
+    PolyKInput,
+    RaoScottInput,
+    SchemaMigrationException,
+)
 
 
 class TestPolyKInput:
@@ -110,6 +116,31 @@ class TestRaoScottInput:
 
 
 class TestSchemaMigrator:
-    def test_invalid_versions(self):
-        # TODO
-        pass
+    @pytest.mark.parametrize(
+        "data",
+        [
+            "",
+            {},
+            {"outputs": None},
+            {"outputs": 1},
+            {"outputs": {"analysis_schema_version": "test"}},
+            [],
+            None,
+        ],
+    )
+    def test_invalid_versions(self, data):
+        # assert validators are successful
+        with pytest.raises(SchemaMigrationException):
+            AnalysisMigrator.migrate(data)
+
+    def test_from_1_0(self, data_path):
+        # assert migration works and data is mutated
+        data = json.loads((data_path / "analyses" / "v1.0.json").read_text())
+        migrated = AnalysisMigrator.migrate(data)
+        assert migrated.initial["outputs"].get("bmds_ui_version") is None
+        assert migrated.analysis.outputs.bmds_ui_version is not None
+
+    def test_from_1_1(self, data_path):
+        # assert migration works
+        data = json.loads((data_path / "analyses" / "v1.1.json").read_text())
+        AnalysisMigrator.migrate(data)
