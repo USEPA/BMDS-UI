@@ -143,7 +143,7 @@ Integration tests use [playwright](https://playwright.dev/python/). By default, 
 poe test-integration
 
 # or a custom method to run a single test
-INTEGRATION_TESTS=1 py.test -sv tests/integration/test_dichotomous.py --pdb
+INTEGRATION_TESTS=1 py.test -sv tests/integration -k test_dichotomous --pdb
 ```
 
 When editing integration tests, use the interactive mode to capture user operations:
@@ -151,10 +151,17 @@ When editing integration tests, use the interactive mode to capture user operati
 ```bash
 poe test-integration-debug
 
-# use set instead of export on windows
 export INTEGRATION_TESTS=1
 export PWDEBUG=1
-py.test -sv tests/integration/test_dichotomous.py --pdb
+py.test -sv tests/integration --pdb
+```
+
+On Windows PowerShell:
+
+```powershell
+$env:INTEGRATION_TESTS=1
+$env:PWDEBUG=1
+py.test -sv tests/integration -k test_dichotomous --pdb
 ```
 
 ### Running Textual in developer mode
