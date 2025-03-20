@@ -14,7 +14,6 @@ import {
     intralitterCorrelation,
     litterSpecificCovariateOptions,
 } from "@/constants/optionsConstants";
-import {priorClassLabels} from "@/constants/outputConstants";
 import {ff} from "@/utils/formatters";
 
 const restrictionMapping = {
