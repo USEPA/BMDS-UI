@@ -85,13 +85,13 @@ class TestAnalysisViewSet:
         client = APIClient()
         url = reverse("api:analysis-migrate")
 
-        response = client.post(url, data={}, format="json")
-
-        assert response.status_code == 400
-        assert response.json() == ["Invalid data for migration"]
+        for data in [{}, {"data": "not JSON"}, {"data": "{}"}]:
+            response = client.post(url, data=data, format="json")
+            assert response.status_code == 400
+            assert response.json() == ["Invalid data for migration"]
 
         # test v1.1
-        data = json.loads((data_path / "analyses" / "v1.1.json").read_text())
+        data = json.loads((data_path / "analyses" / "v1.0.json").read_text())
         response = client.post(url, data={"data": data}, format="json")
         assert response.status_code == 200
         assert response.json()["analysis"]["outputs"]["analysis_schema_version"] == "1.1"

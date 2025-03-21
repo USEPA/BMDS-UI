@@ -31,7 +31,9 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
     @action(detail=False, methods=("post",))
     def migrate(self, request, *args, **kwargs):
-        data = request.data.get("data", "")
+        data = request.data.get("data")
+        if not isinstance(data, dict):
+            raise exceptions.ValidationError("Invalid data for migration")
         try:
             update = schema.AnalysisMigrator.migrate(data)
         except schema.SchemaMigrationException:
