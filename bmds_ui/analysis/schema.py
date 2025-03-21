@@ -1,8 +1,13 @@
+import logging
 import re
+from copy import deepcopy
+from datetime import datetime
+from enum import StrEnum
 from io import StringIO
+from uuid import UUID
 
 import pandas as pd
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, ValidationError, field_validator
 from rest_framework.schemas.openapi import SchemaGenerator
 
 from pybmds.datasets.dichotomous import DichotomousDataset
@@ -11,6 +16,8 @@ from pybmds.datasets.transforms.rao_scott import RaoScott, Species
 from pybmds.types.session import VersionSchema
 
 from .validators import AnalysisSelectedSchema
+
+logger = logging.getLogger(__name__)
 
 
 class EditKeySchema(BaseModel):
@@ -30,9 +37,22 @@ class AnalysisSessionSchema(BaseModel):
     error: str | None = None
 
 
+class AnalysisSchemaVersions(StrEnum):
+    v1_0 = "1.0"
+    v1_1 = "1.1"
+
+    @classmethod
+    def latest_value(cls) -> str:
+        return cls.list_values()[-1]
+
+    @classmethod
+    def list_values(cls) -> list[str]:
+        return [item.value for item in cls]
+
+
 class AnalysisOutput(BaseModel):
     analysis_id: str
-    analysis_schema_version: str = "1.1"
+    analysis_schema_version: str = AnalysisSchemaVersions.latest_value()
     bmds_ui_version: str
     bmds_python_version: VersionSchema | None = None
     outputs: list[AnalysisSessionSchema]
@@ -148,3 +168,82 @@ def add_schema_to_path(schema: dict, path: str, verb: str, name: str):
 
 class ApiSchemaGenerator(SchemaGenerator):
     pass
+
+
+class Analysis(BaseModel):
+    id: UUID
+    inputs: dict
+    errors: list[dict]
+    outputs: AnalysisOutput
+    collections: list
+    is_executing: bool
+    is_finished: bool
+    has_errors: bool
+    inputs_valid: bool
+    api_url: str
+    excel_url: str
+    word_url: str
+    created: datetime
+    started: datetime
+    ended: datetime
+    starred: bool
+
+
+class AnalysisMigration(BaseModel):
+    initial: dict
+    initial_version: str
+    analysis: Analysis
+    version: str
+
+
+class SchemaMigrationException(Exception):
+    pass
+
+
+class AnalysisSchemaVersionOutputs(BaseModel):
+    analysis_schema_version: AnalysisSchemaVersions
+
+
+class AnalysisSchemaVersion(BaseModel):
+    outputs: AnalysisSchemaVersionOutputs
+
+
+class AnalysisMigrator:
+    @classmethod
+    def migrate(cls, data: dict) -> AnalysisMigration:
+        try:
+            asv = AnalysisSchemaVersion.model_validate(data)
+        except ValidationError as err:
+            raise SchemaMigrationException("Cannot migrate; invalid data") from err
+
+        versions = AnalysisSchemaVersions.list_values()
+
+        initial = deepcopy(data)
+        initial_version = asv.outputs.analysis_schema_version
+        initial_index = versions.index(initial_version)
+        for idx in range(initial_index + 1, len(versions)):
+            migration = versions[idx]
+            func = f"to_{migration.replace('.', '_')}"
+            try:
+                data = getattr(cls, func)(data)
+            except Exception as err:
+                raise SchemaMigrationException("Cannot migrate; invalid data") from err
+
+        try:
+            analysis = Analysis.model_validate(data)
+        except ValidationError as err:
+            raise SchemaMigrationException("Cannot migrate; invalid data") from err
+
+        return AnalysisMigration(
+            initial=initial,
+            initial_version=initial_version,
+            analysis=analysis,
+            version=analysis.outputs.analysis_schema_version,
+        )
+
+    @classmethod
+    def to_1_1(cls, data: dict) -> dict:
+        logger.debug("Migrating from 1.0 to 1.1")
+        data["outputs"]["bmds_ui_version"] = "2023.03"  # 1.0 bmds_ui_version
+        data["outputs"]["analysis_schema_version"] = "1.1"
+        return data

@@ -77,10 +77,6 @@ class OutputStore {
         );
     }
 
-    @computed get canEdit() {
-        return this.rootStore.mainStore.canEdit;
-    }
-
     @computed get outputs() {
         return this.rootStore.mainStore.getExecutionOutputs;
     }
