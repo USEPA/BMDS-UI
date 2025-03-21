@@ -27,6 +27,7 @@ venv/
 .coverage
 .env
 .eslintcache
+bmds-ui-test
 bmds_ui/gitcommit.json
 bmds_ui/main/settings/local.py
 bmds_ui/webpack-stats.json

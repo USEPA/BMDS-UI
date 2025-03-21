@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from playwright.sync_api import Page, expect
 
 from bmds_ui.analysis.models import Analysis
@@ -12,6 +14,10 @@ analysis_pks = [
     ("4459f728-05f7-4057-a27c-174822a0313d", "nested dichotomous"),
     ("2f86f324-911d-4194-97d1-fc7c3f5d0c72", "multitumor"),
 ]
+
+
+def data_path():
+    return Path(__file__).parents[1].absolute() / "data"
 
 
 class TestContinuousIntegration(PlaywrightTestCase):
@@ -328,3 +334,24 @@ class TestContinuousIntegration(PlaywrightTestCase):
             if model_type != "multitumor":
                 page.get_by_role("link", name="Logic").click()
                 expect(page.get_by_role("cell", name="Decision Logic")).to_be_visible()
+
+    def test_load_file(self):
+        v1_schema = data_path() / "analyses" / "v1.0.json"
+        assert v1_schema.exists()
+
+        page = self._create_new_analysis()
+        expect(page.locator("#analysis_name")).to_be_visible()
+
+        page.locator("#analysis_name").fill("abc")
+        page.get_by_role("button", name="Actions").click()
+
+        page.get_by_text("Load analysis").click()
+        page.locator("#loadAnalysisFile").set_input_files(v1_schema)
+
+        page.get_by_role("link", name="Output").click()
+        page.get_by_text(
+            "Outputs may be out of dateThere are unsaved changes made to the inputs, and the"
+        ).click()
+        page.get_by_role("link", name="Hill").click()
+        page.get_by_text("Hill Model").click()
+        page.locator("#close-modal").click()
