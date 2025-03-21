@@ -14,7 +14,6 @@ import {
     intralitterCorrelation,
     litterSpecificCovariateOptions,
 } from "@/constants/optionsConstants";
-import {priorClassLabels} from "@/constants/outputConstants";
 import {ff} from "@/utils/formatters";
 
 const restrictionMapping = {
@@ -29,11 +28,7 @@ class ModelOptionsTable extends Component {
         const {dtype, model} = this.props,
             priorLabels = model.settings.priors
                 ? restrictionMapping[model.settings.priors.prior_class]
-                : null,
-            priorClass = model.settings.priors
-                ? getLabel(model.settings.priors.prior_class, priorClassLabels)
-                : null,
-            isBayesian = priorClass === "Bayesian";
+                : null;
         let data = [];
 
         if (dtype == Dtype.DICHOTOMOUS) {
@@ -45,8 +40,6 @@ class ModelOptionsTable extends Component {
                     ? ["Degree", ff(model.settings.degree)]
                     : null,
                 priorLabels,
-                isBayesian ? ["Samples", ff(model.settings.samples)] : null,
-                isBayesian ? ["Burn In", ff(model.settings.burnin)] : null,
             ];
         } else if (dtype == Dtype.CONTINUOUS || dtype == Dtype.CONTINUOUS_INDIVIDUAL) {
             data = [
@@ -62,8 +55,6 @@ class ModelOptionsTable extends Component {
                     ? ["Degree", ff(model.settings.degree)]
                     : null,
                 priorLabels,
-                isBayesian ? ["Samples", model.settings.samples] : null,
-                isBayesian ? ["Burn In", model.settings.burnin] : null,
             ];
         } else if (dtype == Dtype.NESTED_DICHOTOMOUS) {
             data = [
