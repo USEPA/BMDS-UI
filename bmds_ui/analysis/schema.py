@@ -2,8 +2,8 @@ import logging
 import re
 from copy import deepcopy
 from datetime import datetime
+from enum import StrEnum
 from io import StringIO
-from typing import ClassVar, Literal
 from uuid import UUID
 
 import pandas as pd
@@ -37,13 +37,22 @@ class AnalysisSessionSchema(BaseModel):
     error: str | None = None
 
 
-AnalysisSchemaVersions = ["1.0", "1.1"]
-AnalysisSchemaVersionType = Literal["1.0", "1.1"]
+class AnalysisSchemaVersions(StrEnum):
+    v1_0 = "1.0"
+    v1_1 = "1.1"
+
+    @classmethod
+    def latest_value(cls) -> str:
+        return cls.list_values()[-1]
+
+    @classmethod
+    def list_values(cls) -> list[str]:
+        return [item.value for item in cls]
 
 
 class AnalysisOutput(BaseModel):
     analysis_id: str
-    analysis_schema_version: str = "1.1"
+    analysis_schema_version: str = AnalysisSchemaVersions.latest_value()
     bmds_ui_version: str
     bmds_python_version: VersionSchema | None = None
     outputs: list[AnalysisSessionSchema]
@@ -192,7 +201,7 @@ class SchemaMigrationException(Exception):
 
 
 class AnalysisSchemaVersionOutputs(BaseModel):
-    analysis_schema_version: AnalysisSchemaVersionType
+    analysis_schema_version: AnalysisSchemaVersions
 
 
 class AnalysisSchemaVersion(BaseModel):
@@ -200,8 +209,6 @@ class AnalysisSchemaVersion(BaseModel):
 
 
 class AnalysisMigrator:
-    migration_chain: ClassVar = AnalysisSchemaVersions
-
     @classmethod
     def migrate(cls, data: dict) -> AnalysisMigration:
         try:
@@ -209,11 +216,13 @@ class AnalysisMigrator:
         except ValidationError as err:
             raise SchemaMigrationException("Cannot migrate; invalid data") from err
 
+        versions = AnalysisSchemaVersions.list_values()
+
         initial = deepcopy(data)
         initial_version = asv.outputs.analysis_schema_version
-        initial_index = cls.migration_chain.index(initial_version)
-        for idx in range(initial_index + 1, len(cls.migration_chain)):
-            migration = cls.migration_chain[idx]
+        initial_index = versions.index(initial_version)
+        for idx in range(initial_index + 1, len(versions)):
+            migration = versions[idx]
             func = f"to_{migration.replace('.', '_')}"
             try:
                 data = getattr(cls, func)(data)
