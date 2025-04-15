@@ -70,12 +70,15 @@ class AboutModal extends Component {
                         modeled with standard dichotomous models as if they were not correlated.
                     </p>
                     <p>
-                        In order to apply the Rao-Scott transformation, both the numerator and
-                        denominator of a dose-level proportion are divided by <IM f="D" />. This
-                        results in what can be described as the <i>effective</i> sample size{" "}
-                        <IM f="\left({N_{f}}_{RS} = \frac{N_{f}}{D}\right)" />
-                        and the <i>effective</i> affected fetuses{" "}
-                        <IM f="\left({A_{f}}_{RS} = \frac{A_{f}}{D}\right)" />.
+                        In order to apply the Rao-Scott transformation, both the numerator (i.e.,
+                        the number of affected fetuses, <IM f="A_f" />) and denominator (i.e., the
+                        total number of fetuses or sample size, <IM f="N_f" />) of a dose-level
+                        proportion (<IM f="P_f = \frac{A_f}{N_f}" />) are divided by <IM f="D" />.
+                        This results in what can be described as the effective sample size (
+                        <IM f="{N_{f}}_{RS}=\frac{N_f}{D}" />) and the effective affected fetuses (
+                        <IM f="{AF_{f}}_{RS}=\frac{A_f}{D}" />
+                        ). Note that the proportion of animals responding does not change when
+                        applying the Rao-Scott transformation.
                     </p>
                     <p>
                         In order to provide BMDS users an approach to approximate <IM f="D" /> for
