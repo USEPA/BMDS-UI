@@ -8,7 +8,7 @@ import {Dtype} from "./dataConstants";
 const doseResponseLayout = {
         autosize: true,
         legend: {yanchor: "top", y: 0.99, xanchor: "left", x: 0.01},
-        margin: {l: 50, r: 5, t: 50, b: 50},
+        margin: {l: 50, r: 5, t: 50, b: 55},
         showlegend: true,
         title: {
             text: "ADD",

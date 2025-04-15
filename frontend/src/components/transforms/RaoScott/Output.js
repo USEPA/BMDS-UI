@@ -11,7 +11,7 @@ import Table from "@/components/common/Table";
 const plotLayout = (title, xAxis, yAxis) => {
     return {
         height: 400,
-        margin: {l: 50, r: 5, t: 75, b: 50},
+        margin: {l: 50, r: 5, t: 75, b: 55},
         hovermode: "x unified",
         title: {text: title},
         legend: {x: 0.1, y: 1},
