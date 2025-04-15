@@ -14,7 +14,7 @@ const plotLayout = (title, xAxis, yAxis) => {
         height: 400,
         margin: {l: 50, r: 5, t: 75, b: 55},
         hovermode: "x unified",
-        title: {text: wrapText(title, 45)},
+        title: {text: wrapText(title, 45, "<br>")},
         legend: {x: 0.1, y: 1},
         xaxis: {title: {text: xAxis}},
         yaxis: {title: {text: yAxis}},
