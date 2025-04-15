@@ -28,6 +28,11 @@ class IntegerInput extends Component {
                         const value = parseInt(e.target.value);
                         onChange(_.isFinite(value) ? value : "");
                     }}
+                    onKeyDown={e => {
+                        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                            e.preventDefault();
+                        }
+                    }}
                 />
             </>
         );

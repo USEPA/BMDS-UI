@@ -24,6 +24,11 @@ class FloatInput extends Component {
                     type="number"
                     value={value}
                     onChange={e => onChange(parseFloat(e.target.value))}
+                    onKeyDown={e => {
+                        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                            e.preventDefault();
+                        }
+                    }}
                 />
             </>
         );
