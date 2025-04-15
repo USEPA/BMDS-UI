@@ -7,13 +7,14 @@ import Plot from "react-plotly.js";
 import Button from "@/components/common/Button";
 import ClipboardButton from "@/components/common/ClipboardButton";
 import Table from "@/components/common/Table";
+import {wrapText} from "@/utils/wrapText";
 
 const plotLayout = (title, xAxis, yAxis) => {
     return {
         height: 400,
         margin: {l: 50, r: 5, t: 75, b: 55},
         hovermode: "x unified",
-        title: {text: title},
+        title: {text: wrapText(title, 45)},
         legend: {x: 0.1, y: 1},
         xaxis: {title: {text: xAxis}},
         yaxis: {title: {text: yAxis}},

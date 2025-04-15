@@ -2,6 +2,7 @@ import _ from "lodash";
 
 import {continuousErrorBars, dichotomousErrorBars} from "@/utils/errorBars";
 import {ff} from "@/utils/formatters";
+import {wrapText} from "@/utils/wrapText";
 
 import {Dtype} from "./dataConstants";
 
@@ -73,7 +74,7 @@ export const getResponse = dataset => {
     },
     getDrLayout = function(dataset, selected, modal, hover) {
         let layout = _.cloneDeep(doseResponseLayout);
-        layout.title.text = dataset.metadata.name;
+        layout.title.text = wrapText(dataset.metadata.name, 45, "<br>");
         layout.xaxis.title.text = getDoseLabel(dataset);
         layout.yaxis.title.text = getResponseLabel(dataset);
         const xmin = _.min(dataset.doses) || 0,
