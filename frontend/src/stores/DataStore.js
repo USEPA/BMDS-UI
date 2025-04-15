@@ -107,10 +107,9 @@ class DataStore {
     }
 
     @action.bound loadExampleData() {
-        const dataset = getExampleData(this.model_type),
-            currentDataset = this.datasets[this.selectedDatasetId];
-        _.extend(currentDataset, dataset);
-        this.updateOptionDegree(dataset);
+        const exampleData = getExampleData(this.model_type);
+        _.extend(this.selectedDataset, exampleData);
+        this.updateOptionDegree(this.selectedDataset);
     }
 
     @action.bound cleanRows() {
