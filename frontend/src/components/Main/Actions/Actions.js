@@ -89,7 +89,7 @@ class Actions extends Component {
                                 className="dropdown-item"
                                 onClick={() => mainStore.downloadReport("excelUrl")}
                                 icon="file-excel"
-                                text="Download data"
+                                text="Download results"
                             />
                             <Button
                                 className="dropdown-item"

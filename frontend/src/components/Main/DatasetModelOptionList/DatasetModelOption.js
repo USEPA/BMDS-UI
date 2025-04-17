@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -21,7 +22,7 @@ const getDegreeText = (dtype, degree) => {
 class DatasetModelOption extends Component {
     render() {
         const {datasetId, store} = this.props,
-            option = store.options[datasetId],
+            option = _.find(store.options, d => datasetId === d.dataset_id),
             dataset = store.getDataset(option),
             {canEdit, updateOption} = store,
             dtype = store.getModelType,

@@ -127,14 +127,14 @@ class DatasetForm extends Component {
                             <th style={{width: 100}}>
                                 <Button
                                     className="btn btn-primary"
-                                    title="Add row"
+                                    title="Add Row"
                                     onClick={dataStore.addRow}
                                     icon="plus-circle"
                                 />
                                 &nbsp;
                                 <Button
                                     className="btn btn-info"
-                                    title="Load dataset from Excel"
+                                    title="Load Dataset from Excel"
                                     onClick={dataStore.toggleDatasetModal}
                                     icon="table"
                                 />
