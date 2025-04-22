@@ -50,7 +50,6 @@ class TestExcelRenderer:
     def test_error(self):
         resp = Response()
         error = {"test": "here"}
-        resp = Response()
         data = renderers.XlsxRenderer().render(data=error, renderer_context={"response": resp})
         df2 = pd.read_excel(BytesIO(data))
         assert df2.Status[0] == '"{\\n  \\"test\\": \\"here\\"\\n}"'
