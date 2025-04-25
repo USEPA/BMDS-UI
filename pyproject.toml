@@ -24,7 +24,7 @@ classifiers = [
 requires-python = ">=3.11"
 dependencies = [
   # pybmds
-  "pybmds==25.1a1",
+  "pybmds==25.1",
 
   # website
   "Django~=5.1.2",
@@ -44,7 +44,7 @@ dependencies = [
   "redis~=5.2.1",
 
   # desktop
-  "packaging~=24.1",
+  "packaging~=24.2",
   "textual==2.1.2",
   "whitenoise~=6.9.0",
 ]
