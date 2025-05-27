@@ -12,7 +12,7 @@ on:
 jobs:
   backend:
     name: backend
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
 
     services:
       postgres:
@@ -127,7 +127,7 @@ jobs:
   integration:
     name: integration
     needs: [backend, frontend]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
 
     services:
       postgres:
