@@ -124,6 +124,7 @@ omit = [
 
 [tool.ruff]
 exclude = ["scripts"]
+target-version = "py311"
 line-length = 100
 lint.select = ["F", "E", "W", "I", "UP", "S", "B", "T20", "ERA", "NPY", "RUF", "PTH"]
 lint.ignore = ["E501"]

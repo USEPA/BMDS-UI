@@ -3,7 +3,7 @@
 Make sure you have the following applications installed locally:
 
 - [Git](https://git-scm.com/)
-- [Python](https://www.python.org/) ≥ 3.12
+- [Python](https://www.python.org/) ≥ 3.13
 - [Node.js](https://nodejs.org) ≥ 20
 - [Yarn](https://yarnpkg.com/)
 - [PostgreSQL](https://www.postgresql.org/) ≥ 16
@@ -12,10 +12,9 @@ If installing on Windows, these packages are available using [miniconda](https:/
 
 ## Initial setup
 
-Instructions below have been written for bash, so should work out of the box for linux/mac. They may need to be adapted slightly for Windows.
+Install [uv](https://docs.astral.sh/uv/); either via pip install or following the installation guide on the website. Instructions below have been written for bash, so should work out of the box for linux/mac. They may need to be adapted slightly for Windows.
 
 Clone the repository and install all requirements into a virtual environment:
-
 
 ```bash
 # clone repository; we'll put in ~/dev but you can put anywhere
@@ -28,13 +27,12 @@ git clone https://github.com/USEPA/bmds-ui
 
 # create virtual environment and install requirements
 cd ~/dev/bmds-ui
-python -m venv venv
+uv venv --python=3.13
 
 # activate the environment
-source ./venv/bin/activate
+source .venv/bin/activate
 
 # install requirements
-pip install -U pip uv
 uv pip install -e "../bmds"
 uv pip install -e ".[pg,dev]"
 
