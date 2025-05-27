@@ -30,7 +30,7 @@ cd ~/dev/bmds-ui
 uv venv --python=3.13
 
 # activate the environment
-source ./venv/bin/activate
+source .venv/bin/activate
 
 # install requirements
 uv pip install -e "../bmds"
