@@ -210,7 +210,7 @@ WEBPACK_LOADER = {
 }
 
 DAYS_TO_KEEP_ANALYSES = int(os.environ.get("ANALYSIS_RETENTION_DAYS", "365"))
-
+DAYS_TO_KEEP_UNEXECUTED_ANALYSES = int(os.environ.get("UNEXECUTED_ANALYSIS_RETENTION_DAYS", "60"))
 
 # commit information
 def get_git_commit() -> Commit:

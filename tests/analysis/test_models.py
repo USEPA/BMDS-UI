@@ -38,6 +38,16 @@ class TestAnalysis:
         assert n_before - n_after == 1
         assert not Analysis.objects.filter(id="1b4360dd-27ae-46f1-ad7e-45796d44be8c").exists()
 
+    def test_delete_old_unexecuted_analyses(self):
+        n_before = Analysis.objects.count()
+        assert Analysis.objects.filter(id="ab5ada91-8f32-4a24-aedf-dcecbe5044f6").exists()
+
+        Analysis.delete_old_unexecuted_analyses()
+
+        n_after = Analysis.objects.count()
+        assert n_before - n_after == 1
+        assert not Analysis.objects.filter(id="ab5ada91-8f32-4a24-aedf-dcecbe5044f6").exists()
+
 
 @pytest.mark.django_db()
 class TestExecution:

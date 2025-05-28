@@ -152,6 +152,13 @@ class Analysis(models.Model):
         qs.delete()
 
     @classmethod
+    def delete_unexecuted_analyses(cls):
+        unexecuted_time = now() - timedelta(days=settings.DAYS_TO_KEEP_UNEXECUTED_ANALYSES)
+        qs = cls.objects.filter(created__lt=unexecuted_time, started__isnull=True)
+        logger.info(f"Removing {qs.count()} unexecuted analysis created before {unexecuted_time}")
+        qs.delete()
+
+    @classmethod
     def maybe_hanging(cls, queryset):
         """
         Return a queryset of analyses which started at least an hour ago but have not yet ended.
