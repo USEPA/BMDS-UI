@@ -14750,6 +14750,20 @@
     deletion_date: null
     starred: false
     collections: []
+- model: analysis.analysis
+  pk: ab5ada91-8f32-4a24-aedf-dcecbe5044f6
+  fields:
+    password: u1c1ekxgu1uq
+    inputs: {}
+    outputs: {}
+    errors: []
+    created: 2025-01-01 01:23:45.123456+00:00
+    last_updated: 2025-01-01 01:23:45.123456+00:00
+    started: null
+    ended: null
+    deletion_date: null
+    starred: false
+    collections: []
 - model: analysis.collection
   pk: 1
   fields:
