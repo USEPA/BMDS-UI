@@ -120,6 +120,11 @@ class TestRaoScottInput:
         with pytest.raises(ValidationError, match="`dose` must be ≥ 0"):
             RaoScottInput.model_validate(settings)
 
+        settings = deepcopy(raoscott_dataset)
+        settings["dataset"] = settings["dataset"].replace("7,211,6", "0,211,6")
+        with pytest.raises(ValidationError, match="`dose` must be unique"):
+            RaoScottInput.model_validate(settings)
+
         # columns
         settings = deepcopy(raoscott_dataset)
         settings["dataset"] = settings["dataset"].replace("0,470,11", "0,0,11")

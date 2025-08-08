@@ -145,6 +145,9 @@ class RaoScottInput(BaseModel):
         if not (df.dose >= 0).all():
             raise ValueError("`dose` must be ≥ 0")
 
+        if df.dose.nunique() != df.dose.size:
+            raise ValueError("`dose` must be unique")
+
         if not (df.n > 0).all():
             raise ValueError("`n` must be > 0")
 
