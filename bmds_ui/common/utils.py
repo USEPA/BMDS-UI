@@ -19,7 +19,7 @@ def random_string(samples: str = _random_string_pool, length: int = 12) -> str:
         samples (str, optional): Random characters to select from.
         length (int, optional): Size of generated string; defaults to 12.
     """
-    return "".join(secrets.choice(_random_string_pool) for i in range(length))
+    return "".join(secrets.choice(samples) for i in range(length))
 
 
 def to_timestamp(dt: datetime) -> str:
