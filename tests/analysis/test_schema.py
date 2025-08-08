@@ -41,6 +41,18 @@ class TestPolyKInput:
         with pytest.raises(ValidationError, match="Bad column names"):
             PolyKInput.model_validate(settings)
 
+        # check numeric columns
+        settings = deepcopy(polyk_dataset)
+        settings["dataset"] = settings["dataset"].replace("0,452,0", "0,a,0")
+        with pytest.raises(ValidationError, match="must be numeric and finite"):
+            PolyKInput.model_validate(settings)
+
+        # check numeric finite columns
+        settings = deepcopy(polyk_dataset)
+        settings["dataset"] = settings["dataset"].replace("0,452,0", "0,inf,0")
+        with pytest.raises(ValidationError, match="must be numeric and finite"):
+            PolyKInput.model_validate(settings)
+
         # columns
         settings = deepcopy(polyk_dataset)
         settings["dataset"] = settings["dataset"].replace("0,452,0", "-1,452,0")
@@ -88,6 +100,18 @@ class TestRaoScottInput:
         settings = deepcopy(raoscott_dataset)
         settings["dataset"] = settings["dataset"].replace("dose,n,incidence", "dose,n,BAD")
         with pytest.raises(ValidationError, match="Bad column names"):
+            RaoScottInput.model_validate(settings)
+
+        # check numeric columns
+        settings = deepcopy(raoscott_dataset)
+        settings["dataset"] = settings["dataset"].replace("0,470,11", "0,a,11")
+        with pytest.raises(ValidationError, match="must be numeric and finite"):
+            RaoScottInput.model_validate(settings)
+
+        # check numeric finite columns
+        settings = deepcopy(raoscott_dataset)
+        settings["dataset"] = settings["dataset"].replace("0,470,11", "0,inf,11")
+        with pytest.raises(ValidationError, match="must be numeric and finite"):
             RaoScottInput.model_validate(settings)
 
         # columns

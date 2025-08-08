@@ -6,6 +6,7 @@ from enum import StrEnum
 from io import StringIO
 from uuid import UUID
 
+import numpy as np
 import pandas as pd
 from pydantic import BaseModel, Field, ValidationError, field_validator
 from rest_framework.schemas.openapi import SchemaGenerator
@@ -58,6 +59,13 @@ class AnalysisOutput(BaseModel):
     outputs: list[AnalysisSessionSchema]
 
 
+def all_numeric_and_finite(df: pd.DataFrame) -> bool:
+    # check for dtype first; isfinite only works on numeric columns
+    return all(pd.api.types.is_numeric_dtype(dtype) for dtype in df.dtypes) and bool(
+        np.isfinite(df.to_numpy()).all()
+    )
+
+
 class PolyKInput(BaseModel):
     dataset: str
     dose_units: str
@@ -81,6 +89,9 @@ class PolyKInput(BaseModel):
         required_columns = ["dose", "day", "has_tumor"]
         if df.columns.tolist() != required_columns:
             raise ValueError(f"Bad column names; requires {required_columns}")
+
+        if not all_numeric_and_finite(df):
+            raise ValueError("All data must be numeric and finite")
 
         if not (df.dose >= 0).all():
             raise ValueError("`doses` must be ≥ 0")
@@ -127,6 +138,9 @@ class RaoScottInput(BaseModel):
         required_columns = ["dose", "n", "incidence"]
         if df.columns.tolist() != required_columns:
             raise ValueError(f"Bad column names; requires {required_columns}")
+
+        if not all_numeric_and_finite(df):
+            raise ValueError("All data must be numeric and finite")
 
         if not (df.dose >= 0).all():
             raise ValueError("`dose` must be ≥ 0")
