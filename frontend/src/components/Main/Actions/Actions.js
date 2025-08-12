@@ -78,9 +78,11 @@ class Actions extends Component {
                             ) : null}
                         </>
                     ) : null}
-                    <a className="dropdown-item" href={config.cloneUrl}>
-                        <Icon name="files" text="Clone analysis" />
-                    </a>
+                    {mainStore.showClone ? (
+                        <a className="dropdown-item" href={config.cloneUrl}>
+                            <Icon name="files" text="Clone analysis" />
+                        </a>
+                    ) : null}
                     <div className="dropdown-divider"></div>
                     <span className="dropdown-header">Reporting</span>
                     {mainStore.analysisSavedAndValidated && mainStore.hasOutputs ? (

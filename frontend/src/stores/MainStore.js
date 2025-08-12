@@ -337,6 +337,16 @@ class MainStore {
     @computed get isDesktop() {
         return this.config.is_desktop;
     }
+    @computed get showClone() {
+        // only show clone button if we have outputs and a real name
+        return (
+            this.analysisSaved &&
+            this.analysisValidated &&
+            this.hasOutputs &&
+            this.analysis_name &&
+            this.analysis_name.length > 0
+        );
+    }
     @computed get pollInterval() {
         return this.isDesktop ? 1000 : 5000;
     }
