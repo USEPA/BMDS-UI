@@ -22,9 +22,11 @@ def delete_old_analyses():
 
 
 @shared_task()
-def delete_unexecuted_analyses():
+def delete_bot_analyses():
     logger.info("Deleting unexecuted analyses")
-    apps.get_model("analysis", "Analysis").delete_unexecuted_analyses()
+    Analysis = apps.get_model("analysis", "Analysis")
+    Analysis.delete_unexecuted_analyses()
+    Analysis.delete_unnamed_clones()
 
 
 @shared_task()

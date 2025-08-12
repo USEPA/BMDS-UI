@@ -26,8 +26,8 @@ app.conf.beat_schedule = {
         "schedule": timedelta(minutes=60),
         "options": {"expires": timedelta(minutes=60).total_seconds()},
     },
-    "delete-unexecuted-analyses": {
-        "task": "bmds_ui.analysis.tasks.delete_unexecuted_analyses",
+    "delete-bot-analyses": {
+        "task": "bmds_ui.analysis.tasks.delete_bot_analyses",
         "schedule": timedelta(hours=12),
         "options": {"expires": timedelta(hours=12).total_seconds()},
     },
