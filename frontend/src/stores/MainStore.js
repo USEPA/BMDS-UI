@@ -19,7 +19,6 @@ class MainStore {
     @observable model_type = null;
     @observable errorMessage = null;
     @observable errorData = null;
-    @observable hasEditSettings = false;
     @observable executionOutputs = null;
     @observable isUpdateComplete = false;
 
