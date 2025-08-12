@@ -159,6 +159,12 @@ class Analysis(models.Model):
         qs.delete()
 
     @classmethod
+    def delete_unnamed_clones(cls):
+        qs = cls.objects.filter(inputs__analysis_name__startswith=" (clone)")
+        logger.info(f"Removing {qs.count()} analyses with ` (clone)` names")
+        qs.delete()
+
+    @classmethod
     def maybe_hanging(cls, queryset):
         """
         Return a queryset of analyses which started at least an hour ago but have not yet ended.
