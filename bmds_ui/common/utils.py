@@ -1,5 +1,5 @@
 import logging
-import random
+import secrets
 import string
 from collections.abc import Callable
 from datetime import datetime
@@ -19,7 +19,7 @@ def random_string(samples: str = _random_string_pool, length: int = 12) -> str:
         samples (str, optional): Random characters to select from.
         length (int, optional): Size of generated string; defaults to 12.
     """
-    return "".join(random.choices(_random_string_pool, k=length))  # noqa: S311
+    return "".join(secrets.choice(samples) for i in range(length))
 
 
 def to_timestamp(dt: datetime) -> str:

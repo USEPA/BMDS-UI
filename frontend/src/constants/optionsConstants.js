@@ -20,7 +20,7 @@ export const options = {
         },
         [MODEL_NESTED_DICHOTOMOUS]: {
             bmr_type: 1,
-            bmr_value: 0.1,
+            bmr_value: 0.05,
             confidence_level: 0.95,
             litter_specific_covariate: 1,
             bootstrap_iterations: 1000,
