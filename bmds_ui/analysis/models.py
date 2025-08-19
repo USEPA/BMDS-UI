@@ -164,7 +164,7 @@ class Analysis(models.Model):
         qs = cls.objects.filter(
             created__lt=delete_before, inputs__analysis_name__startswith=" (clone)"
         )
-        logger.info(f"Removing {qs.count()} analyses with ` (clone)` names")
+        logger.info(f"Removing {qs.count()} analyses with '(clone)' names")
         qs.delete()
 
     @classmethod

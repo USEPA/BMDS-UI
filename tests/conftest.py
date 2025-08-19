@@ -346,5 +346,5 @@ def desktop_client(settings):
 @pytest.fixture()
 def analysis():
     analysis = Analysis()
-    analysis.inputs  = analysis.default_input()
+    analysis.inputs = analysis.default_input()
     return analysis
