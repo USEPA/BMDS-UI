@@ -8,6 +8,7 @@ LOGGING["loggers"]["bmds_ui"]["propagate"] = True
 LOGGING["loggers"]["bmds_ui.request"]["propagate"] = True
 
 SKIN = SkinStyle.Base
+DATABASES["default"]["NAME"] = "bmds-ui-test"
 DATABASES["default"]["TEST"] = {"NAME": "bmds-ui-test"}
 
 PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
