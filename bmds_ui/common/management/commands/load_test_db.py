@@ -16,7 +16,8 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        if not any(_ in settings.DATABASES["default"]["NAME"] for _ in ["fixture", "test"]):
+        db_name = str(settings.DATABASES["default"]["NAME"])
+        if not any(_ in db_name for _ in ["fixture", "test"]):
             raise CommandError("Must be using a test database to execute.")
 
         call_command("migrate", verbosity=0)

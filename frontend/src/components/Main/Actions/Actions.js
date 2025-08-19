@@ -71,16 +71,16 @@ class Actions extends Component {
                                     </p>
                                 </>
                             ) : null}
-                            {mainStore.isDesktop ? (
-                                <a className="dropdown-item" href={config.editSettings.deleteUrl}>
-                                    <Icon name="trash3-fill" text="Delete analysis" />
-                                </a>
-                            ) : null}
+                            <a className="dropdown-item" href={config.editSettings.deleteUrl}>
+                                <Icon name="trash3-fill" text="Delete analysis" />
+                            </a>
                         </>
                     ) : null}
-                    <a className="dropdown-item" href={config.cloneUrl}>
-                        <Icon name="files" text="Clone analysis" />
-                    </a>
+                    {mainStore.showClone ? (
+                        <a className="dropdown-item" href={config.cloneUrl}>
+                            <Icon name="files" text="Clone analysis" />
+                        </a>
+                    ) : null}
                     <div className="dropdown-divider"></div>
                     <span className="dropdown-header">Reporting</span>
                     {mainStore.analysisSavedAndValidated && mainStore.hasOutputs ? (

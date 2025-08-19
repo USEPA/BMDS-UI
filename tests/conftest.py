@@ -4,6 +4,7 @@ import pytest
 from django.core.management import call_command
 from django.test import Client
 
+from bmds_ui.analysis.models import Analysis
 from pybmds.recommender import RecommenderSettings
 
 
@@ -341,3 +342,9 @@ def desktop_client(settings):
     settings.IS_DESKTOP = True
     yield Client(headers={"hx-request": "true"})
     settings.IS_DESKTOP = False
+
+@pytest.fixture()
+def analysis():
+    analysis = Analysis()
+    analysis.inputs = analysis.default_input()
+    return analysis
