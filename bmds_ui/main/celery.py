@@ -21,9 +21,14 @@ app.conf.beat_schedule = {
         "schedule": timedelta(minutes=5),
         "options": {"expires": timedelta(minutes=5).total_seconds()},
     },
-    "ten-minutes-delete-old-analyses": {
+    "delete-old-analyses": {
         "task": "bmds_ui.analysis.tasks.delete_old_analyses",
         "schedule": timedelta(minutes=60),
         "options": {"expires": timedelta(minutes=60).total_seconds()},
+    },
+    "delete-bot-analyses": {
+        "task": "bmds_ui.analysis.tasks.delete_bot_analyses",
+        "schedule": timedelta(hours=12),
+        "options": {"expires": timedelta(hours=12).total_seconds()},
     },
 }

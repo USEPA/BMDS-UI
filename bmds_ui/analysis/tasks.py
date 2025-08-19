@@ -22,6 +22,14 @@ def delete_old_analyses():
 
 
 @shared_task()
+def delete_bot_analyses():
+    logger.info("Deleting unexecuted analyses")
+    Analysis = apps.get_model("analysis", "Analysis")
+    Analysis.delete_unexecuted_analyses()
+    Analysis.delete_unnamed_clones()
+
+
+@shared_task()
 def generate_report(id_: str, **kw):
     logger.info(f"starting report generation: {id_}")
     analysis = apps.get_model("analysis", "Analysis").objects.get(id=id_)
