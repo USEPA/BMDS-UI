@@ -153,14 +153,17 @@ class Analysis(models.Model):
 
     @classmethod
     def delete_unexecuted_analyses(cls):
-        unexecuted_time = now() - timedelta(days=settings.DAYS_TO_KEEP_UNEXECUTED_ANALYSES)
-        qs = cls.objects.filter(created__lt=unexecuted_time, started__isnull=True)
-        logger.info(f"Removing {qs.count()} unexecuted analysis created before {unexecuted_time}")
+        delete_before = now() - timedelta(days=settings.DAYS_TO_KEEP_UNEXECUTED_ANALYSES)
+        qs = cls.objects.filter(created__lt=delete_before, started__isnull=True)
+        logger.info(f"Removing {qs.count()} unexecuted analysis created before {delete_before}")
         qs.delete()
 
     @classmethod
     def delete_unnamed_clones(cls):
-        qs = cls.objects.filter(inputs__analysis_name__startswith=" (clone)")
+        delete_before = now() - timedelta(days=settings.DAYS_TO_KEEP_UNNAMED_CLONES)
+        qs = cls.objects.filter(
+            created__lt=delete_before, inputs__analysis_name__startswith=" (clone)"
+        )
         logger.info(f"Removing {qs.count()} analyses with ` (clone)` names")
         qs.delete()
 

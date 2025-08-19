@@ -1,7 +1,10 @@
+from datetime import timedelta
 from pathlib import Path
 
 import pandas as pd
 import pytest
+from django.conf import settings
+from django.db.models import F
 
 from bmds_ui.analysis.models import Analysis
 from bmds_ui.analysis.reporting.docx import build_docx
@@ -28,25 +31,43 @@ class TestAnalysis:
         a = Analysis.objects.get(id="cc3ca355-a57a-4fba-9dc3-99657562df68")
         assert str(a.timestamp) == "2021-12-15 18:42:49.109397+00:00"
 
-    def test_delete_old_analyses(self):
-        n_before = Analysis.objects.count()
-        assert Analysis.objects.filter(id="1b4360dd-27ae-46f1-ad7e-45796d44be8c").exists()
-
+    def test_delete_old_analyses(self, analysis):
+        analysis.save()
+        Analysis.objects.filter(id=analysis.id).update(
+            deletion_date=F("created") - timedelta(days=1)
+        )
+        assert Analysis.objects.filter(id=analysis.id).exists()
         Analysis.delete_old_analyses()
+        assert Analysis.objects.filter(id=analysis.id).exists() is False
 
-        n_after = Analysis.objects.count()
-        assert n_before - n_after == 1
-        assert not Analysis.objects.filter(id="1b4360dd-27ae-46f1-ad7e-45796d44be8c").exists()
-
-    def test_delete_old_unexecuted_analyses(self):
+    def test_delete_unexecuted_analyses(self, analysis):
+        analysis.save()
+        Analysis.objects.filter(id=analysis.id).update(
+            created=F("created") - timedelta(days=settings.DAYS_TO_KEEP_UNEXECUTED_ANALYSES + 1)
+        )
         n_before = Analysis.objects.count()
-        assert Analysis.objects.filter(id="ab5ada91-8f32-4a24-aedf-dcecbe5044f6").exists()
+        assert Analysis.objects.filter(id=analysis.id).exists()
 
-        Analysis.delete_old_unexecuted_analyses()
+        Analysis.delete_unexecuted_analyses()
 
         n_after = Analysis.objects.count()
         assert n_before - n_after == 1
-        assert not Analysis.objects.filter(id="ab5ada91-8f32-4a24-aedf-dcecbe5044f6").exists()
+        assert Analysis.objects.filter(id=analysis.id).exists() is False
+
+    def test_delete_unnamed_clones(self, analysis):
+        analysis.inputs["analysis_name"] = " (clone) (clone) (clone)"
+        analysis.save()
+        Analysis.objects.filter(id=analysis.id).update(
+            created=F("created") - timedelta(days=settings.DAYS_TO_KEEP_UNNAMED_CLONES + 1)
+        )
+        n_before = Analysis.objects.count()
+        assert Analysis.objects.filter(id=analysis.id).exists()
+
+        Analysis.delete_unnamed_clones()
+
+        n_after = Analysis.objects.count()
+        assert n_before - n_after == 1
+        assert Analysis.objects.filter(id=analysis.id).exists() is False
 
 
 @pytest.mark.django_db()
