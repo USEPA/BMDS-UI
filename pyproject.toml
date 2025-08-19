@@ -27,24 +27,24 @@ dependencies = [
   "pybmds==25.1",
 
   # website
-  "Django~=5.1.2",
-  "django-anymail~=12.0",
+  "Django~=5.2.5",
+  "django-anymail~=13.0.1",
   "django-redis~=5.4.0",
-  "django-webpack-loader~=3.1.1",
-  "djangorestframework~=3.15.2",
+  "django-webpack-loader~=3.2.1",
+  "djangorestframework~=3.16.1",
   "uritemplate~=4.1.1",
   "django-reversion~=5.1.0",
   "PyYAML~=6.0.2",
 
   # tasks
-  "celery~=5.4.0",
+  "celery~=5.5.3",
   "billiard~=4.2.1",
-  "kombu~=5.4.2",
-  "plotly~=6.0.0",
-  "redis~=5.2.1",
+  "kombu~=5.5.4",
+  "plotly~=6.3.0",
+  "redis~=6.4.0",
 
   # desktop
-  "packaging~=24.2",
+  "packaging~=25.0",
   "textual==2.1.2",
   "whitenoise~=6.9.0",
 ]
@@ -52,35 +52,35 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   # build
-  "flit~=3.11.0",
-  "poethepoet~=0.33.0",
+  "flit~=3.12.0",
+  "poethepoet~=0.37.0",
 
   # debug
-  "django-debug-toolbar~=5.0.1",
-  "django_extensions~=3.2.3",
+  "django-debug-toolbar~=6.0.0",
+  "django_extensions~=4.1",
   "django-browser-reload~=1.18.0",
 
   # tests
-  "pytest~=8.3.3",
-  "pytest-django~=4.10.0",
+  "pytest~=8.4.1",
+  "pytest-django~=4.11.1",
   "vcrpy~=7.0.0",
-  "pytest-recording~=0.13.2",
-  "pytest-asyncio~=0.25.3",
-  "coverage~=7.6.4",
+  "pytest-recording~=0.13.4",
+  "pytest-asyncio~=1.1.0",
+  "coverage~=7.10.4",
 
   # integration tests
-  "playwright~=1.50.0",
+  "playwright~=1.54.0",
   "pytest-playwright~=0.7.0",
 
   # lint and formatting tools
-  "ruff~=0.9.10",
+  "ruff~=0.12.9",
 ]
 pg = [
   "psycopg2-binary~=2.9.10",
 ]
 prod = [
   "gunicorn~=23.0.0",
-  "sentry-sdk~=2.22.0",
+  "sentry-sdk~=2.35.0",
 ]
 
 [project.urls]
@@ -98,7 +98,7 @@ prod = [
 "bmds-desktop" = "bmds_ui.desktop.cli:main"
 
 [build-system]
-requires = ["flit_core ~=3.9"]
+requires = ["flit_core ~=3.12"]
 build-backend = "flit_core.buildapi"
 
 [tool.flit.sdist]
