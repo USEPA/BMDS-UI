@@ -13,7 +13,7 @@ import {
     getResponse,
 } from "@/constants/plotting";
 
-const getLayout = function(datasets) {
+const getLayout = datasets => {
     let layout;
     datasets.forEach(dataset => {
         if (layout === undefined) {
@@ -33,11 +33,13 @@ const getLayout = function(datasets) {
     return layout;
 };
 
-const getData = function(ma, datasets, models) {
+const getData = (ma, datasets, models) => {
     // models may be undefined; make sure to filter out prior to plotting
-    const data = [],
-        y0 = _.mean(models.filter(d => _.isObject(d)).map(model => model.results.plotting.dr_y[0])),
-        y1 = y0 + ma.bmdl * ma.slope_factor;
+    const data = [];
+    const y0 = _.mean(
+        models.filter(d => _.isObject(d)).map(model => model.results.plotting.dr_y[0])
+    );
+    const y1 = y0 + ma.bmdl * ma.slope_factor;
 
     // add individual datasets
     datasets.forEach((dataset, index) => {
@@ -61,8 +63,8 @@ const getData = function(ma, datasets, models) {
         if (_.isEmpty(model)) {
             return;
         }
-        const dataset = datasets[index],
-            {results} = model;
+        const dataset = datasets[index];
+        const {results} = model;
         data.push({
             x: results.plotting.dr_x,
             y: results.plotting.dr_y,
@@ -86,13 +88,13 @@ const getData = function(ma, datasets, models) {
 @observer
 class MultitumorPlot extends Component {
     render() {
-        const store = this.props.outputStore,
-            layout = getLayout(store.multitumorDatasets),
-            data = getData(
-                store.selectedFrequentist.results,
-                store.multitumorDatasets,
-                store.selectedMultitumorModels
-            );
+        const store = this.props.outputStore;
+        const layout = getLayout(store.multitumorDatasets);
+        const data = getData(
+            store.selectedFrequentist.results,
+            store.multitumorDatasets,
+            store.selectedMultitumorModels
+        );
 
         return <DoseResponsePlot data={data} layout={layout} />;
     }

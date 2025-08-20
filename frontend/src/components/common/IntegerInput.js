@@ -25,7 +25,7 @@ class IntegerInput extends Component {
                     step={1}
                     value={value}
                     onChange={e => {
-                        const value = parseInt(e.target.value);
+                        const value = Number.parseInt(e.target.value);
                         onChange(_.isFinite(value) ? value : "");
                     }}
                     onKeyDown={e => {

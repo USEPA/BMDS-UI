@@ -11,9 +11,9 @@ import RuleRow from "./RuleRow";
 @observer
 class RuleList extends Component {
     render() {
-        const {logicStore} = this.props,
-            {canEdit, updateRule, modelType} = logicStore,
-            {rules} = logicStore.logic;
+        const {logicStore} = this.props;
+        const {canEdit, updateRule, modelType} = logicStore;
+        const {rules} = logicStore.logic;
 
         return (
             <table id="rule-table" className="table table-sm">

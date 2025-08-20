@@ -84,8 +84,8 @@ class MainStore {
     @action.bound
     async saveAnalysis() {
         this.rootStore.dataStore.cleanRows();
-        const url = this.config.editSettings.patchInputUrl,
-            {csrfToken} = this.config.editSettings;
+        const url = this.config.editSettings.patchInputUrl;
+        const {csrfToken} = this.config.editSettings;
         this.errorMessage = "";
         this.errorData = null;
         await fetch(url, {
@@ -127,39 +127,39 @@ class MainStore {
         this.isExecuting = true;
         this.errorMessage = "";
 
-        const apiUrl = this.config.apiUrl,
-            {csrfToken} = this.config.editSettings,
-            pollInterval = this.pollInterval,
-            handleServerError = error => {
-                console.error("error", error);
-                if (error.status == 500) {
-                    this.errorMessage =
-                        "A server error occurred... if the error continues or your analysis does not complete please contact us.";
-                    return;
-                }
-                this.errorMessage = error;
-            },
-            pollForResults = () => {
-                fetch(apiUrl, {
-                    method: "GET",
-                    mode: "cors",
+        const apiUrl = this.config.apiUrl;
+        const {csrfToken} = this.config.editSettings;
+        const pollInterval = this.pollInterval;
+        const handleServerError = error => {
+            console.error("error", error);
+            if (error.status === 500) {
+                this.errorMessage =
+                    "A server error occurred... if the error continues or your analysis does not complete please contact us.";
+                return;
+            }
+            this.errorMessage = error;
+        };
+        const pollForResults = () => {
+            fetch(apiUrl, {
+                method: "GET",
+                mode: "cors",
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw response;
+                    }
+                    return response.json();
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw response;
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.is_executing) {
-                            setTimeout(pollForResults, pollInterval);
-                        } else {
-                            this.updateModelStateFromApi(data);
-                            simulateClick(document.getElementById("navlink-output"));
-                        }
-                    })
-                    .catch(handleServerError);
-            };
+                .then(data => {
+                    if (data.is_executing) {
+                        setTimeout(pollForResults, pollInterval);
+                    } else {
+                        this.updateModelStateFromApi(data);
+                        simulateClick(document.getElementById("navlink-output"));
+                    }
+                })
+                .catch(handleServerError);
+        };
 
         await fetch(this.config.editSettings.executeUrl, {
             method: "POST",
@@ -262,9 +262,9 @@ class MainStore {
         this.analysisValidated = data.inputs_valid;
     }
     @action.bound loadAnalysisFromFile(file) {
-        const {csrfToken} = this.config.editSettings,
-            reader = new FileReader(),
-            migrateUrl = "/api/v1/analysis/migrate/";
+        const {csrfToken} = this.config.editSettings;
+        const reader = new FileReader();
+        const migrateUrl = "/api/v1/analysis/migrate/";
         reader.onload = e => {
             let payload;
             try {
@@ -313,10 +313,10 @@ class MainStore {
         })
             .then(response => response.json())
             .then(json => {
-                const fn = json.inputs.analysis_name ? slugify(json.inputs.analysis_name) : json.id,
-                    file = new File([JSON.stringify(json, null, 2)], `${fn}.json`, {
-                        type: "application/json",
-                    });
+                const fn = json.inputs.analysis_name ? slugify(json.inputs.analysis_name) : json.id;
+                const file = new File([JSON.stringify(json, null, 2)], `${fn}.json`, {
+                    type: "application/json",
+                });
                 saveAs(file);
             });
     }
@@ -362,7 +362,7 @@ class MainStore {
         return _.find(mc.modelTypes, {value: this.model_type}).name;
     }
     @computed get getModelTypeChoices() {
-        return mc.modelTypes.map((item, i) => {
+        return mc.modelTypes.map((item, _i) => {
             return {value: item.value, text: item.name};
         });
     }
@@ -403,9 +403,9 @@ class MainStore {
     @observable toastHeader = "";
     @observable toastMessage = "";
     @action.bound downloadReport(url) {
-        let apiUrl = (apiUrl = this.config[url]),
-            params = {},
-            pollInterval = this.pollInterval;
+        let apiUrl = (apiUrl = this.config[url]);
+        const params = {};
+        const pollInterval = this.pollInterval;
         if (this.canEdit) {
             params.editKey = this.config.editSettings.editKey;
         }
@@ -413,25 +413,25 @@ class MainStore {
             _.extend(params, toJS(this.wordReportOptions));
         }
         const fetchReport = () => {
-                fetch(apiUrl + "?" + new URLSearchParams(params).toString()).then(processResponse);
-            },
-            processResponse = response => {
-                let contentType = response.headers.get("content-type");
-                if (contentType.includes("application/json")) {
-                    response.json().then(json => {
-                        this.showToast(json.header, json.message);
-                    });
-                    setTimeout(fetchReport, pollInterval);
-                } else {
-                    const filename = response.headers
-                        .get("content-disposition")
-                        .match(/filename="(.*)"/)[1];
-                    response.blob().then(blob => {
-                        saveAs(blob, filename);
-                        this.hideToast();
-                    });
-                }
-            };
+            fetch(`${apiUrl}?${new URLSearchParams(params).toString()}`).then(processResponse);
+        };
+        const processResponse = response => {
+            const contentType = response.headers.get("content-type");
+            if (contentType.includes("application/json")) {
+                response.json().then(json => {
+                    this.showToast(json.header, json.message);
+                });
+                setTimeout(fetchReport, pollInterval);
+            } else {
+                const filename = response.headers
+                    .get("content-disposition")
+                    .match(/filename="(.*)"/)[1];
+                response.blob().then(blob => {
+                    saveAs(blob, filename);
+                    this.hideToast();
+                });
+            }
+        };
         fetchReport();
     }
     @action.bound showToast(header, message) {

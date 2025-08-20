@@ -6,30 +6,30 @@ import ReactDOM from "react-dom";
 import Icon from "@/components/common/Icon";
 import Table from "@/components/common/Table";
 
-const KEY = "bmds.data",
-    DEFAULT_HISTORY = {enabled: true, history: {}},
-    HistoryTable = ({history}) => {
-        if (history.length === 0) {
-            return (
-                <div className="alert alert-secondary">
-                    <p className="mb-0">
-                        <Icon name="clock-history" text="No history available." />
-                    </p>
-                </div>
-            );
-        }
-        const data = {
-            headers: ["Last viewed", "Analysis URL"],
-            rows: history.map(run => [
-                new Date(run.lastAccess).toLocaleString(),
-                <a key={1} href={run.href}>
-                    {run.href}
-                </a>,
-            ]),
-            colWidths: [30, 70],
-        };
-        return <Table data={data} />;
+const KEY = "bmds.data";
+const DEFAULT_HISTORY = {enabled: true, history: {}};
+const HistoryTable = ({history}) => {
+    if (history.length === 0) {
+        return (
+            <div className="alert alert-secondary">
+                <p className="mb-0">
+                    <Icon name="clock-history" text="No history available." />
+                </p>
+            </div>
+        );
+    }
+    const data = {
+        headers: ["Last viewed", "Analysis URL"],
+        rows: history.map(run => [
+            new Date(run.lastAccess).toLocaleString(),
+            <a key={1} href={run.href}>
+                {run.href}
+            </a>,
+        ]),
+        colWidths: [30, 70],
     };
+    return <Table data={data} />;
+};
 HistoryTable.propTypes = {
     history: PropTypes.arrayOf(PropTypes.object),
 };
@@ -47,7 +47,7 @@ class LocalHistory {
     _load() {
         try {
             return JSON.parse(window.localStorage.getItem(KEY)) || DEFAULT_HISTORY;
-        } catch (error) {
+        } catch (_error) {
             return DEFAULT_HISTORY;
         }
     }
@@ -55,10 +55,10 @@ class LocalHistory {
         window.localStorage.setItem(KEY, JSON.stringify(data));
     }
     log() {
-        const data = this.getData(),
-            {protocol, host, pathname} = window.location,
-            MAX_SIZE = 120,
-            TRIM_SIZE = 100;
+        const data = this.getData();
+        const {protocol, host, pathname} = window.location;
+        const MAX_SIZE = 120;
+        const TRIM_SIZE = 100;
         if (data.enabled) {
             const url = `${protocol}//${host}${pathname}`;
             data.history[url] = Date.now();
@@ -76,13 +76,13 @@ class LocalHistory {
         }
     }
     render(el) {
-        const data = this.getData(),
-            historyArray = _.chain(data.history)
-                .map((lastAccess, href) => {
-                    return {href, lastAccess};
-                })
-                .orderBy(["lastAccess"], ["desc"])
-                .value();
+        const data = this.getData();
+        const historyArray = _.chain(data.history)
+            .map((lastAccess, href) => {
+                return {href, lastAccess};
+            })
+            .orderBy(["lastAccess"], ["desc"])
+            .value();
         ReactDOM.render(<HistoryTable history={historyArray} />, el);
     }
     enable() {

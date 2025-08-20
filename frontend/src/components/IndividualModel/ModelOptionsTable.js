@@ -25,13 +25,13 @@ const restrictionMapping = {
 @observer
 class ModelOptionsTable extends Component {
     render() {
-        const {dtype, model} = this.props,
-            priorLabels = model.settings.priors
-                ? restrictionMapping[model.settings.priors.prior_class]
-                : null;
+        const {dtype, model} = this.props;
+        const priorLabels = model.settings.priors
+            ? restrictionMapping[model.settings.priors.prior_class]
+            : null;
         let data = [];
 
-        if (dtype == Dtype.DICHOTOMOUS) {
+        if (dtype === Dtype.DICHOTOMOUS) {
             data = [
                 ["BMR Type", getLabel(model.settings.bmr_type, dichotomousBmrOptions)],
                 ["BMR", ff(model.settings.bmr)],
@@ -41,7 +41,7 @@ class ModelOptionsTable extends Component {
                     : null,
                 priorLabels,
             ];
-        } else if (dtype == Dtype.CONTINUOUS || dtype == Dtype.CONTINUOUS_INDIVIDUAL) {
+        } else if (dtype === Dtype.CONTINUOUS || dtype === Dtype.CONTINUOUS_INDIVIDUAL) {
             data = [
                 ["BMR Type", getLabel(model.settings.bmr_type, continuousBmrOptions)],
                 ["BMRF", ff(model.settings.bmr)],
@@ -56,7 +56,7 @@ class ModelOptionsTable extends Component {
                     : null,
                 priorLabels,
             ];
-        } else if (dtype == Dtype.NESTED_DICHOTOMOUS) {
+        } else if (dtype === Dtype.NESTED_DICHOTOMOUS) {
             data = [
                 ["BMR Type", getLabel(model.settings.bmr_type, dichotomousBmrOptions)],
                 ["BMR", ff(model.settings.bmr)],

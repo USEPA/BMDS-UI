@@ -21,7 +21,7 @@ PlotlyFigure.propTypes = {
     layout: PropTypes.object,
 };
 
-const renderPlotlyFigure = function(el, data) {
+const renderPlotlyFigure = (el, data) => {
     ReactDOM.render(<PlotlyFigure {...data} />, el);
 };
 

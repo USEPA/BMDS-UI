@@ -11,7 +11,7 @@ InlineMath.propTypes = {
     f: PropTypes.string.isRequired,
 };
 
-export const typesetMath = function() {
+export const typesetMath = () => {
     if (window.MathJax) {
         window.MathJax.typesetPromise();
     }

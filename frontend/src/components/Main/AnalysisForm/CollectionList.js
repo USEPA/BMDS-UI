@@ -8,7 +8,7 @@ class CollectionList extends Component {
     render() {
         const {collections} = this.props.mainStore;
 
-        if (collections.length == 0) {
+        if (collections.length === 0) {
             return null;
         }
 
@@ -17,7 +17,10 @@ class CollectionList extends Component {
                 {collections.map(d => (
                     <span
                         className="analysis-label"
-                        style={{border: `3px solid ${d.bg_color}`, background: `${d.bg_color}1F`}}
+                        style={{
+                            border: `3px solid ${d.bg_color}`,
+                            background: `${d.bg_color}1F`,
+                        }}
                         key={d.id}>
                         {d.name}
                     </span>

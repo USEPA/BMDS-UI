@@ -9,41 +9,40 @@ import Button from "../../common/Button";
 import CheckboxInput from "../../common/CheckboxInput";
 import LabelInput from "../../common/LabelInput";
 
-const areAllModelsChecked = function(modelType, type, models) {
-        return type in models && models[type].length === allModelOptions[modelType][type].length;
-    },
-    SelectAllComponent = observer(props => {
-        const {store, type, disabled, label} = props,
-            id = `select_all_${type}`;
-        return (
-            <>
-                <CheckboxInput
-                    id={id}
-                    disabled={disabled}
-                    onChange={value => store.enableAll(type, value)}
-                    checked={areAllModelsChecked(store.getModelType, type, store.models)}
-                />
-                &nbsp;
-                <LabelInput label={label} htmlFor={id} />
-            </>
-        );
-    }),
-    ModelColGroup = observer(props => {
-        const {hasBayesianModels} = props,
-            cols = hasBayesianModels ? [20, 20, 20, 20, 20] : [33, 33, 34];
-        return (
-            <colgroup>
-                {cols.map((d, i) => (
-                    <col key={i} width={`${d}%`} />
-                ))}
-            </colgroup>
-        );
-    });
+const areAllModelsChecked = (modelType, type, models) =>
+    type in models && models[type].length === allModelOptions[modelType][type].length;
+const SelectAllComponent = observer(props => {
+    const {store, type, disabled, label} = props;
+    const id = `select_all_${type}`;
+    return (
+        <>
+            <CheckboxInput
+                id={id}
+                disabled={disabled}
+                onChange={value => store.enableAll(type, value)}
+                checked={areAllModelsChecked(store.getModelType, type, store.models)}
+            />
+            &nbsp;
+            <LabelInput label={label} htmlFor={id} />
+        </>
+    );
+});
+const ModelColGroup = observer(props => {
+    const {hasBayesianModels} = props;
+    const cols = hasBayesianModels ? [20, 20, 20, 20, 20] : [33, 33, 34];
+    return (
+        <colgroup>
+            {cols.map((d, i) => (
+                <col key={i} width={`${d}%`} />
+            ))}
+        </colgroup>
+    );
+});
 
 const ModelsCheckBoxHeader = observer(props => {
-    const {store} = props,
-        {canEdit} = store,
-        hasBayesianModels = store.getModelType === mc.MODEL_DICHOTOMOUS;
+    const {store} = props;
+    const {canEdit} = store;
+    const hasBayesianModels = store.getModelType === mc.MODEL_DICHOTOMOUS;
     return (
         <>
             <ModelColGroup hasBayesianModels={hasBayesianModels} />

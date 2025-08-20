@@ -11,25 +11,25 @@ export const parseServerErrors = errors => {
         let errorWasParsed = false;
 
         const container = {
-                data: [],
-                messages: [],
-                message: "",
-            },
-            parseError = error => {
+            data: [],
+            messages: [],
+            message: "",
+        };
+        const parseError = error => {
+            try {
+                const msg = JSON.parse(error);
+                container.messages.push(...parsePydanticError(msg));
+                container.data.push(...msg);
+            } catch {
                 try {
-                    const msg = JSON.parse(error);
-                    container.messages.push(...parsePydanticError(msg));
-                    container.data.push(...msg);
+                    container.messages.push(extractErrorFromTraceback(error));
+                    container.data.push(error);
                 } catch {
-                    try {
-                        container.messages.push(extractErrorFromTraceback(error));
-                        container.data.push(error);
-                    } catch {
-                        return false;
-                    }
+                    return false;
                 }
-                return true;
-            };
+            }
+            return true;
+        };
 
         console.warn(`Complete errors:\n\n ${errors}`);
 
@@ -47,9 +47,7 @@ export const parseServerErrors = errors => {
         }
 
         // return a single unique set of messages as a single string. This is used in the UI
-        container.message = _.uniq(container.messages)
-            .join("\n")
-            .trim();
+        container.message = _.uniq(container.messages).join("\n").trim();
 
         return container;
     },
@@ -68,9 +66,9 @@ export const parseServerErrors = errors => {
         if (!error.includes("Traceback")) {
             return error;
         }
-        const lines = error.trim().split("\n"),
-            line = lines[lines.length - 1],
-            colonIndex = line.indexOf(":");
+        const lines = error.trim().split("\n");
+        const line = lines[lines.length - 1];
+        const colonIndex = line.indexOf(":");
         if (colonIndex >= 0) {
             return line.substring(colonIndex + 1).trim();
         }

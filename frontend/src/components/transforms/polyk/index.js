@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import Store from "./store";
 
-const render = function(el, token) {
+const render = (el, token) => {
     const store = new Store(token);
     ReactDOM.render(
         <Provider store={store}>

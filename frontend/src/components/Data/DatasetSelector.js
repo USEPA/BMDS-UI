@@ -14,7 +14,7 @@ class DatasetSelector extends Component {
         }
         return (
             <SelectInput
-                onChange={value => store.setSelectedDataset(parseInt(value))}
+                onChange={value => store.setSelectedDataset(Number.parseInt(value))}
                 label="Select existing"
                 value={store.selectedDatasetId}
                 choices={dataStore.datasets.map(dataset => {

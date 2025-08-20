@@ -6,8 +6,8 @@ import React, {Component} from "react";
 @observer
 class Table extends Component {
     render() {
-        const {data} = this.props,
-            nCols = data.headers.length;
+        const {data} = this.props;
+        const nCols = data.headers.length;
         if (_.isUndefined(data.colWidths)) {
             data.colWidths = _.fill(Array(nCols), Math.round(100 / nCols));
         }
@@ -18,7 +18,7 @@ class Table extends Component {
             <table className={data.tblClasses}>
                 <colgroup>
                     {_.map(data.colWidths).map((value, idx) => (
-                        <col key={idx} width={`${value}%`}></col>
+                        <col key={idx} width={`${value}%`} />
                     ))}
                 </colgroup>
                 <thead>

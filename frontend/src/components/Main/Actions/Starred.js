@@ -8,10 +8,10 @@ import Button from "../../common/Button";
 @observer
 class Starred extends Component {
     render() {
-        const {mainStore} = this.props,
-            {starred} = mainStore,
-            icon = starred ? "star-fill" : "star",
-            title = starred ? "Remove star" : "Add star";
+        const {mainStore} = this.props;
+        const {starred} = mainStore;
+        const icon = starred ? "star-fill" : "star";
+        const title = starred ? "Remove star" : "Add star";
 
         if (!mainStore.canEdit || !mainStore.isDesktop) {
             return null;

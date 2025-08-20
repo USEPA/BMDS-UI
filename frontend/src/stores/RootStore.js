@@ -1,5 +1,5 @@
-import DatasetModelOptionStore from "./DatasetModelOptionStore";
 import DataStore from "./DataStore";
+import DatasetModelOptionStore from "./DatasetModelOptionStore";
 import LogicStore from "./LogicStore";
 import MainStore from "./MainStore";
 import ModelsStore from "./ModelsStore";

@@ -94,8 +94,8 @@ SummaryPlots.propTypes = {
 @observer
 class OutputTabs extends Component {
     render() {
-        const {outputs, downloadExcel, downloadWord, clipboardData} = this.props.store,
-            {df} = outputs;
+        const {outputs, downloadExcel, downloadWord, clipboardData} = this.props.store;
+        const {df} = outputs;
         return (
             <>
                 <div className="row d-flex">
@@ -154,7 +154,7 @@ class OutputTabs extends Component {
                         <ClipboardButton
                             text="Copy Data for BMDS Modeling"
                             textToCopy={clipboardData}
-                            onCopy={e => {
+                            onCopy={_e => {
                                 alert(
                                     'Data copied to your clipboard! For your dichotomous analysis, return to the Data tab, select the "Load dataset from Excel" button, and paste the clipboard contents to create a new dataset. Or, paste the clipboard contents into Excel for further analysis.'
                                 );

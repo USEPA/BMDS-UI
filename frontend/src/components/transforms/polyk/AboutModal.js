@@ -49,7 +49,7 @@ class AboutModal extends Component {
                     <table className="table table-striped">
                         <thead>
                             <tr>
-                                <th></th>
+                                <th />
                                 <th>Numerator contribution</th>
                                 <th>Denominator contribution</th>
                                 <th>Rationale for denominator contribution</th>

@@ -16,31 +16,31 @@ import FloatInput from "../common/FloatInput";
 import SelectInput from "../common/SelectInput";
 
 const fieldMap = {
-        [MODEL_CONTINUOUS]: "enabled_continuous",
-        [MODEL_DICHOTOMOUS]: "enabled_dichotomous",
-        [MODEL_NESTED_DICHOTOMOUS]: "enabled_nested",
-    },
-    lookupMap = {
-        [MODEL_CONTINUOUS]: "enabledContinuous",
-        [MODEL_DICHOTOMOUS]: "enabledDichotomous",
-        [MODEL_NESTED_DICHOTOMOUS]: "enabledNested",
-    };
+    [MODEL_CONTINUOUS]: "enabled_continuous",
+    [MODEL_DICHOTOMOUS]: "enabled_dichotomous",
+    [MODEL_NESTED_DICHOTOMOUS]: "enabled_nested",
+};
+const lookupMap = {
+    [MODEL_CONTINUOUS]: "enabledContinuous",
+    [MODEL_DICHOTOMOUS]: "enabledDichotomous",
+    [MODEL_NESTED_DICHOTOMOUS]: "enabledNested",
+};
 
 @observer
 class RuleRow extends Component {
     render() {
-        const {rule, ruleIndex, canEdit, updateRule, modelType} = this.props,
-            ruleLookup = ruleLookups[rule.rule_class],
-            renderCheckbox = attribute => {
-                return (
-                    <CheckboxInput
-                        checked={rule[attribute]}
-                        onChange={value => updateRule(ruleIndex, attribute, value)}
-                    />
-                );
-            },
-            field = fieldMap[modelType],
-            enabled = ruleLookup[lookupMap[modelType]];
+        const {rule, ruleIndex, canEdit, updateRule, modelType} = this.props;
+        const ruleLookup = ruleLookups[rule.rule_class];
+        const renderCheckbox = attribute => {
+            return (
+                <CheckboxInput
+                    checked={rule[attribute]}
+                    onChange={value => updateRule(ruleIndex, attribute, value)}
+                />
+            );
+        };
+        const field = fieldMap[modelType];
+        const enabled = ruleLookup[lookupMap[modelType]];
 
         if (!enabled) {
             return null;
@@ -65,7 +65,9 @@ class RuleRow extends Component {
                         choices={logicBinOptions.map(option => {
                             return {value: option.value, text: option.label};
                         })}
-                        onChange={value => updateRule(ruleIndex, "failure_bin", parseInt(value))}
+                        onChange={value =>
+                            updateRule(ruleIndex, "failure_bin", Number.parseInt(value))
+                        }
                         value={rule.failure_bin}
                     />
                 </td>

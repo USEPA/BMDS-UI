@@ -10,9 +10,9 @@ import {ff, fractionalFormatter} from "@/utils/formatters";
 @observer
 class Summary extends Component {
     render() {
-        const {outputStore} = this.props,
-            model = outputStore.modalModel,
-            {results} = model;
+        const {outputStore} = this.props;
+        const model = outputStore.modalModel;
+        const {results} = model;
         let data;
         if (outputStore.isNestedDichotomous) {
             data = [

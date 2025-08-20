@@ -12,25 +12,25 @@ import FloatInput from "../common/FloatInput";
 @observer
 class DecisionLogic extends Component {
     render() {
-        const {logicStore} = this.props,
-            {canEdit, resetLogic, updateLogic, logic} = logicStore,
-            renderBooleanRow = (label, field) => {
-                return (
-                    <tr>
-                        <td>{label}</td>
-                        <td className="text-center" style={{minWidth: 50}}>
-                            {canEdit ? (
-                                <CheckboxInput
-                                    onChange={value => updateLogic(field, value)}
-                                    checked={logic[field]}
-                                />
-                            ) : (
-                                checkOrEmpty(logic[field])
-                            )}
-                        </td>
-                    </tr>
-                );
-            };
+        const {logicStore} = this.props;
+        const {canEdit, resetLogic, updateLogic, logic} = logicStore;
+        const renderBooleanRow = (label, field) => {
+            return (
+                <tr>
+                    <td>{label}</td>
+                    <td className="text-center" style={{minWidth: 50}}>
+                        {canEdit ? (
+                            <CheckboxInput
+                                onChange={value => updateLogic(field, value)}
+                                checked={logic[field]}
+                            />
+                        ) : (
+                            checkOrEmpty(logic[field])
+                        )}
+                    </td>
+                </tr>
+            );
+        };
 
         return (
             <div>

@@ -9,15 +9,12 @@ import {ff} from "@/utils/formatters";
 @observer
 class CDFTable extends Component {
     render() {
-        const {bmd_dist} = this.props,
-            data = {
-                headers: ["Cumulative Probability", "BMD"],
-                rows: _.range(bmd_dist[0].length).map(i => [
-                    ff(bmd_dist[1][i]),
-                    ff(bmd_dist[0][i]),
-                ]),
-                tblClasses: "table table-sm text-right",
-            };
+        const {bmd_dist} = this.props;
+        const data = {
+            headers: ["Cumulative Probability", "BMD"],
+            rows: _.range(bmd_dist[0].length).map(i => [ff(bmd_dist[1][i]), ff(bmd_dist[0][i])]),
+            tblClasses: "table table-sm text-right",
+        };
         return <Table data={data} />;
     }
 }

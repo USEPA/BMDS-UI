@@ -6,7 +6,7 @@ import * as constant from "@/constants/optionsConstants";
 
 const createOption = modelType => {
     const option = _.cloneDeep(constant.options[modelType]);
-    if (modelType == MODEL_NESTED_DICHOTOMOUS) {
+    if (modelType === MODEL_NESTED_DICHOTOMOUS) {
         // set seed to random number
         option.bootstrap_seed = Math.ceil(Math.random() * 1000);
     }
@@ -62,8 +62,8 @@ class OptionsStore {
         return this.rootStore.mainStore.isDesktop
             ? 1000
             : this.rootStore.mainStore.isMultiTumor
-            ? 3
-            : 6;
+              ? 3
+              : 6;
     }
 
     @computed get canAddNewOption() {

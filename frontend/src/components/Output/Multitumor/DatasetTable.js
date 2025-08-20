@@ -6,9 +6,9 @@ import React, {Component} from "react";
 import Table from "@/components/common/Table";
 
 const getData = datasets => {
-    const headers = ["Dose"],
-        rows = [],
-        doses = new Set();
+    const headers = ["Dose"];
+    const rows = [];
+    const doses = new Set();
 
     datasets.forEach(dataset => {
         headers.push(dataset.metadata.name);
@@ -20,7 +20,7 @@ const getData = datasets => {
         const thisRow = [dose];
         rows.push(thisRow);
         datasets.forEach(dataset => {
-            const idx = _.findIndex(dataset.doses, d => d == dose);
+            const idx = _.findIndex(dataset.doses, d => d === dose);
             if (idx >= 0) {
                 thisRow.push(`${dataset.incidences[idx]}/${dataset.ns[idx]}`);
             } else {
@@ -35,8 +35,8 @@ const getData = datasets => {
 @observer
 class DatasetTable extends Component {
     render() {
-        const store = this.props.outputStore,
-            {selectedFrequentist} = store;
+        const store = this.props.outputStore;
+        const {selectedFrequentist} = store;
 
         if (!selectedFrequentist) {
             return null;

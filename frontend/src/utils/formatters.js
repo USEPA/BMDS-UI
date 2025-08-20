@@ -2,40 +2,43 @@ import _ from "lodash";
 
 const BMDS_BLANK_VALUE = -9999;
 
-export const ff = function(value) {
+export const ff = value => {
         // ff = float format
         if (value === 0) {
             return value.toString();
-        } else if (value == BMDS_BLANK_VALUE || !_.isFinite(value)) {
+        }
+        if (value === BMDS_BLANK_VALUE || !_.isFinite(value)) {
             return "-";
-        } else if (Math.abs(value) > 0.001 && Math.abs(value) < 1e5) {
+        }
+        if (Math.abs(value) > 0.001 && Math.abs(value) < 1e5) {
             // local print "0" for anything smaller than this
             return value.toLocaleString();
-        } else {
-            // too many 0; use exponential notation
-            return value.toExponential(2);
         }
+        // too many 0; use exponential notation
+        return value.toExponential(2);
     },
-    parameterFormatter = function(value) {
+    parameterFormatter = value => {
         if (value === 0) {
             return value.toString();
-        } else if (value == BMDS_BLANK_VALUE || !_.isFinite(value)) {
+        }
+        if (value === BMDS_BLANK_VALUE || !_.isFinite(value)) {
             return "-";
-        } else if (Math.abs(value) >= 1000 || Math.abs(value) <= 0.001) {
+        }
+        if (Math.abs(value) >= 1000 || Math.abs(value) <= 0.001) {
             return value.toExponential(3);
-        } else {
-            return value.toPrecision(4);
         }
+        return value.toPrecision(4);
     },
-    fractionalFormatter = function(value) {
+    fractionalFormatter = value => {
         // Expected values between 0 and 1
-        if (value == BMDS_BLANK_VALUE || !_.isFinite(value) || value < 0) {
+        if (value === BMDS_BLANK_VALUE || !_.isFinite(value) || value < 0) {
             return "-";
-        } else if (value === 0) {
-            return value.toString();
-        } else if (value < 0.0001) {
-            return "< 0.0001";
-        } else {
-            return value.toPrecision(3);
         }
+        if (value === 0) {
+            return value.toString();
+        }
+        if (value < 0.0001) {
+            return "< 0.0001";
+        }
+        return value.toPrecision(3);
     };

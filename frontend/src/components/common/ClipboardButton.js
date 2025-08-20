@@ -12,7 +12,9 @@ class ClipboardButton extends Component {
     }
     componentDidMount() {
         const {textToCopy, onCopy} = this.props;
-        this.clipboardEvent = new Clipboard(this.ref.current, {text: () => textToCopy});
+        this.clipboardEvent = new Clipboard(this.ref.current, {
+            text: () => textToCopy,
+        });
         if (onCopy) {
             this.clipboardEvent.on("success", onCopy);
         }

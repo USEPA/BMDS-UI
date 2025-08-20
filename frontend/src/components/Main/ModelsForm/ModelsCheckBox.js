@@ -9,86 +9,86 @@ import CheckboxInput from "../../common/CheckboxInput";
 import FloatInput from "../../common/FloatInput";
 import HelpTextPopover from "../../common/HelpTextPopover";
 
-const isModelChecked = function(models, type, model) {
-        let checked = false;
-        if (type in models) {
-            if (type === mc.BAYESIAN) {
-                checked = models[type].findIndex(obj => obj.model === model) > -1;
-            } else {
-                checked = models[type].indexOf(model) > -1;
-            }
+const isModelChecked = (models, type, model) => {
+    let checked = false;
+    if (type in models) {
+        if (type === mc.BAYESIAN) {
+            checked = models[type].findIndex(obj => obj.model === model) > -1;
+        } else {
+            checked = models[type].indexOf(model) > -1;
         }
-        return checked;
-    },
-    getPriorWeightValue = function(models, model) {
-        let prior_weight = 0;
-        if (mc.BAYESIAN in models) {
-            let obj = models[mc.BAYESIAN].find(obj => obj.model === model);
-            if (obj != undefined) {
-                prior_weight = obj.prior_weight;
-            }
+    }
+    return checked;
+};
+const getPriorWeightValue = (models, model) => {
+    let prior_weight = 0;
+    if (mc.BAYESIAN in models) {
+        const obj = models[mc.BAYESIAN].find(obj => obj.model === model);
+        if (obj !== undefined) {
+            prior_weight = obj.prior_weight;
         }
-        return prior_weight;
-    },
-    PriorWeightTd = observer(props => {
-        const {store, model, disabled} = props;
-        return (
-            <td headers="b-p">
-                {store.canEdit ? (
-                    <FloatInput
-                        disabled={disabled}
-                        value={getPriorWeightValue(store.models, model)}
-                        onChange={value => store.setPriorWeight(model, value)}
-                    />
-                ) : (
-                    getPriorWeightValue(store.models, model)
-                )}
-            </td>
-        );
-    }),
-    CheckBoxTd = observer(props => {
-        const {store, type, model, disabled, headers} = props,
-            key = `${type}-${model}`;
-        return (
-            <td key={key} headers={headers}>
-                {store.canEdit ? (
-                    <CheckboxInput
-                        id={key}
-                        disabled={disabled}
-                        onChange={value => store.setModelSelection(type, model, value)}
-                        checked={isModelChecked(store.models, type, model)}
-                    />
-                ) : (
-                    checkOrEmpty(isModelChecked(store.models, type, model))
-                )}
-            </td>
-        );
-    }),
-    ModelHeaderTd = ({name, extra}) => {
-        return (
-            <td className="text-left align-middle" headers="m-name">
-                {name}
-                {extra ? extra : null}
-            </td>
-        );
-    },
-    multistageHelpText = `All Multistage model polynomial degrees will be run up to a maximum
+    }
+    return prior_weight;
+};
+const PriorWeightTd = observer(props => {
+    const {store, model, disabled} = props;
+    return (
+        <td headers="b-p">
+            {store.canEdit ? (
+                <FloatInput
+                    disabled={disabled}
+                    value={getPriorWeightValue(store.models, model)}
+                    onChange={value => store.setPriorWeight(model, value)}
+                />
+            ) : (
+                getPriorWeightValue(store.models, model)
+            )}
+        </td>
+    );
+});
+const CheckBoxTd = observer(props => {
+    const {store, type, model, disabled, headers} = props;
+    const key = `${type}-${model}`;
+    return (
+        <td key={key} headers={headers}>
+            {store.canEdit ? (
+                <CheckboxInput
+                    id={key}
+                    disabled={disabled}
+                    onChange={value => store.setModelSelection(type, model, value)}
+                    checked={isModelChecked(store.models, type, model)}
+                />
+            ) : (
+                checkOrEmpty(isModelChecked(store.models, type, model))
+            )}
+        </td>
+    );
+});
+const ModelHeaderTd = ({name, extra}) => {
+    return (
+        <td className="text-left align-middle" headers="m-name">
+            {name}
+            {extra ? extra : null}
+        </td>
+    );
+};
+const multistageHelpText = `All Multistage model polynomial degrees will be run up to a maximum
         degree as specified by the user. For Bayesian Model Averaging, only the 2nd degree
-        Multistage model is used (see User Manual for details).`,
-    fr = "frequentist_restricted",
-    fu = "frequentist_unrestricted",
-    b = "bayesian";
+        Multistage model is used (see User Manual for details).`;
+const fr = "frequentist_restricted";
+const fu = "frequentist_unrestricted";
+const b = "bayesian";
 
 const ModelsCheckBox = observer(props => {
-    const {store} = props,
-        writeMode = store.canEdit;
+    const {store} = props;
+    const writeMode = store.canEdit;
     if (store.getModelType === mc.MODEL_CONTINUOUS) {
         return (
             <tbody>
                 <tr>
                     <ModelHeaderTd name="Exponential" />
                     <CheckBoxTd store={store} type={fr} headers="mle-r" model={"Exponential"} />
-                    <td id="mle-u"></td>
+                    <td id="mle-u" />
                 </tr>
                 <tr>
                     <ModelHeaderTd name="Hill" />
@@ -97,7 +97,7 @@ const ModelsCheckBox = observer(props => {
                 </tr>
                 <tr>
                     <ModelHeaderTd name="Linear" />
-                    <td id="mle-r"></td>
+                    <td id="mle-r" />
                     <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Linear"} />
                 </tr>
                 <tr>
@@ -112,7 +112,8 @@ const ModelsCheckBox = observer(props => {
                 </tr>
             </tbody>
         );
-    } else if (store.getModelType === mc.MODEL_DICHOTOMOUS) {
+    }
+    if (store.getModelType === mc.MODEL_DICHOTOMOUS) {
         return (
             <tbody>
                 <tr>
@@ -141,7 +142,7 @@ const ModelsCheckBox = observer(props => {
                 </tr>
                 <tr>
                     <ModelHeaderTd name="Logistic" />
-                    <td headers="mle-r"></td>
+                    <td headers="mle-r" />
                     <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Logistic"} />
                     <CheckBoxTd store={store} type={b} headers="b-i" model={"Logistic"} />
                     <PriorWeightTd store={store} model={"Logistic"} />
@@ -172,14 +173,14 @@ const ModelsCheckBox = observer(props => {
                 </tr>
                 <tr>
                     <ModelHeaderTd name="Probit" />
-                    <td headers="mle-r"></td>
+                    <td headers="mle-r" />
                     <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Probit"} />
                     <CheckBoxTd store={store} type={b} headers="b-i" model={"Probit"} />
                     <PriorWeightTd store={store} model={"Probit"} />
                 </tr>
                 <tr>
                     <ModelHeaderTd name="Quantal Linear" />
-                    <td headers="mle-r"></td>
+                    <td headers="mle-r" />
                     <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Quantal Linear"} />
                     <CheckBoxTd store={store} type={b} headers="b-i" model={"Quantal Linear"} />
                     <PriorWeightTd store={store} model={"Quantal Linear"} />
@@ -193,7 +194,8 @@ const ModelsCheckBox = observer(props => {
                 </tr>
             </tbody>
         );
-    } else if (store.getModelType === mc.MODEL_NESTED_DICHOTOMOUS) {
+    }
+    if (store.getModelType === mc.MODEL_NESTED_DICHOTOMOUS) {
         return (
             <tbody>
                 <tr>
@@ -208,9 +210,8 @@ const ModelsCheckBox = observer(props => {
                 </tr>
             </tbody>
         );
-    } else {
-        throw `Unknown modelType: ${store.getModelType}`;
     }
+    throw `Unknown modelType: ${store.getModelType}`;
 });
 ModelsCheckBox.propTypes = {
     store: PropTypes.any,

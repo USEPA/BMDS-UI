@@ -26,22 +26,22 @@ const OptionsForm = props => {
                             return {value: option.value, text: option.label};
                         })}
                         onChange={value =>
-                            props.saveOptions("bmr_type", parseInt(value), props.idx)
+                            props.saveOptions("bmr_type", Number.parseInt(value), props.idx)
                         }
                         value={props.options.bmr_type}
                     />
                 </td>
             ) : null}
-            {props.modelType == mc.MODEL_DICHOTOMOUS ||
-            props.modelType == mc.MODEL_NESTED_DICHOTOMOUS ||
-            props.modelType == mc.MODEL_MULTI_TUMOR ? (
+            {props.modelType === mc.MODEL_DICHOTOMOUS ||
+            props.modelType === mc.MODEL_NESTED_DICHOTOMOUS ||
+            props.modelType === mc.MODEL_MULTI_TUMOR ? (
                 <td>
                     <SelectInput
                         choices={dichotomousBmrOptions.map(option => {
                             return {value: option.value, text: option.label};
                         })}
                         onChange={value =>
-                            props.saveOptions("bmr_type", parseInt(value), props.idx)
+                            props.saveOptions("bmr_type", Number.parseInt(value), props.idx)
                         }
                         value={props.options.bmr_type}
                     />
@@ -75,7 +75,7 @@ const OptionsForm = props => {
                             return {value: option.value, text: option.label};
                         })}
                         onChange={value =>
-                            props.saveOptions("dist_type", parseInt(value), props.idx)
+                            props.saveOptions("dist_type", Number.parseInt(value), props.idx)
                         }
                         value={props.options.dist_type}
                     />
@@ -89,7 +89,7 @@ const OptionsForm = props => {
                             onChange={value =>
                                 props.saveOptions(
                                     "litter_specific_covariate",
-                                    parseInt(value),
+                                    Number.parseInt(value),
                                     props.idx
                                 )
                             }
@@ -130,7 +130,7 @@ const OptionsForm = props => {
                 <Button
                     className="btn btn-danger"
                     title="Delete Option Set"
-                    onClick={e => props.deleteOptions(props.idx)}
+                    onClick={_e => props.deleteOptions(props.idx)}
                     icon="trash3-fill"
                 />
             </td>

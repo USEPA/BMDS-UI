@@ -22,7 +22,7 @@ class App extends Component {
                         About
                     </button>
                 </div>
-                <>{showAboutModal ? <AboutModal store={this.props.store} /> : null}</>
+                {showAboutModal ? <AboutModal store={this.props.store} /> : null}
                 <p className="text-muted col-lg-8">
                     Account for intralitter correlation commonly observed in developmental toxicity
                     studies when only dose-level incidence data is available. For more details,

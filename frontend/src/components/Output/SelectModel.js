@@ -11,15 +11,15 @@ import TextAreaInput from "../common/TextAreaInput";
 @observer
 class SelectModelIndex extends Component {
     render() {
-        const {outputStore} = this.props,
-            selectedOutput = outputStore.selectedOutput.frequentist,
-            {models} = selectedOutput,
-            {model_index, notes} = selectedOutput.selected,
-            selectValue = _.isNumber(model_index) ? model_index : -1,
-            textValue = _.isNull(notes) ? "" : notes,
-            choices = models.map((model, idx) => {
-                return {value: idx, text: model.name};
-            });
+        const {outputStore} = this.props;
+        const selectedOutput = outputStore.selectedOutput.frequentist;
+        const {models} = selectedOutput;
+        const {model_index, notes} = selectedOutput.selected;
+        const selectValue = _.isNumber(model_index) ? model_index : -1;
+        const textValue = _.isNull(notes) ? "" : notes;
+        const choices = models.map((model, idx) => {
+            return {value: idx, text: model.name};
+        });
 
         choices.unshift({value: -1, text: "None (no model selected)"});
 
@@ -29,7 +29,9 @@ class SelectModelIndex extends Component {
                     <SelectInput
                         id="selection_model"
                         label="Selected best-fitting model"
-                        onChange={value => outputStore.saveSelectedModelIndex(parseInt(value))}
+                        onChange={value =>
+                            outputStore.saveSelectedModelIndex(Number.parseInt(value))
+                        }
                         value={selectValue}
                         choices={choices}
                     />

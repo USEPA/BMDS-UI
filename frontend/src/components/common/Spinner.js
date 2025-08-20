@@ -6,7 +6,7 @@ class Spinner extends React.Component {
         return (
             <span>
                 {this.props.text}
-                <span className="ml-2 spinner-border text-info" aria-hidden="true"></span>
+                <span className="ml-2 spinner-border text-info" aria-hidden="true" />
             </span>
         );
     }

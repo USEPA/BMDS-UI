@@ -6,15 +6,10 @@ import FloatingPointHover from "@/components/common/FloatingPointHover";
 
 class TwoColumnTable extends Component {
     render() {
-        const {id, data, label, colwidths} = this.props,
-            widths = colwidths.map(d => `${d}%`),
-            formatPopover = function(value, raw_value) {
-                return _.isFinite(raw_value) ? (
-                    <FloatingPointHover value={raw_value} />
-                ) : (
-                    <span>{value}</span>
-                );
-            };
+        const {id, data, label, colwidths} = this.props;
+        const widths = colwidths.map(d => `${d}%`);
+        const formatPopover = (value, raw_value) =>
+            _.isFinite(raw_value) ? <FloatingPointHover value={raw_value} /> : <span>{value}</span>;
         return (
             <table id={id} className="table table-sm col-r-2">
                 <colgroup>

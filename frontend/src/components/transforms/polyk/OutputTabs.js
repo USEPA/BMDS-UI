@@ -9,38 +9,29 @@ import Plot from "react-plotly.js";
 import ClipboardButton from "@/components/common/ClipboardButton";
 import Table from "@/components/common/Table";
 
-const summaryTable = function(df) {
-    return (
-        <Table
-            data={{
-                headers: [
-                    "Dose",
-                    "N",
-                    "Adjusted N",
-                    "Incidence",
-                    "Proportion",
-                    "Adjusted Proportion",
-                ],
-                rows: _.range(df.dose.length).map(i => [
-                    df.dose[i],
-                    df.n[i],
-                    df.adj_n[i].toFixed(4),
-                    df.incidence[i],
-                    df.proportion[i],
-                    df.adj_proportion[i].toFixed(4),
-                ]),
-                tblClasses: "table table-sm table-striped table-hover text-right",
-            }}
-        />
-    );
-};
+const summaryTable = df => (
+    <Table
+        data={{
+            headers: ["Dose", "N", "Adjusted N", "Incidence", "Proportion", "Adjusted Proportion"],
+            rows: _.range(df.dose.length).map(i => [
+                df.dose[i],
+                df.n[i],
+                df.adj_n[i].toFixed(4),
+                df.incidence[i],
+                df.proportion[i],
+                df.adj_proportion[i].toFixed(4),
+            ]),
+            tblClasses: "table table-sm table-striped table-hover text-right",
+        }}
+    />
+);
 
 @inject("store")
 @observer
 class SummaryPlot extends Component {
     render() {
-        const {df2} = this.props.store.outputs,
-            {dose_units} = this.props.store.settings;
+        const {df2} = this.props.store.outputs;
+        const {dose_units} = this.props.store.settings;
         return (
             <Plot
                 data={[
@@ -93,16 +84,16 @@ SummaryPlot.propTypes = {
 @observer
 class RawDataPlot extends Component {
     getData(df) {
-        const d1 = _.zip(df.dose, df.day, df.has_tumor),
-            d2 = _.groupBy(d1, arr => arr[0]);
-        let results = [];
+        const d1 = _.zip(df.dose, df.day, df.has_tumor);
+        const d2 = _.groupBy(d1, arr => arr[0]);
+        const results = [];
         _.each(d2, (values, key) => {
-            const arr1 = [],
-                arr2 = [];
+            const arr1 = [];
+            const arr2 = [];
             let cumulative = 0;
 
             _.each(values, arr => {
-                if (arr[2] == 1) {
+                if (arr[2] === 1) {
                     cumulative += 1;
                 }
                 arr1.push(arr[1]);
@@ -113,9 +104,9 @@ class RawDataPlot extends Component {
         return _.sortBy(results, arr => arr[0]);
     }
     render() {
-        const {df} = this.props.store.outputs,
-            data = this.getData(df),
-            {dose_units} = this.props.store.settings;
+        const {df} = this.props.store.outputs;
+        const data = this.getData(df);
+        const {dose_units} = this.props.store.settings;
         return (
             <Plot
                 data={data.map(row => {
@@ -159,11 +150,11 @@ RawDataPlot.propTypes = {
 @observer
 class OutputTabs extends Component {
     render() {
-        const {df, df2} = this.props.store.outputs,
-            copyText = _.zip(df2.dose, df2.adj_n, df2.incidence)
-                .map(d => `${d[0]}\t${d[1].toFixed(4)}\t${d[2]}`)
-                .join("\n");
-        df["weight"] = df["adj_n"];
+        const {df, df2} = this.props.store.outputs;
+        const copyText = _.zip(df2.dose, df2.adj_n, df2.incidence)
+            .map(d => `${d[0]}\t${d[1].toFixed(4)}\t${d[2]}`)
+            .join("\n");
+        df.weight = df.adj_n;
         return (
             <Tabs
                 defaultActiveKey="summary"
@@ -178,7 +169,7 @@ class OutputTabs extends Component {
                         <ClipboardButton
                             text="Copy Data for BMDS Modeling"
                             textToCopy={copyText}
-                            onCopy={e => {
+                            onCopy={_e => {
                                 alert(
                                     'Data copied to your clipboard! For your Multistage/Multitumor analysis, return to the Data tab, select the "Load dataset from Excel" button, and paste the clipboard contents to create a new dataset. Or, paste the clipboard contents into Excel for further analysis.'
                                 );
