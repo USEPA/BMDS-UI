@@ -11,9 +11,9 @@ import {
 import {MODEL_CONTINUOUS} from "@/constants/mainConstants";
 import {getDrDatasetPlotData, getDrLayout} from "@/constants/plotting";
 
-const validateTabularData = (text, columns) => {
-    let data = [];
-    const errors = [];
+let validateTabularData = function(text, columns) {
+    let data = [],
+        errors = [];
 
     data = _.chain(text)
         .split("\n")
@@ -21,7 +21,7 @@ const validateTabularData = (text, columns) => {
         .map(line =>
             _.chain(line)
                 .split("\t")
-                .map(Number.parseFloat)
+                .map(parseFloat)
                 .filter(d => _.isFinite(d))
                 .value()
         )
@@ -48,7 +48,7 @@ const validateTabularData = (text, columns) => {
         errors.push(`Expecting 3+ rows; got ${data[0].length} rows`);
     }
 
-    if (errors.length === 0) {
+    if (errors.length == 0) {
         data = _.zipObject(columns, data);
     }
 
@@ -84,13 +84,13 @@ class DataStore {
     }
 
     @action.bound addDataset() {
-        const dataset = getDefaultDataset(this.model_type);
-        const id =
-            _.chain(this.datasets)
-                .map(d => d.metadata.id)
-                .max()
-                .defaultTo(-1)
-                .value() + 1;
+        const dataset = getDefaultDataset(this.model_type),
+            id =
+                _.chain(this.datasets)
+                    .map(d => d.metadata.id)
+                    .max()
+                    .defaultTo(-1)
+                    .value() + 1;
 
         dataset.metadata.id = id;
         dataset.metadata.name = `Dataset #${id + 1}`;
@@ -116,11 +116,11 @@ class DataStore {
         // removes empty rows from each dataset
         this.datasets.map(dataset => {
             // get keys of row properties, and zip values into row arrays
-            const keys = Object.keys(dataset).filter(key => Array.isArray(dataset[key]));
-            const rows = _.zip(...keys.map(key => dataset[key]));
+            let keys = Object.keys(dataset).filter(key => Array.isArray(dataset[key])),
+                rows = _.zip(...keys.map(key => dataset[key]));
             // splice out indices where all row properties are blank
             _.forEachRight(rows, (row, index) => {
-                const isEmpty = _.every(row, e => e === "");
+                let isEmpty = _.every(row, e => e == "");
                 if (isEmpty) {
                     keys.forEach(key => dataset[key].splice(index, 1));
                 }
@@ -130,7 +130,7 @@ class DataStore {
 
     @action.bound addRow() {
         const dataset = this.selectedDataset;
-        Object.keys(dataset).map((key, _i) => {
+        Object.keys(dataset).map((key, i) => {
             if (Array.isArray(dataset[key])) {
                 dataset[key].push("");
             }
@@ -150,8 +150,8 @@ class DataStore {
     };
 
     @action.bound saveDatasetCellItem(key, value, rowIdx) {
-        const dataset = this.selectedDataset;
-        const parsedValue = Number.parseFloat(value);
+        let dataset = this.selectedDataset,
+            parsedValue = parseFloat(value);
         if (_.isNumber(parsedValue)) {
             dataset[key][rowIdx] = parsedValue;
         }
@@ -164,8 +164,8 @@ class DataStore {
     }
 
     @action.bound deleteDataset() {
-        const index = this.selectedDatasetIndex;
-        const datasetId = toJS(this.selectedDatasetId);
+        var index = this.selectedDatasetIndex,
+            datasetId = toJS(this.selectedDatasetId);
         if (index > -1) {
             this.datasets.splice(index, 1);
             this.rootStore.dataOptionStore.deleteOption(datasetId);
@@ -183,7 +183,7 @@ class DataStore {
     }
 
     @computed get showDatasetTypeSelector() {
-        return this.getModelType === MODEL_CONTINUOUS;
+        return this.getModelType == MODEL_CONTINUOUS;
     }
 
     @computed get selectedDataset() {
@@ -199,10 +199,10 @@ class DataStore {
         if (!_.isArray(data)) {
             return null;
         }
-        const index = this.selectedDatasetIndex;
-        const filtered = data.filter(error => {
-            return error.loc && error.loc[0] === "datasets" && error.loc[1] === index;
-        });
+        const index = this.selectedDatasetIndex,
+            filtered = data.filter(error => {
+                return error.loc && error.loc[0] == "datasets" && error.loc[1] == index;
+            });
         return filtered;
     }
 
@@ -212,8 +212,8 @@ class DataStore {
     }
 
     @computed get getMappedArray() {
-        const datasetInputForm = [];
-        const dataset = this.selectedDataset;
+        let datasetInputForm = [],
+            dataset = this.selectedDataset;
         Object.keys(dataset).map(key => {
             if (Array.isArray(dataset[key])) {
                 dataset[key].map((val, i) => {
@@ -275,8 +275,8 @@ class DataStore {
         return this.rootStore.mainStore.isDesktop
             ? 1000
             : this.rootStore.mainStore.isMultiTumor
-              ? 10
-              : 6;
+            ? 10
+            : 6;
     }
     @computed get canAddNewDataset() {
         return this.datasets.length < this.maxItems;
@@ -294,14 +294,14 @@ class DataStore {
     @observable tabularModalDataValidated = false;
     @action.bound toggleDatasetModal() {
         const getDefaultText = () => {
-            const expectedColumns = columns[this.selectedDataset.dtype];
-            const value = _.map(this.getMappedArray, row => {
-                return _.map(expectedColumns, col => row[col].toString()).join("\t");
-            }).join("\n");
-            return value;
-        };
-        const willShow = !this.showTabularModal;
-        const tabularModalText = willShow ? getDefaultText() : "";
+                const expectedColumns = columns[this.selectedDataset.dtype],
+                    value = _.map(this.getMappedArray, row => {
+                        return _.map(expectedColumns, col => row[col].toString()).join("\t");
+                    }).join("\n");
+                return value;
+            },
+            willShow = !this.showTabularModal,
+            tabularModalText = willShow ? getDefaultText() : "";
 
         this.tabularModalDataValidated = false;
         this.tabularModalText = tabularModalText;
@@ -314,12 +314,12 @@ class DataStore {
         this.tabularModalDataValidated = false;
         this.tabularModalText = text;
 
-        if (text === "") {
+        if (text == "") {
             return;
         }
 
-        const expectedColumns = columns[this.selectedDataset.dtype];
-        const results = validateTabularData(text, expectedColumns);
+        let expectedColumns = columns[this.selectedDataset.dtype],
+            results = validateTabularData(text, expectedColumns);
 
         if (results.errors.length > 0) {
             this.tabularModalError = results.errors.join("\n");
@@ -336,8 +336,8 @@ class DataStore {
             return;
         }
 
-        const dataset = _.cloneDeep(this.selectedDataset);
-        const index = this.selectedDatasetIndex;
+        const dataset = _.cloneDeep(this.selectedDataset),
+            index = this.selectedDatasetIndex;
 
         _.each(this.tabularModalData, (value, key) => {
             dataset[key] = value;

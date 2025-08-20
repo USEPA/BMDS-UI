@@ -3,11 +3,14 @@ import React, {Component} from "react";
 
 class Icon extends Component {
     render() {
-        const {name, classes, text, title} = this.props;
-        const extra = text ? " mr-1 " : " ";
-        const icon = (
-            <span title={title} className={`bi bi-${name}${extra}${classes}`} aria-hidden="true" />
-        );
+        const {name, classes, text, title} = this.props,
+            extra = text ? " mr-1 " : " ",
+            icon = (
+                <span
+                    title={title}
+                    className={`bi bi-${name}${extra}${classes}`}
+                    aria-hidden="true"></span>
+            );
         if (text) {
             return (
                 <>

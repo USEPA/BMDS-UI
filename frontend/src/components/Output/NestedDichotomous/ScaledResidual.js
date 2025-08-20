@@ -7,15 +7,15 @@ import {ff} from "@/utils/formatters";
 @observer
 class ScaledResidual extends Component {
     render() {
-        const residuals = this.props.model.results.scaled_residuals;
-        const data = [
-            ["Minimum scaled residual", ff(residuals.min)],
-            ["Minimum ABS(scaled residual)", ff(residuals.min_abs)],
-            ["Average Scaled residual", ff(residuals.avg)],
-            ["Average ABS(scaled residual)", ff(residuals.avg_abs)],
-            ["Maximum scaled residual", ff(residuals.max)],
-            ["Maximum ABS(scaled residual)", ff(residuals.max_abs)],
-        ];
+        const residuals = this.props.model.results.scaled_residuals,
+            data = [
+                ["Minimum scaled residual", ff(residuals.min)],
+                ["Minimum ABS(scaled residual)", ff(residuals.min_abs)],
+                ["Average Scaled residual", ff(residuals.avg)],
+                ["Average ABS(scaled residual)", ff(residuals.avg_abs)],
+                ["Maximum scaled residual", ff(residuals.max)],
+                ["Maximum ABS(scaled residual)", ff(residuals.max_abs)],
+            ];
         return (
             <TwoColumnTable
                 label="Scaled Residuals (for dose group nearest the BMD)"

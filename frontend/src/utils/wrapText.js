@@ -20,9 +20,9 @@ export const wrapText = (text, maxLength = 80, join = "\n") => {
             if (currentLine.length > 0) {
                 result.push(currentLine.trim());
             }
-            currentLine = `${word} `;
+            currentLine = word + " ";
         } else {
-            currentLine += `${word} `;
+            currentLine += word + " ";
         }
     }
 

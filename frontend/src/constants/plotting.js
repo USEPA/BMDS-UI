@@ -7,40 +7,39 @@ import {wrapText} from "@/utils/wrapText";
 import {Dtype} from "./dataConstants";
 
 const doseResponseLayout = {
-    autosize: true,
-    legend: {yanchor: "top", y: 0.99, xanchor: "left", x: 0.01},
-    margin: {l: 50, r: 5, t: 50, b: 55},
-    showlegend: true,
-    title: {
-        text: "ADD",
-    },
-    xaxis: {
+        autosize: true,
+        legend: {yanchor: "top", y: 0.99, xanchor: "left", x: 0.01},
+        margin: {l: 50, r: 5, t: 50, b: 55},
+        showlegend: true,
         title: {
             text: "ADD",
         },
-    },
-    yaxis: {
-        title: {
-            text: "ADD",
+        xaxis: {
+            title: {
+                text: "ADD",
+            },
+        },
+        yaxis: {
+            title: {
+                text: "ADD",
+            },
         },
     },
-};
-const hexToRgbA = (hex, alpha) => {
-    let c;
-    if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
-        c = hex.substring(1).split("");
-        if (c.length === 3) {
-            c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+    hexToRgbA = (hex, alpha) => {
+        var c;
+        if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+            c = hex.substring(1).split("");
+            if (c.length == 3) {
+                c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+            }
+            c = "0x" + c.join("");
+            return "rgba(" + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(",") + `,${alpha})`;
         }
-        c = `0x${c.join("")}`;
-        return `rgba(${[(c >> 16) & 255, (c >> 8) & 255, c & 255].join(",")},${alpha})`;
-    }
-    throw new Error("Bad Hex");
-};
+        throw new Error("Bad Hex");
+    };
 
 export const getResponse = dataset => {
-        let incidences;
-        let ns;
+        let incidences, ns;
 
         switch (dataset.dtype) {
             case Dtype.CONTINUOUS:
@@ -59,52 +58,49 @@ export const getResponse = dataset => {
                 throw `Unknown dtype: ${dataset.dtype}`;
         }
     },
-    getDoseLabel = dataset => {
+    getDoseLabel = function(dataset) {
         let label = dataset.metadata.dose_name;
         if (dataset.metadata.dose_units) {
             label = `${label} (${dataset.metadata.dose_units})`;
         }
         return label;
     },
-    getResponseLabel = dataset => {
+    getResponseLabel = function(dataset) {
         let label = dataset.metadata.response_name;
         if (dataset.metadata.response_units) {
             label = `${label} (${dataset.metadata.response_units})`;
         }
         return label;
     },
-    getDrLayout = (dataset, _selected, _modal, _hover) => {
-        const layout = _.cloneDeep(doseResponseLayout);
+    getDrLayout = function(dataset, selected, modal, hover) {
+        let layout = _.cloneDeep(doseResponseLayout);
         layout.title.text = wrapText(dataset.metadata.name, 45, "<br>");
         layout.xaxis.title.text = getDoseLabel(dataset);
         layout.yaxis.title.text = getResponseLabel(dataset);
-        const xmin = _.min(dataset.doses) || 0;
-        const xmax = _.max(dataset.doses) || 0;
-        const response = getResponse(dataset);
-        const ymin =
-            dataset.dtype === Dtype.CONTINUOUS
-                ? _.min(response) - _.max(continuousErrorBars(dataset).array)
-                : _.min(response) || 0;
-        const ymax =
-            dataset.dtype === Dtype.CONTINUOUS
-                ? _.max(response) + _.max(continuousErrorBars(dataset).array)
-                : _.max(response) || 0;
-        const xbuff = Math.abs(xmax - xmin) * 0.05;
-        const ybuff = Math.abs(ymax - ymin) * 0.05;
+        const xmin = _.min(dataset.doses) || 0,
+            xmax = _.max(dataset.doses) || 0,
+            response = getResponse(dataset),
+            ymin =
+                dataset.dtype == Dtype.CONTINUOUS
+                    ? _.min(response) - _.max(continuousErrorBars(dataset).array)
+                    : _.min(response) || 0,
+            ymax =
+                dataset.dtype == Dtype.CONTINUOUS
+                    ? _.max(response) + _.max(continuousErrorBars(dataset).array)
+                    : _.max(response) || 0,
+            xbuff = Math.abs(xmax - xmin) * 0.05,
+            ybuff = Math.abs(ymax - ymin) * 0.05;
 
-        layout.xaxis.range = [
-            xmin === 0 ? -xbuff : xmin - xbuff,
-            xmax === 0 ? xbuff : xmax + xbuff,
-        ];
+        layout.xaxis.range = [xmin == 0 ? -xbuff : xmin - xbuff, xmax == 0 ? xbuff : xmax + xbuff];
         layout.yaxis.range =
-            dataset.dtype === Dtype.DICHOTOMOUS || dataset.dtype === Dtype.NESTED_DICHOTOMOUS
+            dataset.dtype == Dtype.DICHOTOMOUS || dataset.dtype == Dtype.NESTED_DICHOTOMOUS
                 ? [-0.05, 1.05]
-                : [ymin === 0 ? -ybuff : ymin - ybuff, ymax === 0 ? ybuff : ymax + ybuff];
+                : [ymin == 0 ? -ybuff : ymin - ybuff, ymax == 0 ? ybuff : ymax + ybuff];
 
         // determine whether to position legend to the left or right; auto doesn't work
-        const maxResponseIndex = response.indexOf(_.max(response));
-        const maxResponseDose = dataset.doses[maxResponseIndex];
-        const doseRange = _.max(dataset.doses) - _.min(dataset.doses);
+        const maxResponseIndex = response.indexOf(_.max(response)),
+            maxResponseDose = dataset.doses[maxResponseIndex],
+            doseRange = _.max(dataset.doses) - _.min(dataset.doses);
 
         if (maxResponseDose < doseRange / 2) {
             layout.legend.xanchor = "right";
@@ -115,32 +111,30 @@ export const getResponse = dataset => {
         }
         return layout;
     },
-    getCdfLayout = (dataset, xs) => {
-        const layout = _.cloneDeep(doseResponseLayout);
+    getCdfLayout = function(dataset, xs) {
+        let layout = _.cloneDeep(doseResponseLayout);
         layout.title.text = "BMD Cumulative Distribution Function (CDF)";
         layout.xaxis.title.text = getDoseLabel(dataset);
         layout.yaxis.title.text = "Cumulative Probability";
         layout.yaxis.range = [0, 1];
-        const xMax = xs[xs.length - 1];
-        const xMin = xs[0];
-        const xPadding = (xMax - xMin) * 0.025;
+        const xMax = xs[xs.length - 1],
+            xMin = xs[0],
+            xPadding = (xMax - xMin) * 0.025;
         layout.xaxis.range = [xMin - xPadding, xMax + xPadding];
         layout.legend.traceorder = "reversed";
         return layout;
     },
-    getDrDatasetPlotData = dataset => {
-        let errorBars;
-        let hovertemplate;
-        let name;
-        if (dataset.dtype === Dtype.CONTINUOUS) {
+    getDrDatasetPlotData = function(dataset) {
+        let errorBars, hovertemplate, name;
+        if (dataset.dtype == Dtype.CONTINUOUS) {
             errorBars = continuousErrorBars(dataset);
             name = "Observed Mean ± 95% CI";
-        } else if (dataset.dtype === Dtype.CONTINUOUS_INDIVIDUAL) {
+        } else if (dataset.dtype == Dtype.CONTINUOUS_INDIVIDUAL) {
             name = "Observed";
-        } else if (dataset.dtype === Dtype.DICHOTOMOUS) {
+        } else if (dataset.dtype == Dtype.DICHOTOMOUS) {
             errorBars = dichotomousErrorBars(dataset);
             name = "Fraction Affected ± 95% CI";
-        } else if (dataset.dtype === Dtype.NESTED_DICHOTOMOUS) {
+        } else if (dataset.dtype == Dtype.NESTED_DICHOTOMOUS) {
             name = "Fraction Affected";
         }
         if (errorBars) {
@@ -160,7 +154,7 @@ export const getResponse = dataset => {
             name,
         };
     },
-    getBmdDiamond = (name, bmd, bmdl, bmdu, bmd_y, hexColor) => {
+    getBmdDiamond = function(name, bmd, bmdl, bmdu, bmd_y, hexColor) {
         const hasBmd = bmd > 0;
 
         // prettier-ignore
@@ -195,7 +189,7 @@ export const getResponse = dataset => {
             };
         }
     },
-    getCsfLine = (y0, bmdl, bmd_y, hexColor) => {
+    getCsfLine = function(y0, bmdl, bmd_y, hexColor) {
         if (bmdl > 0) {
             return {
                 x: [0, bmdl],
@@ -210,7 +204,7 @@ export const getResponse = dataset => {
             };
         }
     },
-    getDrBmdLine = (model, hexColor) => {
+    getDrBmdLine = function(model, hexColor) {
         // https://plotly.com/python/marker-style/
         // https://plotly.com/javascript/reference/scatter/
         const data = [
@@ -242,7 +236,7 @@ export const getResponse = dataset => {
         }
         return data;
     },
-    getBayesianBMDLine = (model, hexColor) => {
+    getBayesianBMDLine = function(model, hexColor) {
         const data = [
             {
                 x: model.results.dr_x,
@@ -270,19 +264,21 @@ export const getResponse = dataset => {
 
         return data;
     },
-    getConfig = () => ({
-        modeBarButtonsToRemove: [
-            "pan2d",
-            "select2d",
-            "lasso2d",
-            "zoomIn2d",
-            "zoomOut2d",
-            "autoScale2d",
-            "hoverClosestCartesian",
-            "hoverCompareCartesian",
-            "toggleSpikelines",
-        ],
-    }),
+    getConfig = function() {
+        return {
+            modeBarButtonsToRemove: [
+                "pan2d",
+                "select2d",
+                "lasso2d",
+                "zoomIn2d",
+                "zoomOut2d",
+                "autoScale2d",
+                "hoverClosestCartesian",
+                "hoverCompareCartesian",
+                "toggleSpikelines",
+            ],
+        };
+    },
     bmaColor = "#00008b",
     hoverColor = "#DA2CDA",
     selectedColor = "#4a9f2f",

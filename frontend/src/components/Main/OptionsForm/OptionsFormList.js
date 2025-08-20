@@ -19,12 +19,12 @@ import OptionsReadOnly from "./OptionsReadOnly";
 @observer
 class OptionsFormList extends Component {
     render() {
-        const {optionsStore} = this.props;
-        const modelType = optionsStore.getModelType;
-        const optionsList = toJS(optionsStore.optionsList);
-        const distTypeHelpText =
-            "If lognormal is selected, only the Exponential and Hill models can be executed. Other models will be removed during the execution process and will not be shown in the outputs.";
-        const tailProbabilityHelpText = "Only used for Hybrid models.";
+        const {optionsStore} = this.props,
+            modelType = optionsStore.getModelType,
+            optionsList = toJS(optionsStore.optionsList),
+            distTypeHelpText =
+                "If lognormal is selected, only the Exponential and Hill models can be executed. Other models will be removed during the execution process and will not be shown in the outputs.",
+            tailProbabilityHelpText = "Only used for Hybrid models.";
         return (
             <div>
                 <div className="panel panel-default">

@@ -7,9 +7,9 @@ import Button from "../../common/Button";
 import Icon from "../../common/Icon";
 import CollectionForm from "./CollectionForm";
 
-const getDeletionDateText = editSettings => {
-    const date = editSettings.deleteDateStr;
-    const days = editSettings.deletionDaysUntilDeletion;
+const getDeletionDateText = function(editSettings) {
+    const date = editSettings.deleteDateStr,
+        days = editSettings.deletionDaysUntilDeletion;
     return `${date} (${days} days)`;
 };
 
@@ -17,8 +17,8 @@ const getDeletionDateText = editSettings => {
 @observer
 class Actions extends Component {
     render() {
-        const {mainStore} = this.props;
-        const {config} = mainStore;
+        const {mainStore} = this.props,
+            {config} = mainStore;
         return (
             <div className="dropdown">
                 <Button
@@ -81,7 +81,7 @@ class Actions extends Component {
                             <Icon name="files" text="Clone analysis" />
                         </a>
                     ) : null}
-                    <div className="dropdown-divider" />
+                    <div className="dropdown-divider"></div>
                     <span className="dropdown-header">Reporting</span>
                     {mainStore.analysisSavedAndValidated && mainStore.hasOutputs ? (
                         <>
@@ -112,7 +112,7 @@ class Actions extends Component {
                     )}
                     {mainStore.isDesktop && mainStore.canEdit ? (
                         <>
-                            <div className="dropdown-divider" />
+                            <div className="dropdown-divider"></div>
                             <span className="dropdown-header">Collections</span>
                             <CollectionForm />
                         </>

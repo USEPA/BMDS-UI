@@ -3,7 +3,7 @@ import React from "react";
 
 import Icon from "./components/common/Icon";
 
-export const simulateClick = el => {
+export const simulateClick = function(el) {
         // https://gomakethings.com/how-to-simulate-a-click-event-with-javascript/
         const evt = new MouseEvent("click", {
             bubbles: true,
@@ -12,14 +12,17 @@ export const simulateClick = el => {
         });
         !el.dispatchEvent(evt);
     },
-    randomString = () =>
-        "xxxxxxxxxxxxxxx".replace(/x/g, _c =>
-            String.fromCharCode(97 + Number.parseInt(26 * Math.random()))
-        ),
-    getHeaders = csrfToken => ({
-        "X-CSRFToken": csrfToken,
-        "Content-Type": "application/json",
-    }),
+    randomString = function() {
+        return "xxxxxxxxxxxxxxx".replace(/x/g, c =>
+            String.fromCharCode(97 + parseInt(26 * Math.random()))
+        );
+    },
+    getHeaders = function(csrfToken) {
+        return {
+            "X-CSRFToken": csrfToken,
+            "Content-Type": "application/json",
+        };
+    },
     checkOrEmpty = bool => {
         return (
             <Icon
@@ -29,10 +32,12 @@ export const simulateClick = el => {
             />
         );
     },
-    getLabel = (value, mapping) => _.find(mapping, d => d.value === value).label,
-    getBlob = (response, defaultName) => {
-        const header = response.headers.get("Content-Disposition");
-        const match = header.match(/filename="(.*)"/);
-        const filename = match ? match[1] : defaultName;
+    getLabel = function(value, mapping) {
+        return _.find(mapping, d => d.value == value).label;
+    },
+    getBlob = function(response, defaultName) {
+        const header = response.headers.get("Content-Disposition"),
+            match = header.match(/filename="(.*)"/),
+            filename = match ? match[1] : defaultName;
         return response.blob().then(blob => ({blob, filename}));
     };

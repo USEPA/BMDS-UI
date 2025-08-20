@@ -28,7 +28,7 @@ const DatasetFormRow = props => {
             <td>
                 <Button
                     className="btn btn-danger btn-sm"
-                    onClick={_e => props.delete(props.rowIdx)}
+                    onClick={e => props.delete(props.rowIdx)}
                     icon="trash3-fill"
                 />
             </td>
@@ -47,10 +47,10 @@ DatasetFormRow.propTypes = {
 @observer
 class DatasetForm extends Component {
     render() {
-        const {dataStore} = this.props;
-        const dataset = dataStore.selectedDataset;
-        const errorText = dataStore.selectedDatasetErrorText;
-        const columnNames = columns[dataset.dtype];
+        const {dataStore} = this.props,
+            dataset = dataStore.selectedDataset,
+            errorText = dataStore.selectedDatasetErrorText,
+            columnNames = columns[dataset.dtype];
 
         return (
             <div className="container-fluid">
@@ -163,7 +163,7 @@ class DatasetForm extends Component {
                         icon="layer-forward"
                         text="Load an example dataset"
                     />
-                    {dataStore.rootStore.mainStore.model_type === MODEL_MULTI_TUMOR ? (
+                    {dataStore.rootStore.mainStore.model_type == MODEL_MULTI_TUMOR ? (
                         <a
                             className="ml-auto"
                             href="/transforms/polyk/"
@@ -172,7 +172,7 @@ class DatasetForm extends Component {
                             <Icon name="calculator" text="Poly K Adjustment" />
                         </a>
                     ) : null}
-                    {dataStore.rootStore.mainStore.model_type === MODEL_DICHOTOMOUS ? (
+                    {dataStore.rootStore.mainStore.model_type == MODEL_DICHOTOMOUS ? (
                         <a
                             className="ml-auto"
                             href="/transforms/rao-scott/"

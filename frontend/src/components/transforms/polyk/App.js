@@ -12,8 +12,13 @@ import OutputTabs from "./OutputTabs";
 @observer
 class App extends Component {
     render() {
-        const {outputs, showAboutModal, setAboutModal, downloadExcel, downloadWord} =
-            this.props.store;
+        const {
+            outputs,
+            showAboutModal,
+            setAboutModal,
+            downloadExcel,
+            downloadWord,
+        } = this.props.store;
         return (
             <div className="container py-3">
                 <div className="d-flex justify-content-between">
@@ -25,7 +30,7 @@ class App extends Component {
                         About
                     </button>
                 </div>
-                {showAboutModal ? <AboutModal store={this.props.store} /> : null}
+                <>{showAboutModal ? <AboutModal store={this.props.store} /> : null}</>
                 <p className="text-muted col-lg-8">
                     Correct for treatment-related differences in survival across dose groups in
                     standard 2-year cancer bioassays. For more details, review the software&nbsp;

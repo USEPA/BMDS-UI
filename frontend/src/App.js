@@ -5,8 +5,8 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {HashRouter} from "react-router-dom";
 
-import Navigation from "@/components/Navigation";
 import Icon from "@/components/common/Icon";
+import Navigation from "@/components/Navigation";
 
 @inject("mainStore")
 @observer
@@ -18,23 +18,21 @@ class App extends Component {
 
         // update HTML document title
         autorun(() => {
-            const {analysis_name, canEdit} = this.props.mainStore;
-            const verb = canEdit ? "Update" : "";
-            const name = analysis_name ? analysis_name : "";
-            const app_name = this.props.mainStore.config.is_desktop
-                ? "BMDS Desktop"
-                : "BMDS Online";
+            const {analysis_name, canEdit} = this.props.mainStore,
+                verb = canEdit ? "Update" : "",
+                name = analysis_name ? analysis_name : "",
+                app_name = this.props.mainStore.config.is_desktop ? "BMDS Desktop" : "BMDS Online";
             document.title = _.reject([name, verb, app_name], _.isEmpty).join(" | ");
         });
     }
     render() {
-        const {analysis_name, canEdit, isFuture} = this.props.mainStore;
-        const getHeader = () => {
-            if (canEdit) {
-                return "Update BMDS analysis";
-            }
-            return analysis_name ? analysis_name : "BMDS analysis";
-        };
+        const {analysis_name, canEdit, isFuture} = this.props.mainStore,
+            getHeader = () => {
+                if (canEdit) {
+                    return "Update BMDS analysis";
+                }
+                return analysis_name ? analysis_name : "BMDS analysis";
+            };
 
         return this.props.mainStore.isUpdateComplete ? (
             <HashRouter>

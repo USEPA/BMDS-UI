@@ -4,12 +4,12 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
-import DatasetTable from "../Data/DatasetTable";
-import {ContinuousTestOfInterestDatasetFootnote} from "../IndividualModel/ContinuousTestOfInterest";
-import ModelDetailModal from "../IndividualModel/ModelDetailModal";
 import DoseResponsePlot from "../common/DoseResponsePlot";
 import Icon from "../common/Icon";
 import SelectInput from "../common/SelectInput";
+import DatasetTable from "../Data/DatasetTable";
+import {ContinuousTestOfInterestDatasetFootnote} from "../IndividualModel/ContinuousTestOfInterest";
+import ModelDetailModal from "../IndividualModel/ModelDetailModal";
 import BayesianResultTable from "./BayesianResultTable";
 import FrequentistResultTable from "./FrequentistResultTable";
 import MultitumorDatasetTable from "./Multitumor/DatasetTable";
@@ -50,14 +50,16 @@ class Output extends Component {
         }
         const footnote = outputStore.showContinuousDatasetFootnote ? (
             <ContinuousTestOfInterestDatasetFootnote />
-        ) : undefined;
+        ) : (
+            undefined
+        );
         return <DatasetTable dataset={outputStore.selectedDataset} footnotes={footnote} />;
     }
 
     render() {
-        const {outputStore} = this.props;
-        const {hasNoResults, hasAnyError, selectedFrequentist, selectedBayesian} = outputStore;
-        const {analysisSavedAndValidated, canSelectModel} = outputStore.rootStore.mainStore;
+        const {outputStore} = this.props,
+            {hasNoResults, hasAnyError, selectedFrequentist, selectedBayesian} = outputStore,
+            {analysisSavedAndValidated, canSelectModel} = outputStore.rootStore.mainStore;
 
         if (hasAnyError) {
             return (
@@ -100,10 +102,10 @@ class Output extends Component {
                             <SelectInput
                                 label="Select an output"
                                 onChange={value =>
-                                    outputStore.setSelectedOutputIndex(Number.parseInt(value))
+                                    outputStore.setSelectedOutputIndex(parseInt(value))
                                 }
                                 value={outputStore.selectedOutputIndex}
-                                choices={outputStore.outputs.map((_output, idx) => {
+                                choices={outputStore.outputs.map((output, idx) => {
                                     return {value: idx, text: outputStore.getOutputName(idx)};
                                 })}
                             />

@@ -73,9 +73,8 @@ class AboutModal extends Component {
                         In order to apply the Rao-Scott transformation, both the numerator (i.e.,
                         the number of affected fetuses, <IM f="A_f" />) and denominator (i.e., the
                         total number of fetuses or sample size, <IM f="N_f" />) of a dose-level
-                        proportion (
-                        <IM f="P_f = \frac{A_f}{N_f}" />) are divided by <IM f="D" />. This results
-                        in what can be described as the effective sample size (
+                        proportion (<IM f="P_f = \frac{A_f}{N_f}" />) are divided by <IM f="D" />.
+                        This results in what can be described as the effective sample size (
                         <IM f="{N_{f}}_{RS}=\frac{N_f}{D}" />) and the effective affected fetuses (
                         <IM f="{AF_{f}}_{RS}=\frac{A_f}{D}" />
                         ). Note that the proportion of animals responding does not change when
@@ -173,9 +172,8 @@ class AboutModal extends Component {
                         From these regression coefficients, the design effect can be calculated as
                         <IM f="D = e^{\left\lbrack a + b \times \ln(P_{f})+0.5\sigma_{res}^{2} \right\rbrack}" />
                         . Given there is no strong methodological preference using the design effect
-                        calculated using linear least squares regression (
-                        <IM f="D_{LS}" />) vs the design effect calculated using orthogonal
-                        regression (<IM f="D_{OR}" />
+                        calculated using linear least squares regression (<IM f="D_{LS}" />) vs the
+                        design effect calculated using orthogonal regression (<IM f="D_{OR}" />
                         ), by practice the design effect estimated using these two regression
                         approaches is averaged to generate the average design effect (
                         <IM f="D_{average}" />) actually used in the scaling of <IM f="N_{f}" /> and{" "}

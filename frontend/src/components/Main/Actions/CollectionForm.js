@@ -12,9 +12,9 @@ class CollectionForm extends Component {
         this.state = {selected: props.mainStore.collectionDefaultValues};
     }
     render() {
-        const {mainStore} = this.props;
-        const {collectionDefaultValues} = mainStore;
-        const {collections} = mainStore.config.editSettings;
+        const {mainStore} = this.props,
+            {collectionDefaultValues} = mainStore,
+            {collections} = mainStore.config.editSettings;
 
         if (!mainStore.canEdit || !mainStore.isDesktop) {
             return null;
@@ -28,9 +28,7 @@ class CollectionForm extends Component {
                     defaultValue={collectionDefaultValues}
                     onChange={e =>
                         this.setState({
-                            selected: Array.from(e.target.selectedOptions, d =>
-                                Number.parseInt(d.value)
-                            ),
+                            selected: Array.from(e.target.selectedOptions, d => parseInt(d.value)),
                         })
                     }>
                     {collections.map(d => (

@@ -17,7 +17,7 @@ class Popover extends Component {
     }
     render() {
         const {children, content, title, element, attrs} = this.props;
-        const props = _.fromPairs([
+        let props = _.fromPairs([
             ["ref", this.domNode],
             ["title", title],
             ["aria-hidden", "true"],

@@ -19,9 +19,9 @@ import {ff} from "@/utils/formatters";
 @observer
 class OptionSetTable extends Component {
     render() {
-        const {outputStore} = this.props;
-        const {getModelType, selectedModelOptions, selectedDatasetOptions} = outputStore;
-        const option_index = outputStore.selectedOutput.option_index + 1;
+        const {outputStore} = this.props,
+            {getModelType, selectedModelOptions, selectedDatasetOptions} = outputStore,
+            option_index = outputStore.selectedOutput.option_index + 1;
         let rows;
         if (getModelType === MODEL_CONTINUOUS) {
             rows = [

@@ -26,7 +26,7 @@ class ModelsStore {
     @computed get numModelsSelected() {
         return _.chain(this.models)
             .values()
-            .reduce((_sum, d) => d.length, 0)
+            .reduce((sum, d) => d.length, 0)
             .value();
     }
 
@@ -56,11 +56,11 @@ class ModelsStore {
                 this.models[name] = [];
             }
             if (name === mc.BAYESIAN) {
-                const bma = {
+                let bma = {
                     model,
                     prior_weight: 0,
                 };
-                const obj = this.models[name].find(obj => obj.model === model);
+                let obj = this.models[name].find(obj => obj.model === model);
                 if (obj === undefined) {
                     this.models[name].push(bma);
                 }
@@ -93,18 +93,16 @@ class ModelsStore {
     }
 
     @action.bound setDefaultPriorWeights() {
-        const value = Number.parseFloat(
-            (this.prior_weight / this.models[mc.BAYESIAN].length).toFixed(3)
-        );
+        const value = parseFloat((this.prior_weight / this.models[mc.BAYESIAN].length).toFixed(3));
         this.models[mc.BAYESIAN].forEach(obj => {
             obj.prior_weight = value;
         });
     }
 
     @action.bound setPriorWeight(model, value) {
-        const modelIndex = _.findIndex(this.models[mc.BAYESIAN], d => d.model === model);
+        let modelIndex = _.findIndex(this.models[mc.BAYESIAN], d => d.model === model);
         if (modelIndex >= 0) {
-            this.models[mc.BAYESIAN][modelIndex].prior_weight = Number.parseFloat(value);
+            this.models[mc.BAYESIAN][modelIndex].prior_weight = parseFloat(value);
         }
     }
 }

@@ -5,6 +5,8 @@ import {Col, Modal, Row} from "react-bootstrap";
 
 import * as dc from "@/constants/dataConstants";
 
+import Button from "../common/Button";
+import DoseResponsePlot from "../common/DoseResponsePlot";
 import {MsComboInfo, MsComboSummary} from "../Output/Multitumor/MsCombo";
 import MultitumorPlot from "../Output/Multitumor/MultitumorPlot";
 import BootstrapResults from "../Output/NestedDichotomous/BootstrapResults";
@@ -12,8 +14,6 @@ import BootstrapRuns from "../Output/NestedDichotomous/BootstrapRuns";
 import InputParameter from "../Output/NestedDichotomous/InputParameter";
 import LitterData from "../Output/NestedDichotomous/LitterData";
 import ScaledResidual from "../Output/NestedDichotomous/ScaledResidual";
-import Button from "../common/Button";
-import DoseResponsePlot from "../common/DoseResponsePlot";
 import CDFPlot from "./CDFPlot";
 import CDFTable from "./CDFTable";
 import ContinuousDeviance from "./ContinuousDeviance";
@@ -28,24 +28,25 @@ import ModelParameters from "./ModelParameters";
 import ParameterPriorTable from "./ParameterPriorTable";
 import Summary from "./Summary";
 
-const getCdfData = model => ({
-    bmd: model.results.bmd,
-    bmdl: model.results.bmdl,
-    bmdu: model.results.bmdu,
-    alpha: model.settings.alpha,
-});
+const getCdfData = function(model) {
+    return {
+        bmd: model.results.bmd,
+        bmdl: model.results.bmdl,
+        bmdu: model.results.bmdu,
+        alpha: model.settings.alpha,
+    };
+};
 
 @observer
 class ModelBody extends Component {
     render() {
-        const {outputStore} = this.props;
-        const dataset = outputStore.selectedDataset;
-        const model = outputStore.modalModel;
-        const dtype = dataset.dtype;
-        const priorClass = model.settings.priors.prior_class;
-        const isDichotomous = dtype === dc.Dtype.DICHOTOMOUS;
-        const isContinuous =
-            dtype === dc.Dtype.CONTINUOUS || dtype === dc.Dtype.CONTINUOUS_INDIVIDUAL;
+        const {outputStore} = this.props,
+            dataset = outputStore.selectedDataset,
+            model = outputStore.modalModel,
+            dtype = dataset.dtype,
+            priorClass = model.settings.priors.prior_class,
+            isDichotomous = dtype == dc.Dtype.DICHOTOMOUS,
+            isContinuous = dtype == dc.Dtype.CONTINUOUS || dtype == dc.Dtype.CONTINUOUS_INDIVIDUAL;
         return (
             <Modal.Body>
                 <Row>
@@ -111,10 +112,10 @@ ModelBody.propTypes = {
 @observer
 class ModelAverageBody extends Component {
     render() {
-        const {outputStore} = this.props;
-        const dataset = outputStore.selectedDataset;
-        const model = outputStore.modalModel;
-        const bayesian_models = outputStore.selectedOutput.bayesian.models;
+        const {outputStore} = this.props,
+            dataset = outputStore.selectedDataset,
+            model = outputStore.modalModel,
+            bayesian_models = outputStore.selectedOutput.bayesian.models;
         return (
             <Modal.Body>
                 <Row>
@@ -156,10 +157,10 @@ ModelAverageBody.propTypes = {
 @observer
 class MultitumorModalBody extends Component {
     render() {
-        const {outputStore} = this.props;
-        const model = outputStore.modalModel;
-        const isSummary = outputStore.drModelModalIsMA;
-        const dataset = outputStore.modalDataset;
+        const {outputStore} = this.props,
+            model = outputStore.modalModel,
+            isSummary = outputStore.drModelModalIsMA,
+            dataset = outputStore.modalDataset;
 
         if (isSummary) {
             return (
@@ -235,10 +236,10 @@ MultitumorModalBody.propTypes = {
 @observer
 class NestedDichotomousModalBody extends Component {
     render() {
-        const {outputStore} = this.props;
-        const dataset = outputStore.selectedDataset;
-        const dtype = dataset.dtype;
-        const model = outputStore.modalModel;
+        const {outputStore} = this.props,
+            dataset = outputStore.selectedDataset,
+            dtype = dataset.dtype,
+            model = outputStore.modalModel;
 
         return (
             <Modal.Body>
@@ -293,25 +294,24 @@ class ModelDetailModal extends Component {
         const {outputStore} = this.props;
         if (outputStore.isMultiTumor) {
             return MultitumorModalBody;
-        }
-        if (outputStore.drModelModalIsMA) {
+        } else if (outputStore.drModelModalIsMA) {
             return ModelAverageBody;
-        }
-        if (outputStore.isNestedDichotomous) {
+        } else if (outputStore.isNestedDichotomous) {
             return NestedDichotomousModalBody;
+        } else {
+            return ModelBody;
         }
-        return ModelBody;
     }
     render() {
-        const {outputStore} = this.props;
-        const model = outputStore.modalModel;
+        const {outputStore} = this.props,
+            model = outputStore.modalModel;
 
         if (!model) {
             return null;
         }
 
-        const name = this.getTitle();
-        const Body = this.getBody();
+        const name = this.getTitle(),
+            Body = this.getBody();
 
         return (
             <Modal

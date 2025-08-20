@@ -15,21 +15,19 @@ import CheckboxInput from "../../common/CheckboxInput";
 import SelectInput from "../../common/SelectInput";
 
 const getDegreeText = (dtype, degree) => {
-    return degree === 0 && dtype === Dtype.MULTI_TUMOR
-        ? "auto"
-        : getLabel(degree, allDegreeOptions);
+    return degree === 0 && dtype == Dtype.MULTI_TUMOR ? "auto" : getLabel(degree, allDegreeOptions);
 };
 
 @observer
 class DatasetModelOption extends Component {
     render() {
-        const {datasetId, store} = this.props;
-        const option = _.find(store.options, d => datasetId === d.dataset_id);
-        const dataset = store.getDataset(option);
-        const {canEdit, updateOption} = store;
-        const dtype = store.getModelType;
-        const hasDegree = option.degree !== undefined;
-        const hasAdverseDirection = option.adverse_direction !== undefined;
+        const {datasetId, store} = this.props,
+            option = _.find(store.options, d => datasetId === d.dataset_id),
+            dataset = store.getDataset(option),
+            {canEdit, updateOption} = store,
+            dtype = store.getModelType,
+            hasDegree = option.degree !== undefined,
+            hasAdverseDirection = option.adverse_direction !== undefined;
 
         return canEdit ? (
             <tr>
@@ -46,9 +44,7 @@ class DatasetModelOption extends Component {
                             choices={getDegreeOptions(dtype, dataset).map(option => {
                                 return {value: option.value, text: option.label};
                             })}
-                            onChange={value =>
-                                updateOption(datasetId, "degree", Number.parseInt(value))
-                            }
+                            onChange={value => updateOption(datasetId, "degree", parseInt(value))}
                             value={option.degree}
                         />
                     </td>
@@ -60,7 +56,7 @@ class DatasetModelOption extends Component {
                                 return {value: option.value, text: option.label};
                             })}
                             onChange={value =>
-                                updateOption(datasetId, "adverse_direction", Number.parseInt(value))
+                                updateOption(datasetId, "adverse_direction", parseInt(value))
                             }
                             value={option.adverse_direction}
                         />

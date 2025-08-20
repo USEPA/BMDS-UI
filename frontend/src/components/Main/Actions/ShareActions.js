@@ -47,7 +47,7 @@ class ShareActions extends Component {
                             Anyone with this link can view the analysis and download reports.
                         </p>
                         {/* EDIT LINK */}
-                        <div className="dropdown-divider" />
+                        <div className="dropdown-divider"></div>
                         <span className="dropdown-header">Edit link</span>
                         <div
                             className="dropdown-item btn-group btn-block"

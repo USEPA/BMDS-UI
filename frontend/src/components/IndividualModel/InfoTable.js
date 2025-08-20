@@ -8,16 +8,16 @@ import TwoColumnTable from "@/components/common/TwoColumnTable";
 @observer
 class InfoTable extends Component {
     render() {
-        const {outputStore} = this.props;
-        const model = outputStore.modalModel;
-        const dataset = outputStore.isMultiTumor
-            ? outputStore.modalDataset
-            : outputStore.selectedDataset;
-        const data = [
-            ["Dataset", dataset.metadata.name],
-            ["Model", model.name],
-            ["Equation", model.model_class.model_form_str],
-        ];
+        const {outputStore} = this.props,
+            model = outputStore.modalModel,
+            dataset = outputStore.isMultiTumor
+                ? outputStore.modalDataset
+                : outputStore.selectedDataset,
+            data = [
+                ["Dataset", dataset.metadata.name],
+                ["Model", model.name],
+                ["Equation", model.model_class.model_form_str],
+            ];
         return <TwoColumnTable id="info-table" data={data} label="Info" />;
     }
 }

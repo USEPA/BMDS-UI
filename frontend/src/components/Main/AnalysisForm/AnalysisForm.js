@@ -14,9 +14,9 @@ import CollectionList from "./CollectionList";
 @observer
 class RunChecklist extends Component {
     render() {
-        const {complete, message} = this.props;
-        const color = complete ? "text-success" : "text-danger";
-        const icon = complete ? "check-circle-fill" : "x-circle-fill";
+        const {complete, message} = this.props,
+            color = complete ? "text-success" : "text-danger",
+            icon = complete ? "check-circle-fill" : "x-circle-fill";
 
         return (
             <p>

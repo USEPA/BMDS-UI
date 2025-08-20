@@ -17,23 +17,20 @@ const testDescriptionText = {
 @observer
 class ContinuousTestOfInterestDatasetFootnote extends Component {
     render() {
-        const model = this.props.outputStore.selectedOutput.frequentist.models[0];
-        const {p_values} = model.results.tests;
+        const model = this.props.outputStore.selectedOutput.frequentist.models[0],
+            {p_values} = model.results.tests;
         return (
             <>
                 <p className="text-muted my-0">
-                    Test 1
-                    <HelpTextPopover title={"Test 1"} content={testDescriptionText[1]} />
+                    Test 1<HelpTextPopover title={"Test 1"} content={testDescriptionText[1]} />
                     &nbsp;Dose Response: {fractionalFormatter(p_values[0])}
                 </p>
                 <p className="text-muted my-0">
-                    Test 2
-                    <HelpTextPopover title={"Test 2"} content={testDescriptionText[2]} />
+                    Test 2<HelpTextPopover title={"Test 2"} content={testDescriptionText[2]} />
                     &nbsp;Homogeneity of Variance: {fractionalFormatter(p_values[1])}
                 </p>
                 <p className="text-muted my-0">
-                    Test 3
-                    <HelpTextPopover title={"Test 3"} content={testDescriptionText[3]} />
+                    Test 3<HelpTextPopover title={"Test 3"} content={testDescriptionText[3]} />
                     &nbsp;Variance Model Selection: {fractionalFormatter(p_values[2])}
                 </p>
             </>
@@ -47,29 +44,32 @@ ContinuousTestOfInterestDatasetFootnote.propTypes = {
 @observer
 class ContinuousTestOfInterest extends Component {
     render() {
-        const {store} = this.props;
-        const testInterest = store.modalModel.results.tests;
-        const data = {
-            headers: [
-                "Test",
-                "-2 * Log(Likelihood Ratio)",
-                "Test d.f.",
-                <span key={1}>
-                    <i>P</i>-Value
-                </span>,
-            ],
-            rows: testInterest.names.map((_name, i) => [
-                <span key={i}>
-                    Test {i + 1}
-                    <HelpTextPopover title={`Test ${i + 1}`} content={testDescriptionText[i + 1]} />
-                </span>,
-                ff(testInterest.ll_ratios[i]),
-                ff(testInterest.dfs[i]),
-                fractionalFormatter(testInterest.p_values[i]),
-            ]),
-            subheader: "Tests of Mean and Variance Fits",
-            tblClasses: "table table-sm text-right col-l-1",
-        };
+        const {store} = this.props,
+            testInterest = store.modalModel.results.tests,
+            data = {
+                headers: [
+                    "Test",
+                    "-2 * Log(Likelihood Ratio)",
+                    "Test d.f.",
+                    <span key={1}>
+                        <i>P</i>-Value
+                    </span>,
+                ],
+                rows: testInterest.names.map((name, i) => [
+                    <span key={i}>
+                        Test {i + 1}
+                        <HelpTextPopover
+                            title={`Test ${i + 1}`}
+                            content={testDescriptionText[i + 1]}
+                        />
+                    </span>,
+                    ff(testInterest.ll_ratios[i]),
+                    ff(testInterest.dfs[i]),
+                    fractionalFormatter(testInterest.p_values[i]),
+                ]),
+                subheader: "Tests of Mean and Variance Fits",
+                tblClasses: "table table-sm text-right col-l-1",
+            };
         return <Table data={data} />;
     }
 }

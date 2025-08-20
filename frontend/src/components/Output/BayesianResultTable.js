@@ -11,21 +11,21 @@ import {ff, fractionalFormatter} from "@/utils/formatters";
 @observer
 class BayesianResultTable extends Component {
     render() {
-        const store = this.props.outputStore;
-        const {selectedBayesian} = store;
+        const store = this.props.outputStore,
+            {selectedBayesian} = store;
 
         if (!selectedBayesian) {
             return null;
         }
 
-        const colWidths = [12, 11, 11, 11, 11, 11, 11, 11, 11];
-        const ma = selectedBayesian.model_average;
+        const colWidths = [12, 11, 11, 11, 11, 11, 11, 11, 11],
+            ma = selectedBayesian.model_average;
 
         return (
             <table id="bayesian-model-result" className="table table-sm text-right col-l-1">
                 <colgroup>
                     {_.map(colWidths).map((value, idx) => (
-                        <col key={idx} width={`${value}%`} />
+                        <col key={idx} width={`${value}%`}></col>
                     ))}
                 </colgroup>
                 <thead>
@@ -79,7 +79,7 @@ class BayesianResultTable extends Component {
                         <tr className="table-warning">
                             <td>
                                 <a
-                                    id={"bayesian-result-ma"}
+                                    id={`bayesian-result-ma`}
                                     href="#"
                                     onClick={e => {
                                         e.preventDefault();

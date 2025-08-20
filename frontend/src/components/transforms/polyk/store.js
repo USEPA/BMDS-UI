@@ -13,7 +13,7 @@ class Store {
         dataset: "",
         dose_units: "ppm",
         power: 3,
-        duration: Number.NaN,
+        duration: NaN,
     };
     @observable error = null;
     @observable errorObject = null;
@@ -95,7 +95,7 @@ class Store {
             dataset: "",
             dose_units: "ppm",
             power: 3,
-            duration: Number.NaN,
+            duration: NaN,
         };
         this.error = null;
         this.outputs = null;

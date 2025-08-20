@@ -10,23 +10,23 @@ import {ff} from "@/utils/formatters";
 @observer
 class ResultTable extends Component {
     render() {
-        const store = this.props.outputStore;
-        const {selectedFrequentist} = store;
+        const store = this.props.outputStore,
+            {selectedFrequentist} = store;
 
         if (!selectedFrequentist) {
             return null;
         }
-        const colWidths = [15, 15, 8, 8, 8, 8, 8, 8, 11, 11];
-        const {results} = selectedFrequentist;
-        const {multitumorDatasets} = store;
-        const indexes = results.selected_model_indexes;
-        const showMultitumor = store.multitumorDatasets.length > 1;
+        const colWidths = [15, 15, 8, 8, 8, 8, 8, 8, 11, 11],
+            {results} = selectedFrequentist,
+            {multitumorDatasets} = store,
+            indexes = results.selected_model_indexes,
+            showMultitumor = store.multitumorDatasets.length > 1;
 
         return (
             <table className="table table-sm text-right col-l-1 col-l-2">
                 <colgroup>
                     {_.map(colWidths).map((value, idx) => (
-                        <col key={idx} width={`${value}%`} />
+                        <col key={idx} width={`${value}%`}></col>
                     ))}
                 </colgroup>
                 <thead>
@@ -79,52 +79,52 @@ class ResultTable extends Component {
                         </tr>
                     ) : null}
                     {results.models.map((dataset_models, dataset_index) => {
-                        const dataset = multitumorDatasets[dataset_index];
-                        const rows = _.flatten(
-                            dataset_models.map((model, model_index) => {
-                                const key = `${dataset_index}-${model_index}`;
-                                const selected = indexes[dataset_index] === model_index;
-                                const {results} = model;
-                                return (
-                                    <tr key={key} className={selected ? "table-info" : ""}>
-                                        <td>
-                                            <a
-                                                id={key}
-                                                href="#"
-                                                onClick={e => {
-                                                    e.preventDefault();
-                                                    store.showModalDetailMultitumor(
-                                                        dataset_index,
-                                                        model_index
-                                                    );
-                                                }}>
-                                                {model.name}
-                                                {selected ? "*" : ""}
-                                            </a>
-                                        </td>
-                                        <td>{dataset.metadata.name}</td>
-                                        <td>
-                                            <FloatingPointHover value={results.bmdl} />
-                                        </td>
-                                        <td>
-                                            <FloatingPointHover value={results.bmd} />
-                                        </td>
-                                        <td>
-                                            <FloatingPointHover value={results.bmdu} />
-                                        </td>
-                                        <td>
-                                            <FloatingPointHover value={results.slope_factor} />
-                                        </td>
-                                        <td>{ff(results.gof.p_value)}</td>
-                                        <td>
-                                            <FloatingPointHover value={results.fit.aic} />
-                                        </td>
-                                        <td>{ff(results.gof.residual[0])}</td>
-                                        <td>{ff(results.gof.roi)}</td>
-                                    </tr>
-                                );
-                            })
-                        );
+                        const dataset = multitumorDatasets[dataset_index],
+                            rows = _.flatten(
+                                dataset_models.map((model, model_index) => {
+                                    const key = `${dataset_index}-${model_index}`,
+                                        selected = indexes[dataset_index] === model_index,
+                                        {results} = model;
+                                    return (
+                                        <tr key={key} className={selected ? "table-info" : ""}>
+                                            <td>
+                                                <a
+                                                    id={key}
+                                                    href="#"
+                                                    onClick={e => {
+                                                        e.preventDefault();
+                                                        store.showModalDetailMultitumor(
+                                                            dataset_index,
+                                                            model_index
+                                                        );
+                                                    }}>
+                                                    {model.name}
+                                                    {selected ? "*" : ""}
+                                                </a>
+                                            </td>
+                                            <td>{dataset.metadata.name}</td>
+                                            <td>
+                                                <FloatingPointHover value={results.bmdl} />
+                                            </td>
+                                            <td>
+                                                <FloatingPointHover value={results.bmd} />
+                                            </td>
+                                            <td>
+                                                <FloatingPointHover value={results.bmdu} />
+                                            </td>
+                                            <td>
+                                                <FloatingPointHover value={results.slope_factor} />
+                                            </td>
+                                            <td>{ff(results.gof.p_value)}</td>
+                                            <td>
+                                                <FloatingPointHover value={results.fit.aic} />
+                                            </td>
+                                            <td>{ff(results.gof.residual[0])}</td>
+                                            <td>{ff(results.gof.roi)}</td>
+                                        </tr>
+                                    );
+                                })
+                            );
                         return rows;
                     })}
                 </tbody>

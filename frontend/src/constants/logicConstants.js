@@ -49,7 +49,7 @@ export const RULES = Object.freeze({
     optionalRules = [RULES.GOF_CANCER],
     ruleLookups = {
         [RULES.BMD_MISSING]: {
-            notes: _val => "BMD not estimated",
+            notes: val => "BMD not estimated",
             name: "BMD calculated",
             hasThreshold: false,
             enabledContinuous: true,
@@ -58,7 +58,7 @@ export const RULES = Object.freeze({
         },
         [RULES.BMDL_MISSING]: {
             name: "BMDL calculated",
-            notes: _val => "BMDL not estimated",
+            notes: val => "BMDL not estimated",
             hasThreshold: false,
             enabledContinuous: true,
             enabledDichotomous: true,
@@ -66,7 +66,7 @@ export const RULES = Object.freeze({
         },
         [RULES.BMDU_MISSING]: {
             name: "BMDU calculated",
-            notes: _val => "BMDU not estimated",
+            notes: val => "BMDU not estimated",
             hasThreshold: false,
             enabledContinuous: true,
             enabledDichotomous: true,
@@ -74,7 +74,7 @@ export const RULES = Object.freeze({
         },
         [RULES.AIC_MISSING]: {
             name: "AIC calculated",
-            notes: _val => "AIC not estimated",
+            notes: val => "AIC not estimated",
             hasThreshold: false,
             enabledContinuous: true,
             enabledDichotomous: true,
@@ -82,7 +82,7 @@ export const RULES = Object.freeze({
         },
         [RULES.ROI_MISSING]: {
             name: "Residual of interest calculated",
-            notes: _val => "Residual of interest not estimated",
+            notes: val => "Residual of interest not estimated",
             hasThreshold: false,
             enabledContinuous: true,
             enabledDichotomous: true,
@@ -129,7 +129,7 @@ export const RULES = Object.freeze({
             enabledNested: true,
         },
         [RULES.BMD_BMDL_RATIO_WARN]: {
-            name: "Ratio of BMD/BMDL (caution)",
+            name: `Ratio of BMD/BMDL (caution)`,
             notes: val => `BMD/BMDL ratio > ${val}`,
             hasThreshold: true,
             enabledContinuous: true,
@@ -146,7 +146,7 @@ export const RULES = Object.freeze({
         },
         [RULES.WARNINGS]: {
             name: "BMDS model warning",
-            notes: _val => "BMD output file included warning",
+            notes: val => "BMD output file included warning",
             hasThreshold: false,
             enabledContinuous: false,
             enabledDichotomous: false,
@@ -218,7 +218,7 @@ export const RULES = Object.freeze({
         },
         [RULES.DOF_ZERO]: {
             name: "D.O.F equal 0",
-            notes: _val => "d.f=0, saturated model (Goodness of fit test cannot be calculated)",
+            notes: val => "d.f=0, saturated model (Goodness of fit test cannot be calculated)",
             hasThreshold: false,
             enabledContinuous: true,
             enabledDichotomous: true,

@@ -17,8 +17,8 @@ import Output from "./Output/Output";
 @observer
 class Navigation extends Component {
     render() {
-        const {mainStore} = this.props;
-        const {isMultiTumor} = mainStore;
+        const {mainStore} = this.props,
+            {isMultiTumor} = mainStore;
         return (
             <>
                 <ul className="nav nav-tabs d-flex mt-3">
@@ -47,7 +47,7 @@ class Navigation extends Component {
                     {mainStore.canEdit && !mainStore.isDesktop ? (
                         <li className="nav-item ml-auto mr-1">{<ShareActions />}</li>
                     ) : (
-                        <span className="ml-auto" />
+                        <span className="ml-auto"></span>
                     )}
                     <Starred />
                     <li
