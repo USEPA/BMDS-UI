@@ -44,7 +44,7 @@ export const inv_tdist_05 = function(df) {
             ];
             if (df > 350) {
                 console.warn("Extrapolating beyond inv_tdist_05 regression range (N>350).");
-                return undefined;
+                return Number.NaN;
             }
         }
         return (
