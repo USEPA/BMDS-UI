@@ -147,7 +147,7 @@ class OutputStore {
 
     @computed get getPValue() {
         let percentileValue = _.range(0.01, 1, 0.01);
-        let pValue = percentileValue.map(function(each_element) {
+        let pValue = percentileValue.map(function (each_element) {
             return Number(each_element.toFixed(2));
         });
         return pValue;
@@ -484,7 +484,7 @@ class OutputStore {
 
     // persist changes to axes by user for a given output session
     @observable userPlotSettings = {};
-    @action.bound resetUserPlotSettings(output_id) {
+    @action.bound resetUserPlotSettings(_output_id) {
         this.userPlotSettings = {};
     }
     @action.bound updateUserPlotSettings(e) {

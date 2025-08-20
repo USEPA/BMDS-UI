@@ -45,7 +45,7 @@ export const options = {
         {value: 6, label: "Hybrid-Extra Risk"},
         {value: 7, label: "Hybrid-Added Risk"},
     ],
-    isHybridBmr = function(val) {
+    isHybridBmr = function (val) {
         return val === 6 || val === 7;
     },
     distTypeOptions = [

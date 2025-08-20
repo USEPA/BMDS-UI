@@ -55,7 +55,7 @@ class ContinuousTestOfInterest extends Component {
                         <i>P</i>-Value
                     </span>,
                 ],
-                rows: testInterest.names.map((name, i) => [
+                rows: testInterest.names.map((_name, i) => [
                     <span key={i}>
                         Test {i + 1}
                         <HelpTextPopover

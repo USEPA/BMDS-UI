@@ -5,8 +5,6 @@ import {Col, Modal, Row} from "react-bootstrap";
 
 import * as dc from "@/constants/dataConstants";
 
-import Button from "../common/Button";
-import DoseResponsePlot from "../common/DoseResponsePlot";
 import {MsComboInfo, MsComboSummary} from "../Output/Multitumor/MsCombo";
 import MultitumorPlot from "../Output/Multitumor/MultitumorPlot";
 import BootstrapResults from "../Output/NestedDichotomous/BootstrapResults";
@@ -14,6 +12,8 @@ import BootstrapRuns from "../Output/NestedDichotomous/BootstrapRuns";
 import InputParameter from "../Output/NestedDichotomous/InputParameter";
 import LitterData from "../Output/NestedDichotomous/LitterData";
 import ScaledResidual from "../Output/NestedDichotomous/ScaledResidual";
+import Button from "../common/Button";
+import DoseResponsePlot from "../common/DoseResponsePlot";
 import CDFPlot from "./CDFPlot";
 import CDFTable from "./CDFTable";
 import ContinuousDeviance from "./ContinuousDeviance";
@@ -28,7 +28,7 @@ import ModelParameters from "./ModelParameters";
 import ParameterPriorTable from "./ParameterPriorTable";
 import Summary from "./Summary";
 
-const getCdfData = function(model) {
+const getCdfData = function (model) {
     return {
         bmd: model.results.bmd,
         bmdl: model.results.bmdl,

@@ -9,7 +9,7 @@ import Plot from "react-plotly.js";
 import ClipboardButton from "@/components/common/ClipboardButton";
 import Table from "@/components/common/Table";
 
-const summaryTable = function(df) {
+const summaryTable = function (df) {
     return (
         <Table
             data={{
@@ -178,7 +178,7 @@ class OutputTabs extends Component {
                         <ClipboardButton
                             text="Copy Data for BMDS Modeling"
                             textToCopy={copyText}
-                            onCopy={e => {
+                            onCopy={_e => {
                                 alert(
                                     'Data copied to your clipboard! For your Multistage/Multitumor analysis, return to the Data tab, select the "Load dataset from Excel" button, and paste the clipboard contents to create a new dataset. Or, paste the clipboard contents into Excel for further analysis.'
                                 );

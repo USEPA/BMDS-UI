@@ -16,7 +16,7 @@ export const DATA_CONTINUOUS_SUMMARY = "CS",
     DATA_DICHOTOMOUS = "DM",
     DATA_NESTED_DICHOTOMOUS = "ND",
     DATA_MULTI_TUMOR = "MT",
-    datasetTypesByModelType = function(modelType) {
+    datasetTypesByModelType = function (modelType) {
         switch (modelType) {
             case mc.MODEL_DICHOTOMOUS:
                 return [{value: DATA_DICHOTOMOUS, name: "Dichotomous"}];
@@ -72,7 +72,7 @@ export const DATA_CONTINUOUS_SUMMARY = "CS",
         litter_ns: "Litter Size",
         litter_covariates: "Litter Specific Covariate",
     },
-    getDefaultDataset = function(dtype) {
+    getDefaultDataset = function (dtype) {
         switch (dtype) {
             case DATA_CONTINUOUS_SUMMARY:
                 return {
@@ -139,8 +139,8 @@ export const DATA_CONTINUOUS_SUMMARY = "CS",
                 throw `Unknown dataset type ${dtype}`;
         }
     },
-    getExampleData = function(dtype) {
-        /* eslint-disable */
+    getExampleData = function (dtype) {
+        // biome-ignore format: this block is manually formatted
         switch (dtype) {
             case DATA_CONTINUOUS_SUMMARY:
                 return {
@@ -201,12 +201,11 @@ export const DATA_CONTINUOUS_SUMMARY = "CS",
                         14, 9, 14, 9, 13, 12, 10, 10, 11, 14,
                         11, 11, 14, 11, 10, 11, 10, 15, 7, 14,
                         11, 14, 12, 13, 12, 14, 11, 8, 10
-                    ]
+                    ],
                 };
             default:
                 throw `Unknown dataset type ${dtype}`;
         }
-        /* eslint-enable */
     },
     datasetOptions = {
         [mc.MODEL_CONTINUOUS]: {
@@ -242,17 +241,17 @@ export const DATA_CONTINUOUS_SUMMARY = "CS",
         {value: 7, label: "7"},
         {value: 8, label: "8"},
     ],
-    getNumDoseGroups = function(dataset) {
+    getNumDoseGroups = function (dataset) {
         return _.uniq(dataset.doses).length;
     },
-    getDefaultDegree = function(dtype, dataset) {
+    getDefaultDegree = function (dtype, dataset) {
         if (dtype === Dtype.MULTI_TUMOR) {
             return 0; // auto
         }
         const n = getNumDoseGroups(dataset) - 1;
         return _.clamp(n, 1, 3);
     },
-    getDegreeOptions = function(dtype, dataset) {
+    getDegreeOptions = function (dtype, dataset) {
         const maxDegree = Math.max(Math.min(8, getNumDoseGroups(dataset) - 1), 1),
             options = _.cloneDeep(allDegreeOptions).filter(d => d.value <= maxDegree);
         if (dtype === Dtype.MULTI_TUMOR) {

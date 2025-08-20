@@ -6,7 +6,7 @@ import React, {Component} from "react";
 import Table from "@/components/common/Table";
 import {ff, fractionalFormatter} from "@/utils/formatters";
 
-const getData = function(model) {
+const getData = function (model) {
     const results = model.results.bootstrap,
         finalIdx = results.p_value.length - 1,
         rows = _.range(results.p_value.length).map(idx => [

@@ -1,13 +1,13 @@
 import {continuousErrorBars, dichotomousErrorBars, inv_tdist_05} from "../../src/utils/errorBars";
 import assert from "../helpers";
 
-describe("utils/errorBars", function() {
-    describe("inv_tdist_05", function() {
-        it("handles out of bounds", function() {
+describe("utils/errorBars", function () {
+    describe("inv_tdist_05", function () {
+        it("handles out of bounds", function () {
             assert.ok(isNaN(inv_tdist_05(0)));
             assert.ok(isNaN(inv_tdist_05(351)));
         });
-        it("approximated values are close to expected", function() {
+        it("approximated values are close to expected", function () {
             assert.isClose(inv_tdist_05(1), 12.706, 1e-2);
             assert.isClose(inv_tdist_05(2), 4.302, 1e-2);
             assert.isClose(inv_tdist_05(10), 2.228, 1e-2);
@@ -17,8 +17,8 @@ describe("utils/errorBars", function() {
         });
     });
 
-    describe("continuousErrorBars", function() {
-        it("works with invalid data", function() {
+    describe("continuousErrorBars", function () {
+        it("works with invalid data", function () {
             const dataset = {
                     doses: [1, 2, 3, 4],
                     ns: [undefined, 0, 30, 30],
@@ -30,7 +30,7 @@ describe("utils/errorBars", function() {
             resp.array.forEach(d => assert.ok(d === undefined));
             resp.arrayminus.forEach(d => assert.ok(d === undefined));
         });
-        it("works with valid data", function() {
+        it("works with valid data", function () {
             const dataset = {
                     doses: [0, 1],
                     ns: [30, 10],
@@ -44,8 +44,8 @@ describe("utils/errorBars", function() {
         });
     });
 
-    describe("dichotomousErrorBars", function() {
-        it("works with invalid data", function() {
+    describe("dichotomousErrorBars", function () {
+        it("works with invalid data", function () {
             const dataset = {
                     doses: [1, 2, 3],
                     ns: [undefined, 0, 30],
@@ -56,7 +56,7 @@ describe("utils/errorBars", function() {
             resp.array.forEach(d => assert.ok(d === undefined));
             resp.arrayminus.forEach(d => assert.ok(d === undefined));
         });
-        it("works with valid data", function() {
+        it("works with valid data", function () {
             const dataset = {
                     doses: [1, 2, 3, 4],
                     ns: [10, 10, 100, 1000],

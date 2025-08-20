@@ -15,7 +15,7 @@ const seFootnote = (
             more parameters are on bounds.
         </p>
     ),
-    getData = function(model) {
+    getData = model => {
         const parameters = model.results.parameters,
             indexes = _.range(parameters.names.length),
             anyBounded = _.sum(parameters.bounded) > 0;
@@ -29,13 +29,13 @@ const seFootnote = (
                 return [
                     parameters.names[i],
                     bounded ? (
-                        <>
+                        <div key={i}>
                             <span>On Bound</span>
                             <HelpTextPopover
                                 title="On Bound"
                                 content={`The value of this parameter, ${parameters.values[i]}, is within the tolerance of the bound`}
                             />
-                        </>
+                        </div>
                     ) : (
                         parameterFormatter(parameters.values[i])
                     ),
@@ -45,7 +45,7 @@ const seFootnote = (
             footnotes: anyBounded ? seFootnote : null,
         };
     },
-    getNestedData = function(model) {
+    getNestedData = model => {
         const names = model.results.parameter_names,
             values = model.results.parameters,
             bounded = model.results.bounded,
@@ -59,13 +59,13 @@ const seFootnote = (
                 return [
                     names[i],
                     bounded[i] ? (
-                        <>
+                        <div key={i}>
                             <span>On Bound</span>
                             <HelpTextPopover
                                 title="On Bound"
                                 content={`The value of this parameter, ${values[i]}, is within the tolerance of the bound`}
                             />
-                        </>
+                        </div>
                     ) : (
                         parameterFormatter(values[i])
                     ),

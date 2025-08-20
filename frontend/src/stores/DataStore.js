@@ -11,7 +11,7 @@ import {
 import {MODEL_CONTINUOUS} from "@/constants/mainConstants";
 import {getDrDatasetPlotData, getDrLayout} from "@/constants/plotting";
 
-let validateTabularData = function(text, columns) {
+let validateTabularData = function (text, columns) {
     let data = [],
         errors = [];
 
@@ -130,7 +130,7 @@ class DataStore {
 
     @action.bound addRow() {
         const dataset = this.selectedDataset;
-        Object.keys(dataset).map((key, i) => {
+        Object.keys(dataset).map((key, _i) => {
             if (Array.isArray(dataset[key])) {
                 dataset[key].push("");
             }
@@ -275,8 +275,8 @@ class DataStore {
         return this.rootStore.mainStore.isDesktop
             ? 1000
             : this.rootStore.mainStore.isMultiTumor
-            ? 10
-            : 6;
+              ? 10
+              : 6;
     }
     @computed get canAddNewDataset() {
         return this.datasets.length < this.maxItems;

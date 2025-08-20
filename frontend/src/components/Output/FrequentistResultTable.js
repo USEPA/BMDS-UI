@@ -13,19 +13,19 @@ import {ff} from "@/utils/formatters";
 import Button from "../common/Button";
 import Popover from "../common/Popover";
 
-const getModelBinLabel = function(output, index) {
+const getModelBinLabel = function (output, index) {
         if (output.recommender.results.recommended_model_index == index) {
             return `Recommended - Lowest ${output.recommender.results.recommended_model_variable.toUpperCase()}`;
         }
         return BIN_LABELS[output.recommender.results.model_bin[index]];
     },
-    getModelBinText = function(output, index) {
+    getModelBinText = function (output, index) {
         return _.chain(toJS(output.recommender.results.model_notes[index]))
             .values()
             .flattenDeep()
             .value();
     },
-    getRecommenderText = function(output, index) {
+    getRecommenderText = function (output, index) {
         let items = getModelBinText(output, index);
         if (items.length === 0) {
             return null;
@@ -38,7 +38,7 @@ const getModelBinLabel = function(output, index) {
             </ul>
         );
     },
-    getFootnotes = function(recommendedModelIndex, selected) {
+    getFootnotes = function (recommendedModelIndex, selected) {
         const icons = "*†‡§",
             fns = [];
         if (_.isNumber(recommendedModelIndex)) {
@@ -59,7 +59,7 @@ const getModelBinLabel = function(output, index) {
         }
         return fns;
     },
-    getRestricted = function(models) {
+    getRestricted = function (models) {
         return _.chain(models)
             .map((model, index) => {
                 if (model.settings.priors.prior_class === priorClass.frequentist_restricted) {
@@ -70,7 +70,7 @@ const getModelBinLabel = function(output, index) {
             .compact()
             .value();
     },
-    getUnrestricted = function(models) {
+    getUnrestricted = function (models) {
         return _.chain(models)
             .map((model, index) => {
                 if (model.settings.priors.prior_class === priorClass.frequentist_unrestricted) {
@@ -81,7 +81,7 @@ const getModelBinLabel = function(output, index) {
             .compact()
             .value();
     },
-    getColWidths = function(store) {
+    getColWidths = function (store) {
         if (store.isNestedDichotomous) {
             return store.recommendationEnabled
                 ? [20, 11, 11, 11, 11, 11, 25]
