@@ -150,6 +150,7 @@ jobs:
       LIVESERVER_HOST: localhost
       LIVESERVER_PORT: 8000
       NO_VITE_DEV: 1
+      DJANGO_SETTINGS_MODULE: bmds_ui.main.settings.testing
 
     steps:
     - uses: actions/checkout@v4
@@ -182,6 +183,19 @@ jobs:
       id: test
       continue-on-error: true
       run: |
+
+        if [ -d "bmds_ui/static/bundles" ]; then
+          ls -laht bmds_ui/static/bundles
+        fi
+        if [ -d "bmds_ui/static/bundles/assets" ]; then
+          ls -laht bmds_ui/static/bundles/assets
+        fi
+        chmod 755 -R bmds_ui/static/bundles/
+        python manage.py shell -c "from django.conf import settings; print(settings.DJANGO_VITE)"
+        if [ -d "bmds_ui/static/bundles/manifest.json" ]; then
+          cat bmds_ui/static/bundles/manifest.json
+        fi
+
         export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
         py.test -sv tests/integration/
     # - name: run integration tests (retry)
