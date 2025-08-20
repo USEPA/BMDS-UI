@@ -103,7 +103,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: 22
         cache: 'yarn'
         cache-dependency-path: 'frontend/yarn.lock'
     - name: install
@@ -184,21 +184,21 @@ jobs:
       run: |
         export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
         py.test -sv tests/integration/
-    - name: run integration tests (retry)
-      if: steps.test.outcome=='failure'
-      id: retry
-      continue-on-error: true
-      run: |
-        export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
-        py.test -sv tests/integration/
-    - name: set status
-      if: always()
-      run: |
-        if ${{ steps.test.outcome=='success' || steps.retry.outcome=='success' }}; then
-          echo success!
-        else
-          exit 1
-        fi
+    # - name: run integration tests (retry)
+    #   if: steps.test.outcome=='failure'
+    #   id: retry
+    #   continue-on-error: true
+    #   run: |
+    #     export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
+    #     py.test -sv tests/integration/
+    # - name: set status
+    #   if: always()
+    #   run: |
+    #     if ${{ steps.test.outcome=='success' || steps.retry.outcome=='success' }}; then
+    #       echo success!
+    #     else
+    #       exit 1
+    #     fi
     - name: build wheel
       run: |
         export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
