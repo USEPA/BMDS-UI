@@ -140,7 +140,7 @@ export const DATA_CONTINUOUS_SUMMARY = "CS",
         }
     },
     getExampleData = function (dtype) {
-        /* eslint-disable */
+        /* biome-ignore-start */
         switch (dtype) {
             case DATA_CONTINUOUS_SUMMARY:
                 return {
@@ -194,7 +194,7 @@ export const DATA_CONTINUOUS_SUMMARY = "CS",
             default:
                 throw `Unknown dataset type ${dtype}`;
         }
-        /* eslint-enable */
+        /* biome-ignore-end */
     },
     datasetOptions = {
         [mc.MODEL_CONTINUOUS]: {
