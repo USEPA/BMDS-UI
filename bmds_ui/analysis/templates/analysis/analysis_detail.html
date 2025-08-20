@@ -7,6 +7,8 @@
 {% block extra-js %}
 {{ config|json_script:"config" }}
 <script type="text/javascript">
+$(document).ready(() => {
     window.app.appStartup(document.getElementById("main"))
+});
 </script>
 {% endblock %}

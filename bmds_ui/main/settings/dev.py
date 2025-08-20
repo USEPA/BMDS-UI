@@ -17,6 +17,14 @@ SERVER_BANNER_COLOR = "#318d50"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
+DJANGO_VITE["default"].update(
+    **{
+        "dev_mode": os.environ.get("NO_VITE_DEV") is None,
+        "manifest_path": str(ROOT_DIR / "static" / "bundles" / "manifest.json"),
+        "dev_server_port": 8150,
+    }
+)
+
 # use a memory cache if no redis location specified
 if CACHES["default"]["LOCATION"] is None:
     CACHES["default"]["BACKEND"] = "django.core.cache.backends.locmem.LocMemCache"

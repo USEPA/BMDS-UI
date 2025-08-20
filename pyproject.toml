@@ -30,7 +30,7 @@ dependencies = [
   "Django~=5.2.5",
   "django-anymail~=13.0.1",
   "django-redis~=5.4.0",
-  "django-webpack-loader~=3.2.1",
+  "django-vite==3.1.0",
   "djangorestframework~=3.16.1",
   "uritemplate~=4.1.1",
   "django-reversion~=5.1.0",

@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     # 3rd party apps
     "rest_framework",
     "rest_framework.authtoken",
-    "webpack_loader",
+    "django_vite",
     "reversion",
     # Custom apps
     "bmds_ui.common",
@@ -200,13 +200,11 @@ REST_FRAMEWORK = {
     ),
 }
 
-WEBPACK_LOADER = {
-    "DEFAULT": {
-        "BUNDLE_DIR_NAME": "bundles/",
-        "STATS_FILE": str(BASE_DIR / "webpack-stats.json"),
-        "POLL_INTERVAL": 0.1,
-        "IGNORE": [".+/.map"],
-    }
+DJANGO_VITE = {
+    "default": {
+        "manifest_path": str(Path(STATIC_ROOT) / "bundles" / "manifest.json"),
+        "static_url_prefix": "bundles",
+    },
 }
 
 DAYS_TO_KEEP_ANALYSES = int(os.environ.get("ANALYSIS_RETENTION_DAYS", "365"))
