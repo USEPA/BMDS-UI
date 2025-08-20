@@ -30,7 +30,6 @@ venv/
 bmds-ui-test
 bmds_ui/gitcommit.json
 bmds_ui/main/settings/local.py
-bmds_ui/webpack-stats.json
 celerybeat-schedule
 compose/nginx/conf/nginx.conf
 settings.ini

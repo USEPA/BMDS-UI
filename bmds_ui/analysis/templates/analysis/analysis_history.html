@@ -10,6 +10,8 @@
 
 {% block extra-js %}
 <script type="text/javascript">
+$(document).ready(() => {
     window.app.history.render(document.getElementById('tracker'));
+});
 </script>
 {% endblock extra-js %}

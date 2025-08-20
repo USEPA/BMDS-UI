@@ -51,11 +51,11 @@ def plotly(fig: Figure) -> str | None:
         dedent("""
     <div id="{id}"><span class="text-muted">Loading...</span></div>
     <script>
-        document.addEventListener("DOMContentLoaded", startup, false);
         function startup () {{
             const data = JSON.parse("{json}")
             window.app.renderPlotlyFigure(document.getElementById("{id}"), data);
         }};
+        document.addEventListener("DOMContentLoaded", startup, false);
     </script>"""),
         id=id,
         json=escapejs(fig.to_json()),
