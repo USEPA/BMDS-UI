@@ -75,7 +75,7 @@ If you navigate to [localhost](http://127.0.0.1:8000/) and see a website, you're
 Recommended extensions:
 
 - [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
-- [Eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [Biome for VS Code](https://marketplace.visualstudio.com/items?itemName=biomejs.biome)
 - [Ruff](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff)
 
 ## Additional settings

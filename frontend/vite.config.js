@@ -1,6 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
 import react from "@vitejs/plugin-react";
-import fs from "fs";
-import path from "path";
 import {defineConfig} from "vite";
 import {viteExternalsPlugin} from "vite-plugin-externals";
 
@@ -51,15 +51,11 @@ export default defineConfig({
                     if (id.includes("node_modules")) {
                         if (id.includes("plotly")) {
                             return "plotly";
-                        } else if (
-                            id.includes("react") ||
-                            id.includes("mobx") ||
-                            id.includes("quill")
-                        ) {
-                            return "ui";
-                        } else {
-                            return "vendor";
                         }
+                        if (id.includes("react") || id.includes("mobx") || id.includes("quill")) {
+                            return "ui";
+                        }
+                        return "vendor";
                     }
                     return null;
                 },
