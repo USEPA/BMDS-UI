@@ -30,6 +30,8 @@ CACHES = {
     }
 }
 
+DJANGO_VITE["default"]["manifest_path"] = str(STATIC_ROOT / "bundles" / "manifest.json")
+
 DB_VACUUM_INTERVAL_SECONDS = 120  # interval (in seconds)
 
 DATABASES = {
