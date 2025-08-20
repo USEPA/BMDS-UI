@@ -6,7 +6,7 @@ import React, {Component} from "react";
 import Table from "@/components/common/Table";
 import {ff} from "@/utils/formatters";
 
-const getData = function(model) {
+const getData = function (model) {
     const litter = model.results.litter,
         n = _.size(litter.lsc);
     return {

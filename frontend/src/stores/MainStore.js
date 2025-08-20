@@ -362,7 +362,7 @@ class MainStore {
         return _.find(mc.modelTypes, {value: this.model_type}).name;
     }
     @computed get getModelTypeChoices() {
-        return mc.modelTypes.map((item, i) => {
+        return mc.modelTypes.map((item, _i) => {
             return {value: item.value, text: item.name};
         });
     }

@@ -9,7 +9,7 @@ import CheckboxInput from "../../common/CheckboxInput";
 import FloatInput from "../../common/FloatInput";
 import HelpTextPopover from "../../common/HelpTextPopover";
 
-const isModelChecked = function(models, type, model) {
+const isModelChecked = function (models, type, model) {
         let checked = false;
         if (type in models) {
             if (type === mc.BAYESIAN) {
@@ -20,7 +20,7 @@ const isModelChecked = function(models, type, model) {
         }
         return checked;
     },
-    getPriorWeightValue = function(models, model) {
+    getPriorWeightValue = function (models, model) {
         let prior_weight = 0;
         if (mc.BAYESIAN in models) {
             let obj = models[mc.BAYESIAN].find(obj => obj.model === model);

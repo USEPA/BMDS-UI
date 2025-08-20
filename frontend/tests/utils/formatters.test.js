@@ -1,13 +1,13 @@
 import {ff, fractionalFormatter, parameterFormatter} from "../../src/utils/formatters";
 import assert from "../helpers";
 
-const check = function(func, input, output) {
+const check = function (func, input, output) {
     assert.equal(func(input), output);
 };
 
-describe("common", function() {
-    describe("ff", function() {
-        it("formats as expected", function() {
+describe("common", function () {
+    describe("ff", function () {
+        it("formats as expected", function () {
             // special cases
             check(ff, -9999, "-");
             check(ff, Infinity, "-");
@@ -45,8 +45,8 @@ describe("common", function() {
         });
     });
 
-    describe("parameterFormatter", function() {
-        it("formats as expected", function() {
+    describe("parameterFormatter", function () {
+        it("formats as expected", function () {
             // special cases
             check(parameterFormatter, -9999, "-");
             check(parameterFormatter, Infinity, "-");
@@ -74,8 +74,8 @@ describe("common", function() {
         });
     });
 
-    describe("fractionalFormatter", function() {
-        it("formats as expected", function() {
+    describe("fractionalFormatter", function () {
+        it("formats as expected", function () {
             // special cases
             assert.equal(fractionalFormatter(-9999), "-");
             assert.equal(fractionalFormatter(Infinity), "-");

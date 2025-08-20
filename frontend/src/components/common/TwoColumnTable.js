@@ -8,7 +8,7 @@ class TwoColumnTable extends Component {
     render() {
         const {id, data, label, colwidths} = this.props,
             widths = colwidths.map(d => `${d}%`),
-            formatPopover = function(value, raw_value) {
+            formatPopover = function (value, raw_value) {
                 return _.isFinite(raw_value) ? (
                     <FloatingPointHover value={raw_value} />
                 ) : (

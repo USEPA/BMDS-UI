@@ -62,8 +62,8 @@ class OptionsStore {
         return this.rootStore.mainStore.isDesktop
             ? 1000
             : this.rootStore.mainStore.isMultiTumor
-            ? 3
-            : 6;
+              ? 3
+              : 6;
     }
 
     @computed get canAddNewOption() {

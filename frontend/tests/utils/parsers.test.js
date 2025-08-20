@@ -5,16 +5,16 @@ import {
 } from "../../src/utils/parsers";
 import assert from "../helpers";
 
-describe("Parsing", function() {
-    describe("parseServerErrors", function() {
-        it("handles no error correct", function() {
+describe("Parsing", function () {
+    describe("parseServerErrors", function () {
+        it("handles no error correct", function () {
             assert.equal(parseServerErrors(""), null);
             assert.equal(parseServerErrors(null), null);
             assert.equal(parseServerErrors(undefined), null);
             assert.equal(parseServerErrors([]), null);
         });
 
-        it("handles an unknown format", function() {
+        it("handles an unknown format", function () {
             assert.deepStrictEqual(parseServerErrors("ERROR"), {
                 data: ["ERROR"],
                 messages: ["An error has occurred"],
@@ -40,7 +40,7 @@ describe("Parsing", function() {
             });
         });
 
-        it("handles tracebacks", function() {
+        it("handles tracebacks", function () {
             assert.deepStrictEqual(
                 parseServerErrors([
                     'Traceback (most recent call last):\n  File "/bmds-ui/bmds_ui/analysis/models.py", line 246, in try_run_session\n    return AnalysisSession.run(inputs, dataset_index, option_index)\nValueError: Doses are not unique\n',
@@ -55,7 +55,7 @@ describe("Parsing", function() {
             );
         });
 
-        it("handles pydantic", function() {
+        it("handles pydantic", function () {
             assert.deepStrictEqual(
                 parseServerErrors([
                     '[{"type":"float_type","loc":["datasets",0,"function-after[num_groups(), MaxContinuousDatasetSchema]","doses",1],"msg":"Input should be a valid number","url":"https://errors.pydantic.dev/2.4/v/float_type"},{"type":"float_type","loc":["datasets",0,"function-after[num_groups(), MaxContinuousIndividualDatasetSchema]","doses",1],"msg":"Input should be a valid number","url":"https://errors.pydantic.dev/2.4/v/float_type"},{"type":"missing","loc":["datasets",0,"function-after[num_groups(), MaxContinuousIndividualDatasetSchema]","responses"],"msg":"Field required","url":"https://errors.pydantic.dev/2.4/v/missing"}]',
@@ -109,8 +109,8 @@ describe("Parsing", function() {
         });
     });
 
-    describe("extractErrorFromTraceback", function() {
-        it("extracts the error from a python traceback", function() {
+    describe("extractErrorFromTraceback", function () {
+        it("extracts the error from a python traceback", function () {
             const tracebackErrors = [
                 [
                     'Traceback (most recent call last):\n  File "/bmds-ui/bmds_ui/analysis/models.py", line 246, in try_run_session\n    return AnalysisSession.run(inputs, dataset_index, option_index)\nValueError: Doses are not unique\n',
@@ -131,8 +131,8 @@ describe("Parsing", function() {
         });
     });
 
-    describe("parsePydanticError", function() {
-        it("extracts the error from a pydantic exception", function() {
+    describe("parsePydanticError", function () {
+        it("extracts the error from a pydantic exception", function () {
             const pydanticErrors = [
                 [
                     [

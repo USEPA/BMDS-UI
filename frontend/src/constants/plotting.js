@@ -58,21 +58,21 @@ export const getResponse = dataset => {
                 throw `Unknown dtype: ${dataset.dtype}`;
         }
     },
-    getDoseLabel = function(dataset) {
+    getDoseLabel = function (dataset) {
         let label = dataset.metadata.dose_name;
         if (dataset.metadata.dose_units) {
             label = `${label} (${dataset.metadata.dose_units})`;
         }
         return label;
     },
-    getResponseLabel = function(dataset) {
+    getResponseLabel = function (dataset) {
         let label = dataset.metadata.response_name;
         if (dataset.metadata.response_units) {
             label = `${label} (${dataset.metadata.response_units})`;
         }
         return label;
     },
-    getDrLayout = function(dataset, selected, modal, hover) {
+    getDrLayout = function (dataset, _selected, _modal, _hover) {
         let layout = _.cloneDeep(doseResponseLayout);
         layout.title.text = wrapText(dataset.metadata.name, 45, "<br>");
         layout.xaxis.title.text = getDoseLabel(dataset);
@@ -111,7 +111,7 @@ export const getResponse = dataset => {
         }
         return layout;
     },
-    getCdfLayout = function(dataset, xs) {
+    getCdfLayout = function (dataset, xs) {
         let layout = _.cloneDeep(doseResponseLayout);
         layout.title.text = "BMD Cumulative Distribution Function (CDF)";
         layout.xaxis.title.text = getDoseLabel(dataset);
@@ -124,7 +124,7 @@ export const getResponse = dataset => {
         layout.legend.traceorder = "reversed";
         return layout;
     },
-    getDrDatasetPlotData = function(dataset) {
+    getDrDatasetPlotData = function (dataset) {
         let errorBars, hovertemplate, name;
         if (dataset.dtype == Dtype.CONTINUOUS) {
             errorBars = continuousErrorBars(dataset);
@@ -154,7 +154,7 @@ export const getResponse = dataset => {
             name,
         };
     },
-    getBmdDiamond = function(name, bmd, bmdl, bmdu, bmd_y, hexColor) {
+    getBmdDiamond = function (name, bmd, bmdl, bmdu, bmd_y, hexColor) {
         const hasBmd = bmd > 0;
 
         // prettier-ignore
@@ -189,7 +189,7 @@ export const getResponse = dataset => {
             };
         }
     },
-    getCsfLine = function(y0, bmdl, bmd_y, hexColor) {
+    getCsfLine = function (y0, bmdl, bmd_y, hexColor) {
         if (bmdl > 0) {
             return {
                 x: [0, bmdl],
@@ -204,7 +204,7 @@ export const getResponse = dataset => {
             };
         }
     },
-    getDrBmdLine = function(model, hexColor) {
+    getDrBmdLine = function (model, hexColor) {
         // https://plotly.com/python/marker-style/
         // https://plotly.com/javascript/reference/scatter/
         const data = [
@@ -236,7 +236,7 @@ export const getResponse = dataset => {
         }
         return data;
     },
-    getBayesianBMDLine = function(model, hexColor) {
+    getBayesianBMDLine = function (model, hexColor) {
         const data = [
             {
                 x: model.results.dr_x,
@@ -264,7 +264,7 @@ export const getResponse = dataset => {
 
         return data;
     },
-    getConfig = function() {
+    getConfig = function () {
         return {
             modeBarButtonsToRemove: [
                 "pan2d",

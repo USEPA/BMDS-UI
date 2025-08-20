@@ -47,7 +47,7 @@ class LocalHistory {
     _load() {
         try {
             return JSON.parse(window.localStorage.getItem(KEY)) || DEFAULT_HISTORY;
-        } catch (error) {
+        } catch (_error) {
             return DEFAULT_HISTORY;
         }
     }

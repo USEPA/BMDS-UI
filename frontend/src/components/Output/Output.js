@@ -4,12 +4,12 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
-import DoseResponsePlot from "../common/DoseResponsePlot";
-import Icon from "../common/Icon";
-import SelectInput from "../common/SelectInput";
 import DatasetTable from "../Data/DatasetTable";
 import {ContinuousTestOfInterestDatasetFootnote} from "../IndividualModel/ContinuousTestOfInterest";
 import ModelDetailModal from "../IndividualModel/ModelDetailModal";
+import DoseResponsePlot from "../common/DoseResponsePlot";
+import Icon from "../common/Icon";
+import SelectInput from "../common/SelectInput";
 import BayesianResultTable from "./BayesianResultTable";
 import FrequentistResultTable from "./FrequentistResultTable";
 import MultitumorDatasetTable from "./Multitumor/DatasetTable";
@@ -50,9 +50,7 @@ class Output extends Component {
         }
         const footnote = outputStore.showContinuousDatasetFootnote ? (
             <ContinuousTestOfInterestDatasetFootnote />
-        ) : (
-            undefined
-        );
+        ) : undefined;
         return <DatasetTable dataset={outputStore.selectedDataset} footnotes={footnote} />;
     }
 
@@ -105,7 +103,7 @@ class Output extends Component {
                                     outputStore.setSelectedOutputIndex(parseInt(value))
                                 }
                                 value={outputStore.selectedOutputIndex}
-                                choices={outputStore.outputs.map((output, idx) => {
+                                choices={outputStore.outputs.map((_output, idx) => {
                                     return {value: idx, text: outputStore.getOutputName(idx)};
                                 })}
                             />

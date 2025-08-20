@@ -47,9 +47,7 @@ export const parseServerErrors = errors => {
         }
 
         // return a single unique set of messages as a single string. This is used in the UI
-        container.message = _.uniq(container.messages)
-            .join("\n")
-            .trim();
+        container.message = _.uniq(container.messages).join("\n").trim();
 
         return container;
     },

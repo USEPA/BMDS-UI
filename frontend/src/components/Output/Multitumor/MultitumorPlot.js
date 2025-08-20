@@ -13,7 +13,7 @@ import {
     getResponse,
 } from "@/constants/plotting";
 
-const getLayout = function(datasets) {
+const getLayout = function (datasets) {
     let layout;
     datasets.forEach(dataset => {
         if (layout === undefined) {
@@ -33,7 +33,7 @@ const getLayout = function(datasets) {
     return layout;
 };
 
-const getData = function(ma, datasets, models) {
+const getData = function (ma, datasets, models) {
     // models may be undefined; make sure to filter out prior to plotting
     const data = [],
         y0 = _.mean(models.filter(d => _.isObject(d)).map(model => model.results.plotting.dr_y[0])),

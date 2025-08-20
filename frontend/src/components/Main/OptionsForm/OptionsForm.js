@@ -130,7 +130,7 @@ const OptionsForm = props => {
                 <Button
                     className="btn btn-danger"
                     title="Delete Option Set"
-                    onClick={e => props.deleteOptions(props.idx)}
+                    onClick={_e => props.deleteOptions(props.idx)}
                     icon="trash3-fill"
                 />
             </td>

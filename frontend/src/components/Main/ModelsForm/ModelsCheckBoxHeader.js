@@ -9,7 +9,7 @@ import Button from "../../common/Button";
 import CheckboxInput from "../../common/CheckboxInput";
 import LabelInput from "../../common/LabelInput";
 
-const areAllModelsChecked = function(modelType, type, models) {
+const areAllModelsChecked = function (modelType, type, models) {
         return type in models && models[type].length === allModelOptions[modelType][type].length;
     },
     SelectAllComponent = observer(props => {

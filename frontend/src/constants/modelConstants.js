@@ -69,7 +69,7 @@ const allContinuous = ["Exponential", "Hill", "Linear", "Polynomial", "Power"],
             frequentist_unrestricted: [],
         },
     },
-    isLognormal = function(disttype) {
+    isLognormal = function (disttype) {
         return disttype == 3;
     },
     hasDegrees = new Set(["Multistage", "Polynomial"]);

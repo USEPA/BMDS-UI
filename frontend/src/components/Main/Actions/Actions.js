@@ -7,7 +7,7 @@ import Button from "../../common/Button";
 import Icon from "../../common/Icon";
 import CollectionForm from "./CollectionForm";
 
-const getDeletionDateText = function(editSettings) {
+const getDeletionDateText = function (editSettings) {
     const date = editSettings.deleteDateStr,
         days = editSettings.deletionDaysUntilDeletion;
     return `${date} (${days} days)`;

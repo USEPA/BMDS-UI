@@ -12,13 +12,8 @@ import OutputTabs from "./OutputTabs";
 @observer
 class App extends Component {
     render() {
-        const {
-            outputs,
-            showAboutModal,
-            setAboutModal,
-            downloadExcel,
-            downloadWord,
-        } = this.props.store;
+        const {outputs, showAboutModal, setAboutModal, downloadExcel, downloadWord} =
+            this.props.store;
         return (
             <div className="container py-3">
                 <div className="d-flex justify-content-between">

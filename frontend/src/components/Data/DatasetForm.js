@@ -28,7 +28,7 @@ const DatasetFormRow = props => {
             <td>
                 <Button
                     className="btn btn-danger btn-sm"
-                    onClick={e => props.delete(props.rowIdx)}
+                    onClick={_e => props.delete(props.rowIdx)}
                     icon="trash3-fill"
                 />
             </td>

@@ -7,7 +7,7 @@ import {Dtype} from "@/constants/dataConstants";
 import {isLognormal} from "@/constants/modelConstants";
 import {ff} from "@/utils/formatters";
 
-const getDichotomousData = function(dataset, model) {
+const getDichotomousData = function (dataset, model) {
         const gof = model.results.gof;
         return {
             headers: [
@@ -31,7 +31,7 @@ const getDichotomousData = function(dataset, model) {
             }),
         };
     },
-    getContinuousNormalData = function(dataset, dtype, model) {
+    getContinuousNormalData = function (_dataset, dtype, model) {
         const gof = model.results.gof,
             useFF = dtype === Dtype.CONTINUOUS_INDIVIDUAL;
         return {
@@ -58,7 +58,7 @@ const getDichotomousData = function(dataset, model) {
             }),
         };
     },
-    getContinuousLognormalData = function(dataset, dtype, model) {
+    getContinuousLognormalData = function (dataset, dtype, model) {
         const gof = model.results.gof,
             useFF = dtype === Dtype.CONTINUOUS_INDIVIDUAL;
         return {

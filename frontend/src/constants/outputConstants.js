@@ -1,13 +1,13 @@
 import {Dtype} from "./dataConstants";
 
-export const getPValue = function(dataType, results) {
+export const getPValue = function (dataType, results) {
         if (dataType === Dtype.DICHOTOMOUS) {
             return results.gof.p_value;
         } else {
             return results.tests.p_values[3];
         }
     },
-    isFrequentist = function(priorClass) {
+    isFrequentist = function (priorClass) {
         return priorClass < 2;
     },
     priorClass = {
