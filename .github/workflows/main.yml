@@ -86,7 +86,7 @@ jobs:
 
     - name: Install bmds_ui
       run: |
-        uv pip install --system "venv/dist/*.whl | head -n 1)"
+        uv pip install --system venv/dist/*.whl
         uv pip install --system -v -e ".[pg,dev]"
     - name: loc
       run: |
