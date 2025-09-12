@@ -82,7 +82,7 @@ jobs:
         uv pip install pybind11==3.0.0 --target=./pybind11
         export CMAKE_PREFIX_PATH=${{ github.workspace }}/pybind11/pybind11/share/cmake
         export CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)
-        uv build ---wheel
+        uv build --wheel
 
     - name: Install bmds_ui
       run: |
