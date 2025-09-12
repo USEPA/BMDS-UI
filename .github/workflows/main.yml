@@ -105,7 +105,6 @@ jobs:
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         DJANGO_CACHE_LOCATION: redis://localhost:6379/0
       run: |
-        export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
         coverage run -m pytest --record-mode=none
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
         coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
@@ -201,7 +200,7 @@ jobs:
         path: venv/dist
     - name: Install bmds_ui
       run: |
-        uv pip install --system "venv/dist/*.whl | head -n 1)"
+        uv pip install --system venv/dist/*.whl
         uv pip install --system -v -e ".[pg,dev]"
         playwright install --with-deps chromium
 
@@ -210,14 +209,12 @@ jobs:
       id: test
       continue-on-error: true
       run: |
-        export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
         py.test -sv tests/integration/
     - name: run integration tests (retry)
       if: steps.test.outcome=='failure'
       id: retry
       continue-on-error: true
       run: |
-        export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
         py.test -sv tests/integration/
     - name: set status
       if: always()
@@ -229,9 +226,8 @@ jobs:
         fi
     - name: build wheel
       run: |
-        export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
         manage.py set_git_commit
-        flit build --no-use-vcs
+        uv build --wheel
     - name: Upload wheel
       uses: actions/upload-artifact@v4
       with:
