@@ -16,7 +16,7 @@ concurrency:
 jobs:
   backend:
     name: backend
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     services:
       postgres:
@@ -34,6 +34,9 @@ jobs:
         ports:
         - 6379:6379
 
+    env:
+      VCPKG_HOST_TRIPLET: x64-linux
+
     steps:
     - name: Checkout bmds-ui
       uses: actions/checkout@v4
@@ -43,21 +46,48 @@ jobs:
         repository: USEPA/BMDS
         path: venv
         ref: main
+
+    - name: Cache vcpkg dependencies
+      id: cache-vcpkg-deps
+      uses: actions/cache@v4
+      with:
+        path: venv/vcpkg_installed
+        key: vcpkg-${{ runner.os }}-${{ hashFiles('venv/vcpkg.json') }}
+    - name: Acquire vcpkg
+      if: steps.cache-vcpkg-deps.outputs.cache-hit != 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: "Microsoft/vcpkg"
+        path: venv/vcpkg
+        ref: c9c17dcea3016bc241df0422e82b8aea212dcb93
+    - name: Install libraries with vcpkg.json
+      if: steps.cache-vcpkg-deps.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        cd venv
+        ./vcpkg/bootstrap-vcpkg.sh
+        ./vcpkg/vcpkg install --host-triplet="$VCPKG_HOST_TRIPLET" --overlay-ports=./vendor/ports
+
     - uses: actions/setup-python@v5
       with:
         python-version: "3.13"
-        cache: pip
-    - name: Install pybmds
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        cache-dependency-glob: "**/pyproject.toml"
+
+    - name: Build pybmds
       run: |
-        python -m pip install -U pip wheel setuptools
         cd venv
-        source ./tools/linux_ci_setup.sh
-        source ./tools/linux_ci_env.sh
-        python setup.py bdist_wheel
-        python -m pip install "$(ls dist/*.whl | head -n 1)"
+        uv pip install pybind11==3.0.0 --target=./pybind11
+        export CMAKE_PREFIX_PATH=$(pwd)/pybind11/pybind11/share/cmake
+        export CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)
+        uv build --wheel
+
     - name: Install bmds_ui
       run: |
-        python -m pip install -e ".[pg,dev]"
+        uv pip install --system venv/dist/*.whl
+        uv pip install --system -v -e ".[pg,dev]"
     - name: loc
       run: |
         sudo apt-get install -y cloc
@@ -75,7 +105,6 @@ jobs:
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         DJANGO_CACHE_LOCATION: redis://localhost:6379/0
       run: |
-        export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
         coverage run -m pytest --record-mode=none
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
         coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
@@ -84,9 +113,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: pybmds
-        path: |
-          venv/dist
-          venv/tools
+        path: venv/dist
         retention-days: 1
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v4
@@ -128,7 +155,7 @@ jobs:
   integration:
     name: integration
     needs: [backend, frontend]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     services:
       postgres:
@@ -156,7 +183,11 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: "3.13"
-        cache: pip
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        cache-dependency-glob: "**/pyproject.toml"
+
     - name: Download JS build
       uses: actions/download-artifact@v4
       with:
@@ -166,30 +197,24 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: pybmds
-        path: venv
-    - name: Install pybmds
-      run: |
-        source ./venv/tools/linux_ci_setup.sh
-        source ./venv/tools/linux_ci_env.sh
-        python -m pip install "$(ls ./venv/dist/*.whl | head -n 1)"
+        path: venv/dist
     - name: Install bmds_ui
       run: |
-        pip install -U pip wheel
-        pip install -e ".[pg,dev]"
+        uv pip install --system venv/dist/*.whl
+        uv pip install --system -v -e ".[pg,dev]"
         playwright install --with-deps chromium
+
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run integration tests
       id: test
       continue-on-error: true
       run: |
-        export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
         py.test -sv tests/integration/
     - name: run integration tests (retry)
       if: steps.test.outcome=='failure'
       id: retry
       continue-on-error: true
       run: |
-        export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
         py.test -sv tests/integration/
     - name: set status
       if: always()
@@ -201,9 +226,8 @@ jobs:
         fi
     - name: build wheel
       run: |
-        export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
         manage.py set_git_commit
-        flit build --no-use-vcs
+        uv build --wheel
     - name: Upload wheel
       uses: actions/upload-artifact@v4
       with:
