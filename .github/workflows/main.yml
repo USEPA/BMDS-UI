@@ -34,6 +34,9 @@ jobs:
         ports:
         - 6379:6379
 
+    env:
+      VCPKG_HOST_TRIPLET: x64-linux
+
     steps:
     - name: Checkout bmds-ui
       uses: actions/checkout@v4
