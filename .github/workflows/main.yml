@@ -52,7 +52,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: venv/vcpkg_installed
-        key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+        key: vcpkg-${{ runner.os }}-${{ hashFiles('venv/vcpkg.json') }}
     - name: Acquire vcpkg
       if: steps.cache-vcpkg-deps.outputs.cache-hit != 'true'
       uses: actions/checkout@v4
