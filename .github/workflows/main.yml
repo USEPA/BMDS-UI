@@ -16,7 +16,7 @@ concurrency:
 jobs:
   backend:
     name: backend
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     services:
       postgres:
@@ -43,57 +43,87 @@ jobs:
         repository: USEPA/BMDS
         path: venv
         ref: main
-    - uses: actions/setup-python@v5
+
+    - name: Cache vcpkg dependencies
+      id: cache-vcpkg-deps
+      uses: actions/cache@v4
       with:
-        python-version: "3.13"
-        cache: pip
-    - name: Install pybmds
-      run: |
-        python -m pip install -U pip wheel setuptools
-        cd venv
-        source ./tools/linux_ci_setup.sh
-        source ./tools/linux_ci_env.sh
-        python setup.py bdist_wheel
-        python -m pip install "$(ls dist/*.whl | head -n 1)"
-    - name: Install bmds_ui
-      run: |
-        python -m pip install -e ".[pg,dev]"
-    - name: loc
-      run: |
-        sudo apt-get install -y cloc
-        echo "# Lines of Code Report" >> $GITHUB_STEP_SUMMARY
-        poe -q loc >> $GITHUB_STEP_SUMMARY
-    - name: lint
-      run: |
-        poe lint-py
-    - name: test
-      env:
-        DJANGO_DB_NAME: bmds-online-test
-        DJANGO_DB_USER: bmds
-        DJANGO_DB_PW: password
-        DJANGO_DB_HOST: localhost
-        DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
-        DJANGO_CACHE_LOCATION: redis://localhost:6379/0
-      run: |
-        export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
-        coverage run -m pytest --record-mode=none
-        echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
-        coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
-        coverage html -d coverage -i
-    - name: Upload pybmds wheel
-      uses: actions/upload-artifact@v4
+        path: venv/vcpkg_installed
+        key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+    - name: Acquire vcpkg
+      if: steps.cache-vcpkg-deps.outputs.cache-hit != 'true'
+      uses: actions/checkout@v4
       with:
-        name: pybmds
-        path: |
-          venv/dist
-          venv/tools
-        retention-days: 1
-    - name: Upload Coverage Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage
-        path: coverage
-        retention-days: 14
+        repository: "Microsoft/vcpkg"
+        path: venv/vcpkg
+        ref: c9c17dcea3016bc241df0422e82b8aea212dcb93
+    - name: Install libraries with vcpkg.json
+      if: steps.cache-vcpkg-deps.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        cd bmds
+        ./vcpkg/bootstrap-vcpkg.sh
+        ./vcpkg/vcpkg install --host-triplet="$VCPKG_HOST_TRIPLET" --overlay-ports=./vendor/ports
+
+    # - uses: actions/setup-python@v5
+    #   with:
+    #     python-version: "3.13"
+    #     cache: pip
+    # - name: Install uv
+    #   uses: astral-sh/setup-uv@v5
+    #   with:
+    #     cache-dependency-glob: "**/pyproject.toml"
+
+    # - name: Build pybmds
+    #   run: |
+    #     cd venv
+    #     uv pip install pybind11==3.0.0 --target=./pybind11
+    #     export CMAKE_PREFIX_PATH=${{ github.workspace }}/pybind11/pybind11/share/cmake
+    #     export CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)
+    #     uv pip install --system -v -e ".[dev,docs]"
+    #     stubgen -p pybmds.bmdscore -o src
+    #     ruff format src/pybmds/bmdscore.pyi
+    #     python -c "import pybmds; print(pybmds.bmdscore.version())"
+
+    # - name: Install bmds_ui
+    #   run: |
+    #     python -m pip install -e ".[pg,dev]"
+    # - name: loc
+    #   run: |
+    #     sudo apt-get install -y cloc
+    #     echo "# Lines of Code Report" >> $GITHUB_STEP_SUMMARY
+    #     poe -q loc >> $GITHUB_STEP_SUMMARY
+    # - name: lint
+    #   run: |
+    #     poe lint-py
+    # - name: test
+    #   env:
+    #     DJANGO_DB_NAME: bmds-online-test
+    #     DJANGO_DB_USER: bmds
+    #     DJANGO_DB_PW: password
+    #     DJANGO_DB_HOST: localhost
+    #     DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
+    #     DJANGO_CACHE_LOCATION: redis://localhost:6379/0
+    #   run: |
+    #     export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
+    #     coverage run -m pytest --record-mode=none
+    #     echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
+    #     coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+    #     coverage html -d coverage -i
+    # - name: Upload pybmds wheel
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: pybmds
+    #     path: |
+    #       venv/dist
+    #       venv/tools
+    #     retention-days: 1
+    # - name: Upload Coverage Report
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: coverage
+    #     path: coverage
+    #     retention-days: 14
 
   frontend:
     name: frontend
