@@ -61,7 +61,7 @@ jobs:
       if: steps.cache-vcpkg-deps.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        cd bmds
+        cd venv
         ./vcpkg/bootstrap-vcpkg.sh
         ./vcpkg/vcpkg install --host-triplet="$VCPKG_HOST_TRIPLET" --overlay-ports=./vendor/ports
 
