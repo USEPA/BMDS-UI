@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Jonckheere-Terpstra Adjustment | {{block.super}}{% endblock title %}
+
+{% block content %}
+{% csrf_token %}
+<div id="main"></div>
+{% endblock content %}
+
+{% block extra-js %}
+{% include "fragments/mathjax.html" %}
+<script type="text/javascript">
+    $(document).ready(() => {
+        const token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+        window.app.jonckheereTerpstra(document.getElementById('main'), token);
+    });
+</script>
+{% endblock extra-js %}
