@@ -1,7 +1,6 @@
-export const speciesChoices = [
-        {value: "rat", text: "Rat"},
-        {value: "mouse", text: "Mouse"},
-        {value: "rabbit", text: "Rabbit"},
-    ],
-    exampleData =
-        "dose,n,incidence\n0,470,11\n7,211,6\n35,232,2\n100,220,7\n175,241,14\n350,237,39\n500,166,57";
+export const hypothesisChoices = [
+    { value: "increasing", text: "Increasing" },
+    { value: "two-sided", text: "Two-Sided" },
+  ],
+  exampleData =
+    "doses,responses\n0,8.57\n0,8.71\n0,7.99\n0,9.27\n0,9.47\n0,10.06\n0,8.65\n0,9.13\n0,9.01\n0,8.35\n10,8.66\n10,8.45\n10,9.26\n10,8.76\n10,7.85\n10,9.01\n10,9.09\n10,9.57\n10,10.14\n10,10.49\n20,9.87\n20,10.26\n20,9.76\n20,10.24\n20,10.54\n20,10.72\n20,8.83\n20,10.02\n20,9.18\n20,10.87\n40,11.56\n40,10.59\n40,11.99\n40,11.59\n40,10.59\n40,10.52\n40,11.32\n40,12.0\n40,12.12\n40,12.64\n80,10.96\n80,12.13\n80,12.77\n80,13.06\n80,13.16\n80,14.04\n80,14.01\n80,13.9\n80,12.99\n80,13.13";

@@ -288,5 +288,5 @@ class PolyKAdjustment(TemplateView):
 class RaoScottAdjustment(TemplateView):
     template_name: str = "analysis/rao-scott.html"
 
-class JonckheereTerpstraAdjustment(TemplateView):
+class JonckheereTerpstraTrendTest(TemplateView):
     template_name: str = "analysis/jonckheere-terpstra.html"

@@ -21,7 +21,7 @@ class AboutModal extends Component {
         onHide={() => store.setAboutModal(false)}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Jonckheere-Terpstra Transformation</Modal.Title>
+          <Modal.Title>Jonckheere-Terpstra Trend Test</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>

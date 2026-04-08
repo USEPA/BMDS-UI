@@ -14,7 +14,7 @@ class App extends Component {
     return (
       <div className="container py-3">
         <div className="d-flex justify-content-between">
-          <h2>Jonckheere-Terpstra Transformation</h2>
+          <h2>Jonckheere-Terpstra Trend Test</h2>
           <button
             type="button"
             className="btn btn-primary"

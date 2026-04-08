@@ -200,10 +200,7 @@ class DatasetForm extends Component {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Icon
-                name="calculator"
-                text="Jonckheere-Terpstra Transformation"
-              />
+              <Icon name="calculator" text="Jonckheere-Terpstra Trend Test" />
             </a>
           ) : null}
         </div>
