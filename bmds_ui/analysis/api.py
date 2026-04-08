@@ -7,6 +7,7 @@ from rest_framework.schemas.openapi import AutoSchema
 
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott
+from pybmds.datasets.continuous import ContinuousIndividualDataset
 
 from ..common import renderers
 from ..common.renderers import BinaryFile
@@ -282,29 +283,31 @@ class RaoScottViewset(viewsets.GenericViewSet):
 class JonckheereTerpstraViewset(viewsets.GenericViewSet):
     queryset = models.Analysis.objects.none()
     serializer_class = UnusedSerializer
-    schema = AutoSchema(operation_id_base="RaoScott")
+    schema = AutoSchema(operation_id_base="JonckheereTerpstra")
 
-    def _run_analysis(self, request) -> RaoScott:
-        try:
-            settings = pydantic_validate(request.data, schema.RaoScottInput)
-        except ValidationError as err:
-            raise exceptions.ValidationError(err.message) from None
-        analysis = settings.calculate()
-        return analysis
+    def _run_analysis(self, request) -> ContinuousIndividualDataset:
+        # try:
+        #     settings = pydantic_validate(request.data, schema.RaoScottInput)
+        # except ValidationError as err:
+        #     raise exceptions.ValidationError(err.message) from None
+        # analysis = settings.calculate()
+        # return analysis
+        return {"hello" : [1, 2, 3, 4, 5]}
 
     def create(self, request, *args, **kwargs):
         analysis = self._run_analysis(request)
-        return Response({"df": analysis.df})
+        # return Response({"df": analysis.df})
+        return Response(analysis)
 
-    @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
-    def excel(self, request, *args, **kwargs):
-        analysis = self._run_analysis(request)
-        data = BinaryFile(analysis.to_excel(), "rao-scott-transformation")
-        return Response(data)
+    # @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
+    # def excel(self, request, *args, **kwargs):
+    #     analysis = self._run_analysis(request)
+    #     data = BinaryFile(analysis.to_excel(), "jonckheere-terpstra-trend-test")
+    #     return Response(data)
 
-    @action(detail=False, methods=["POST"], renderer_classes=(renderers.DocxRenderer,))
-    def word(self, request, *args, **kwargs):
-        analysis = self._run_analysis(request)
-        f = build_raoscott_docx(analysis)
-        data = BinaryFile(f, "rao-scott-transformation")
-        return Response(data)
+    # @action(detail=False, methods=["POST"], renderer_classes=(renderers.DocxRenderer,))
+    # def word(self, request, *args, **kwargs):
+    #     analysis = self._run_analysis(request)
+    #     f = build_raoscott_docx(analysis)
+    #     data = BinaryFile(f, "jonckheere-terpstra-trend-test")
+    #     return Response(data)

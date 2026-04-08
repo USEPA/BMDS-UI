@@ -46,7 +46,7 @@ class Store {
 
   @action.bound
   async submit() {
-    const url = "/api/v1/rao-scott/";
+    const url = "/api/v1/jonckheere-terpstra/";
     this.error = null;
     await fetch(url, this.submissionRequest)
       .then((response) => {
@@ -79,15 +79,18 @@ class Store {
   }
 
   @computed get clipboardData() {
-    const { df } = this.outputs;
-    return _.zip(df.dose, df.n_adjusted, df.incidence_adjusted)
-      .map((d) => `${d[0]}\t${d[1].toFixed(4)}\t${d[2].toFixed(4)}`)
-      .join("\n");
+    // return "hello";
+    // const { df } = this.outputs;
+    // return _.zip(df.dose, df.n_adjusted, df.incidence_adjusted)
+    //   .map((d) => `${d[0]}\t${d[1].toFixed(4)}\t${d[2].toFixed(4)}`)
+    //   .join("\n");
+    console.log(this.outputs);
+    return String(this.outputs);
   }
 
   @action.bound
   async downloadExcel() {
-    const url = "/api/v1/rao-scott/excel/";
+    const url = "/api/v1/jonckheere-terpstra/excel/";
     await fetch(url, this.submissionRequest)
       .then((response) => getBlob(response))
       .then(({ blob, filename }) => saveAs(blob, filename));
@@ -95,7 +98,7 @@ class Store {
 
   @action.bound
   async downloadWord() {
-    const url = "/api/v1/rao-scott/word/";
+    const url = "/api/v1/jonckheere-terpstra/word/";
     await fetch(url, this.submissionRequest)
       .then((response) => getBlob(response))
       .then(({ blob, filename }) => saveAs(blob, filename));
