@@ -2,93 +2,10 @@ import _ from "lodash";
 import { inject, observer } from "mobx-react";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import Plot from "react-plotly.js";
 
 import Button from "@/components/common/Button";
 import ClipboardButton from "@/components/common/ClipboardButton";
 import Table from "@/components/common/Table";
-import { wrapText } from "@/utils/wrapText";
-
-const plotLayout = (title, xAxis, yAxis) => {
-  return {
-    height: 400,
-    margin: { l: 50, r: 5, t: 75, b: 55 },
-    hovermode: "x unified",
-    title: { text: wrapText(title, 45, "<br>") },
-    legend: { x: 0.1, y: 1 },
-    xaxis: { title: { text: xAxis } },
-    yaxis: { title: { text: yAxis } },
-  };
-};
-
-@inject("store")
-@observer
-class SummaryPlots extends Component {
-  render() {
-    const { df } = this.props.store.outputs;
-    return (
-      <>
-        <div className="col-lg-6">
-          {/* <Plot
-                        data={[
-                            {
-                                x: df.dose,
-                                y: df.n,
-                                type: "scatter",
-                                mode: "lines+markers",
-                                marker: {color: "FireBrick", symbol: "circle", size: 12},
-                                name: "Original N",
-                            },
-                            {
-                                x: df.dose,
-                                y: df.n_adjusted,
-                                type: "scatter",
-                                mode: "lines+markers",
-                                marker: {color: "LightSalmon", symbol: "diamond", size: 12},
-                                name: "Adjusted N",
-                            },
-                        ]}
-                        layout={plotLayout("Original N vs Adjusted N", "Dose", "N")}
-                        style={{width: "100%"}}
-                        useResizeHandler={true}
-                    /> */}
-        </div>
-        <div className="col-lg-6">
-          {/* <Plot
-                        data={[
-                            {
-                                x: df.dose,
-                                y: df.incidence,
-                                type: "scatter",
-                                mode: "lines+markers",
-                                marker: {color: "MidnightBlue", symbol: "circle", size: 12},
-                                name: "Original Incidence",
-                            },
-                            {
-                                x: df.dose,
-                                y: df.incidence_adjusted,
-                                type: "scatter",
-                                mode: "lines+markers",
-                                marker: {color: "LightSkyBlue", symbol: "diamond", size: 12},
-                                name: "Adjusted Incidence",
-                            },
-                        ]}
-                        layout={plotLayout(
-                            "Original Incidence vs Adjusted Incidence",
-                            "Dose",
-                            "Incidence"
-                        )}
-                        style={{width: "100%"}}
-                        useResizeHandler={true}
-                    /> */}
-        </div>
-      </>
-    );
-  }
-}
-SummaryPlots.propTypes = {
-  store: PropTypes.object,
-};
 
 @inject("store")
 @observer
@@ -129,7 +46,8 @@ class OutputTabs extends Component {
           </div>
         </div>
         <div className="row">
-          <div className="col-12">
+          <div className="col-12" style={{ maxWidth: 500 }}>
+            <br></br>
             <Table
               data={{
                 headers: ["Metric", "Value"],
@@ -151,7 +69,6 @@ class OutputTabs extends Component {
               className="btn btn-link my-1"
             />
           </div>
-          <SummaryPlots />
         </div>
       </>
     );
