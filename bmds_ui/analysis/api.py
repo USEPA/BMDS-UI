@@ -280,24 +280,29 @@ class RaoScottViewset(viewsets.GenericViewSet):
         data = BinaryFile(f, "rao-scott-transformation")
         return Response(data)
 
-class JonckheereTerpstraViewset(viewsets.GenericViewSet):
-    queryset = models.Analysis.objects.none()
-    serializer_class = UnusedSerializer
-    schema = AutoSchema(operation_id_base="JonckheereTerpstra")
 
-    def _run_analysis(self, request) -> ContinuousIndividualDataset:
-        # try:
-        #     settings = pydantic_validate(request.data, schema.RaoScottInput)
-        # except ValidationError as err:
-        #     raise exceptions.ValidationError(err.message) from None
-        # analysis = settings.calculate()
-        # return analysis
-        return {"hello" : [1, 2, 3, 4, 5]}
+class JonckheereTerpstraViewset(viewsets.GenericViewSet):
+    queryset = models.Analysis.objects.none() # not needed
+    serializer_class = UnusedSerializer # not needed, pydantic is used instead
+    schema = AutoSchema(operation_id_base="JonckheereTerpstra") 
+
+    def _run_analysis(self, request):
+        try:
+            settings = pydantic_validate(request.data, schema.JonckheereTerpstraInput)
+        except ValidationError as err:
+            raise exceptions.ValidationError(err.message) from None
+        analysis = settings.calculate()
+        return analysis
+        # answer = {
+        #         "dataset": ds,
+        #         "hypothesis": request.data["hypothesis"],
+        #     }
+        # return answer
 
     def create(self, request, *args, **kwargs):
         analysis = self._run_analysis(request)
-        # return Response({"df": analysis.df})
-        return Response(analysis)
+        return Response({"df": analysis.df})
+        # return Response(analysis)
 
     # @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
     # def excel(self, request, *args, **kwargs):

@@ -12,6 +12,7 @@ from pydantic import BaseModel, Field, ValidationError, field_validator
 from rest_framework.schemas.openapi import SchemaGenerator
 
 from pybmds.datasets.dichotomous import DichotomousDataset
+from pybmds.datasets.continuous import ContinuousIndividualDataset
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott, Species
 from pybmds.types.session import VersionSchema
@@ -168,6 +169,48 @@ class RaoScottInput(BaseModel):
             incidences=df.incidence.tolist(),
         )
         return RaoScott(dataset=dataset, species=self.species)
+ 
+    
+class JonckheereTerpstraInput(BaseModel):
+    dataset: str
+    hypothesis: str
+
+    @field_validator("dataset")
+    @classmethod
+    def check_dataset(cls, value):
+        if len(value) > 10_000:
+            raise ValueError("Dataset too large")
+
+        # replace tabs or spaces with commas
+        value = re.sub(r"[,\t ]+", ",", value.strip())
+
+        try:
+            df = pd.read_csv(StringIO(value))
+        except pd.errors.EmptyDataError:
+            raise ValueError("Empty dataset") from None
+
+        required_columns = ["doses", "responses"]
+        if df.columns.tolist() != required_columns:
+            raise ValueError(f"Bad column names; requires {required_columns}")
+
+        if not all_numeric_and_finite(df):
+            raise ValueError("All data must be numeric and finite")
+
+        if not (df.doses >= 0).all():
+            raise ValueError("`dose` must be ≥ 0")
+
+        return value
+
+    def calculate(self):
+        df = pd.read_csv(StringIO(self.dataset)).sort_values(["doses"])
+        dataset = ContinuousIndividualDataset(
+            doses=df.doses.tolist(),
+            responses=df.responses.tolist(),
+        )
+        print("dataset TYPE :::::::::::::::::::::::::: ", type(dataset))
+        # print("dataset TYPE :::::::::::::::::::::::::: ", dataset.class.module)
+        print(hasattr(dataset, "trend"))
+        return dataset.trend(hypothesis=self.hypothesis)
 
 
 def add_schemas(schema: dict, models: list):
