@@ -41,11 +41,7 @@ if "fixture" in str(DATABASES["default"]["NAME"]):
 ### Install requirements
 
 ```bash
-uv pip install -e ".[dev,docs]"
 uv pip install -e ".[pg,dev]"
-
-cd frontend
-npm install --legacy-peer-deps
 
 cd ../
 poe sync dev
@@ -60,9 +56,6 @@ In one terminal, start the the python webserver:
 ```bash
 # active python virtual environment
 .venv\Scripts\activate
-
-# install latest packages and requirements from code
-poe sync-dev
 
 # run development webserver
 poe run-py

@@ -292,17 +292,13 @@ class JonckheereTerpstraViewset(viewsets.GenericViewSet):
         except ValidationError as err:
             raise exceptions.ValidationError(err.message) from None
         analysis = settings.calculate()
+        print("analysis::::::::::::::::::::::::::::::::::::::::::::::")
+        print(analysis)
         return analysis
-        # answer = {
-        #         "dataset": ds,
-        #         "hypothesis": request.data["hypothesis"],
-        #     }
-        # return answer
 
     def create(self, request, *args, **kwargs):
         analysis = self._run_analysis(request)
-        return Response({"df": analysis.df})
-        # return Response(analysis)
+        return Response({"answer": analysis})
 
     # @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
     # def excel(self, request, *args, **kwargs):

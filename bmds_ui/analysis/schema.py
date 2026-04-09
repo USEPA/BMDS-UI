@@ -207,10 +207,8 @@ class JonckheereTerpstraInput(BaseModel):
             doses=df.doses.tolist(),
             responses=df.responses.tolist(),
         )
-        print("dataset TYPE :::::::::::::::::::::::::: ", type(dataset))
-        # print("dataset TYPE :::::::::::::::::::::::::: ", dataset.class.module)
-        print(hasattr(dataset, "trend"))
-        return dataset.trend(hypothesis=self.hypothesis)
+        result = dataset.trend(hypothesis=self.hypothesis).tbl()
+        return result
 
 
 def add_schemas(schema: dict, models: list):
