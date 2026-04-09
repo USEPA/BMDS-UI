@@ -79,7 +79,13 @@ class Store {
   }
 
   @computed get clipboardData() {
-    return this.outputs.answer;
+    const answer = this.outputs.answer;
+
+    const result_string = Object.entries(answer)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join("\n");
+
+    return result_string;
   }
 
   @action.bound

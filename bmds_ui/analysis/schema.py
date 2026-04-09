@@ -207,8 +207,18 @@ class JonckheereTerpstraInput(BaseModel):
             doses=df.doses.tolist(),
             responses=df.responses.tolist(),
         )
-        result = dataset.trend(hypothesis=self.hypothesis).tbl()
-        return result
+        result = dataset.trend(hypothesis=self.hypothesis)
+        
+        result_dict = {
+            "Hypothesis": result.hypothesis,
+            "Statistic": result.statistic,
+            "Approach (P-Value)": result.approach,
+            "P-Value": result.p_value
+        }
+
+        # result_tbl = dataset.trend(hypothesis=self.hypothesis).tbl()
+        # return result_tbl
+        return result_dict
 
 
 def add_schemas(schema: dict, models: list):

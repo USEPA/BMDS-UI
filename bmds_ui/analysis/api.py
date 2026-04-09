@@ -292,8 +292,6 @@ class JonckheereTerpstraViewset(viewsets.GenericViewSet):
         except ValidationError as err:
             raise exceptions.ValidationError(err.message) from None
         analysis = settings.calculate()
-        print("analysis::::::::::::::::::::::::::::::::::::::::::::::")
-        print(analysis)
         return analysis
 
     def create(self, request, *args, **kwargs):
