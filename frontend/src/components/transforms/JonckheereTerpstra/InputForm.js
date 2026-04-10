@@ -20,6 +20,33 @@ class InputForm extends Component {
       submit,
       reset,
     } = this.props.store;
+
+    const executeClickHandler = async (e) => {
+      e?.preventDefault?.();
+
+      const executeButton = document.getElementById("executeButton");
+      const resetButton = document.getElementById("resetButton");
+
+      document.body.style.cursor = "wait";
+      executeButton.style.cursor = "wait";
+      resetButton.style.cursor = "wait";
+      executeButton.disabled = true;
+      resetButton.disabled = true;
+
+      await new Promise(requestAnimationFrame);
+
+      try {
+        // Handles both sync and async submit()
+        await Promise.resolve(submit());
+      } finally {
+        document.body.style.cursor = "";
+        executeButton.style.cursor = "";
+        resetButton.style.cursor = "";
+        executeButton.disabled = false;
+        resetButton.disabled = false;
+      }
+    };
+
     return (
       <form>
         <div className="row">
@@ -69,11 +96,13 @@ class InputForm extends Component {
             <label>&nbsp;</label>
             <Button
               className="btn btn-primary btn-block py-3"
-              onClick={submit}
+              id="executeButton"
+              onClick={executeClickHandler}
               text="Execute"
             />
             <Button
               className="btn btn-secondary btn-block"
+              id="resetButton"
               onClick={reset}
               text="Reset"
             />

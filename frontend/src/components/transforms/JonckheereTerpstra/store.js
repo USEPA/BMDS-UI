@@ -10,6 +10,7 @@ class Store {
     this.selected_dataset = JSON.parse(
       localStorage.getItem("selected_dataset"),
     );
+    this.model_type = this.selected_dataset.metadata.model_type;
 
     function toCSV(data, headers) {
       return (
@@ -21,10 +22,10 @@ class Store {
       );
     }
 
-    if (this.selected_dataset.metadata.model_type === "I") {
+    if (this.model_type === "I") {
       this.exampleData = exampleDataIndividual;
       this.selected_data = toCSV(this.selected_dataset, ["doses", "responses"]);
-    } else if (this.selected_dataset.metadata.model_type === "CS") {
+    } else if (this.model_type === "CS") {
       this.exampleData = exampleDataSummary;
       this.selected_data = toCSV(this.selected_dataset, [
         "doses",
@@ -38,7 +39,7 @@ class Store {
   @observable settings = {
     dataset: this.selected_data,
     hypothesis: "increasing",
-    model_type: this.selected_dataset.metadata.model_type,
+    model_type: this.model_type,
   };
   @observable error = null;
   @observable errorObject = null;
@@ -137,6 +138,7 @@ class Store {
     this.settings = {
       dataset: this.selected_data,
       hypothesis: "increasing",
+      model_type: this.model_type,
     };
     this.error = null;
     this.outputs = null;

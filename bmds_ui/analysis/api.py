@@ -7,7 +7,6 @@ from rest_framework.schemas.openapi import AutoSchema
 
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott
-from pybmds.datasets.continuous import ContinuousIndividualDataset
 
 from ..common import renderers
 from ..common.renderers import BinaryFile
