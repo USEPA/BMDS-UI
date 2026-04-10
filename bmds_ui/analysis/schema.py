@@ -8,11 +8,12 @@ from uuid import UUID
 
 import numpy as np
 import pandas as pd
-from pydantic import BaseModel, Field, ValidationError, field_validator
+from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
 from rest_framework.schemas.openapi import SchemaGenerator
 
 from pybmds.datasets.dichotomous import DichotomousDataset
 from pybmds.datasets.continuous import ContinuousIndividualDataset
+from pybmds.datasets.continuous import ContinuousDataset
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott, Species
 from pybmds.types.session import VersionSchema
@@ -174,41 +175,63 @@ class RaoScottInput(BaseModel):
 class JonckheereTerpstraInput(BaseModel):
     dataset: str
     hypothesis: str
+    model_type: str  # "I" or "CS"
 
-    @field_validator("dataset")
+    @field_validator("dataset", mode="before")
     @classmethod
-    def check_dataset(cls, value):
+    def clean_dataset(cls, value: str):
         if len(value) > 10_000:
             raise ValueError("Dataset too large")
+        return re.sub(r"[,\t ]+", ",", value.strip())
 
-        # replace tabs or spaces with commas
-        value = re.sub(r"[,\t ]+", ",", value.strip())
-
+    @model_validator(mode="after")
+    def check_dataset(self):
         try:
-            df = pd.read_csv(StringIO(value))
+            df = pd.read_csv(StringIO(self.dataset))
         except pd.errors.EmptyDataError:
             raise ValueError("Empty dataset") from None
 
-        required_columns = ["doses", "responses"]
+        if self.model_type == "I":
+            required_columns = ["doses", "responses"]
+        elif self.model_type == "CS":
+            required_columns = ["doses", "ns", "means", "stdevs"]
+        else:
+            raise ValueError(f"Unknown model_type {self.model_type!r}; expected 'I' or 'CS'")
+
         if df.columns.tolist() != required_columns:
             raise ValueError(f"Bad column names; requires {required_columns}")
 
         if not all_numeric_and_finite(df):
             raise ValueError("All data must be numeric and finite")
 
-        if not (df.doses >= 0).all():
-            raise ValueError("`dose` must be ≥ 0")
+        if not (df["doses"] >= 0).all():
+            raise ValueError("`doses` must be ≥ 0")
 
-        return value
+        if self.model_type == "CS":
+            if not (df["ns"] > 0).all():
+                raise ValueError("`ns` must be > 0")
+            if not (df["stdevs"] >= 0).all():
+                raise ValueError("`stdevs` must be ≥ 0")
+
+        return self
 
     def calculate(self):
-        df = pd.read_csv(StringIO(self.dataset)).sort_values(["doses"])
-        dataset = ContinuousIndividualDataset(
-            doses=df.doses.tolist(),
-            responses=df.responses.tolist(),
-        )
+        df = pd.read_csv(StringIO(self.dataset))
+
+        if self.model_type == "I":
+            dataset = ContinuousIndividualDataset(
+                doses=df.doses.tolist(),
+                responses=df.responses.tolist(),
+            )
+        elif self.model_type == "CS":
+            dataset = ContinuousDataset(
+                doses=df.doses.tolist(),
+                ns=df.ns.tolist(),
+                means=df.means.tolist(),
+                stdevs=df.stdevs.tolist(),
+            )
         result = dataset.trend(hypothesis=self.hypothesis)
-        
+
         result_dict = {
             "Hypothesis": result.hypothesis,
             "Statistic": result.statistic,
@@ -216,8 +239,6 @@ class JonckheereTerpstraInput(BaseModel):
             "P-Value": result.p_value
         }
 
-        # result_tbl = dataset.trend(hypothesis=self.hypothesis).tbl()
-        # return result_tbl
         return result_dict
 
 

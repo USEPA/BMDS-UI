@@ -38,6 +38,7 @@ class Store {
   @observable settings = {
     dataset: this.selected_data,
     hypothesis: "increasing",
+    model_type: this.selected_dataset.metadata.model_type,
   };
   @observable error = null;
   @observable errorObject = null;
