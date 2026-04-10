@@ -78,6 +78,10 @@ class DataStore {
 
   @action.bound setSelectedDataset(id) {
     this.selectedDatasetId = id;
+    localStorage.setItem(
+      "model_type",
+      this.selectedDataset.metadata.model_type,
+    );
   }
 
   @action.bound setDatasetMetadata(key, value) {
@@ -96,11 +100,12 @@ class DataStore {
 
     dataset.metadata.id = id;
     dataset.metadata.name = `Dataset #${id + 1}`;
+    dataset.metadata.model_type = this.model_type;
     this.datasets.push(dataset);
     this.rootStore.dataOptionStore.createOption(dataset);
     this.selectedDatasetId = id;
     this.updateOptionDegree(dataset);
-    console.log("this.model_type: ", this.model_type);
+    localStorage.setItem("model_type", dataset.metadata.model_type);
   }
 
   @action.bound updateOptionDegree() {
@@ -181,6 +186,10 @@ class DataStore {
         this.datasets[this.datasets.length - 1].metadata.id;
     }
     this.rootStore.mainStore.setInputsChangedFlag();
+    localStorage.setItem(
+      "model_type",
+      this.selectedDataset.metadata.model_type,
+    );
   }
 
   @action.bound setDatasets(datasets) {

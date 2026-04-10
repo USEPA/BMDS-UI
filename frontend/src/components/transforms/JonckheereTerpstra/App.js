@@ -6,11 +6,11 @@ import AboutModal from "./AboutModal";
 import InputForm from "./InputForm";
 import OutputTabs from "./Output";
 
-@inject("store", "dataStore")
+@inject("store")
 @observer
 class App extends Component {
   render() {
-    const { model_type } = this.props.dataStore;
+    const model_type = localStorage.getItem("model_type");
     const { showAboutModal, setAboutModal, outputs } = this.props.store;
     return (
       <div className="container py-3">

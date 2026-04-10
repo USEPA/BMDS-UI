@@ -4,13 +4,13 @@ import ReactDOM from "react-dom";
 
 import App from "./App";
 import Store from "./store";
-import DataStore from "../../../stores/DataStore";
+// import rootStore from "../../../stores/RootStore";
+import rootStore from "@/stores/RootStore";
 
 const render = function (el, token) {
   const store = new Store(token);
-  const dataStore = new DataStore();
   ReactDOM.render(
-    <Provider store={store} dataStore={dataStore}>
+    <Provider store={store} dataStore={rootStore.dataStore}>
       <App />
     </Provider>,
     el,
