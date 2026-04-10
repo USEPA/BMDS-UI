@@ -3,7 +3,7 @@ import _ from "lodash";
 import { action, computed, observable } from "mobx";
 
 import { getBlob, getHeaders } from "../../../common";
-import { exampleData } from "./constants";
+import { exampleDataIndividual, exampleDataSummary } from "./constants";
 class Store {
   constructor(token) {
     this.token = token;
@@ -22,8 +22,10 @@ class Store {
     }
 
     if (this.selected_dataset.metadata.model_type === "I") {
+      this.exampleData = exampleDataIndividual;
       this.selected_data = toCSV(this.selected_dataset, ["doses", "responses"]);
     } else if (this.selected_dataset.metadata.model_type === "CS") {
+      this.exampleData = exampleDataSummary;
       this.selected_data = toCSV(this.selected_dataset, [
         "doses",
         "ns",
@@ -48,13 +50,15 @@ class Store {
 
   @action.bound
   loadExampleData() {
-    this.updateSettings("dataset", exampleData);
+    this.updateSettings("dataset", this.exampleData);
   }
 
   @action.bound
   downloadExampleData() {
     saveAs(
-      new File([exampleData], "example-jonckheere.csv", { type: "text/csv" }),
+      new File([this.exampleData], "example-jonckheere.csv", {
+        type: "text/csv",
+      }),
     );
   }
 
