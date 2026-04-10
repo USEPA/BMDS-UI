@@ -4,14 +4,37 @@ import { action, computed, observable } from "mobx";
 
 import { getBlob, getHeaders } from "../../../common";
 import { exampleData } from "./constants";
-
 class Store {
   constructor(token) {
     this.token = token;
+    this.selected_dataset = JSON.parse(
+      localStorage.getItem("selected_dataset"),
+    );
+
+    function toCSV(data, headers) {
+      return (
+        headers.join(",") +
+        "\n" +
+        Array.from({ length: data[headers[0]].length }, (_, i) =>
+          headers.map((key) => data[key][i]).join(","),
+        ).join("\n")
+      );
+    }
+
+    if (this.selected_dataset.metadata.model_type === "I") {
+      this.selected_data = toCSV(this.selected_dataset, ["doses", "responses"]);
+    } else if (this.selected_dataset.metadata.model_type === "CS") {
+      this.selected_data = toCSV(this.selected_dataset, [
+        "doses",
+        "ns",
+        "means",
+        "stdevs",
+      ]);
+    }
   }
 
   @observable settings = {
-    dataset: "",
+    dataset: this.selected_data,
     hypothesis: "increasing",
   };
   @observable error = null;
@@ -107,7 +130,7 @@ class Store {
   @action.bound
   reset() {
     this.settings = {
-      dataset: "",
+      dataset: this.selected_data,
       hypothesis: "increasing",
     };
     this.error = null;

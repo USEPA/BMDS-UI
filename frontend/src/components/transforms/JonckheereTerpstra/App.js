@@ -10,12 +10,12 @@ import OutputTabs from "./Output";
 @observer
 class App extends Component {
   render() {
-    const model_type = localStorage.getItem("model_type");
     const { showAboutModal, setAboutModal, outputs } = this.props.store;
+
     return (
       <div className="container py-3">
         <div className="d-flex justify-content-between">
-          <h2>Jonckheere-Terpstra Trend Test {model_type}</h2>
+          <h2>Jonckheere-Terpstra Trend Test</h2>
           <button
             type="button"
             className="btn btn-primary"
