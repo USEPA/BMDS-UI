@@ -18,8 +18,9 @@ class Store {
       );
 
       const filteredRows = rows.filter((row) => {
-        console.log(Array.isArray(row), row);
-        return Array.isArray(row) && row.some((cell) => cell !== "");
+        return (
+          Array.isArray(row) && row.some((cell) => cell !== "" && cell !== null)
+        );
       });
 
       return (

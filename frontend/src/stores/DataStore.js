@@ -159,6 +159,11 @@ class DataStore {
     });
     this.updateOptionDegree(dataset);
     this.rootStore.mainStore.setInputsChangedFlag();
+
+    localStorage.setItem(
+      "selected_dataset",
+      JSON.stringify(this.selectedDataset),
+    );
   };
 
   @action.bound saveDatasetCellItem(key, value, rowIdx) {
@@ -168,6 +173,11 @@ class DataStore {
       dataset[key][rowIdx] = parsedValue;
     }
     this.rootStore.mainStore.setInputsChangedFlag();
+
+    localStorage.setItem(
+      "selected_dataset",
+      JSON.stringify(this.selectedDataset),
+    );
   }
 
   @action.bound changeColumnName(name, value) {
