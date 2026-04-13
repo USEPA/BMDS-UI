@@ -13,27 +13,32 @@ class Store {
     this.model_type = this.selected_dataset.metadata.model_type;
 
     function toCSV(data, headers) {
+      const rows = Array.from({ length: data[headers[0]].length }, (_, i) =>
+        headers.map((key) => data[key][i]),
+      );
+
+      const filteredRows = rows.filter((row) => {
+        console.log(Array.isArray(row), row);
+        return Array.isArray(row) && row.some((cell) => cell !== "");
+      });
+
       return (
         headers.join(",") +
         "\n" +
-        Array.from({ length: data[headers[0]].length }, (_, i) =>
-          headers.map((key) => data[key][i]).join(","),
-        ).join("\n")
+        filteredRows.map((row) => row.join(",")).join("\n")
       );
     }
 
+    var columns = null;
     if (this.model_type === "I") {
       this.exampleData = exampleDataIndividual;
-      this.selected_data = toCSV(this.selected_dataset, ["doses", "responses"]);
+      columns = ["doses", "responses"];
     } else if (this.model_type === "CS") {
       this.exampleData = exampleDataSummary;
-      this.selected_data = toCSV(this.selected_dataset, [
-        "doses",
-        "ns",
-        "means",
-        "stdevs",
-      ]);
+      columns = ["doses", "ns", "means", "stdevs"];
     }
+
+    this.selected_data = toCSV(this.selected_dataset, columns);
   }
 
   @observable settings = {

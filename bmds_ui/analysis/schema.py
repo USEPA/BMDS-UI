@@ -236,7 +236,7 @@ class JonckheereTerpstraInput(BaseModel):
             "Hypothesis": result.hypothesis,
             "Statistic": result.statistic,
             "Approach (P-Value)": result.approach,
-            "P-Value": result.p_value
+            "P-Value": f"{result.p_value:.4e}"
         }
 
         return result_dict
