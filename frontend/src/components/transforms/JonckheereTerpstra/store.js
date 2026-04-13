@@ -127,7 +127,9 @@ class Store {
   async downloadExcel() {
     const url = "/api/v1/jonckheere-terpstra/excel/";
     await fetch(url, this.submissionRequest)
-      .then((response) => getBlob(response))
+      .then((response) => {
+        return getBlob(response, "result.xlsx");
+      })
       .then(({ blob, filename }) => saveAs(blob, filename));
   }
 
@@ -135,7 +137,9 @@ class Store {
   async downloadWord() {
     const url = "/api/v1/jonckheere-terpstra/word/";
     await fetch(url, this.submissionRequest)
-      .then((response) => getBlob(response))
+      .then((response) => {
+        return getBlob(response, "result.xlsx");
+      })
       .then(({ blob, filename }) => saveAs(blob, filename));
   }
 

@@ -120,6 +120,11 @@ class DataStore {
     const exampleData = getExampleData(this.model_type);
     _.extend(this.selectedDataset, exampleData);
     this.updateOptionDegree(this.selectedDataset);
+
+    localStorage.setItem(
+      "selected_dataset",
+      JSON.stringify(this.selectedDataset),
+    );
   }
 
   @action.bound cleanRows() {

@@ -7,6 +7,8 @@ from rest_framework.schemas.openapi import AutoSchema
 
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott
+from pandas import DataFrame
+from io import BytesIO
 
 from ..common import renderers
 from ..common.renderers import BinaryFile
@@ -16,7 +18,7 @@ from ..common.utils import get_bool
 from ..common.validation import pydantic_validate
 from . import models, schema, serializers, validators
 from .reporting.cache import DocxReportCache, ExcelReportCache
-from .reporting.docx import add_update_url, build_polyk_docx, build_raoscott_docx
+from .reporting.docx import add_update_url, build_polyk_docx, build_raoscott_docx, build_jonckheereterpstra_docx
 
 
 class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -270,6 +272,7 @@ class RaoScottViewset(viewsets.GenericViewSet):
     def excel(self, request, *args, **kwargs):
         analysis = self._run_analysis(request)
         data = BinaryFile(analysis.to_excel(), "rao-scott-transformation")
+        print("RAO SCOT DATA:::::::::::::::::::: ", data)
         return Response(data)
 
     @action(detail=False, methods=["POST"], renderer_classes=(renderers.DocxRenderer,))
@@ -297,15 +300,16 @@ class JonckheereTerpstraViewset(viewsets.GenericViewSet):
         analysis = self._run_analysis(request)
         return Response({"answer": analysis})
 
-    # @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
-    # def excel(self, request, *args, **kwargs):
-    #     analysis = self._run_analysis(request)
-    #     data = BinaryFile(analysis.to_excel(), "jonckheere-terpstra-trend-test")
-    #     return Response(data)
+    @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
+    def excel(self, request, *args, **kwargs):
+        binary_stream = BytesIO()
+        DataFrame([self._run_analysis(request)]).to_excel(binary_stream, index=False)
+        data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
+        return Response(data)
 
-    # @action(detail=False, methods=["POST"], renderer_classes=(renderers.DocxRenderer,))
-    # def word(self, request, *args, **kwargs):
-    #     analysis = self._run_analysis(request)
-    #     f = build_raoscott_docx(analysis)
-    #     data = BinaryFile(f, "jonckheere-terpstra-trend-test")
-    #     return Response(data)
+    @action(detail=False, methods=["POST"], renderer_classes=(renderers.DocxRenderer,))
+    def word(self, request, *args, **kwargs):
+        analysis = DataFrame([self._run_analysis(request)])
+        binary_stream = build_jonckheereterpstra_docx(analysis)
+        data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
+        return Response(data)
