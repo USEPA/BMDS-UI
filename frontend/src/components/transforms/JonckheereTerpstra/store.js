@@ -26,6 +26,9 @@ class Store {
   }
 
   @observable settings = {
+    dataset_obj: Object.fromEntries(
+      this.columns.map((col) => [col, this.selected_dataset[col]]),
+    ),
     dataset: this.selected_data,
     hypothesis: "increasing",
     model_type: this.model_type,
@@ -96,6 +99,12 @@ class Store {
     this.selected_dataset = this.parseCSVToObjects(
       this.exampleData,
       this.columns,
+    );
+    this.updateSettings(
+      "dataset_obj",
+      Object.fromEntries(
+        this.columns.map((col) => [col, this.selected_dataset[col]]),
+      ),
     );
   }
 
@@ -197,7 +206,7 @@ class Store {
     const url = "/api/v1/jonckheere-terpstra/word/";
     await fetch(url, this.submissionRequest)
       .then((response) => {
-        return getBlob(response, "result.xlsx");
+        return getBlob(response, "result.docx");
       })
       .then(({ blob, filename }) => saveAs(blob, filename));
   }
@@ -209,6 +218,9 @@ class Store {
     );
 
     this.settings = {
+      dataset_obj: Object.fromEntries(
+        this.columns.map((col) => [col, this.selected_dataset[col]]),
+      ),
       dataset: this.selected_data,
       hypothesis: "increasing",
       model_type: this.model_type,

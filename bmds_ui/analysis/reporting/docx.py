@@ -159,14 +159,23 @@ def build_raoscott_docx(analysis: RaoScott) -> BytesIO:
     report.document.save(f)
     return f
 
-def build_jonckheereterpstra_docx(analysis):
+def build_jonckheereterpstra_docx(analysis, dataset):
     report = Report.build_default()
 
     report.document.add_heading("Jonckheere Terpstra Trend Test", 1)
     write_setting_p(report, "Report generated: ", to_timestamp(now()))
     write_current_version_p(report)
+
+    report.document.add_paragraph(
+            "  "
+        )
+
     report.document.add_paragraph(
             df_to_table(report, analysis)
+        )
+    
+    report.document.add_paragraph(
+            df_to_table(report, dataset)
         )
 
     f = BytesIO()

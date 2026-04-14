@@ -309,6 +309,6 @@ class JonckheereTerpstraViewset(viewsets.GenericViewSet):
     @action(detail=False, methods=["POST"], renderer_classes=(renderers.DocxRenderer,))
     def word(self, request, *args, **kwargs):
         analysis = DataFrame([self._run_analysis(request)])
-        binary_stream = build_jonckheereterpstra_docx(analysis)
+        binary_stream = build_jonckheereterpstra_docx(analysis, DataFrame(request.data['dataset_obj']))
         data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
         return Response(data)
