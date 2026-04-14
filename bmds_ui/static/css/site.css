@@ -1,4 +1,9 @@
 /* bootstrap4 overrides */
+body[busy="true"],
+body[busy="true"] * {
+  cursor: wait !important;
+}
+
 label {
   font-weight: bold;
 }

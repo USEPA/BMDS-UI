@@ -24,14 +24,17 @@ class InputForm extends Component {
     const executeClickHandler = async (e) => {
       e?.preventDefault?.();
 
-      const executeButton = document.getElementById("executeButton");
-      const resetButton = document.getElementById("resetButton");
+      const idsToDisable = [
+        "executeButton",
+        "resetButton",
+        "textArea",
+        "dropdown",
+      ];
 
-      document.body.style.cursor = "wait";
-      executeButton.style.cursor = "wait";
-      resetButton.style.cursor = "wait";
-      executeButton.disabled = true;
-      resetButton.disabled = true;
+      document.body.setAttribute("busy", "true");
+      for (const id of idsToDisable) {
+        document.getElementById(id).disabled = true;
+      }
 
       await new Promise(requestAnimationFrame);
 
@@ -39,11 +42,10 @@ class InputForm extends Component {
         // Handles both sync and async submit()
         await Promise.resolve(submit());
       } finally {
-        document.body.style.cursor = "";
-        executeButton.style.cursor = "";
-        resetButton.style.cursor = "";
-        executeButton.disabled = false;
-        resetButton.disabled = false;
+        document.body.removeAttribute("busy");
+        for (const id of idsToDisable) {
+          document.getElementById(id).disabled = false;
+        }
       }
     };
 
@@ -52,6 +54,7 @@ class InputForm extends Component {
         <div className="row">
           <div className="col-lg-4">
             <SelectInput
+              id="dropdown"
               label="Hypothesis"
               choices={hypothesisChoices}
               value={settings.hypothesis}
@@ -63,6 +66,7 @@ class InputForm extends Component {
           </div>
           <div className="col-lg-4">
             <TextAreaInput
+              id="textArea"
               rows={6}
               label="Dataset"
               value={settings.dataset}

@@ -272,7 +272,6 @@ class RaoScottViewset(viewsets.GenericViewSet):
     def excel(self, request, *args, **kwargs):
         analysis = self._run_analysis(request)
         data = BinaryFile(analysis.to_excel(), "rao-scott-transformation")
-        print("RAO SCOT DATA:::::::::::::::::::: ", data)
         return Response(data)
 
     @action(detail=False, methods=["POST"], renderer_classes=(renderers.DocxRenderer,))
