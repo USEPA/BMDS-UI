@@ -45,7 +45,7 @@ urlpatterns = [
     path(f"{edit_pattern}delete/", views.AnalysisDelete.as_view(), name="analysis_delete"),
     path("transforms/polyk/", views.PolyKAdjustment.as_view(), name="polyk"),
     path("transforms/rao-scott/", views.RaoScottAdjustment.as_view(), name="rao-scott"),
-    path("transforms/jonckheere-terpstra/", views.JonckheereTerpstraTrendTest.as_view(), name="jonckheere-terpstra"),
+    path("TrendTests/jonckheere-terpstra/", views.JonckheereTerpstraTrendTest.as_view(), name="jonckheere-terpstra"),
     # errors
     path("401/", common_views.Error401.as_view(), name="401"),
     path("403/", TemplateView.as_view(template_name="403.html"), name="403"),

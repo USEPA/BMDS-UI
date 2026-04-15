@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 
 import DoseResponsePlot from "../common/DoseResponsePlot";
-import CochranArmitage from "../TrendTests/CochranArmitage";
 import DatasetForm from "./DatasetForm";
 import DatasetSelector from "./DatasetSelector";
 import DatasetTable from "./DatasetTable";
@@ -49,10 +48,12 @@ class Data extends Component {
                       className="btn btn-primary"
                       text="Cochran-Armitage Test"
                       onClick={(e) => {
-                        console.log("display CochranArmitage");
+                        dataStore.performCochranArmitage();
                       }}
                     />
-                    <CochranArmitage />
+                    <div id="cochran-armitage-result">
+                      {dataStore.CochranArmitageResult}
+                    </div>
                   </div>
                 )}
               </>

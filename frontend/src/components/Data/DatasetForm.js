@@ -196,7 +196,7 @@ class DatasetForm extends Component {
           {dataStore.rootStore.mainStore.model_type == MODEL_CONTINUOUS ? (
             <a
               className="ml-auto"
-              href="/transforms/jonckheere-terpstra/"
+              href="/TrendTests/jonckheere-terpstra/"
               target="_blank"
               rel="noopener noreferrer"
             >

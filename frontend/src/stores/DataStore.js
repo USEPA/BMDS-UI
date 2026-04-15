@@ -62,9 +62,56 @@ class DataStore {
     this.rootStore = rootStore;
   }
 
+  @observable CochranArmitageResult = null;
   @observable model_type = dc.DATA_CONTINUOUS_SUMMARY;
   @observable datasets = [];
   @observable selectedDatasetId = null;
+
+  // @computed get submissionRequest() {
+  //     return {
+  //       method: "POST",
+  //       mode: "cors",
+  //       headers: getHeaders(this.token),
+  //       body: JSON.stringify(this.settings),
+  //     };
+  //   }
+
+  @action.bound
+  async performCochranArmitage() {
+    this.showCochranArmitage = true;
+    this.CochranArmitageResult = JSON.stringify(this.selectedDataset);
+
+    // const url = "/api/v1/cochran-armitage/";
+    // this.error = null;
+    // await fetch(url, this.submissionRequest)
+    //   .then((response) => {
+    //     if (response.ok) {
+    //       response.json().then((data) => {
+    //         this.outputs = data;
+    //       });
+    //     } else {
+    //       response
+    //         .json()
+    //         .then((data) => {
+    //           this.error = true;
+    //           console.error(data);
+    //           try {
+    //             this.error = JSON.parse(data);
+    //           } catch (err) {
+    //             console.error(err);
+    //           }
+    //         })
+    //         .catch((error) => {
+    //           this.error = true;
+    //           console.error(error);
+    //         });
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     this.error = true;
+    //     console.error(error);
+    //   });
+  }
 
   @action.bound setDefaultsByDatasetType() {
     this.selectedDatasetId = null;
