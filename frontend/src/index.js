@@ -6,7 +6,7 @@ import App from "@/App";
 import { renderPlotlyFigure } from "@/components/common/PlotlyFigure";
 import raoScott from "@/components/transforms/RaoScott";
 import polyk from "@/components/transforms/polyk";
-import jonckheereTerpstra from "@/components/transforms/JonckheereTerpstra";
+import jonckheereTerpstra from "@/components/TrendTests/JonckheereTerpstra";
 import rootStore from "@/stores/RootStore";
 import history from "@/utils/localHistory";
 
