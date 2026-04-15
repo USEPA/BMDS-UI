@@ -74,14 +74,23 @@ class DataStore {
       method: "POST",
       mode: "cors",
       headers: getHeaders(this.rootStore.csrfToken),
-      body: JSON.stringify(this.selectedDataset),
+      body: JSON.stringify(this.settings),
     };
   }
 
   @action.bound
   async performCochranArmitage() {
+    this.selected_data = this.toCSV(this.selectedDataset, [
+      "doses",
+      "ns",
+      "incidences",
+    ]);
+
+    this.settings = {
+      dataset: this.selected_data,
+    };
+
     this.showCochranArmitage = true;
-    this.CochranArmitageResult = JSON.stringify(this.selectedDataset);
 
     const url = "/api/v1/cochran-armitage/";
     this.error = null;
@@ -89,7 +98,7 @@ class DataStore {
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
-            this.outputs = data;
+            this.CochranArmitageResult = JSON.stringify(data);
           });
         } else {
           response
@@ -113,6 +122,24 @@ class DataStore {
         this.error = true;
         console.error(error);
       });
+  }
+
+  toCSV(data, headers) {
+    const rows = Array.from({ length: data[headers[0]].length }, (_, i) =>
+      headers.map((key) => data[key][i]),
+    );
+
+    const filteredRows = rows.filter((row) => {
+      return (
+        Array.isArray(row) && row.some((cell) => cell !== "" && cell !== null)
+      );
+    });
+
+    return (
+      headers.join(",") +
+      "\n" +
+      filteredRows.map((row) => row.join(",")).join("\n")
+    );
   }
 
   @action.bound setDefaultsByDatasetType() {

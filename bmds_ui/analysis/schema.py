@@ -240,6 +240,66 @@ class JonckheereTerpstraInput(BaseModel):
         }
 
         return result_dict
+    
+class CochranArmitage(BaseModel):
+    dataset: str
+
+    @field_validator("dataset", mode="before")
+    @classmethod
+    def clean_dataset(cls, value: str):
+        if len(value) > 10_000:
+            raise ValueError("Dataset too large")
+        return re.sub(r"[,\t ]+", ",", value.strip())
+
+    @model_validator(mode="after")
+    def check_dataset(self):
+        try:
+            df = pd.read_csv(StringIO(self.dataset))
+        except pd.errors.EmptyDataError:
+            raise ValueError("Empty dataset") from None
+
+        required_columns = ["doses", "ns", "incidences"]
+
+        if df.columns.tolist() != required_columns:
+            raise ValueError(f"Bad column names; requires {required_columns}")
+
+        if not all_numeric_and_finite(df):
+            raise ValueError("All data must be numeric and finite")
+
+        if not (df["doses"] >= 0).all():
+            raise ValueError("`doses` must be ≥ 0")
+        
+        if df.doses.nunique() != df.doses.size:
+            raise ValueError("`dose` must be unique")
+
+        if not (df.ns > 0).all():
+            raise ValueError("`n` must be > 0")
+
+        if not (df.incidences >= 0).all():
+            raise ValueError("`incidence` must be ≥ 0")
+
+        min_non_incidence = (df.ns - df.incidences).min()
+        if min_non_incidence < 0:
+            raise ValueError("`incidence` must be ≤ `n`")
+
+        return self
+
+    def calculate(self):
+        df = pd.read_csv(StringIO(self.dataset)).sort_values(["doses"])
+        dataset = DichotomousDataset(
+            doses=df.doses.tolist(),
+            ns=df.ns.tolist(),
+            incidences=df.incidences.tolist(),
+        )
+        result = dataset.trend()
+
+        result_dict = {
+            "Statistic": result.statistic,
+            "P-Value (Asymptotic)": f"{result.p_value_asymptotic:.4e}",
+            "P-Value (Exact) ": f"{result.p_value_exact:.4e}"
+        }
+
+        return result_dict
 
 
 def add_schemas(schema: dict, models: list):

@@ -322,11 +322,11 @@ class JonckheereTerpstraViewset(viewsets.GenericViewSet):
 class CochranArmitageViewset(viewsets.GenericViewSet):
     queryset = models.Analysis.objects.none() # not needed
     serializer_class = UnusedSerializer # not needed, pydantic is used instead
-    schema = AutoSchema(operation_id_base="JonckheereTerpstra") 
+    schema = AutoSchema(operation_id_base="CochranArmitage") 
 
     def _run_analysis(self, request):
         try:
-            settings = pydantic_validate(request.data, schema.JonckheereTerpstraInput)
+            settings = pydantic_validate(request.data, schema.CochranArmitage)
         except ValidationError as err:
             raise exceptions.ValidationError(err.message) from None
         analysis = settings.calculate()
@@ -336,22 +336,22 @@ class CochranArmitageViewset(viewsets.GenericViewSet):
         analysis = self._run_analysis(request)
         return Response({"answer": analysis})
 
-    @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
-    def excel(self, request, *args, **kwargs):
-        binary_stream = BytesIO()
-        with ExcelWriter(binary_stream, engine="openpyxl") as writer:
-            DataFrame([self._run_analysis(request)]).to_excel(
-            writer, index=False, sheet_name="Analysis"
-        )
-            DataFrame(request.data["dataset_obj"]).to_excel(writer, index=False, sheet_name="Dataset")
+    # @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
+    # def excel(self, request, *args, **kwargs):
+    #     binary_stream = BytesIO()
+    #     with ExcelWriter(binary_stream, engine="openpyxl") as writer:
+    #         DataFrame([self._run_analysis(request)]).to_excel(
+    #         writer, index=False, sheet_name="Analysis"
+    #     )
+    #         DataFrame(request.data["dataset_obj"]).to_excel(writer, index=False, sheet_name="Dataset")
 
-        binary_stream.seek(0)
-        data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
-        return Response(data)
+    #     binary_stream.seek(0)
+    #     data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
+    #     return Response(data)
 
-    @action(detail=False, methods=["POST"], renderer_classes=(renderers.DocxRenderer,))
-    def word(self, request, *args, **kwargs):
-        analysis = DataFrame([self._run_analysis(request)])
-        binary_stream = build_jonckheereterpstra_docx(analysis, DataFrame(request.data['dataset_obj']))
-        data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
-        return Response(data)
+    # @action(detail=False, methods=["POST"], renderer_classes=(renderers.DocxRenderer,))
+    # def word(self, request, *args, **kwargs):
+    #     analysis = DataFrame([self._run_analysis(request)])
+    #     binary_stream = build_jonckheereterpstra_docx(analysis, DataFrame(request.data['dataset_obj']))
+    #     data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
+    #     return Response(data)
