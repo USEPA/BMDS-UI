@@ -27,6 +27,9 @@ const Root = (
 
 const appStartup = function (el) {
   history.log();
+  rootStore.csrfToken = document.getElementsByName(
+    "csrfmiddlewaretoken",
+  )[0].value;
   ReactDOM.render(Root, el);
 };
 

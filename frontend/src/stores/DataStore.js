@@ -59,8 +59,9 @@ let validateTabularData = function (text, columns) {
 };
 
 class DataStore {
-  constructor(rootStore) {
+  constructor(rootStore, token) {
     this.rootStore = rootStore;
+    this.token = token;
   }
 
   @observable CochranArmitageResult = null;
@@ -72,9 +73,7 @@ class DataStore {
     return {
       method: "POST",
       mode: "cors",
-      // headers: getHeaders(this.token),
-      // body: JSON.stringify(this.settings),
-      headers: getHeaders("abcdsefjfsg"),
+      headers: getHeaders(this.rootStore.csrfToken),
       body: JSON.stringify(this.selectedDataset),
     };
   }
@@ -83,7 +82,6 @@ class DataStore {
   async performCochranArmitage() {
     this.showCochranArmitage = true;
     this.CochranArmitageResult = JSON.stringify(this.selectedDataset);
-    console.log(this.rootStore);
 
     const url = "/api/v1/cochran-armitage/";
     this.error = null;
