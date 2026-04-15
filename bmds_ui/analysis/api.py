@@ -7,7 +7,7 @@ from rest_framework.schemas.openapi import AutoSchema
 
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott
-from pandas import DataFrame
+from pandas import DataFrame, ExcelWriter
 from io import BytesIO
 
 from ..common import renderers
@@ -302,7 +302,13 @@ class JonckheereTerpstraViewset(viewsets.GenericViewSet):
     @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
     def excel(self, request, *args, **kwargs):
         binary_stream = BytesIO()
-        DataFrame([self._run_analysis(request)]).to_excel(binary_stream, index=False)
+        with ExcelWriter(binary_stream, engine="openpyxl") as writer:
+            DataFrame([self._run_analysis(request)]).to_excel(
+            writer, index=False, sheet_name="Analysis"
+        )
+            DataFrame(request.data["dataset_obj"]).to_excel(writer, index=False, sheet_name="Dataset")
+
+        binary_stream.seek(0)
         data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
         return Response(data)
 

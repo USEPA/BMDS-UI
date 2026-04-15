@@ -1,4 +1,3 @@
-import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import _ from "lodash";
 import { action, computed, observable } from "mobx";
@@ -173,32 +172,11 @@ class Store {
   @action.bound
   async downloadExcel() {
     const url = "/api/v1/jonckheere-terpstra/excel/";
-
     await fetch(url, this.submissionRequest)
       .then((response) => {
         return getBlob(response, "result.xlsx");
       })
-      .then(async ({ blob, filename }) => {
-        const columns = this.columns;
-        const rows = this.selected_dataset[columns[0]].map((_, i) =>
-          Object.fromEntries(
-            columns.map((col) => [col, this.selected_dataset[col][i]]),
-          ),
-        );
-        const arrayBuffer = await blob.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type: "array" });
-
-        // Rename the first sheet to 'results'
-        const firstSheet = workbook.Sheets["Sheet1"];
-        delete workbook.Sheets["Sheet1"];
-        workbook.Sheets["results"] = firstSheet;
-        workbook.SheetNames[0] = "results";
-
-        const worksheet = XLSX.utils.json_to_sheet(rows);
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Dataset");
-
-        XLSX.writeFile(workbook, filename);
-      });
+      .then(({ blob, filename }) => saveAs(blob, filename));
   }
 
   @action.bound
