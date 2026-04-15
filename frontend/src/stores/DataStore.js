@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { action, computed, observable, toJS } from "mobx";
 
+import { getHeaders } from "../common";
 import * as dc from "@/constants/dataConstants";
 import {
   columns,
@@ -67,50 +68,53 @@ class DataStore {
   @observable datasets = [];
   @observable selectedDatasetId = null;
 
-  // @computed get submissionRequest() {
-  //     return {
-  //       method: "POST",
-  //       mode: "cors",
-  //       headers: getHeaders(this.token),
-  //       body: JSON.stringify(this.settings),
-  //     };
-  //   }
+  @computed get submissionRequest() {
+    return {
+      method: "POST",
+      mode: "cors",
+      // headers: getHeaders(this.token),
+      // body: JSON.stringify(this.settings),
+      headers: getHeaders("abcdsefjfsg"),
+      body: JSON.stringify(this.selectedDataset),
+    };
+  }
 
   @action.bound
   async performCochranArmitage() {
     this.showCochranArmitage = true;
     this.CochranArmitageResult = JSON.stringify(this.selectedDataset);
+    console.log(this.rootStore);
 
-    // const url = "/api/v1/cochran-armitage/";
-    // this.error = null;
-    // await fetch(url, this.submissionRequest)
-    //   .then((response) => {
-    //     if (response.ok) {
-    //       response.json().then((data) => {
-    //         this.outputs = data;
-    //       });
-    //     } else {
-    //       response
-    //         .json()
-    //         .then((data) => {
-    //           this.error = true;
-    //           console.error(data);
-    //           try {
-    //             this.error = JSON.parse(data);
-    //           } catch (err) {
-    //             console.error(err);
-    //           }
-    //         })
-    //         .catch((error) => {
-    //           this.error = true;
-    //           console.error(error);
-    //         });
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     this.error = true;
-    //     console.error(error);
-    //   });
+    const url = "/api/v1/cochran-armitage/";
+    this.error = null;
+    await fetch(url, this.submissionRequest)
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            this.outputs = data;
+          });
+        } else {
+          response
+            .json()
+            .then((data) => {
+              this.error = true;
+              console.error(data);
+              try {
+                this.error = JSON.parse(data);
+              } catch (err) {
+                console.error(err);
+              }
+            })
+            .catch((error) => {
+              this.error = true;
+              console.error(error);
+            });
+        }
+      })
+      .catch((error) => {
+        this.error = true;
+        console.error(error);
+      });
   }
 
   @action.bound setDefaultsByDatasetType() {

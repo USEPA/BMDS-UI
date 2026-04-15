@@ -7,7 +7,7 @@ from rest_framework.routers import SimpleRouter
 from rest_framework.schemas import get_schema_view
 
 from ..analysis import schema, views
-from ..analysis.api import AnalysisViewset, PolyKViewset, RaoScottViewset, JonckheereTerpstraViewset
+from ..analysis.api import AnalysisViewset, PolyKViewset, RaoScottViewset, JonckheereTerpstraViewset, CochranArmitageViewset
 from ..common import views as common_views
 from ..common.api import HealthcheckViewset
 from .constants import AuthProvider
@@ -21,6 +21,7 @@ router.register("analysis", AnalysisViewset, basename="analysis")
 router.register("polyk", PolyKViewset, basename="polyk")
 router.register("rao-scott", RaoScottViewset, basename="rao-scott")
 router.register("jonckheere-terpstra", JonckheereTerpstraViewset, basename="jonckheere-terpstra")
+router.register("cochran-armitage", CochranArmitageViewset, basename="cochran-armitage")
 router.register(healthcheck_url, HealthcheckViewset, basename="healthcheck")
 
 edit_pattern = "analysis/<uuid:pk>/<str:password>/"
