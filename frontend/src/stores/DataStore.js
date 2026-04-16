@@ -98,7 +98,7 @@ class DataStore {
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
-            this.CochranArmitageResult = JSON.stringify(data);
+            this.CochranArmitageResult = data.answer;
           });
         } else {
           response

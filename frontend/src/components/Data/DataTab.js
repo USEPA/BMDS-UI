@@ -8,6 +8,7 @@ import DatasetSelector from "./DatasetSelector";
 import DatasetTable from "./DatasetTable";
 import SelectModelType from "./SelectModelType";
 import Button from "../common/Button";
+import Table from "../common/Table";
 
 import { MODEL_DICHOTOMOUS } from "@/constants/mainConstants";
 
@@ -16,6 +17,11 @@ import { MODEL_DICHOTOMOUS } from "@/constants/mainConstants";
 class Data extends Component {
   render() {
     const { dataStore } = this.props;
+    const cochranArmitageLabels = [
+      "Statistic",
+      "P-Value (Asymptotic)",
+      "P-Value (Exact) ",
+    ];
     return (
       <div className="container-fluid">
         <div className="row">
@@ -52,7 +58,24 @@ class Data extends Component {
                       }}
                     />
                     <div id="cochran-armitage-result">
-                      {dataStore.CochranArmitageResult}
+                      {dataStore.CochranArmitageResult && (
+                        <>
+                          <div className="col-12" style={{ maxWidth: 500 }}>
+                            <br></br>
+                            <Table
+                              data={{
+                                headers: ["Metric", "Value"],
+                                rows: cochranArmitageLabels.map((label) => [
+                                  label,
+                                  dataStore.CochranArmitageResult[label],
+                                ]),
+                                tblClasses:
+                                  "table table-sm table-striped table-hover text-right",
+                              }}
+                            />
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 )}

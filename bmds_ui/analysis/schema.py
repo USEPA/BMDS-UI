@@ -294,7 +294,7 @@ class CochranArmitage(BaseModel):
         result = dataset.trend()
 
         result_dict = {
-            "Statistic": result.statistic,
+            "Statistic": f"{result.statistic:.4f}",
             "P-Value (Asymptotic)": f"{result.p_value_asymptotic:.4e}",
             "P-Value (Exact) ": f"{result.p_value_exact:.4e}"
         }
