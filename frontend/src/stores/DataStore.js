@@ -65,6 +65,7 @@ class DataStore {
   }
 
   @observable CochranArmitageResult = null;
+  @observable canRunCochranArmitage = false;
   @observable model_type = dc.DATA_CONTINUOUS_SUMMARY;
   @observable datasets = [];
   @observable selectedDatasetId = null;
@@ -76,6 +77,14 @@ class DataStore {
       headers: getHeaders(this.rootStore.csrfToken),
       body: JSON.stringify(this.settings),
     };
+  }
+
+  datasetChanged() {
+    localStorage.setItem(
+      "selected_dataset",
+      JSON.stringify(this.selectedDataset),
+    );
+    this.canRunCochranArmitage = true;
   }
 
   @action.bound
@@ -90,8 +99,6 @@ class DataStore {
       dataset: this.selected_data,
     };
 
-    this.showCochranArmitage = true;
-
     const url = "/api/v1/cochran-armitage/";
     this.error = null;
     await fetch(url, this.submissionRequest)
@@ -99,8 +106,11 @@ class DataStore {
         if (response.ok) {
           response.json().then((data) => {
             this.CochranArmitageResult = data.answer;
+            this.canRunCochranArmitage = false;
           });
         } else {
+          this.CochranArmitageResult = null;
+          this.canRunCochranArmitage = true;
           response
             .json()
             .then((data) => {
@@ -137,6 +147,10 @@ class DataStore {
   @action.bound setSelectedDataset(id) {
     this.selectedDatasetId = id;
 
+    if (this.model_type === "DM") {
+      this.performCochranArmitage();
+    }
+
     localStorage.setItem(
       "selected_dataset",
       JSON.stringify(this.selectedDataset),
@@ -166,6 +180,11 @@ class DataStore {
     this.updateOptionDegree(dataset);
 
     localStorage.setItem("selected_dataset", JSON.stringify(dataset));
+
+    if (this.model_type === "DM") {
+      this.CochranArmitageResult = null;
+      this.canRunCochranArmitage = false;
+    }
   }
 
   @action.bound updateOptionDegree() {
@@ -179,10 +198,7 @@ class DataStore {
     _.extend(this.selectedDataset, exampleData);
     this.updateOptionDegree(this.selectedDataset);
 
-    localStorage.setItem(
-      "selected_dataset",
-      JSON.stringify(this.selectedDataset),
-    );
+    this.datasetChanged();
   }
 
   @action.bound cleanRows() {
@@ -223,10 +239,7 @@ class DataStore {
     this.updateOptionDegree(dataset);
     this.rootStore.mainStore.setInputsChangedFlag();
 
-    localStorage.setItem(
-      "selected_dataset",
-      JSON.stringify(this.selectedDataset),
-    );
+    this.datasetChanged();
   };
 
   @action.bound saveDatasetCellItem(key, value, rowIdx) {
@@ -237,10 +250,7 @@ class DataStore {
     }
     this.rootStore.mainStore.setInputsChangedFlag();
 
-    localStorage.setItem(
-      "selected_dataset",
-      JSON.stringify(this.selectedDataset),
-    );
+    this.datasetChanged();
   }
 
   @action.bound changeColumnName(name, value) {

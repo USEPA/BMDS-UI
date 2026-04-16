@@ -10,7 +10,10 @@ import SelectModelType from "./SelectModelType";
 import Button from "../common/Button";
 import Table from "../common/Table";
 
-import { MODEL_DICHOTOMOUS } from "@/constants/mainConstants";
+import {
+  MODEL_DICHOTOMOUS,
+  MODEL_MULTI_TUMOR,
+} from "@/constants/mainConstants";
 
 @inject("dataStore")
 @observer
@@ -47,17 +50,20 @@ class Data extends Component {
                   layout={dataStore.drPlotLayout}
                   data={dataStore.drPlotData}
                 />
-                {dataStore.rootStore.mainStore.model_type ===
-                  MODEL_DICHOTOMOUS && (
+                {[MODEL_DICHOTOMOUS, MODEL_MULTI_TUMOR].includes(
+                  dataStore.rootStore.mainStore.model_type,
+                ) && (
                   <div style={{ paddingTop: "2px" }}>
                     <Button
+                      id="cochranArmitageButton"
                       className="btn btn-primary"
                       text="Cochran-Armitage Test"
+                      disabled={!dataStore.canRunCochranArmitage}
                       onClick={(e) => {
                         dataStore.performCochranArmitage();
                       }}
                     />
-                    <div id="cochran-armitage-result">
+                    <div>
                       {dataStore.CochranArmitageResult && (
                         <>
                           <div className="col-12" style={{ maxWidth: 500 }}>
