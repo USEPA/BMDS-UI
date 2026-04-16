@@ -2,7 +2,7 @@ import { saveAs } from "file-saver";
 import _ from "lodash";
 import { action, computed, observable } from "mobx";
 
-import { getBlob, getHeaders } from "../../../common";
+import { getBlob, getHeaders, toCSV, parseCSVToObjects } from "../../../common";
 import { exampleDataIndividual, exampleDataSummary } from "./constants";
 class Store {
   constructor(token) {
@@ -21,7 +21,7 @@ class Store {
       this.columns = ["doses", "ns", "means", "stdevs"];
     }
 
-    this.selected_data = this.toCSV(this.selected_dataset, this.columns);
+    this.selected_data = toCSV(this.selected_dataset, this.columns);
   }
 
   @observable settings = {
@@ -36,57 +36,6 @@ class Store {
   @observable errorObject = null;
   @observable outputs = null;
 
-  parseCSVToObjects(csv, columns) {
-    if (
-      typeof csv !== "string" ||
-      !Array.isArray(columns) ||
-      columns.length === 0
-    ) {
-      return {};
-    }
-
-    const lines = csv.split(/\r?\n/);
-
-    const headerMatches =
-      lines.length > 0 &&
-      lines[0].split(",").length === columns.length &&
-      lines[0] === columns.join(",");
-
-    const dataLines = headerMatches ? lines.slice(1) : lines;
-
-    const result = {};
-    columns.forEach((key) => (result[key] = []));
-
-    for (const line of dataLines) {
-      if (line.length === 0) continue; // skip completely empty lines
-      const cells = line.split(",");
-      for (let i = 0; i < columns.length; i++) {
-        const raw = cells[i] !== undefined ? cells[i] : "";
-        result[columns[i]].push(raw === "" || /^na$/i.test(raw) ? null : raw);
-      }
-    }
-
-    return result;
-  }
-
-  toCSV(data, headers) {
-    const rows = Array.from({ length: data[headers[0]].length }, (_, i) =>
-      headers.map((key) => data[key][i]),
-    );
-
-    const filteredRows = rows.filter((row) => {
-      return (
-        Array.isArray(row) && row.some((cell) => cell !== "" && cell !== null)
-      );
-    });
-
-    return (
-      headers.join(",") +
-      "\n" +
-      filteredRows.map((row) => row.join(",")).join("\n")
-    );
-  }
-
   @action.bound
   updateSettings(key, value) {
     this.settings[key] = value;
@@ -95,10 +44,7 @@ class Store {
   @action.bound
   loadExampleData() {
     this.updateSettings("dataset", this.exampleData);
-    this.selected_dataset = this.parseCSVToObjects(
-      this.exampleData,
-      this.columns,
-    );
+    this.selected_dataset = parseCSVToObjects(this.exampleData, this.columns);
     this.updateSettings(
       "dataset_obj",
       Object.fromEntries(

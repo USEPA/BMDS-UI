@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { action, computed, observable, toJS } from "mobx";
 
-import { getHeaders } from "../common";
+import { getHeaders, toCSV } from "../common";
 import * as dc from "@/constants/dataConstants";
 import {
   columns,
@@ -80,7 +80,7 @@ class DataStore {
 
   @action.bound
   async performCochranArmitage() {
-    this.selected_data = this.toCSV(this.selectedDataset, [
+    this.selected_data = toCSV(this.selectedDataset, [
       "doses",
       "ns",
       "incidences",
@@ -122,24 +122,6 @@ class DataStore {
         this.error = true;
         console.error(error);
       });
-  }
-
-  toCSV(data, headers) {
-    const rows = Array.from({ length: data[headers[0]].length }, (_, i) =>
-      headers.map((key) => data[key][i]),
-    );
-
-    const filteredRows = rows.filter((row) => {
-      return (
-        Array.isArray(row) && row.some((cell) => cell !== "" && cell !== null)
-      );
-    });
-
-    return (
-      headers.join(",") +
-      "\n" +
-      filteredRows.map((row) => row.join(",")).join("\n")
-    );
   }
 
   @action.bound setDefaultsByDatasetType() {

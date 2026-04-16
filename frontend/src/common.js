@@ -40,4 +40,53 @@ export const simulateClick = function (el) {
       match = header.match(/filename="(.*)"/),
       filename = match ? match[1] : defaultName;
     return response.blob().then((blob) => ({ blob, filename }));
+  },
+  parseCSVToObjects = function (csv, columns) {
+    if (
+      typeof csv !== "string" ||
+      !Array.isArray(columns) ||
+      columns.length === 0
+    ) {
+      return {};
+    }
+
+    const lines = csv.split(/\r?\n/);
+
+    const headerMatches =
+      lines.length > 0 &&
+      lines[0].split(",").length === columns.length &&
+      lines[0] === columns.join(",");
+
+    const dataLines = headerMatches ? lines.slice(1) : lines;
+
+    const result = {};
+    columns.forEach((key) => (result[key] = []));
+
+    for (const line of dataLines) {
+      if (line.length === 0) continue; // skip completely empty lines
+      const cells = line.split(",");
+      for (let i = 0; i < columns.length; i++) {
+        const raw = cells[i] !== undefined ? cells[i] : "";
+        result[columns[i]].push(raw === "" || /^na$/i.test(raw) ? null : raw);
+      }
+    }
+
+    return result;
+  },
+  toCSV = function (data, headers) {
+    const rows = Array.from({ length: data[headers[0]].length }, (_, i) =>
+      headers.map((key) => data[key][i]),
+    );
+
+    const filteredRows = rows.filter((row) => {
+      return (
+        Array.isArray(row) && row.some((cell) => cell !== "" && cell !== null)
+      );
+    });
+
+    return (
+      headers.join(",") +
+      "\n" +
+      filteredRows.map((row) => row.join(",")).join("\n")
+    );
   };
