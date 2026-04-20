@@ -14,7 +14,7 @@ from ..common import renderers
 from ..common.renderers import BinaryFile
 from ..common.serializers import UnusedSerializer
 from ..common.task_cache import ReportStatus
-from ..common.utils import get_bool
+from ..common.utils import get_bool, to_csv
 from ..common.validation import pydantic_validate
 from . import models, schema, serializers, validators
 from .reporting.cache import DocxReportCache, ExcelReportCache
@@ -98,6 +98,14 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         instance.refresh_from_db()
         serializer = self.get_serializer(instance)
+
+        try:
+            ca_settings = pydantic_validate({"dataset": to_csv(instance.inputs["datasets"][0], ["doses","ns","incidences"])}, schema.CochranArmitage)
+            ca_result = ca_settings.calculate()
+            print(ca_result)
+        except ValidationError as err:
+            raise exceptions.ValidationError(err.message) from None
+
         return Response(serializer.data)
 
     @action(detail=True, methods=("post",), url_path="select-model")
@@ -318,7 +326,8 @@ class JonckheereTerpstraViewset(viewsets.GenericViewSet):
         binary_stream = build_jonckheereterpstra_docx(analysis, DataFrame(request.data['dataset_obj']))
         data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
         return Response(data)
-    
+
+
 class CochranArmitageViewset(viewsets.GenericViewSet):
     queryset = models.Analysis.objects.none() # not needed
     serializer_class = UnusedSerializer # not needed, pydantic is used instead

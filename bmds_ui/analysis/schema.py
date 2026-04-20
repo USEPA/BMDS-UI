@@ -240,6 +240,7 @@ class JonckheereTerpstraInput(BaseModel):
         }
 
         return result_dict
+ 
     
 class CochranArmitage(BaseModel):
     dataset: str

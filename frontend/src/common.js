@@ -80,7 +80,8 @@ export const simulateClick = function (el) {
 
     const filteredRows = rows.filter((row) => {
       return (
-        Array.isArray(row) && row.some((cell) => cell !== "" && cell !== null)
+        Array.isArray(row) &&
+        row.some((cell) => cell !== "" && cell != null && !Number.isNaN(cell))
       );
     });
 
