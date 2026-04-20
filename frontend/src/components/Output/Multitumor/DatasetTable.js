@@ -1,51 +1,68 @@
 import _ from "lodash";
-import {inject, observer} from "mobx-react";
+import { inject, observer } from "mobx-react";
 import PropTypes from "prop-types";
-import React, {Component} from "react";
+import React, { Component } from "react";
 
 import Table from "@/components/common/Table";
 
-const getData = datasets => {
-    const headers = ["Dose"],
-        rows = [],
-        doses = new Set();
+const getData = (datasets) => {
+  const headers = ["Dose"],
+    rows = [],
+    doses = new Set();
 
-    datasets.forEach(dataset => {
-        headers.push(dataset.metadata.name);
-        dataset.doses.forEach(dose => doses.add(dose));
-    });
+  datasets.forEach((dataset) => {
+    headers.push(dataset.metadata.name);
+    dataset.doses.forEach((dose) => doses.add(dose));
+  });
 
-    const doseArr = [...doses].sort((a, b) => a - b);
-    doseArr.forEach(dose => {
-        const thisRow = [dose];
-        rows.push(thisRow);
-        datasets.forEach(dataset => {
-            const idx = _.findIndex(dataset.doses, d => d == dose);
-            if (idx >= 0) {
-                thisRow.push(`${dataset.incidences[idx]}/${dataset.ns[idx]}`);
-            } else {
-                thisRow.push("-");
-            }
-        });
+  const doseArr = [...doses].sort((a, b) => a - b);
+  doseArr.forEach((dose) => {
+    const thisRow = [dose];
+    rows.push(thisRow);
+    datasets.forEach((dataset) => {
+      const idx = _.findIndex(dataset.doses, (d) => d == dose);
+      if (idx >= 0) {
+        thisRow.push(`${dataset.incidences[idx]}/${dataset.ns[idx]}`);
+      } else {
+        thisRow.push("-");
+      }
     });
-    return {tblClasses: "table table-sm text-right col-l-1", headers, rows};
+  });
+  return { tblClasses: "table table-sm text-right col-l-1", headers, rows };
+};
+
+const getCochranArmitageData = (datasets, cochranArmitageResults) => {
+  const headers = ["Cochran-Armitage", ...datasets.map((d) => d.metadata.name)];
+  const keys = Object.keys(cochranArmitageResults[0]);
+  const rows = keys.map((k) => [k, ...cochranArmitageResults.map((r) => r[k])]);
+  return { tblClasses: "table table-sm text-right col-l-1", headers, rows };
 };
 
 @inject("outputStore")
 @observer
 class DatasetTable extends Component {
-    render() {
-        const store = this.props.outputStore,
-            {selectedFrequentist} = store;
+  render() {
+    const store = this.props.outputStore,
+      { selectedFrequentist } = store;
 
-        if (!selectedFrequentist) {
-            return null;
-        }
-        return <Table data={getData(store.multitumorDatasets)} />;
+    if (!selectedFrequentist) {
+      return null;
     }
+    return (
+      <>
+        <Table data={getData(store.multitumorDatasets)} />
+        <Table
+          data={getCochranArmitageData(
+            store.multitumorDatasets,
+            store.cochranArmitage,
+          )}
+        />
+      </>
+    );
+  }
 }
 DatasetTable.propTypes = {
-    outputStore: PropTypes.object,
+  outputStore: PropTypes.object,
 };
 
 export default DatasetTable;

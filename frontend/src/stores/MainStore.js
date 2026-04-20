@@ -182,8 +182,13 @@ class MainStore {
         if (data.is_executing) {
           setTimeout(pollForResults, pollInterval);
         } else {
-          console.log("Analysis Result: ", data);
           this.updateModelStateFromApi(data);
+
+          console.log("Analysis Result: ", data);
+          console.log(
+            "cochranArmitage",
+            this.rootStore.outputStore.cochranArmitage,
+          );
           simulateClick(document.getElementById("navlink-output"));
         }
       })
@@ -248,7 +253,13 @@ class MainStore {
     this.isExecuting = data.is_executing;
     if (data.outputs) {
       this.executionOutputs = data.outputs.outputs;
+
+      if (data.cochran_armitage_result) {
+        this.rootStore.outputStore.cochranArmitage =
+          data.cochran_armitage_result;
+      }
     }
+
     // unpack general settings
     this.analysis_name = inputs.analysis_name;
     this.analysis_description = inputs.analysis_description;

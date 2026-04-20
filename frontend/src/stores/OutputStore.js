@@ -41,6 +41,7 @@ class OutputStore {
   @observable drModelAverageModal = false;
   @observable showBMDLine = false;
   @observable showInlineNotes = false;
+  @observable cochranArmitage = null;
 
   @action.bound toggleInlineNotes() {
     this.showInlineNotes = !this.showInlineNotes;
@@ -93,7 +94,6 @@ class OutputStore {
   @computed get selectedFrequentist() {
     const output = this.selectedOutput;
     if (output) {
-      console.log(output.frequentist);
       return output.frequentist || output.session || null;
     }
     return null;

@@ -99,12 +99,16 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         instance.refresh_from_db()
         serializer = self.get_serializer(instance)
 
-        try:
-            ca_settings = pydantic_validate({"dataset": to_csv(instance.inputs["datasets"][0], ["doses","ns","incidences"])}, schema.CochranArmitage)
-            ca_result = ca_settings.calculate()
-            print(ca_result)
-        except ValidationError as err:
-            raise exceptions.ValidationError(err.message) from None
+        # Perform Cochran Armitage for Dichotomous Model
+        cochran_armitage_results = []
+        if instance.inputs["datasets"][0]["metadata"]["model_type"] == "DM":
+            for dataset in instance.inputs["datasets"]:
+                try:
+                    cochran_armitage_settings = pydantic_validate({"dataset": to_csv(dataset, ["doses","ns","incidences"])}, schema.CochranArmitage)
+                    cochran_armitage_results.append(cochran_armitage_settings.calculate())
+                except ValidationError as err:
+                    raise exceptions.ValidationError(err.message) from None  
+            return Response({**serializer.data, "cochran_armitage_result": cochran_armitage_results})    
 
         return Response(serializer.data)
 
