@@ -32,8 +32,11 @@ const getData = (datasets) => {
 };
 
 const getCochranArmitageData = (datasets, cochranArmitageResults) => {
+  console.log("results: ", cochranArmitageResults);
   const headers = ["Cochran-Armitage", ...datasets.map((d) => d.metadata.name)];
-  const keys = Object.keys(cochranArmitageResults[0]);
+  const keys = Object.keys(cochranArmitageResults[0]).filter(
+    (k) => k !== "name",
+  );
   const rows = keys.map((k) => [k, ...cochranArmitageResults.map((r) => r[k])]);
   return { tblClasses: "table table-sm text-right col-l-1", headers, rows };
 };

@@ -12,6 +12,7 @@ class ExcelReportCache(ReportCache):
         return tasks.generate_excel.delay(str(self.analysis.id))
 
     def create(self) -> BytesIO:
+        print("self.analysis: ", self.analysis)
         return self.analysis.to_excel()
 
 

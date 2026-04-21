@@ -10,8 +10,6 @@ class CochranArmitageTable extends Component {
     const { outputStore } = this.props,
       { selectedDatasetCochranArmitage } = outputStore;
 
-    console.log("reached CA table");
-
     const rows = Object.entries(selectedDatasetCochranArmitage).map(
       ([k, v]) => [k, v],
     );
@@ -28,7 +26,7 @@ class CochranArmitageTable extends Component {
           </colgroup>
           <tbody>
             {rows
-              .filter((d) => !_.isNull(d))
+              .filter((d) => !_.isNull(d) && d[0] !== "name")
               .map((d, i) => {
                 return (
                   <tr key={i}>

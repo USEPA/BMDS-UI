@@ -99,18 +99,31 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         instance.refresh_from_db()
         serializer = self.get_serializer(instance)
 
-        # Perform Cochran Armitage for Dichotomous Model
-        cochran_armitage_results = []
+        cochran_armitage_result = []
         if instance.inputs["datasets"][0]["metadata"]["model_type"] == "DM":
             for dataset in instance.inputs["datasets"]:
                 try:
-                    cochran_armitage_settings = pydantic_validate({"dataset": to_csv(dataset, ["doses","ns","incidences"])}, schema.CochranArmitage)
-                    cochran_armitage_results.append(cochran_armitage_settings.calculate())
+                    settings = pydantic_validate(
+                        {"dataset": to_csv(dataset, ["doses", "ns", "incidences"])},
+                        schema.CochranArmitage
+                    )
+                    result = settings.calculate()
+                    result["name"] = dataset.get("metadata", {}).get("name")
+                    cochran_armitage_result.append(result)
                 except ValidationError as err:
-                    raise exceptions.ValidationError(err.message) from None  
-            return Response({**serializer.data, "cochran_armitage_result": cochran_armitage_results})    
+                    raise exceptions.ValidationError(str(err)) from None
 
-        return Response(serializer.data)
+        # Persist results so other requests (e.g., excel) can access them
+        # Assume instance.outputs is a JSONField (dict-like)
+        outputs = (instance.outputs or {}).copy()
+        outputs["cochran_armitage_result"] = cochran_armitage_result
+        instance.outputs = outputs
+        instance.save(update_fields=["outputs"])
+
+        payload = {**serializer.data}
+        if cochran_armitage_result:
+            payload["cochran_armitage_result"] = cochran_armitage_result
+        return Response(payload)
 
     @action(detail=True, methods=("post",), url_path="select-model")
     def select_model(self, request, *args, **kwargs):
@@ -153,16 +166,53 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
+    def _compute_cochran_armitage(self, instance):
+        cochran_armitage_result = []
+        try:
+            if instance.inputs["datasets"][0]["metadata"]["model_type"] == "DM":
+                for dataset in instance.inputs["datasets"]:
+                    settings = pydantic_validate(
+                        {"dataset": to_csv(dataset, ["doses", "ns", "incidences"])},
+                        schema.CochranArmitage
+                    )
+                    result = settings.calculate()
+                    result["name"] = dataset.get("metadata", {}).get("name")
+                    cochran_armitage_result.append(result)
+        except ValidationError as err:
+            raise exceptions.ValidationError(str(err)) from None
+        return cochran_armitage_result
+
     @action(detail=True, renderer_classes=(renderers.XlsxRenderer,))
     def excel(self, request, *args, **kwargs):
-        """
-        Return Excel export of outputs for selected analysis
-        """
         instance = self.get_object()
         cache = ExcelReportCache(analysis=instance)
         response = cache.request_content()
-        if response.status is ReportStatus.COMPLETE:
-            cache.delete()  # destroy from cache; request is now complete
+
+        if response.status == ReportStatus.COMPLETE:
+            cache.delete()
+
+            # Fetch persisted results or compute on the fly
+            cochran_armitage_result = (instance.outputs or {}).get("cochran_armitage_result")
+            if cochran_armitage_result is None:
+                cochran_armitage_result = self._compute_cochran_armitage(instance)
+
+            if cochran_armitage_result:
+                binary_stream = response.content  # should be a BytesIO-like object
+                binary_stream.seek(0)
+                with ExcelWriter(binary_stream, engine="openpyxl", mode="a") as writer:
+                    df = (
+                        DataFrame(cochran_armitage_result)
+                        .set_index("name")
+                        .T
+                        .rename_axis("Cochran-Armitage")
+                        .reset_index()
+                    )
+                    df.to_excel(writer, index=False, sheet_name="Cochran Armitage")
+
+                data = renderers.BinaryFile(data=binary_stream, filename=instance.slug)
+                return Response(data)
+
+            # return the base report
             data = renderers.BinaryFile(data=response.content, filename=instance.slug)
             return Response(data)
 
@@ -348,23 +398,3 @@ class CochranArmitageViewset(viewsets.GenericViewSet):
     def create(self, request, *args, **kwargs):
         analysis = self._run_analysis(request)
         return Response({"answer": analysis})
-
-    # @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
-    # def excel(self, request, *args, **kwargs):
-    #     binary_stream = BytesIO()
-    #     with ExcelWriter(binary_stream, engine="openpyxl") as writer:
-    #         DataFrame([self._run_analysis(request)]).to_excel(
-    #         writer, index=False, sheet_name="Analysis"
-    #     )
-    #         DataFrame(request.data["dataset_obj"]).to_excel(writer, index=False, sheet_name="Dataset")
-
-    #     binary_stream.seek(0)
-    #     data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
-    #     return Response(data)
-
-    # @action(detail=False, methods=["POST"], renderer_classes=(renderers.DocxRenderer,))
-    # def word(self, request, *args, **kwargs):
-    #     analysis = DataFrame([self._run_analysis(request)])
-    #     binary_stream = build_jonckheereterpstra_docx(analysis, DataFrame(request.data['dataset_obj']))
-    #     data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
-    #     return Response(data)
