@@ -183,12 +183,6 @@ class MainStore {
           setTimeout(pollForResults, pollInterval);
         } else {
           this.updateModelStateFromApi(data);
-
-          console.log("Analysis Result: ", data);
-          console.log(
-            "cochranArmitage",
-            this.rootStore.outputStore.cochranArmitage,
-          );
           simulateClick(document.getElementById("navlink-output"));
         }
       })
