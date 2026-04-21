@@ -149,7 +149,6 @@ class MainStore {
           .then((response) => {
             if (!response.ok) {
               throw response;
-            } else {
             }
             return response.json();
           })
@@ -414,7 +413,7 @@ class MainStore {
   @observable toastHeader = "";
   @observable toastMessage = "";
   @action.bound downloadReport(url) {
-    let apiUrl = (apiUrl = this.config[url]),
+    let apiUrl = this.config[url],
       params = {},
       pollInterval = this.pollInterval;
     if (this.canEdit) {
