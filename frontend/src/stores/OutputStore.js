@@ -4,6 +4,7 @@ import { action, computed, observable, toJS } from "mobx";
 import { getHeaders } from "@/common";
 import {
   MODEL_CONTINUOUS,
+  MODEL_DICHOTOMOUS,
   MODEL_MULTI_TUMOR,
   MODEL_NESTED_DICHOTOMOUS,
 } from "@/constants/mainConstants";
@@ -58,6 +59,10 @@ class OutputStore {
 
   @computed get isMultiTumor() {
     return this.getModelType === MODEL_MULTI_TUMOR;
+  }
+
+  @computed get isDichotomous() {
+    return this.getModelType === MODEL_DICHOTOMOUS;
   }
 
   @computed get isNestedDichotomous() {
@@ -120,6 +125,11 @@ class OutputStore {
   @computed get selectedDatasetOptions() {
     const index = this.selectedOutput.dataset_index;
     return this.rootStore.dataOptionStore.options[index];
+  }
+
+  @computed get selectedDatasetCochranArmitage() {
+    const index = this.selectedOutput.dataset_index;
+    return this.cochranArmitage[index];
   }
 
   @computed get showContinuousDatasetFootnote() {

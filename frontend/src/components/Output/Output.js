@@ -16,6 +16,7 @@ import MultitumorDatasetTable from "./Multitumor/DatasetTable";
 import MultitumorPlot from "./Multitumor/MultitumorPlot";
 import MultitumorResultTable from "./Multitumor/ResultTable";
 import OptionSetTable from "./OptionSetTable";
+import CochranArmitageTable from "./CochranArmitageTable";
 import SelectModel from "./SelectModel";
 
 const OutputErrorComponent = ({ title, children, alertClass }) => {
@@ -52,10 +53,12 @@ class Output extends Component {
       <ContinuousTestOfInterestDatasetFootnote />
     ) : undefined;
     return (
-      <DatasetTable
-        dataset={outputStore.selectedDataset}
-        footnotes={footnote}
-      />
+      <div>
+        <DatasetTable
+          dataset={outputStore.selectedDataset}
+          footnotes={footnote}
+        />
+      </div>
     );
   }
 
@@ -117,9 +120,20 @@ class Output extends Component {
               />
             </div>
           ) : null}
-          <div className="col-lg-6">{this.renderDataset()}</div>
           <div className="col-lg-4">
-            <OptionSetTable />
+            <div style={{ maxWidth: 800 }}>{this.renderDataset()}</div>
+          </div>
+          <div className="col-lg-4">
+            <div className="row g-3">
+              <div className="col-md-6">
+                <OptionSetTable />
+              </div>
+              {outputStore.isDichotomous && outputStore.cochranArmitage ? (
+                <div className="col-md-6">
+                  <CochranArmitageTable />
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
         {selectedFrequentist ? (
