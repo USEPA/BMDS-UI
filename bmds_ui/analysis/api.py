@@ -223,12 +223,33 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         """
         instance: models.Analysis = self.get_object()
         uri = request.build_absolute_uri("/")[:-1]
-        kwargs = {
+        extra_kwargs = {
             "dataset_format_long": get_bool(request.query_params.get("datasetFormatLong")),
             "all_models": get_bool(request.query_params.get("allModels")),
             "bmd_cdf_table": get_bool(request.query_params.get("bmdCdfTable")),
         }
-        cache = DocxReportCache(analysis=instance, uri=uri, **kwargs)
+
+        # Compute result (reuse excel() logic)
+        cochran_armitage_result = (instance.outputs or {}).get("cochran_armitage_result")
+        if cochran_armitage_result is None:
+            cochran_armitage_result = self._compute_cochran_armitage(instance)
+
+        if cochran_armitage_result:
+            df = (
+                DataFrame(cochran_armitage_result)
+                .set_index("name")
+                .T
+                .rename_axis("Cochran-Armitage")
+                .reset_index()
+            )
+            # Pass a JSON-serializable payload
+            extra_kwargs["cochran_armitage_df"] = df.to_dict(orient="records")
+
+
+
+
+
+        cache = DocxReportCache(analysis=instance, uri=uri, **extra_kwargs)
         response = cache.request_content()
         if response.status is ReportStatus.COMPLETE:
             cache.delete()  # destroy from cache; request is now complete

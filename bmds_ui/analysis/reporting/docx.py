@@ -7,6 +7,8 @@ import docx
 from django.conf import settings
 from django.utils.timezone import now
 
+from pandas import DataFrame
+
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott
 from pybmds.reporting.styling import Report, write_setting_p, df_to_table
@@ -35,6 +37,7 @@ def build_docx(
     dataset_format_long: bool = True,
     all_models: bool = False,
     bmd_cdf_table: bool = False,
+    cochran_armitage_df=None,
 ) -> BytesIO:
     """Generate a Microsoft Word binary file for an analysis
 
@@ -71,6 +74,25 @@ def build_docx(
         analysis.outputs["bmds_python_version"]["python"],
         analysis.outputs["bmds_python_version"]["dll"],
     )
+
+    if cochran_armitage_df:
+        df = DataFrame(cochran_armitage_df)
+        print(DataFrame(cochran_armitage_df))
+        report.document.add_heading("Cochran-Armitage Test", 2)
+        
+        # Assume the first column is the label column (e.g., "Cochran-Armitage")
+        label_col = df.columns[0]
+        dataset_cols = [c for c in df.columns if c != label_col]
+
+        if len(dataset_cols) <= 3:
+            # Render as-is when ≤3 dataset columns
+            report.document.add_paragraph(df_to_table(report, df))
+        else:
+            # Split dataset columns into chunks of 3, render each as its own paragraph
+            for i in range(0, len(dataset_cols), 3):
+                chunk = dataset_cols[i:i+3]
+                sub_df = df[[label_col] + chunk]
+                report.document.add_paragraph(df_to_table(report, sub_df))
 
     if not analysis.is_finished:
         report.document.add_paragraph("Execution is incomplete; no report could be generated")
