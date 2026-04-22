@@ -113,8 +113,6 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
                 except ValidationError as err:
                     raise exceptions.ValidationError(str(err)) from None
 
-        # Persist results so other requests (e.g., excel) can access them
-        # Assume instance.outputs is a JSONField (dict-like)
         outputs = (instance.outputs or {}).copy()
         outputs["cochran_armitage_result"] = cochran_armitage_result
         instance.outputs = outputs

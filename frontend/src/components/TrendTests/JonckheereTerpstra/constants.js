@@ -1,5 +1,6 @@
 export const hypothesisChoices = [
     { value: "increasing", text: "Increasing" },
+    { value: "decreasing", text: "Decreasing" },
     { value: "two-sided", text: "Two-Sided" },
   ],
   exampleDataSummary =
