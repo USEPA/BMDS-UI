@@ -120,8 +120,8 @@ class Output extends Component {
               />
             </div>
           ) : null}
-          <div className="col-lg-4">
-            <div style={{ maxWidth: 800 }}>{this.renderDataset()}</div>
+          <div className="col-lg-5">
+            <div>{this.renderDataset()}</div>
           </div>
           <div className="col-lg-4">
             <div className="row g-3">

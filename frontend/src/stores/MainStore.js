@@ -246,12 +246,10 @@ class MainStore {
     this.isExecuting = data.is_executing;
     if (data.outputs) {
       this.executionOutputs = data.outputs.outputs;
-
-      if (data.cochran_armitage_result) {
-        this.rootStore.outputStore.cochranArmitage =
-          data.cochran_armitage_result;
-      }
     }
+
+    this.rootStore.outputStore.cochranArmitage =
+      data.outputs.cochran_armitage_result ?? null;
 
     // unpack general settings
     this.analysis_name = inputs.analysis_name;

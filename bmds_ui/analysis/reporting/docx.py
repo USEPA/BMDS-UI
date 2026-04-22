@@ -77,20 +77,21 @@ def build_docx(
 
     if cochran_armitage_df:
         df = DataFrame(cochran_armitage_df)
-        print(DataFrame(cochran_armitage_df))
+        report.document.add_paragraph("  ")
         report.document.add_heading("Cochran-Armitage Test", 2)
         
+        max_cols = 4
         # Assume the first column is the label column (e.g., "Cochran-Armitage")
         label_col = df.columns[0]
         dataset_cols = [c for c in df.columns if c != label_col]
 
-        if len(dataset_cols) <= 3:
-            # Render as-is when ≤3 dataset columns
+        if len(dataset_cols) <= max_cols:
+            # Render as-is when ≤max_cols dataset columns
             report.document.add_paragraph(df_to_table(report, df))
         else:
-            # Split dataset columns into chunks of 3, render each as its own paragraph
-            for i in range(0, len(dataset_cols), 3):
-                chunk = dataset_cols[i:i+3]
+            # Split dataset columns into chunks of 3max_cols, render each as its own paragraph
+            for i in range(0, len(dataset_cols), max_cols):
+                chunk = dataset_cols[i:i+max_cols]
                 sub_df = df[[label_col] + chunk]
                 report.document.add_paragraph(df_to_table(report, sub_df))
 
