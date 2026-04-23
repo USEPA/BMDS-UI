@@ -7,6 +7,7 @@ import React, { Component } from "react";
 import DatasetTable from "../Data/DatasetTable";
 import { ContinuousTestOfInterestDatasetFootnote } from "../IndividualModel/ContinuousTestOfInterest";
 import ModelDetailModal from "../IndividualModel/ModelDetailModal";
+import AdditionalNestedPlotsModal from "../IndividualModel/AdditionalNestedPlotsModal";
 import DoseResponsePlot from "../common/DoseResponsePlot";
 import Icon from "../common/Icon";
 import Button from "../common/Button";
@@ -19,6 +20,8 @@ import MultitumorResultTable from "./Multitumor/ResultTable";
 import OptionSetTable from "./OptionSetTable";
 import CochranArmitageTable from "./CochranArmitageTable";
 import SelectModel from "./SelectModel";
+
+import { modelClasses } from "@/constants/outputConstants";
 
 const OutputErrorComponent = ({ title, children, alertClass }) => {
   return (
@@ -159,19 +162,20 @@ class Output extends Component {
                   layout={outputStore.drFrequentistPlotLayout}
                   data={outputStore.drFrequentistPlotData}
                 />
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    width: "100%",
-                    paddingTop: "8px",
-                  }}
-                >
+                <div>
                   {outputStore.isNestedDichotomous ? (
                     <Button
-                      className="btn btn-primary"
-                      onClick={outputStore.viewAdditionalNestedPlots}
-                      text="View additional nested plots"
+                      className="btn btn-info btn-sm float-right mt-2"
+                      icon="eye-fill"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        outputStore.viewAdditionalNestedPlots();
+                        // outputStore.showModalDetail(
+                        //   modelClasses.frequentist,
+                        //   0,
+                        // );
+                      }}
+                      text="View Additional Plots"
                     />
                   ) : null}
                 </div>
@@ -196,6 +200,9 @@ class Output extends Component {
         ) : null}
 
         <div>{outputStore.showModelModal ? <ModelDetailModal /> : null}</div>
+        <div>
+          {outputStore.showNestedModal ? <AdditionalNestedPlotsModal /> : null}
+        </div>
       </div>
     );
   }

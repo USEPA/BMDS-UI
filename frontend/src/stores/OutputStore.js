@@ -429,7 +429,22 @@ class OutputStore {
     return data;
   }
 
-  @action.bound viewAdditionalNestedPlots() {
+  // Additional Nested Dichotomous Plots Modal
+  @observable showNestedModal = false;
+  @observable helloMessage = "";
+
+  @action.bound openNestedModal(message = "hello") {
+    this.helloMessage = message;
+    this.showNestedModal = true;
+  }
+
+  @action.bound closeNestedModal() {
+    this.showNestedModal = false;
+    this.helloMessage = "";
+  }
+
+  @action.bound viewAdditionalNestedPlots(e) {
+    this.openNestedModal("hello");
     console.log("hello");
   }
 
