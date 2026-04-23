@@ -175,6 +175,7 @@ class RaoScottInput(BaseModel):
 class JonckheereTerpstraInput(BaseModel):
     dataset: str
     hypothesis: str
+    nperm: int | None = Field(default=None, ge=1)
     model_type: str  # "I" or "CS"
 
     @field_validator("dataset", mode="before")
@@ -230,7 +231,7 @@ class JonckheereTerpstraInput(BaseModel):
                 means=df.means.tolist(),
                 stdevs=df.stdevs.tolist(),
             )
-        result = dataset.trend(hypothesis=self.hypothesis)
+        result = dataset.trend(hypothesis=self.hypothesis, nperm=self.nperm)
 
         result_dict = {
             "Hypothesis": result.hypothesis,

@@ -30,6 +30,7 @@ class Store {
     ),
     dataset: this.selected_data,
     hypothesis: "increasing",
+    nperm: null,
     model_type: this.model_type,
   };
   @observable error = null;

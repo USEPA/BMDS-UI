@@ -4,6 +4,7 @@ import React, { Component } from "react";
 
 import Button from "../../common/Button";
 import SelectInput from "../../common/SelectInput";
+import PermutationsInput from "../../common/PermutationsInput";
 import TextAreaInput from "../../common/TextAreaInput";
 import { hypothesisChoices } from "./constants";
 
@@ -63,7 +64,19 @@ class InputForm extends Component {
               }}
             />
             <p className="text-muted mb-0">Please select the hypothesis.</p>
+            <br></br>
+            <PermutationsInput
+              label="Number of permutations"
+              value={settings.nperm} // number or null
+              onChange={(value) => updateSettings("nperm", value)} // expect number or null
+              min={1}
+              max={1_000_000}
+            />
+            <p className="text-muted mb-0">
+              Optional: Set the number of permutations.
+            </p>
           </div>
+
           <div className="col-lg-4">
             <TextAreaInput
               id="textArea"
