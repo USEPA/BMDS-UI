@@ -9,6 +9,7 @@ import { ContinuousTestOfInterestDatasetFootnote } from "../IndividualModel/Cont
 import ModelDetailModal from "../IndividualModel/ModelDetailModal";
 import DoseResponsePlot from "../common/DoseResponsePlot";
 import Icon from "../common/Icon";
+import Button from "../common/Button";
 import SelectInput from "../common/SelectInput";
 import BayesianResultTable from "./BayesianResultTable";
 import FrequentistResultTable from "./FrequentistResultTable";
@@ -152,12 +153,28 @@ class Output extends Component {
                 <FrequentistResultTable />
                 {canSelectModel ? <SelectModel /> : null}
               </div>
-              <div className="align-items-center d-flex col-lg-4">
+              <div className="align-items-center col-lg-4">
                 <DoseResponsePlot
                   onRelayout={outputStore.updateUserPlotSettings}
                   layout={outputStore.drFrequentistPlotLayout}
                   data={outputStore.drFrequentistPlotData}
                 />
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    width: "100%",
+                    paddingTop: "8px",
+                  }}
+                >
+                  {outputStore.isNestedDichotomous ? (
+                    <Button
+                      className="btn btn-primary"
+                      onClick={outputStore.viewAdditionalNestedPlots}
+                      text="View additional nested plots"
+                    />
+                  ) : null}
+                </div>
               </div>
             </div>
           )

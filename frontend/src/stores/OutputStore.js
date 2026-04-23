@@ -429,6 +429,10 @@ class OutputStore {
     return data;
   }
 
+  @action.bound viewAdditionalNestedPlots() {
+    console.log("hello");
+  }
+
   @action.bound drPlotAddHover(model) {
     if (this.drModelSelected && this.drModelSelected[0].name === model.name) {
       return;
