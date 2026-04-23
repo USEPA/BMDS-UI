@@ -30,6 +30,7 @@ class InputForm extends Component {
         "resetButton",
         "textArea",
         "dropdown",
+        "permutation_input",
       ];
 
       document.body.setAttribute("busy", "true");

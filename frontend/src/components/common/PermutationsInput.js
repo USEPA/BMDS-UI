@@ -9,7 +9,7 @@ import LabelInput from "./LabelInput";
 class PermutationsInput extends Component {
   constructor(props) {
     super(props);
-    this._id = props.id || randomString();
+    this._id = "permutation_input";
   }
 
   handleChange = (e) => {
