@@ -15,6 +15,7 @@ class AdditionalNestedPlotsModal extends Component {
         show={outputStore.showNestedModal}
         onHide={outputStore.closeNestedModal}
         centered
+        size="xl"
       >
         <Modal.Header>
           <Modal.Title>Additional Nested Dichotomous Plots</Modal.Title>

@@ -443,15 +443,10 @@ class OutputStore {
     this.AdditionalNestedPlotsContent = "";
   }
 
-  // @action.bound viewAdditionalNestedPlots() {
-  //   console.log(this.selectedOutput["nested_dichotomous_plot_png"]);
-  //   this.openNestedModal("hello the static plots should go here");
-  // }
-
   @action.bound viewAdditionalNestedPlots() {
     const out =
       this.selectedOutput && this.selectedOutput["nested_dichotomous_plot_png"];
-    const dataUrl = out ? "data:image/png;base64," + out : ""; //change to svg
+    const dataUrl = out ? "data:image/png;base64," + out : "";
     this.openNestedModal(dataUrl);
   }
 
