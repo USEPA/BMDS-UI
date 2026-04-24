@@ -114,10 +114,14 @@ def build_docx(
 
     # Add the additional nested dichotomous plots
     if additionalNestedDichotomousPlots:
+        report.document.add_paragraph(" ")
         report.document.add_heading("Additional Nested Dichotomous Plots", 2)
         for output in analysis.outputs["outputs"]:
             dataset_name = str(output["frequentist"]["dataset"]["metadata"]["name"])
-            report.document.add_paragraph("Name:" + dataset_name)
+            p = report.document.add_paragraph()
+            label = p.add_run("Dataset Name: ")
+            label.bold = True
+            p.add_run(dataset_name)
             b64_png = output["nested_dichotomous_plot_png"]  # base64 string
             add_png_b64_to_docx(report.document, b64_png, width_in=6)
             report.document.add_paragraph(" ")
