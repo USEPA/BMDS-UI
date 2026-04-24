@@ -79,6 +79,10 @@ class MainStore {
     return this.model_type === mc.MODEL_MULTI_TUMOR;
   }
 
+  @computed get isNestedDichotomous() {
+    return this.model_type === "ND";
+  }
+
   @computed get isMultiTumorOrNestedDichotomous() {
     return this.model_type === "ND" || this.model_type === "MT";
   }
@@ -461,6 +465,7 @@ class MainStore {
     datasetFormatLong: true,
     allModels: false,
     bmdCdfTable: false,
+    additionalNestedDichotomousPlots: false,
   };
   @action.bound changeReportOptions(name, value) {
     this.wordReportOptions[name] = value;

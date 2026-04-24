@@ -11,13 +11,13 @@ from pandas import DataFrame
 
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott
-from pybmds.reporting.styling import Report, write_setting_p, df_to_table
+from pybmds.reporting.styling import Report, write_setting_p, df_to_table, add_mpl_figure
 from pybmds.utils import get_version
 
 from ... import __version__ as bmds_ui_version
 from ...common.docx import add_url_hyperlink
 from ...common.utils import to_timestamp
-from ..utils import get_citation
+from ..utils import get_citation, add_png_b64_to_docx
 
 if TYPE_CHECKING:
     from ..models import Analysis
@@ -37,6 +37,7 @@ def build_docx(
     dataset_format_long: bool = True,
     all_models: bool = False,
     bmd_cdf_table: bool = False,
+    additionalNestedDichotomousPlots: bool = False,
     cochran_armitage_df=None,
 ) -> BytesIO:
     """Generate a Microsoft Word binary file for an analysis
@@ -110,6 +111,16 @@ def build_docx(
             bmd_cdf_table=bmd_cdf_table,
             session_inputs_table=True,
         )
+
+    # Add the additional nested dichotomous plots
+    if additionalNestedDichotomousPlots:
+        report.document.add_heading("Additional Nested Dichotomous Plots", 2)
+        for output in analysis.outputs["outputs"]:
+            dataset_name = str(output["frequentist"]["dataset"]["metadata"]["name"])
+            report.document.add_paragraph("Name:" + dataset_name)
+            b64_png = output["nested_dichotomous_plot_png"]  # base64 string
+            add_png_b64_to_docx(report.document, b64_png, width_in=6)
+            report.document.add_paragraph(" ")
 
     write_citation(report, 1)
 

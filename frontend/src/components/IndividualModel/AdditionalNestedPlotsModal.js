@@ -31,7 +31,7 @@ class AdditionalNestedPlotsModal extends Component {
             <img
               src={outputStore.AdditionalNestedPlotsContent}
               alt="Nested dichotomous plot"
-              style={{ maxWidth: "100%", height: "auto", display: "block" }}
+              style={{ maxWidth: "90%", height: "auto", display: "block" }}
             />
           ) : (
             "No Content"

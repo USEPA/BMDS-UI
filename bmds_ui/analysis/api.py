@@ -227,9 +227,10 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             "dataset_format_long": get_bool(request.query_params.get("datasetFormatLong")),
             "all_models": get_bool(request.query_params.get("allModels")),
             "bmd_cdf_table": get_bool(request.query_params.get("bmdCdfTable")),
+            "additionalNestedDichotomousPlots": get_bool(request.query_params.get("additionalNestedDichotomousPlots")),
         }
 
-        # Compute result (reuse excel() logic)
+        # Compute result 
         cochran_armitage_result = (instance.outputs or {}).get("cochran_armitage_result")
         if cochran_armitage_result is None:
             cochran_armitage_result = self._compute_cochran_armitage(instance)
@@ -244,10 +245,6 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             )
             # Pass a JSON-serializable payload
             extra_kwargs["cochran_armitage_df"] = df.to_dict(orient="records")
-
-
-
-
 
         cache = DocxReportCache(analysis=instance, uri=uri, **extra_kwargs)
         response = cache.request_content()
