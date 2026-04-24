@@ -170,10 +170,6 @@ class Output extends Component {
                       onClick={(e) => {
                         e.preventDefault();
                         outputStore.viewAdditionalNestedPlots();
-                        // outputStore.showModalDetail(
-                        //   modelClasses.frequentist,
-                        //   0,
-                        // );
                       }}
                       text="View Additional Plots"
                     />

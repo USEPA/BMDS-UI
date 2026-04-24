@@ -1,11 +1,14 @@
 import itertools
 from copy import deepcopy
 from typing import NamedTuple, Self
+from .utils import fig_to_png_b64
+import matplotlib.pyplot as plt 
 
 import pybmds
 from pybmds.constants import DistType, ModelClass
 from pybmds.session import Session
 from pybmds.types.nested_dichotomous import IntralitterCorrelation, LitterSpecificCovariate
+from pybmds.plotting.nested_dichotomous import dose_litter_response_plot
 
 from .schema import AnalysisSessionSchema
 from .transforms import (
@@ -124,7 +127,7 @@ class AnalysisSession(NamedTuple):
     @classmethod
     def run(cls, inputs: dict, dataset_index: int, option_index: int) -> AnalysisSessionSchema:
         session = cls.create(inputs, dataset_index, option_index)
-        session.execute()
+        session.execute(inputs)
         return session.to_schema()
 
     @classmethod
@@ -149,11 +152,23 @@ class AnalysisSession(NamedTuple):
             bayesian=Session.from_serialized(obj.bayesian) if obj.bayesian else None,
         )
 
-    def execute(self):
+    def execute(self, inputs):
         if self.frequentist:
             self.frequentist.execute()
             if self.frequentist.recommendation_enabled:
-                self.frequentist.recommend()
+                self.frequentist.recommend()  
+
+            dataset_type = inputs["dataset_type"]
+            if dataset_type == ModelClass.NESTED_DICHOTOMOUS:
+                fig = dose_litter_response_plot(self.frequentist)
+                # serialize and stash on the session for later retrieval
+                try:
+                    self.frequentist._plot_png = fig_to_png_b64(fig)
+                finally:
+                    try:
+                        plt.close(fig)
+                    except Exception:
+                        pass     
 
         if self.bayesian:
             if self.bayesian.dataset.dtype == pybmds.constants.Dtype.DICHOTOMOUS:
@@ -165,6 +180,7 @@ class AnalysisSession(NamedTuple):
             dataset_index=self.dataset_index,
             option_index=self.option_index,
             frequentist=self.frequentist.to_dict() if self.frequentist else None,
+            nested_dichotomous_plot_png=getattr(self.frequentist, "_plot_png", None) if self.frequentist else None,
             bayesian=self.bayesian.to_dict() if self.bayesian else None,
         )
 

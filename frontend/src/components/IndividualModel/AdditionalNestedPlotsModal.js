@@ -17,15 +17,25 @@ class AdditionalNestedPlotsModal extends Component {
         centered
       >
         <Modal.Header>
-          <Modal.Title>Notification</Modal.Title>
+          <Modal.Title>Additional Nested Dichotomous Plots</Modal.Title>
           <Button
-            id="close-hello-modal"
+            id="close-nested-dichotomous-modal"
             className="btn btn-secondary float-right"
             onClick={outputStore.closeNestedModal}
             icon="x-circle"
           />
         </Modal.Header>
-        <Modal.Body>{outputStore.helloMessage || "hello"}</Modal.Body>
+        <Modal.Body>
+          {outputStore.AdditionalNestedPlotsContent ? (
+            <img
+              src={outputStore.AdditionalNestedPlotsContent}
+              alt="Nested dichotomous plot"
+              style={{ maxWidth: "100%", height: "auto", display: "block" }}
+            />
+          ) : (
+            "No Content"
+          )}
+        </Modal.Body>
       </Modal>
     );
   }

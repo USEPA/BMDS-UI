@@ -431,21 +431,28 @@ class OutputStore {
 
   // Additional Nested Dichotomous Plots Modal
   @observable showNestedModal = false;
-  @observable helloMessage = "";
+  @observable AdditionalNestedPlotsContent = "";
 
-  @action.bound openNestedModal(message = "hello") {
-    this.helloMessage = message;
+  @action.bound openNestedModal(content = "") {
+    this.AdditionalNestedPlotsContent = content;
     this.showNestedModal = true;
   }
 
   @action.bound closeNestedModal() {
     this.showNestedModal = false;
-    this.helloMessage = "";
+    this.AdditionalNestedPlotsContent = "";
   }
 
-  @action.bound viewAdditionalNestedPlots(e) {
-    this.openNestedModal("hello");
-    console.log("hello");
+  // @action.bound viewAdditionalNestedPlots() {
+  //   console.log(this.selectedOutput["nested_dichotomous_plot_png"]);
+  //   this.openNestedModal("hello the static plots should go here");
+  // }
+
+  @action.bound viewAdditionalNestedPlots() {
+    const out =
+      this.selectedOutput && this.selectedOutput["nested_dichotomous_plot_png"];
+    const dataUrl = out ? "data:image/png;base64," + out : ""; //change to svg
+    this.openNestedModal(dataUrl);
   }
 
   @action.bound drPlotAddHover(model) {

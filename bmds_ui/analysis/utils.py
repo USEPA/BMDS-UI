@@ -1,4 +1,6 @@
 import re
+import io
+import base64
 
 from django.conf import settings
 from django.utils.timezone import now
@@ -21,3 +23,9 @@ def get_citation() -> str:
 
 
 re_hex_color = re.compile("^#(?:[0-9a-fA-F]{3}){1,2}$")
+
+def fig_to_png_b64(fig, dpi: int = 150) -> str:
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png", dpi=dpi, bbox_inches="tight")
+    buf.seek(0)
+    return base64.b64encode(buf.getvalue()).decode("utf-8")

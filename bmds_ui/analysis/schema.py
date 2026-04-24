@@ -2,6 +2,7 @@ import logging
 import re
 from copy import deepcopy
 from datetime import datetime
+from typing import Optional
 from enum import StrEnum
 from io import StringIO
 from uuid import UUID
@@ -37,6 +38,7 @@ class AnalysisSessionSchema(BaseModel):
     option_index: int
     frequentist: dict | None = None
     bayesian: dict | None = None
+    nested_dichotomous_plot_png: Optional[str] = None
     error: str | None = None
 
 
