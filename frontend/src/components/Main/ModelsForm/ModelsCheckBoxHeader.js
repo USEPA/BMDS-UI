@@ -69,6 +69,7 @@ const ModelsCheckBoxHeader = observer((props) => {
                   <>
                     <br />
                     <SelectAllComponent
+                      key="mle-frequentist_restricted"
                       store={store}
                       type={"frequentist_restricted"}
                       label="Select All"
@@ -82,6 +83,7 @@ const ModelsCheckBoxHeader = observer((props) => {
                   <>
                     <br />
                     <SelectAllComponent
+                      key="mle-frequentist_unrestricted"
                       store={store}
                       type={"frequentist_unrestricted"}
                       label="Select All"
@@ -92,20 +94,21 @@ const ModelsCheckBoxHeader = observer((props) => {
             </>
           ) : activeTab === "loud" ? (
             <>
-              <th id="b-i">
+              <th id="l-i">
                 Include
                 {store.canEdit ? (
                   <>
                     <br />
                     <SelectAllComponent
+                      key="loud"
                       store={store}
-                      type={"bayesian"}
+                      type={"loud"}
                       label="Select All"
                     />
                   </>
                 ) : null}
               </th>
-              <th id="b-p">
+              <th id="l-p">
                 <span className="mb-1">Prior Weight</span>
               </th>
             </>
@@ -117,6 +120,7 @@ const ModelsCheckBoxHeader = observer((props) => {
                   <>
                     <br />
                     <SelectAllComponent
+                      key="bayesian"
                       store={store}
                       type={"bayesian"}
                       label="Select All"

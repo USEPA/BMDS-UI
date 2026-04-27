@@ -77,7 +77,8 @@ const isModelChecked = function (models, type, model) {
         Multistage model is used (see User Manual for details).`,
   fr = "frequentist_restricted",
   fu = "frequentist_unrestricted",
-  b = "bayesian";
+  b = "bayesian",
+  l = "loud";
 
 const ModelsCheckBox = observer((props) => {
   const { store } = props,
@@ -107,428 +108,222 @@ const ModelsCheckBox = observer((props) => {
         </tr>
       </tbody>
     );
-  } else if (store.getModelType === mc.MODEL_CONTINUOUS) {
-    if (store.activeTab === "mle") {
-      return (
-        <tbody>
-          <tr>
-            <ModelHeaderTd name="Exponential" />
-            <CheckBoxTd
-              store={store}
-              type={fr}
-              headers="mle-r"
-              model={"Exponential"}
-            />
-            <td id="mle-u"></td>
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Hill" />
-            <CheckBoxTd
-              store={store}
-              type={fr}
-              headers="mle-r"
-              model={"Hill"}
-            />
-            <CheckBoxTd
-              store={store}
-              type={fu}
-              headers="mle-u"
-              model={"Hill"}
-            />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Linear" />
-            <td id="mle-r"></td>
-            <CheckBoxTd
-              store={store}
-              type={fu}
-              headers="mle-u"
-              model={"Linear"}
-            />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Polynomial" />
-            <CheckBoxTd
-              store={store}
-              type={fr}
-              headers="mle-r"
-              model={"Polynomial"}
-            />
-            <CheckBoxTd
-              store={store}
-              type={fu}
-              headers="mle-u"
-              model={"Polynomial"}
-            />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Power" />
-            <CheckBoxTd
-              store={store}
-              type={fr}
-              headers="mle-r"
-              model={"Power"}
-            />
-            <CheckBoxTd
-              store={store}
-              type={fu}
-              headers="mle-u"
-              model={"Power"}
-            />
-          </tr>
-        </tbody>
-      );
-    } else if (store.activeTab === "loud") {
-      return (
-        <tbody>
-          <tr>
-            <ModelHeaderTd name="Dichotomous Hill" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"Dichotomous-Hill"}
-            />
-            <PriorWeightTd store={store} model={"Dichotomous-Hill"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Gamma" />
-            <CheckBoxTd store={store} type={b} headers="b-i" model={"Gamma"} />
-            <PriorWeightTd store={store} model={"Gamma"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Logistic" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"Logistic"}
-            />
-            <PriorWeightTd store={store} model={"Logistic"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Log Logistic" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"LogLogistic"}
-            />
-            <PriorWeightTd store={store} model={"LogLogistic"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Log Probit" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"LogProbit"}
-            />
-            <PriorWeightTd store={store} model={"LogProbit"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd
-              name="Multistage"
-              extra={
-                writeMode ? (
-                  <HelpTextPopover content={multistageHelpText} />
-                ) : null
-              }
-            />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"Multistage"}
-            />
-            <PriorWeightTd store={store} model={"Multistage"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Probit" />
-            <CheckBoxTd store={store} type={b} headers="b-i" model={"Probit"} />
-            <PriorWeightTd store={store} model={"Probit"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Quantal Linear" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"Quantal Linear"}
-            />
-            <PriorWeightTd store={store} model={"Quantal Linear"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Weibull" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"Weibull"}
-            />
-            <PriorWeightTd store={store} model={"Weibull"} />
-          </tr>
-        </tbody>
-      );
-    }
-  } else if (store.getModelType === mc.MODEL_DICHOTOMOUS) {
-    if (store.activeTab === "mle") {
-      return (
-        <tbody>
-          <tr>
-            <ModelHeaderTd name="Exponential" />
-            <CheckBoxTd
-              store={store}
-              type={fr}
-              headers="mle-r"
-              model={"Exponential"}
-            />
-            <td id="mle-u"></td>
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Hill" />
-            <CheckBoxTd
-              store={store}
-              type={fr}
-              headers="mle-r"
-              model={"Hill"}
-            />
-            <CheckBoxTd
-              store={store}
-              type={fu}
-              headers="mle-u"
-              model={"Hill"}
-            />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Linear" />
-            <td id="mle-r"></td>
-            <CheckBoxTd
-              store={store}
-              type={fu}
-              headers="mle-u"
-              model={"Linear"}
-            />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Polynomial" />
-            <CheckBoxTd
-              store={store}
-              type={fr}
-              headers="mle-r"
-              model={"Polynomial"}
-            />
-            <CheckBoxTd
-              store={store}
-              type={fu}
-              headers="mle-u"
-              model={"Polynomial"}
-            />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Power" />
-            <CheckBoxTd
-              store={store}
-              type={fr}
-              headers="mle-r"
-              model={"Power"}
-            />
-            <CheckBoxTd
-              store={store}
-              type={fu}
-              headers="mle-u"
-              model={"Power"}
-            />
-          </tr>
-        </tbody>
-      );
-    } else if (store.activeTab === "loud") {
-      return (
-        <tbody>
-          <tr>
-            <ModelHeaderTd name="Dichotomous Hill" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"Dichotomous-Hill"}
-            />
-            <PriorWeightTd store={store} model={"Dichotomous-Hill"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Gamma" />
-            <CheckBoxTd store={store} type={b} headers="b-i" model={"Gamma"} />
-            <PriorWeightTd store={store} model={"Gamma"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Logistic" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"Logistic"}
-            />
-            <PriorWeightTd store={store} model={"Logistic"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Log Logistic" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"LogLogistic"}
-            />
-            <PriorWeightTd store={store} model={"LogLogistic"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Log Probit" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"LogProbit"}
-            />
-            <PriorWeightTd store={store} model={"LogProbit"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd
-              name="Multistage"
-              extra={
-                writeMode ? (
-                  <HelpTextPopover content={multistageHelpText} />
-                ) : null
-              }
-            />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"Multistage"}
-            />
-            <PriorWeightTd store={store} model={"Multistage"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Probit" />
-            <CheckBoxTd store={store} type={b} headers="b-i" model={"Probit"} />
-            <PriorWeightTd store={store} model={"Probit"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Quantal Linear" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"Quantal Linear"}
-            />
-            <PriorWeightTd store={store} model={"Quantal Linear"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Weibull" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"Weibull"}
-            />
-            <PriorWeightTd store={store} model={"Weibull"} />
-          </tr>
-        </tbody>
-      );
-    } else if (store.activeTab === "toxicr") {
-      return (
-        <tbody>
-          <tr>
-            <ModelHeaderTd name="Dichotomous Hill" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"Dichotomous-Hill"}
-            />
-            <PriorWeightTd store={store} model={"Dichotomous-Hill"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Gamma" />
-            <CheckBoxTd store={store} type={b} headers="b-i" model={"Gamma"} />
-            <PriorWeightTd store={store} model={"Gamma"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Logistic" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"Logistic"}
-            />
-            <PriorWeightTd store={store} model={"Logistic"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Log Logistic" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"LogLogistic"}
-            />
-            <PriorWeightTd store={store} model={"LogLogistic"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Log Probit" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"LogProbit"}
-            />
-            <PriorWeightTd store={store} model={"LogProbit"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd
-              name="Multistage"
-              extra={
-                writeMode ? (
-                  <HelpTextPopover content={multistageHelpText} />
-                ) : null
-              }
-            />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"Multistage"}
-            />
-            <PriorWeightTd store={store} model={"Multistage"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Probit" />
-            <CheckBoxTd store={store} type={b} headers="b-i" model={"Probit"} />
-            <PriorWeightTd store={store} model={"Probit"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Quantal Linear" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"Quantal Linear"}
-            />
-            <PriorWeightTd store={store} model={"Quantal Linear"} />
-          </tr>
-          <tr>
-            <ModelHeaderTd name="Weibull" />
-            <CheckBoxTd
-              store={store}
-              type={b}
-              headers="b-i"
-              model={"Weibull"}
-            />
-            <PriorWeightTd store={store} model={"Weibull"} />
-          </tr>
-        </tbody>
-      );
-    }
+  } else if (store.activeTab === "mle") {
+    return (
+      <tbody>
+        <tr>
+          <ModelHeaderTd name="Exponential" />
+          <CheckBoxTd
+            store={store}
+            type={fr}
+            headers="mle-r"
+            model={"Exponential"}
+          />
+          <td id="mle-u"></td>
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Hill" />
+          <CheckBoxTd store={store} type={fr} headers="mle-r" model={"Hill"} />
+          <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Hill"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Linear" />
+          <td id="mle-r"></td>
+          <CheckBoxTd
+            store={store}
+            type={fu}
+            headers="mle-u"
+            model={"Linear"}
+          />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Polynomial" />
+          <CheckBoxTd
+            store={store}
+            type={fr}
+            headers="mle-r"
+            model={"Polynomial"}
+          />
+          <CheckBoxTd
+            store={store}
+            type={fu}
+            headers="mle-u"
+            model={"Polynomial"}
+          />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Power" />
+          <CheckBoxTd store={store} type={fr} headers="mle-r" model={"Power"} />
+          <CheckBoxTd store={store} type={fu} headers="mle-u" model={"Power"} />
+        </tr>
+      </tbody>
+    );
+  } else if (store.activeTab === "toxicr") {
+    return (
+      <tbody>
+        <tr>
+          <ModelHeaderTd name="Dichotomous Hill" />
+          <CheckBoxTd
+            store={store}
+            type={b}
+            headers="b-i"
+            model={"Dichotomous-Hill"}
+          />
+          <PriorWeightTd store={store} model={"Dichotomous-Hill"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Gamma" />
+          <CheckBoxTd store={store} type={b} headers="b-i" model={"Gamma"} />
+          <PriorWeightTd store={store} model={"Gamma"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Logistic" />
+          <CheckBoxTd store={store} type={b} headers="b-i" model={"Logistic"} />
+          <PriorWeightTd store={store} model={"Logistic"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Log Logistic" />
+          <CheckBoxTd
+            store={store}
+            type={b}
+            headers="b-i"
+            model={"LogLogistic"}
+          />
+          <PriorWeightTd store={store} model={"LogLogistic"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Log Probit" />
+          <CheckBoxTd
+            store={store}
+            type={b}
+            headers="b-i"
+            model={"LogProbit"}
+          />
+          <PriorWeightTd store={store} model={"LogProbit"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd
+            name="Multistage"
+            extra={
+              writeMode ? (
+                <HelpTextPopover content={multistageHelpText} />
+              ) : null
+            }
+          />
+          <CheckBoxTd
+            store={store}
+            type={b}
+            headers="b-i"
+            model={"Multistage"}
+          />
+          <PriorWeightTd store={store} model={"Multistage"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Probit" />
+          <CheckBoxTd store={store} type={b} headers="b-i" model={"Probit"} />
+          <PriorWeightTd store={store} model={"Probit"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Quantal Linear" />
+          <CheckBoxTd
+            store={store}
+            type={b}
+            headers="b-i"
+            model={"Quantal Linear"}
+          />
+          <PriorWeightTd store={store} model={"Quantal Linear"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Weibull" />
+          <CheckBoxTd store={store} type={b} headers="b-i" model={"Weibull"} />
+          <PriorWeightTd store={store} model={"Weibull"} />
+        </tr>
+      </tbody>
+    );
+  } else if (store.activeTab === "loud") {
+    return (
+      <tbody>
+        <tr>
+          <ModelHeaderTd name="Dichotomous Hill" />
+          <CheckBoxTd
+            store={store}
+            type={l}
+            headers="l-i"
+            model={"Dichotomous-Hill"}
+          />
+          <PriorWeightTd store={store} model={"Dichotomous-Hill"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Gamma" />
+          <CheckBoxTd store={store} type={l} headers="l-i" model={"Gamma"} />
+          <PriorWeightTd store={store} model={"Gamma"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Logistic" />
+          <CheckBoxTd store={store} type={l} headers="l-i" model={"Logistic"} />
+          <PriorWeightTd store={store} model={"Logistic"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Log Logistic" />
+          <CheckBoxTd
+            store={store}
+            type={l}
+            headers="l-i"
+            model={"LogLogistic"}
+          />
+          <PriorWeightTd store={store} model={"LogLogistic"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Log Probit" />
+          <CheckBoxTd
+            store={store}
+            type={l}
+            headers="l-i"
+            model={"LogProbit"}
+          />
+          <PriorWeightTd store={store} model={"LogProbit"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd
+            name="Multistage"
+            extra={
+              writeMode ? (
+                <HelpTextPopover content={multistageHelpText} />
+              ) : null
+            }
+          />
+          <CheckBoxTd
+            store={store}
+            type={l}
+            headers="l-i"
+            model={"Multistage"}
+          />
+          <PriorWeightTd store={store} model={"Multistage"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Probit" />
+          <CheckBoxTd store={store} type={l} headers="l-i" model={"Probit"} />
+          <PriorWeightTd store={store} model={"Probit"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Quantal Linear" />
+          <CheckBoxTd
+            store={store}
+            type={l}
+            headers="l-i"
+            model={"Quantal Linear"}
+          />
+          <PriorWeightTd store={store} model={"Quantal Linear"} />
+        </tr>
+        <tr>
+          <ModelHeaderTd name="Weibull" />
+          <CheckBoxTd store={store} type={l} headers="l-i" model={"Weibull"} />
+          <PriorWeightTd store={store} model={"Weibull"} />
+        </tr>
+      </tbody>
+    );
   } else {
-    throw `Unknown modelType: ${store.getModelType}`;
+    throw `Unknown modelType: ${store.activeTab}`;
   }
 });
 ModelsCheckBox.propTypes = {
