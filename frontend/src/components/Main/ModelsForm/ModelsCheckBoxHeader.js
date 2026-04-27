@@ -30,31 +30,25 @@ const areAllModelsChecked = function (modelType, type, models) {
         <LabelInput label={label} htmlFor={id} />
       </>
     );
-  }),
-  ModelColGroup = observer((props) => {
-    const { hasBayesianModels } = props,
-      cols = hasBayesianModels ? [20, 20, 20, 20, 20] : [33, 33, 34];
-    return (
-      <colgroup>
-        {cols.map((d, i) => (
-          <col key={i} width={`${d}%`} />
-        ))}
-      </colgroup>
-    );
   });
 
 const ModelsCheckBoxHeader = observer((props) => {
-  const { store } = props,
-    { canEdit } = store,
-    hasBayesianModels = store.getModelType === mc.MODEL_DICHOTOMOUS;
+  const { store } = props;
+  const activeTab =
+    store.getModelType == mc.MODEL_NESTED_DICHOTOMOUS ? "mle" : store.activeTab;
+
+  const activeTabToTitle = {
+    loud: "Loud Bayesian Model Averaging",
+    mle: "Maximum Likelihood Estimate",
+    toxicr: "ToxicR Bayesian Model Averaging",
+  };
   return (
     <>
-      <ModelColGroup hasBayesianModels={hasBayesianModels} />
       <thead className="bg-custom">
         <tr>
           <th className="align-top" rowSpan="2" id="m-name">
             Model
-            {canEdit ? (
+            {store.canEdit ? (
               <>
                 <Button
                   className="mt-4 btn btn-sm btn-block btn-info"
@@ -64,43 +58,62 @@ const ModelsCheckBoxHeader = observer((props) => {
               </>
             ) : null}
           </th>
-          <th colSpan="2">Maximum Likelihood Estimate</th>
-          {hasBayesianModels ? (
-            <th colSpan="2">Bayesian Model Averaging</th>
-          ) : null}
+          <th colSpan="2">{activeTabToTitle[activeTab]}</th>
         </tr>
         <tr>
-          <th id="mle-r">
-            Restricted
-            {canEdit ? (
-              <>
-                <br />
-                <SelectAllComponent
-                  store={store}
-                  type={"frequentist_restricted"}
-                  label="Select All"
-                />
-              </>
-            ) : null}
-          </th>
-          <th id="mle-ur">
-            Unrestricted
-            {canEdit ? (
-              <>
-                <br />
-                <SelectAllComponent
-                  store={store}
-                  type={"frequentist_unrestricted"}
-                  label="Select All"
-                />
-              </>
-            ) : null}
-          </th>
-          {hasBayesianModels ? (
+          {activeTab === "mle" ? (
+            <>
+              <th id="mle-r">
+                Restricted
+                {store.canEdit ? (
+                  <>
+                    <br />
+                    <SelectAllComponent
+                      store={store}
+                      type={"frequentist_restricted"}
+                      label="Select All"
+                    />
+                  </>
+                ) : null}
+              </th>
+              <th id="mle-ur">
+                Unrestricted
+                {store.canEdit ? (
+                  <>
+                    <br />
+                    <SelectAllComponent
+                      store={store}
+                      type={"frequentist_unrestricted"}
+                      label="Select All"
+                    />
+                  </>
+                ) : null}
+              </th>
+            </>
+          ) : activeTab === "loud" ? (
             <>
               <th id="b-i">
                 Include
-                {canEdit ? (
+                {store.canEdit ? (
+                  <>
+                    <br />
+                    <SelectAllComponent
+                      store={store}
+                      type={"bayesian"}
+                      label="Select All"
+                    />
+                  </>
+                ) : null}
+              </th>
+              <th id="b-p">
+                <span className="mb-1">Prior Weight</span>
+              </th>
+            </>
+          ) : activeTab === "toxicr" ? (
+            <>
+              <th id="b-i">
+                Include
+                {store.canEdit ? (
                   <>
                     <br />
                     <SelectAllComponent
