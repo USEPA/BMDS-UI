@@ -28,8 +28,8 @@ class App extends Component {
         </div>
         <>{showAboutModal ? <AboutModal store={this.props.store} /> : null}</>
         <p className="text-muted col-lg-8">
-          [INSERT DESCRIPTION OF THIS MODULE]. For more details, review the
-          software{" "}
+          Non-parametric test for detecting a trend accross ordered groups. For
+          more details, review the software{" "}
           <a href="#" onClick={() => setAboutModal(true)}>
             description
           </a>

@@ -24,143 +24,66 @@ class AboutModal extends Component {
           <Modal.Title>Jonckheere-Terpstra Trend Test</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <h3>Software Inputs</h3>
           <p>
-            Add paragraph 1{" "}
-            {ExternalAnchor(
-              "https://pubmed.ncbi.nlm.nih.gov/27567129/",
-              "Link Display Text",
-            )}
-            , This is some example text.
+            The dataset used for the Jonckheere-Terpstra trend test should have
+            the same structure as Summarized Continuous or Individual Continuous
+            data and should have the following columns in this sequence:
           </p>
-          <p>
-            Add paragraph 2 <i>This is an example of italics text</i>
-          </p>
-          <p>Add paragraph 3</p>
-          <div className="alert alert-info my-3">
-            <strong>Note:</strong> This is an example of an important note.
-          </div>
-          <p>
-            Add paragraph 4, here are some examples of formula text:{" "}
-            <IM f="D" />
-          </p>
-          <p>
-            An example of subscript: <IM f="A_f" /> and a fraction:{" "}
-            <IM f="P_f = \frac{A_f}{N_f}" /> And a couple more:{" "}
-            <IM f="{N_{f}}_{RS}=\frac{N_f}{D}" /> and{" "}
-            <IM f="{AF_{f}}_{RS}=\frac{A_f}{D}" />
-          </p>
-          <p>Add another paragraph.</p>
-          <table className="table table-condensed table-striped">
-            <thead>
-              <tr>
-                <th>TableHeader1</th>
-                <th>TableHeader2</th>
-                <th>$n$, TableHeader3</th>
-                <th>$n$, TableHeader4</th>
-                <th>$a$</th>
-                <th>$b$</th>
-                <th>
-                  <IM f="\sigma_{res}^2" />
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Row1</td>
-                <td>E</td>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-              </tr>
-              <tr>
-                <td>Row2</td>
-                <td>X</td>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-              </tr>
-              <tr>
-                <td>Row3</td>
-                <td>A</td>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-              </tr>
-              <tr>
-                <td>Row4</td>
-                <td>M</td>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-              </tr>
-              <tr>
-                <td>Row5</td>
-                <td>P</td>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-              </tr>
-              <tr>
-                <td>Row6</td>
-                <td>LE</td>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-              </tr>
-            </tbody>
-          </table>
-          <p>Add another paragraph</p>
-          <p>Add another paragraph</p>
-          <p>Add another paragraph</p>
-          <h3>Add a header</h3>
-          <p>Add another paragraph</p>
-
+          <h5>Summarized Contintuous Data Input</h5>
           <ol>
             <li>
-              <strong>Ordered List example</strong> - add your text here
+              <strong>doses</strong> - the numeric value of each dose group
             </li>
             <li>
-              <strong>bold text</strong> - add your text here
+              <strong>ns</strong> - the total number of subjects per dose group
             </li>
             <li>
-              <strong>bold text</strong> - add your text here
+              <strong>means</strong> - the numeric value for the mean response
+              per dose group
+            </li>
+            <li>
+              <strong>stdevs</strong> - the numeric value for the standard
+              deviation per dose group
             </li>
           </ol>
-          <p>Add another paragraph</p>
-          <h3>Add another header</h3>
+          <h5>Individual Continuous Data Input</h5>
           <ol>
-            <li>Another list example</li>
-            <li>Replace this text with your own</li>
+            <li>
+              <strong>doses</strong> - the numeric value of each dose
+            </li>
+            <li>
+              <strong>responses</strong> - the response value for each
+              individual
+            </li>
           </ol>
-          <p>
-            You can add another <strong>paragraph</strong> right here
-          </p>
-          <h3>Another Header</h3>
-          <p>
-            Add another paragraph with some link-out buttons at the end{" "}
-            {ExternalAnchor(
-              "https://pubmed.ncbi.nlm.nih.gov/27567129/",
-              "Link 1",
-              "p-2 mx-1 badge badge-info",
-            )}
-            {ExternalAnchor(
-              "https://pubmed.ncbi.nlm.nih.gov/27567129/",
-              "Link 2",
-              "p-2 mx-1 badge badge-info",
-            )}
-          </p>
+          <h5>Settings Inputs</h5>
+          <ol>
+            <li>
+              <strong>Hypothesis</strong> - [Increasing, Decreasing, Two-Sided]
+            </li>
+            <li>
+              <strong>Number of Permutations</strong> - (optional) Setting a
+              number of permutations will run the test using 'permutation'
+              approach.
+            </li>
+          </ol>
+          <h3>Software Outputs</h3>
+          <ol>
+            <li>
+              <strong>Hypothesis</strong> - [Increasing, Decreasing, Two-Sided]
+            </li>
+            <li>
+              <strong>Statistic</strong>
+            </li>
+            <li>
+              <strong>Approach (P-Value)</strong> - [exact, approximate,
+              permutation]
+            </li>
+            <li>
+              <strong>P-Value</strong>
+            </li>
+          </ol>
         </Modal.Body>
       </Modal>
     );
