@@ -7,6 +7,14 @@ import { getHeaders, simulateClick } from "@/common";
 import * as mc from "@/constants/mainConstants";
 import { parseServerErrors } from "@/utils/parsers";
 
+// *** DEFAULT REPORT OPTIONS ***
+const DEFAULT_WORD_REPORT_OPTIONS = Object.freeze({
+  datasetFormatLong: true,
+  allModels: false,
+  bmdCdfTable: false,
+  additionalNestedDichotomousPlots: false,
+});
+
 class MainStore {
   constructor(rootStore) {
     this.rootStore = rootStore;
@@ -460,18 +468,15 @@ class MainStore {
   }
   // *** END TOAST ***
 
-  // *** DEFAULT REPORT OPTIONS ***
-  @observable wordReportOptions = {
-    datasetFormatLong: true,
-    allModels: false,
-    bmdCdfTable: false,
-    additionalNestedDichotomousPlots: false,
-  };
+  @observable wordReportOptions = { ...DEFAULT_WORD_REPORT_OPTIONS };
+
   @action.bound changeReportOptions(name, value) {
     this.wordReportOptions[name] = value;
   }
   @observable displayWordReportOptionModal = false;
   @action.bound showWordReportOptionModal() {
+    // reset the report options to default every time the word report modal is displayed.
+    Object.assign(this.wordReportOptions, DEFAULT_WORD_REPORT_OPTIONS);
     this.displayWordReportOptionModal = true;
   }
   @action.bound closeWordReportOptionModal() {
