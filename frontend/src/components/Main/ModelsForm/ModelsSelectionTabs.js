@@ -1,0 +1,84 @@
+import { inject, observer } from "mobx-react";
+import PropTypes from "prop-types";
+import React, { Component } from "react";
+import { NavLink } from "react-router-dom";
+import { MODEL_CONTINUOUS, MODEL_DICHOTOMOUS } from "@/constants/mainConstants";
+@inject("modelsStore")
+@observer
+class ModelsSelectionTabs extends Component {
+  render() {
+    const { modelsStore } = this.props;
+
+    const Tabs = observer(({ modelsStore }) => {
+      const handleClick = (tab) => (e) => {
+        e.preventDefault();
+        modelsStore.setActiveTab(tab);
+      };
+
+      // Do not render tabs for other models.
+      if (
+        modelsStore.getModelType !== MODEL_CONTINUOUS &&
+        modelsStore.getModelType !== MODEL_DICHOTOMOUS
+      ) {
+        return null;
+      }
+
+      return (
+        <ul className="nav nav-tabs d-flex mt-3 mb-2" role="tablist">
+          <li className="nav-item">
+            <NavLink
+              className={`nav-link ${modelsStore.isActive("loud") ? "active" : ""}`}
+              to="/x"
+              exact={true}
+              onClick={handleClick("loud")}
+              aria-current={modelsStore.isActive("loud") ? "page" : undefined}
+              role="tab"
+              aria-selected={modelsStore.isActive("loud")}
+            >
+              Loud Bayesian Model Averaging
+            </NavLink>
+          </li>
+
+          {modelsStore.getModelType !== MODEL_DICHOTOMOUS ? null : (
+            <li className="nav-item">
+              <NavLink
+                className={`nav-link ${modelsStore.isActive("toxicr") ? "active" : ""}`}
+                to="/x"
+                onClick={handleClick("toxicr")}
+                aria-current={
+                  modelsStore.isActive("toxicr") ? "page" : undefined
+                }
+                role="tab"
+                aria-selected={modelsStore.isActive("toxicr")}
+              >
+                ToxicR Bayesian Model Averaging
+              </NavLink>
+            </li>
+          )}
+
+          <li className="nav-item">
+            <NavLink
+              id="navlink-output"
+              className={`nav-link ${modelsStore.isActive("mle") ? "active" : ""}`}
+              to="/x"
+              onClick={handleClick("mle")}
+              aria-current={modelsStore.isActive("mle") ? "page" : undefined}
+              role="tab"
+              aria-selected={modelsStore.isActive("mle")}
+            >
+              Maximum Likelihood Estimate
+            </NavLink>
+          </li>
+        </ul>
+      );
+    });
+
+    return <Tabs modelsStore={modelsStore} />;
+  }
+}
+
+ModelsSelectionTabs.propTypes = {
+  modelsStore: PropTypes.object,
+};
+
+export default ModelsSelectionTabs;

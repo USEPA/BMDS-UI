@@ -11,7 +11,7 @@ from pandas import DataFrame
 
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott
-from pybmds.reporting.styling import Report, write_setting_p, df_to_table, add_mpl_figure
+from pybmds.reporting.styling import Report, write_setting_p, df_to_table
 from pybmds.utils import get_version
 
 from ... import __version__ as bmds_ui_version
