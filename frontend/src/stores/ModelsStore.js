@@ -8,19 +8,19 @@ class ModelsStore {
   constructor(rootStore) {
     this.rootStore = rootStore;
 
-    // Switch to 'loud' tab if currently on toxicr tab and Model Type is switched to continuous.
+    // Switch to 'loud_bayesian' tab if currently on toxicr tab and Model Type is switched to continuous.
     reaction(
       () => this.getModelType,
       (type) => {
         if (type !== mc.MODEL_DICHOTOMOUS && this.activeTab === "toxicr") {
-          this.setActiveTab("loud");
+          this.setActiveTab("loud_bayesian");
         }
       },
       { fireImmediately: true },
     );
   }
 
-  @observable activeTab = "loud"; // 'loud' | 'toxicr' | 'mle'
+  @observable activeTab = "loud_bayesian"; // 'loud_bayesian' | 'toxicr_bayesian' | 'mle'
   @action setActiveTab(tab) {
     this.activeTab = tab;
   }
@@ -75,7 +75,7 @@ class ModelsStore {
       if (!(name in this.models)) {
         this.models[name] = [];
       }
-      if (name === mc.BAYESIAN || name === mc.LOUD) {
+      if (name === mc.TOXICR_BAYESIAN || name === mc.LOUD_BAYESIAN) {
         let bma = {
           model,
           prior_weight: 0,
@@ -92,7 +92,7 @@ class ModelsStore {
       }
     } else {
       let index = -1;
-      if (name === mc.BAYESIAN || name === mc.LOUD) {
+      if (name === mc.TOXICR_BAYESIAN || name === mc.LOUD_BAYESIAN) {
         index = this.models[name].findIndex((obj) => obj.model === model);
         if (index > -1) {
           this.models[name].splice(index, 1);

@@ -38,7 +38,7 @@ const ModelsCheckBoxHeader = observer((props) => {
     store.getModelType == mc.MODEL_NESTED_DICHOTOMOUS ? "mle" : store.activeTab;
 
   const activeTabToTitle = {
-    loud: "Loud Bayesian Model Averaging",
+    loud_bayesian: "Loud Bayesian Model Averaging",
     mle: "Maximum Likelihood Estimate",
     toxicr: "ToxicR Bayesian Model Averaging",
   };
@@ -92,43 +92,43 @@ const ModelsCheckBoxHeader = observer((props) => {
                 ) : null}
               </th>
             </>
-          ) : activeTab === "loud" ? (
+          ) : activeTab === "loud_bayesian" ? (
             <>
-              <th id="l-i">
+              <th id="lb-i">
                 Include
                 {store.canEdit ? (
                   <>
                     <br />
                     <SelectAllComponent
                       store={store}
-                      key={"loud"}
-                      type={"loud"}
+                      key={"loud_bayesian"}
+                      type={"loud_bayesian"}
                       label="Select All"
                     />
                   </>
                 ) : null}
               </th>
-              <th id="l-p">
+              <th id="lb-p">
                 <span className="mb-1">Prior Weight</span>
               </th>
             </>
           ) : activeTab === "toxicr" ? (
             <>
-              <th id="b-i">
+              <th id="tb-i">
                 Include
                 {store.canEdit ? (
                   <>
                     <br />
                     <SelectAllComponent
                       store={store}
-                      key={"bayesian"}
-                      type={"bayesian"}
+                      key={"toxicr_bayesian"}
+                      type={"toxicr_bayesian"}
                       label="Select All"
                     />
                   </>
                 ) : null}
               </th>
-              <th id="b-p">
+              <th id="tb-p">
                 <span className="mb-1">Prior Weight</span>
               </th>
             </>
