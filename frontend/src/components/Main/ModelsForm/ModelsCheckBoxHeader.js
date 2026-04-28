@@ -69,7 +69,6 @@ const ModelsCheckBoxHeader = observer((props) => {
                   <>
                     <br />
                     <SelectAllComponent
-                      key="mle-frequentist_restricted"
                       store={store}
                       type={"frequentist_restricted"}
                       label="Select All"
@@ -83,7 +82,6 @@ const ModelsCheckBoxHeader = observer((props) => {
                   <>
                     <br />
                     <SelectAllComponent
-                      key="mle-frequentist_unrestricted"
                       store={store}
                       type={"frequentist_unrestricted"}
                       label="Select All"
@@ -100,7 +98,6 @@ const ModelsCheckBoxHeader = observer((props) => {
                   <>
                     <br />
                     <SelectAllComponent
-                      key="loud"
                       store={store}
                       type={"loud"}
                       label="Select All"
@@ -120,7 +117,6 @@ const ModelsCheckBoxHeader = observer((props) => {
                   <>
                     <br />
                     <SelectAllComponent
-                      key="bayesian"
                       store={store}
                       type={"bayesian"}
                       label="Select All"
