@@ -61,6 +61,7 @@ class ModelsStore {
 
   @action.bound enableAll(name, checked) {
     allModelOptions[this.getModelType][name].map((model) => {
+      console.log(checked);
       this.setModelSelection(name, model, checked);
     });
   }
@@ -75,7 +76,7 @@ class ModelsStore {
       if (!(name in this.models)) {
         this.models[name] = [];
       }
-      if (name === mc.BAYESIAN) {
+      if (name === mc.BAYESIAN || name === mc.LOUD) {
         let bma = {
           model,
           prior_weight: 0,
@@ -84,7 +85,7 @@ class ModelsStore {
         if (obj === undefined) {
           this.models[name].push(bma);
         }
-        this.setDefaultPriorWeights();
+        this.setDefaultPriorWeights(name);
       } else {
         if (!this.models[name].includes(model)) {
           this.models[name].push(model);
@@ -92,11 +93,11 @@ class ModelsStore {
       }
     } else {
       let index = -1;
-      if (name === mc.BAYESIAN) {
+      if (name === mc.BAYESIAN || name === mc.LOUD) {
         index = this.models[name].findIndex((obj) => obj.model === model);
         if (index > -1) {
           this.models[name].splice(index, 1);
-          this.setDefaultPriorWeights();
+          this.setDefaultPriorWeights(name);
         }
       } else {
         index = this.models[name].indexOf(model);
@@ -112,22 +113,19 @@ class ModelsStore {
     this.rootStore.mainStore.setInputsChangedFlag();
   }
 
-  @action.bound setDefaultPriorWeights() {
+  @action.bound setDefaultPriorWeights(name) {
     const value = parseFloat(
-      (this.prior_weight / this.models[mc.BAYESIAN].length).toFixed(3),
+      (this.prior_weight / this.models[name].length).toFixed(3),
     );
-    this.models[mc.BAYESIAN].forEach((obj) => {
+    this.models[name].forEach((obj) => {
       obj.prior_weight = value;
     });
   }
 
-  @action.bound setPriorWeight(model, value) {
-    let modelIndex = _.findIndex(
-      this.models[mc.BAYESIAN],
-      (d) => d.model === model,
-    );
+  @action.bound setPriorWeight(name, model, value) {
+    let modelIndex = _.findIndex(this.models[name], (d) => d.model === model);
     if (modelIndex >= 0) {
-      this.models[mc.BAYESIAN][modelIndex].prior_weight = parseFloat(value);
+      this.models[name][modelIndex].prior_weight = parseFloat(value);
     }
   }
 }

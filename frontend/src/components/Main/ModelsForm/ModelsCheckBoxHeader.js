@@ -10,6 +10,11 @@ import CheckboxInput from "../../common/CheckboxInput";
 import LabelInput from "../../common/LabelInput";
 
 const areAllModelsChecked = function (modelType, type, models) {
+    console.log(
+      "areAllModelsChecked: ",
+      type in models &&
+        models[type].length === allModelOptions[modelType][type].length,
+    );
     return (
       type in models &&
       models[type].length === allModelOptions[modelType][type].length
@@ -70,6 +75,7 @@ const ModelsCheckBoxHeader = observer((props) => {
                     <br />
                     <SelectAllComponent
                       store={store}
+                      key={"mle-frequentist_restricted"}
                       type={"frequentist_restricted"}
                       label="Select All"
                     />
@@ -83,6 +89,7 @@ const ModelsCheckBoxHeader = observer((props) => {
                     <br />
                     <SelectAllComponent
                       store={store}
+                      key={"mle-frequentist_unrestricted"}
                       type={"frequentist_unrestricted"}
                       label="Select All"
                     />
@@ -99,6 +106,7 @@ const ModelsCheckBoxHeader = observer((props) => {
                     <br />
                     <SelectAllComponent
                       store={store}
+                      key={"loud"}
                       type={"loud"}
                       label="Select All"
                     />
@@ -118,6 +126,7 @@ const ModelsCheckBoxHeader = observer((props) => {
                     <br />
                     <SelectAllComponent
                       store={store}
+                      key={"bayesian"}
                       type={"bayesian"}
                       label="Select All"
                     />
