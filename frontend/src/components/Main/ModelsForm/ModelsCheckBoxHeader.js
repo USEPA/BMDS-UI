@@ -10,11 +10,6 @@ import CheckboxInput from "../../common/CheckboxInput";
 import LabelInput from "../../common/LabelInput";
 
 const areAllModelsChecked = function (modelType, type, models) {
-    console.log(
-      "areAllModelsChecked: ",
-      type in models &&
-        models[type].length === allModelOptions[modelType][type].length,
-    );
     return (
       type in models &&
       models[type].length === allModelOptions[modelType][type].length
@@ -82,7 +77,7 @@ const ModelsCheckBoxHeader = observer((props) => {
                   </>
                 ) : null}
               </th>
-              <th id="mle-ur">
+              <th id="mle-u">
                 Unrestricted
                 {store.canEdit ? (
                   <>

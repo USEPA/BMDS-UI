@@ -61,7 +61,6 @@ class ModelsStore {
 
   @action.bound enableAll(name, checked) {
     allModelOptions[this.getModelType][name].map((model) => {
-      console.log(checked);
       this.setModelSelection(name, model, checked);
     });
   }

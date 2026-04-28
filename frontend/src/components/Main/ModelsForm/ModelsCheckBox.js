@@ -12,7 +12,7 @@ import HelpTextPopover from "../../common/HelpTextPopover";
 const isModelChecked = function (models, type, model) {
     let checked = false;
     if (type in models) {
-      if (type === mc.BAYESIAN) {
+      if (type === mc.BAYESIAN || type === mc.LOUD) {
         checked = models[type].findIndex((obj) => obj.model === model) > -1;
       } else {
         checked = models[type].indexOf(model) > -1;
@@ -20,10 +20,10 @@ const isModelChecked = function (models, type, model) {
     }
     return checked;
   },
-  getPriorWeightValue = function (models, model) {
+  getPriorWeightValue = function (models, type, model) {
     let prior_weight = 0;
-    if (mc.BAYESIAN in models) {
-      let obj = models[mc.BAYESIAN].find((obj) => obj.model === model);
+    if (type in models) {
+      let obj = models[type].find((obj) => obj.model === model);
       if (obj != undefined) {
         prior_weight = obj.prior_weight;
       }
@@ -37,11 +37,11 @@ const isModelChecked = function (models, type, model) {
         {store.canEdit ? (
           <FloatInput
             disabled={disabled}
-            value={getPriorWeightValue(store.models, model)}
+            value={getPriorWeightValue(store.models, name, model)}
             onChange={(value) => store.setPriorWeight(name, model, value)}
           />
         ) : (
-          getPriorWeightValue(store.models, model)
+          getPriorWeightValue(store.models, name, model)
         )}
       </td>
     );
@@ -192,7 +192,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={l}
               model={"Exponential"}
               headers="l-p"
             />
@@ -202,7 +202,7 @@ const ModelsCheckBox = observer((props) => {
             <CheckBoxTd store={store} type={l} headers="l-i" model={"Hill"} />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={l}
               model={"Hill"}
               headers="l-p"
             />
@@ -212,7 +212,7 @@ const ModelsCheckBox = observer((props) => {
             <CheckBoxTd store={store} type={l} headers="l-i" model={"Linear"} />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={l}
               model={"Linear"}
               headers="l-p"
             />
@@ -227,7 +227,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={l}
               model={"Polynomial"}
               headers="l-p"
             />
@@ -237,7 +237,7 @@ const ModelsCheckBox = observer((props) => {
             <CheckBoxTd store={store} type={l} headers="l-i" model={"Power"} />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={l}
               model={"Power"}
               headers="l-p"
             />
@@ -395,7 +395,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={b}
               model={"Dichotomous-Hill"}
               headers="b-p"
             />
@@ -405,7 +405,7 @@ const ModelsCheckBox = observer((props) => {
             <CheckBoxTd store={store} type={b} headers="b-i" model={"Gamma"} />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={b}
               model={"Gamma"}
               headers="b-p"
             />
@@ -420,7 +420,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={b}
               model={"Logistic"}
               headers="b-p"
             />
@@ -435,7 +435,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={b}
               model={"LogLogistic"}
               headers="b-p"
             />
@@ -450,7 +450,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={b}
               model={"LogProbit"}
               headers="b-p"
             />
@@ -472,7 +472,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={b}
               model={"Multistage"}
               headers="b-p"
             />
@@ -482,7 +482,7 @@ const ModelsCheckBox = observer((props) => {
             <CheckBoxTd store={store} type={b} headers="b-i" model={"Probit"} />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={b}
               model={"Probit"}
               headers="b-p"
             />
@@ -497,7 +497,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={b}
               model={"Quantal Linear"}
               headers="b-p"
             />
@@ -512,7 +512,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={b}
               model={"Weibull"}
               headers="b-p"
             />
@@ -532,7 +532,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={l}
               model={"Dichotomous-Hill"}
               headers="l-p"
             />
@@ -542,7 +542,7 @@ const ModelsCheckBox = observer((props) => {
             <CheckBoxTd store={store} type={l} headers="l-i" model={"Gamma"} />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={l}
               model={"Gamma"}
               headers="l-p"
             />
@@ -557,7 +557,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={l}
               model={"Logistic"}
               headers="l-p"
             />
@@ -572,7 +572,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={l}
               model={"LogLogistic"}
               headers="l-p"
             />
@@ -587,7 +587,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={l}
               model={"LogProbit"}
               headers="l-p"
             />
@@ -609,7 +609,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={l}
               model={"Multistage"}
               headers="l-p"
             />
@@ -619,7 +619,7 @@ const ModelsCheckBox = observer((props) => {
             <CheckBoxTd store={store} type={l} headers="l-i" model={"Probit"} />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={l}
               model={"Probit"}
               headers="l-p"
             />
@@ -634,7 +634,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={l}
               model={"Quantal Linear"}
               headers="l-p"
             />
@@ -649,7 +649,7 @@ const ModelsCheckBox = observer((props) => {
             />
             <PriorWeightTd
               store={store}
-              name={store.activeTab}
+              name={l}
               model={"Weibull"}
               headers="l-p"
             />
