@@ -12,14 +12,10 @@ class ModelsStore {
     reaction(
       () => this.getModelType,
       (type) => {
-<<<<<<< HEAD
         if (
           type !== mc.MODEL_DICHOTOMOUS &&
           this.activeTab === "toxicr_bayesian"
         ) {
-=======
-        if (type !== mc.MODEL_DICHOTOMOUS && this.activeTab === "toxicr") {
->>>>>>> d44f00b027d863273c948645668a244a14230faa
           this.setActiveTab("loud_bayesian");
         }
       },

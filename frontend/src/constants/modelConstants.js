@@ -18,6 +18,11 @@ const allContinuous = ["Exponential", "Hill", "Linear", "Polynomial", "Power"],
     "Weibull",
   ],
   allNestedDichotomous = ["Nested Logistic", "NCTR"],
+  rowOrder = {
+    [MODEL_CONTINUOUS]: allContinuous,
+    [MODEL_DICHOTOMOUS]: allDichotomous,
+    [MODEL_NESTED_DICHOTOMOUS]: allNestedDichotomous,
+  },
   models = {
     [MODEL_CONTINUOUS]: {
       frequentist_restricted: ["Exponential", "Hill", "Polynomial", "Power"],
@@ -51,7 +56,6 @@ const allContinuous = ["Exponential", "Hill", "Linear", "Polynomial", "Power"],
     [MODEL_CONTINUOUS]: {
       frequentist_restricted: ["Exponential", "Hill", "Polynomial", "Power"],
       frequentist_unrestricted: ["Hill", "Linear", "Polynomial", "Power"],
-      toxicr_bayesian: allContinuous,
       loud_bayesian: allContinuous,
     },
     [MODEL_DICHOTOMOUS]: {
@@ -81,4 +85,4 @@ const allContinuous = ["Exponential", "Hill", "Linear", "Polynomial", "Power"],
   },
   hasDegrees = new Set(["Multistage", "Polynomial"]);
 
-export { allModelOptions, hasDegrees, isLognormal, models };
+export { allModelOptions, hasDegrees, isLognormal, models, rowOrder };
