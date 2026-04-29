@@ -22,13 +22,15 @@ const Tabs = observer(({ modelsStore }) => {
     <ul className="nav nav-tabs d-flex mt-3 mb-2" role="tablist">
       <li className="nav-item">
         <NavLink
-          className={`nav-link ${modelsStore.isActive("loud") ? "active" : ""}`}
+          className={`nav-link ${modelsStore.isActive("loud_bayesian") ? "active" : ""}`}
           to="/x"
           exact={true}
-          onClick={handleClick("loud")}
-          aria-current={modelsStore.isActive("loud") ? "page" : undefined}
+          onClick={handleClick("loud_bayesian")}
+          aria-current={
+            modelsStore.isActive("loud_bayesian") ? "page" : undefined
+          }
           role="tab"
-          aria-selected={modelsStore.isActive("loud")}
+          aria-selected={modelsStore.isActive("loud_bayesian")}
         >
           Loud Bayesian Model Averaging
         </NavLink>

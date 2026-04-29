@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import * as mc from "@/constants/mainConstants";
+import { allModelOptions } from "@/constants/modelConstants";
 
 import { checkOrEmpty } from "../../../common";
 import CheckboxInput from "../../common/CheckboxInput";
@@ -12,7 +13,7 @@ import HelpTextPopover from "../../common/HelpTextPopover";
 const isModelChecked = function (models, type, model) {
     let checked = false;
     if (type in models) {
-      if (type === mc.BAYESIAN || type === mc.LOUD) {
+      if (type === mc.TOXICR_BAYESIAN || type === mc.LOUD_BAYESIAN) {
         checked = models[type].findIndex((obj) => obj.model === model) > -1;
       } else {
         checked = models[type].indexOf(model) > -1;
@@ -31,17 +32,17 @@ const isModelChecked = function (models, type, model) {
     return prior_weight;
   },
   PriorWeightTd = observer((props) => {
-    const { store, model, disabled, headers, name } = props;
+    const { store, type, model, disabled, headers } = props;
     return (
       <td headers={headers}>
         {store.canEdit ? (
           <FloatInput
             disabled={disabled}
-            value={getPriorWeightValue(store.models, name, model)}
-            onChange={(value) => store.setPriorWeight(name, model, value)}
+            value={getPriorWeightValue(store.models, type, model)}
+            onChange={(value) => store.setPriorWeight(type, model, value)}
           />
         ) : (
-          getPriorWeightValue(store.models, name, model)
+          getPriorWeightValue(store.models, type, model)
         )}
       </td>
     );
@@ -77,8 +78,8 @@ const isModelChecked = function (models, type, model) {
         Multistage model is used (see User Manual for details).`,
   fr = "frequentist_restricted",
   fu = "frequentist_unrestricted",
-  b = "bayesian",
-  l = "loud";
+  tb = "toxicr_bayesian",
+  lb = "loud_bayesian";
 
 const ModelsCheckBox = observer((props) => {
   const { store } = props,
@@ -179,67 +180,77 @@ const ModelsCheckBox = observer((props) => {
           </tr>
         </tbody>
       );
-    } else if (store.activeTab === "loud") {
+    } else if (store.activeTab === "loud_bayesian") {
       return (
         <tbody>
           <tr>
             <ModelHeaderTd name="Exponential" />
             <CheckBoxTd
               store={store}
-              type={l}
-              headers="l-i"
+              type={lb}
+              headers="lb-i"
               model={"Exponential"}
             />
             <PriorWeightTd
               store={store}
-              name={l}
+              type={lb}
               model={"Exponential"}
-              headers="l-p"
+              headers="lb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Hill" />
-            <CheckBoxTd store={store} type={l} headers="l-i" model={"Hill"} />
+            <CheckBoxTd store={store} type={lb} headers="lb-i" model={"Hill"} />
             <PriorWeightTd
               store={store}
-              name={l}
+              type={lb}
               model={"Hill"}
-              headers="l-p"
+              headers="lb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Linear" />
-            <CheckBoxTd store={store} type={l} headers="l-i" model={"Linear"} />
+            <CheckBoxTd
+              store={store}
+              type={lb}
+              headers="lb-i"
+              model={"Linear"}
+            />
             <PriorWeightTd
               store={store}
-              name={l}
+              type={lb}
               model={"Linear"}
-              headers="l-p"
+              headers="lb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Polynomial" />
             <CheckBoxTd
               store={store}
-              type={l}
-              headers="l-i"
+              type={lb}
+              headers="lb-i"
               model={"Polynomial"}
             />
             <PriorWeightTd
               store={store}
-              name={l}
+              type={lb}
               model={"Polynomial"}
-              headers="l-p"
+              headers="lb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Power" />
-            <CheckBoxTd store={store} type={l} headers="l-i" model={"Power"} />
+            <CheckBoxTd
+              store={store}
+              type={lb}
+              headers="lb-i"
+              model={"Power"}
+            />
             <PriorWeightTd
               store={store}
-              name={l}
+              type={lb}
               model={"Power"}
-              headers="l-p"
+              headers="lb-p"
             />
           </tr>
         </tbody>
@@ -320,7 +331,6 @@ const ModelsCheckBox = observer((props) => {
             />
           </tr>
           <tr>
-            {" "}
             <ModelHeaderTd
               name="Multistage"
               extra={
@@ -343,7 +353,6 @@ const ModelsCheckBox = observer((props) => {
             />
           </tr>
           <tr>
-            {" "}
             <ModelHeaderTd name="Probit" />
             <td id="mle-r"></td>
             <CheckBoxTd
@@ -354,7 +363,6 @@ const ModelsCheckBox = observer((props) => {
             />
           </tr>
           <tr>
-            {" "}
             <ModelHeaderTd name="Quantal Linear" />
             <td id="mle-r"></td>
             <CheckBoxTd
@@ -365,7 +373,6 @@ const ModelsCheckBox = observer((props) => {
             />
           </tr>
           <tr>
-            {" "}
             <ModelHeaderTd name="Weibull" />
             <CheckBoxTd
               store={store}
@@ -382,77 +389,82 @@ const ModelsCheckBox = observer((props) => {
           </tr>
         </tbody>
       );
-    } else if (store.activeTab === "toxicr") {
+    } else if (store.activeTab === "toxicr_bayesian") {
       return (
         <tbody>
           <tr>
             <ModelHeaderTd name="Dichotomous Hill" />
             <CheckBoxTd
               store={store}
-              type={b}
-              headers="b-i"
+              type={tb}
+              headers="tb-i"
               model={"Dichotomous-Hill"}
             />
             <PriorWeightTd
               store={store}
-              name={b}
+              type={tb}
               model={"Dichotomous-Hill"}
-              headers="b-p"
+              headers="tb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Gamma" />
-            <CheckBoxTd store={store} type={b} headers="b-i" model={"Gamma"} />
+            <CheckBoxTd
+              store={store}
+              type={tb}
+              headers="tb-i"
+              model={"Gamma"}
+            />
             <PriorWeightTd
               store={store}
-              name={b}
+              type={tb}
               model={"Gamma"}
-              headers="b-p"
+              headers="tb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Logistic" />
             <CheckBoxTd
               store={store}
-              type={b}
-              headers="b-i"
+              type={tb}
+              headers="tb-i"
               model={"Logistic"}
             />
             <PriorWeightTd
               store={store}
-              name={b}
+              type={tb}
               model={"Logistic"}
-              headers="b-p"
+              headers="tb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Log Logistic" />
             <CheckBoxTd
               store={store}
-              type={b}
-              headers="b-i"
+              type={tb}
+              headers="tb-i"
               model={"LogLogistic"}
             />
             <PriorWeightTd
               store={store}
-              name={b}
+              type={tb}
               model={"LogLogistic"}
-              headers="b-p"
+              headers="tb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Log Probit" />
             <CheckBoxTd
               store={store}
-              type={b}
-              headers="b-i"
+              type={tb}
+              headers="tb-i"
               model={"LogProbit"}
             />
             <PriorWeightTd
               store={store}
-              name={b}
+              type={tb}
               model={"LogProbit"}
-              headers="b-p"
+              headers="tb-p"
             />
           </tr>
           <tr>
@@ -466,130 +478,140 @@ const ModelsCheckBox = observer((props) => {
             />
             <CheckBoxTd
               store={store}
-              type={b}
-              headers="b-i"
+              type={tb}
+              headers="tb-i"
               model={"Multistage"}
             />
             <PriorWeightTd
               store={store}
-              name={b}
+              type={tb}
               model={"Multistage"}
-              headers="b-p"
+              headers="tb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Probit" />
-            <CheckBoxTd store={store} type={b} headers="b-i" model={"Probit"} />
+            <CheckBoxTd
+              store={store}
+              type={tb}
+              headers="tb-i"
+              model={"Probit"}
+            />
             <PriorWeightTd
               store={store}
-              name={b}
+              type={tb}
               model={"Probit"}
-              headers="b-p"
+              headers="tb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Quantal Linear" />
             <CheckBoxTd
               store={store}
-              type={b}
-              headers="b-i"
+              type={tb}
+              headers="tb-i"
               model={"Quantal Linear"}
             />
             <PriorWeightTd
               store={store}
-              name={b}
+              type={tb}
               model={"Quantal Linear"}
-              headers="b-p"
+              headers="tb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Weibull" />
             <CheckBoxTd
               store={store}
-              type={b}
-              headers="b-i"
+              type={tb}
+              headers="tb-i"
               model={"Weibull"}
             />
             <PriorWeightTd
               store={store}
-              name={b}
+              type={tb}
               model={"Weibull"}
-              headers="b-p"
+              headers="tb-p"
             />
           </tr>
         </tbody>
       );
-    } else if (store.activeTab === "loud") {
+    } else if (store.activeTab === "loud_bayesian") {
       return (
         <tbody>
           <tr>
             <ModelHeaderTd name="Dichotomous Hill" />
             <CheckBoxTd
               store={store}
-              type={l}
-              headers="l-i"
+              type={lb}
+              headers="lb-i"
               model={"Dichotomous-Hill"}
             />
             <PriorWeightTd
               store={store}
-              name={l}
+              type={lb}
               model={"Dichotomous-Hill"}
-              headers="l-p"
+              headers="lb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Gamma" />
-            <CheckBoxTd store={store} type={l} headers="l-i" model={"Gamma"} />
+            <CheckBoxTd
+              store={store}
+              type={lb}
+              headers="lb-i"
+              model={"Gamma"}
+            />
             <PriorWeightTd
               store={store}
-              name={l}
+              type={lb}
               model={"Gamma"}
-              headers="l-p"
+              headers="lb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Logistic" />
             <CheckBoxTd
               store={store}
-              type={l}
-              headers="l-i"
+              type={lb}
+              headers="lb-i"
               model={"Logistic"}
             />
             <PriorWeightTd
               store={store}
-              name={l}
+              type={lb}
               model={"Logistic"}
-              headers="l-p"
+              headers="lb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Log Logistic" />
             <CheckBoxTd
               store={store}
-              type={l}
-              headers="l-i"
+              type={lb}
+              headers="lb-i"
               model={"LogLogistic"}
             />
             <PriorWeightTd
               store={store}
-              name={l}
+              type={lb}
               model={"LogLogistic"}
-              headers="l-p"
+              headers="lb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Log Probit" />
             <CheckBoxTd
               store={store}
-              type={l}
-              headers="l-i"
+              type={lb}
+              headers="lb-i"
               model={"LogProbit"}
             />
             <PriorWeightTd
               store={store}
-              name={l}
+              type={lb}
               model={"LogProbit"}
-              headers="l-p"
+              headers="lb-p"
             />
           </tr>
           <tr>
@@ -603,55 +625,60 @@ const ModelsCheckBox = observer((props) => {
             />
             <CheckBoxTd
               store={store}
-              type={l}
-              headers="l-i"
+              type={lb}
+              headers="lb-i"
               model={"Multistage"}
             />
             <PriorWeightTd
               store={store}
-              name={l}
+              type={lb}
               model={"Multistage"}
-              headers="l-p"
+              headers="lb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Probit" />
-            <CheckBoxTd store={store} type={l} headers="l-i" model={"Probit"} />
+            <CheckBoxTd
+              store={store}
+              type={lb}
+              headers="lb-i"
+              model={"Probit"}
+            />
             <PriorWeightTd
               store={store}
-              name={l}
+              type={lb}
               model={"Probit"}
-              headers="l-p"
+              headers="lb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Quantal Linear" />
             <CheckBoxTd
               store={store}
-              type={l}
-              headers="l-i"
+              type={lb}
+              headers="lb-i"
               model={"Quantal Linear"}
             />
             <PriorWeightTd
               store={store}
-              name={l}
+              type={lb}
               model={"Quantal Linear"}
-              headers="l-p"
+              headers="lb-p"
             />
           </tr>
           <tr>
             <ModelHeaderTd name="Weibull" />
             <CheckBoxTd
               store={store}
-              type={l}
-              headers="l-i"
+              type={lb}
+              headers="lb-i"
               model={"Weibull"}
             />
             <PriorWeightTd
               store={store}
-              name={l}
+              type={lb}
               model={"Weibull"}
-              headers="l-p"
+              headers="lb-p"
             />
           </tr>
         </tbody>

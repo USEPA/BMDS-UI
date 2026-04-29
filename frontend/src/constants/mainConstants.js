@@ -1,7 +1,7 @@
 export const MODEL_CONTINUOUS = "C",
   MODEL_DICHOTOMOUS = "D",
-  BAYESIAN = "bayesian",
-  LOUD = "loud",
+  TOXICR_BAYESIAN = "toxicr_bayesian",
+  LOUD_BAYESIAN = "loud_bayesian",
   MODEL_NESTED_DICHOTOMOUS = "ND",
   MODEL_MULTI_TUMOR = "MT",
   modelTypes = [

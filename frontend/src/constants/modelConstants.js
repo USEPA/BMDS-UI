@@ -51,8 +51,8 @@ const allContinuous = ["Exponential", "Hill", "Linear", "Polynomial", "Power"],
     [MODEL_CONTINUOUS]: {
       frequentist_restricted: ["Exponential", "Hill", "Polynomial", "Power"],
       frequentist_unrestricted: ["Hill", "Linear", "Polynomial", "Power"],
-      bayesian: allContinuous,
-      loud: allContinuous,
+      toxicr_bayesian: allContinuous,
+      loud_bayesian: allContinuous,
     },
     [MODEL_DICHOTOMOUS]: {
       frequentist_restricted: [
@@ -64,8 +64,8 @@ const allContinuous = ["Exponential", "Hill", "Linear", "Polynomial", "Power"],
         "Weibull",
       ],
       frequentist_unrestricted: allDichotomous,
-      bayesian: allDichotomous,
-      loud: allDichotomous,
+      toxicr_bayesian: allDichotomous,
+      loud_bayesian: allDichotomous,
     },
     [MODEL_NESTED_DICHOTOMOUS]: {
       frequentist_restricted: allNestedDichotomous,
