@@ -32,7 +32,13 @@ const Tabs = observer(({ modelsStore }) => {
           role="tab"
           aria-selected={modelsStore.isActive("loud_bayesian")}
         >
-          Loud Bayesian Model Averaging
+          Loud Bayesian Model Averaging{" ("}
+          {
+            modelsStore.numSelectedForTabs[modelsStore.getModelType][
+              "loud_bayesian"
+            ]
+          }
+          {")"}
         </NavLink>
       </li>
 
@@ -48,7 +54,13 @@ const Tabs = observer(({ modelsStore }) => {
             role="tab"
             aria-selected={modelsStore.isActive("toxicr_bayesian")}
           >
-            ToxicR Bayesian Model Averaging
+            ToxicR Bayesian Model Averaging{" ("}
+            {
+              modelsStore.numSelectedForTabs[modelsStore.getModelType][
+                "toxicr_bayesian"
+              ]
+            }
+            {")"}
           </NavLink>
         </li>
       )}
@@ -63,7 +75,9 @@ const Tabs = observer(({ modelsStore }) => {
           role="tab"
           aria-selected={modelsStore.isActive("mle")}
         >
-          Maximum Likelihood Estimate
+          Maximum Likelihood Estimate{" ("}
+          {modelsStore.numSelectedForTabs[modelsStore.getModelType]["mle"]}
+          {")"}
         </NavLink>
       </li>
     </ul>

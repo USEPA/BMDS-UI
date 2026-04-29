@@ -68,12 +68,16 @@ const PriorWeightTd = observer(({ store, type, model, headers }) => {
 
 const CheckBoxTd = observer(({ store, type, model, disabled, headers }) => {
   const key = `${type}-${model}`;
+
   return (
     <td headers={headers}>
       {store.canEdit ? (
         <CheckboxInput
           id={key}
-          onChange={(value) => store.setModelSelection(type, model, value)}
+          onChange={(value) => {
+            store.setModelSelection(type, model, value);
+            store.setNumSelectedForTabs(type);
+          }}
           checked={isModelChecked(store.models, type, model)}
         />
       ) : (
@@ -184,15 +188,6 @@ const ModelsCheckBox = observer(({ store }) => {
 
   const columns = tabColumns[activeTab];
   if (!columns) throw `Unknown activeTab: ${activeTab}`;
-
-  // const modelSet = new Set();
-  // columns.forEach((col) => {
-  //   (allModelOptions[getModelType][col.type] ?? []).forEach((m) =>
-  //     modelSet.add(m),
-  //   );
-  // });
-
-  // const allModels = [...modelSet];
 
   const allModels = rowOrder[getModelType];
 

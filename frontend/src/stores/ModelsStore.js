@@ -32,6 +32,24 @@ class ModelsStore {
     return this.activeTab === tab;
   }
 
+  @observable numSelectedForTabs = {
+    [mc.MODEL_CONTINUOUS]: {
+      loud_bayesian: 0,
+      mle: 5,
+    },
+    [mc.MODEL_DICHOTOMOUS]: {
+      loud_bayesian: 0,
+      toxicr_bayesian: 0,
+      mle: 9,
+    },
+  };
+  @action setNumSelectedForTabs(type) {
+    const tabTypes = ["toxicr_bayesian", "loud_bayesian", "mle"];
+    if (!tabTypes.includes(type)) return;
+    this.numSelectedForTabs[this.getModelType][type] =
+      this.models?.[type]?.length ?? 0;
+  }
+
   @observable model_headers = {};
   @observable models = {};
   @observable prior_weight = 1;
@@ -44,6 +62,16 @@ class ModelsStore {
     if (this.numModelsSelected === 0 || force) {
       this.models = models[this.getModelType];
     }
+    if (
+      this.getModelType !== mc.MODEL_DICHOTOMOUS &&
+      this.getModelType !== mc.MODEL_CONTINUOUS
+    ) {
+      return;
+    }
+
+    this.setNumSelectedForTabs("toxicr_bayesian");
+    this.setNumSelectedForTabs("loud_bayesian");
+    this.setNumSelectedForTabs("mle");
   }
 
   @computed get numModelsSelected() {
@@ -66,6 +94,7 @@ class ModelsStore {
     allModelOptions[this.getModelType][name].map((model) => {
       this.setModelSelection(name, model, checked);
     });
+    this.setNumSelectedForTabs(name);
   }
 
   @action.bound resetModelSelection() {
