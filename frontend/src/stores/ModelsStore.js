@@ -12,7 +12,10 @@ class ModelsStore {
     reaction(
       () => this.getModelType,
       (type) => {
-        if (type !== mc.MODEL_DICHOTOMOUS && this.activeTab === "toxicr") {
+        if (
+          type !== mc.MODEL_DICHOTOMOUS &&
+          this.activeTab === "toxicr_bayesian"
+        ) {
           this.setActiveTab("loud_bayesian");
         }
       },
@@ -121,10 +124,10 @@ class ModelsStore {
     });
   }
 
-  @action.bound setPriorWeight(name, model, value) {
-    let modelIndex = _.findIndex(this.models[name], (d) => d.model === model);
+  @action.bound setPriorWeight(type, model, value) {
+    let modelIndex = _.findIndex(this.models[type], (d) => d.model === model);
     if (modelIndex >= 0) {
-      this.models[name][modelIndex].prior_weight = parseFloat(value);
+      this.models[type][modelIndex].prior_weight = parseFloat(value);
     }
   }
 }

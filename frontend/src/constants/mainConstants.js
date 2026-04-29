@@ -1,5 +1,7 @@
 export const MODEL_CONTINUOUS = "C",
   MODEL_DICHOTOMOUS = "D",
+  FREQUENTIST_RESTRICTED = "frequentist_restricted",
+  FREQUENTIST_UNRESTRICTED = "frequentist_unrestricted",
   TOXICR_BAYESIAN = "toxicr_bayesian",
   LOUD_BAYESIAN = "loud_bayesian",
   MODEL_NESTED_DICHOTOMOUS = "ND",

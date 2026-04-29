@@ -39,12 +39,14 @@ const Tabs = observer(({ modelsStore }) => {
       {modelsStore.getModelType !== MODEL_DICHOTOMOUS ? null : (
         <li className="nav-item">
           <NavLink
-            className={`nav-link ${modelsStore.isActive("toxicr") ? "active" : ""}`}
+            className={`nav-link ${modelsStore.isActive("toxicr_bayesian") ? "active" : ""}`}
             to="/x"
-            onClick={handleClick("toxicr")}
-            aria-current={modelsStore.isActive("toxicr") ? "page" : undefined}
+            onClick={handleClick("toxicr_bayesian")}
+            aria-current={
+              modelsStore.isActive("toxicr_bayesian") ? "page" : undefined
+            }
             role="tab"
-            aria-selected={modelsStore.isActive("toxicr")}
+            aria-selected={modelsStore.isActive("toxicr_bayesian")}
           >
             ToxicR Bayesian Model Averaging
           </NavLink>
