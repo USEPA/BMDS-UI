@@ -38,6 +38,10 @@ const ModelsCheckBoxHeader = observer((props) => {
     store.getModelType == mc.MODEL_NESTED_DICHOTOMOUS ? "mle" : store.activeTab;
 
   const activeTabToTitle = {
+<<<<<<< HEAD
+=======
+    loud_bayesian: "Loud Bayesian Model Averaging",
+>>>>>>> d44f00b027d863273c948645668a244a14230faa
     mle: "Maximum Likelihood Estimate",
     loud_bayesian: "Loud Bayesian Model Averaging",
     toxicr_bayesian: "ToxicR Bayesian Model Averaging",
