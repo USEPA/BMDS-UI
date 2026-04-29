@@ -52,7 +52,7 @@ const ModelsCheckBoxHeader = observer((props) => {
               <>
                 <Button
                   className="mt-4 btn btn-sm btn-block btn-info"
-                  onClick={store.resetModelSelection}
+                  onClick={() => store.resetModelSelection(activeTab)}
                   text="Reset Selection"
                 />
               </>

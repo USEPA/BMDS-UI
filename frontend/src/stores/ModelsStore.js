@@ -23,6 +23,12 @@ class ModelsStore {
     );
   }
 
+  @observable tabTypes = [
+    "toxicr_bayesian",
+    "loud_bayesian",
+    "frequentist_restricted",
+    "frequentist_unrestricted",
+  ];
   @observable activeTab = "loud_bayesian"; // 'loud_bayesian' | 'toxicr_bayesian' | 'mle'
   @action setActiveTab(tab) {
     this.activeTab = tab;
@@ -44,10 +50,30 @@ class ModelsStore {
     },
   };
   @action setNumSelectedForTabs(type) {
-    const tabTypes = ["toxicr_bayesian", "loud_bayesian", "mle"];
-    if (!tabTypes.includes(type)) return;
-    this.numSelectedForTabs[this.getModelType][type] =
-      this.models?.[type]?.length ?? 0;
+    if (
+      this.getModelType !== mc.MODEL_CONTINUOUS &&
+      this.getModelType !== mc.MODEL_DICHOTOMOUS
+    ) {
+      return;
+    }
+    // if (!this.tabTypes.includes(type)) return;
+
+    if (
+      type === "frequentist_restricted" ||
+      type === "frequentist_unrestricted"
+    ) {
+      const numRestricted =
+        this.models?.["frequentist_restricted"]?.length ?? 0;
+
+      const numUnrestricted =
+        this.models?.["frequentist_unrestricted"]?.length ?? 0;
+
+      this.numSelectedForTabs[this.getModelType]["mle"] =
+        numRestricted + numUnrestricted;
+    } else {
+      this.numSelectedForTabs[this.getModelType][type] =
+        this.models?.[type]?.length ?? 0;
+    }
   }
 
   @observable model_headers = {};
@@ -62,16 +88,37 @@ class ModelsStore {
     if (this.numModelsSelected === 0 || force) {
       this.models = models[this.getModelType];
     }
+
     if (
       this.getModelType !== mc.MODEL_DICHOTOMOUS &&
       this.getModelType !== mc.MODEL_CONTINUOUS
     ) {
       return;
+    } else {
+      this.tabTypes.forEach((tabType) => this.setNumSelectedForTabs(tabType));
     }
+  }
 
-    this.setNumSelectedForTabs("toxicr_bayesian");
-    this.setNumSelectedForTabs("loud_bayesian");
-    this.setNumSelectedForTabs("mle");
+  @action.bound setDefaultsForCurrentType(force, type) {
+    if (this.numModelsSelected === 0 || force) {
+      if (
+        this.getModelType !== mc.MODEL_DICHOTOMOUS &&
+        this.getModelType !== mc.MODEL_CONTINUOUS
+      ) {
+        this.models = models[this.getModelType];
+        return;
+      } else {
+        if (type === "loud_bayesian" || type === "toxicr_bayesian") {
+          delete this.models[type];
+        } else if (type === "mle") {
+          this.models["frequentist_restricted"] =
+            models[this.getModelType]["frequentist_restricted"];
+          this.models["frequentist_unrestricted"] =
+            models[this.getModelType]["frequentist_unrestricted"];
+        }
+        this.tabTypes.forEach((tabType) => this.setNumSelectedForTabs(tabType));
+      }
+    }
   }
 
   @computed get numModelsSelected() {
@@ -97,8 +144,8 @@ class ModelsStore {
     this.setNumSelectedForTabs(name);
   }
 
-  @action.bound resetModelSelection() {
-    this.setDefaultsByDatasetType(true);
+  @action.bound resetModelSelection(type) {
+    this.setDefaultsForCurrentType(true, type);
     this.rootStore.mainStore.setInputsChangedFlag();
   }
 
