@@ -29,7 +29,7 @@ const Tabs = observer(({ modelsStore }) => {
           role="tab"
           aria-selected={modelsStore.isActive("loud_bayesian")}
         >
-          Loud Bayesian Model Averaging{" ("}
+          LOUD Bayesian Model Averaging{" ("}
           {modelsStore.tabBadge["loud_bayesian"]}
           {")"}
         </NavLink>

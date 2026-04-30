@@ -54,9 +54,7 @@ class MainStore {
     this.setInputsChangedFlag();
   }
   @action.bound resetModelSelection() {
-    this.rootStore.modelsStore.resetModelSelection(
-      this.rootStore.modelsStore.activeTab,
-    );
+    this.rootStore.modelsStore.resetModelSelection();
   }
 
   @computed get getOptions() {
@@ -260,10 +258,9 @@ class MainStore {
     this.isExecuting = data.is_executing;
     if (data.outputs) {
       this.executionOutputs = data.outputs.outputs;
+      this.rootStore.outputStore.cochranArmitage =
+        data.outputs.cochran_armitage_result ?? null;
     }
-
-    this.rootStore.outputStore.cochranArmitage =
-      data.outputs.cochran_armitage_result ?? null;
 
     // unpack general settings
     this.analysis_name = inputs.analysis_name;

@@ -39,7 +39,7 @@ const ModelsCheckBoxHeader = observer((props) => {
 
   const activeTabToTitle = {
     mle: "Maximum Likelihood Estimate",
-    loud_bayesian: "Loud Bayesian Model Averaging",
+    loud_bayesian: "LOUD Bayesian Model Averaging",
     toxicr_bayesian: "ToxicR Bayesian Model Averaging",
   };
   return (
@@ -52,7 +52,7 @@ const ModelsCheckBoxHeader = observer((props) => {
               <>
                 <Button
                   className="mt-4 btn btn-sm btn-block btn-info"
-                  onClick={() => store.resetModelSelection(activeTab)}
+                  onClick={store.resetModelSelection}
                   text="Reset Selection"
                 />
               </>
