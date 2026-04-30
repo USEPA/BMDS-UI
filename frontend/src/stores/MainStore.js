@@ -54,7 +54,9 @@ class MainStore {
     this.setInputsChangedFlag();
   }
   @action.bound resetModelSelection() {
-    this.rootStore.modelsStore.resetModelSelection();
+    this.rootStore.modelsStore.resetModelSelection(
+      this.rootStore.modelsStore.activeTab,
+    );
   }
 
   @computed get getOptions() {
