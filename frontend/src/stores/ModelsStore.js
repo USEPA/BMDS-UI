@@ -4,6 +4,18 @@ import { action, computed, observable, reaction } from "mobx";
 import * as mc from "@/constants/mainConstants";
 import { allModelOptions, models } from "@/constants/modelConstants";
 
+const model_subtypes = [
+  "toxicr_bayesian",
+  "loud_bayesian",
+  "frequentist_restricted",
+  "frequentist_unrestricted",
+];
+
+const frequentist_model_types = [
+  "frequentist_restricted",
+  "frequentist_unrestricted",
+];
+
 class ModelsStore {
   constructor(rootStore) {
     this.rootStore = rootStore;
@@ -23,12 +35,6 @@ class ModelsStore {
     );
   }
 
-  @observable model_subtypes = [
-    "toxicr_bayesian",
-    "loud_bayesian",
-    "frequentist_restricted",
-    "frequentist_unrestricted",
-  ];
   @observable activeTab = "loud_bayesian"; // 'loud_bayesian' | 'toxicr_bayesian' | 'mle'
   @action setActiveTab(tab) {
     this.activeTab = tab;
@@ -45,43 +51,27 @@ class ModelsStore {
     );
   }
 
-  isFrequentist(model_subtype) {
-    return (
-      model_subtype === "frequentist_restricted" ||
-      model_subtype === "frequentist_unrestricted"
-    );
-  }
-
-  @observable numSelectedForTabs = {
-    [mc.MODEL_CONTINUOUS]: {
-      loud_bayesian: null,
-      mle: null,
-    },
-    [mc.MODEL_DICHOTOMOUS]: {
-      loud_bayesian: null,
-      toxicr_bayesian: null,
-      mle: null,
-    },
+  @observable tabBadge = {
+    loud_bayesian: null,
+    toxicr_bayesian: null,
+    mle: null,
   };
 
-  @action setNumSelectedForTabs(model_subtype) {
+  @action setTabBadge(model_subtype) {
     if (!this.hasTabs()) {
       return;
     }
 
     // Sum up the number of frequentist restricted and frequentist unrestricted models to display on the MLE tab.
-    if (isFrequentist(model_subtype)) {
-      const numRestricted =
-        this.models?.["frequentist_restricted"]?.length ?? 0;
+    if (frequentist_model_types.includes(model_subtype)) {
+      let frequentist_sum = 0;
+      frequentist_model_types.forEach((model) => {
+        frequentist_sum += this.models?.[model]?.length ?? 0;
+      });
 
-      const numUnrestricted =
-        this.models?.["frequentist_unrestricted"]?.length ?? 0;
-
-      this.numSelectedForTabs[this.getModelType]["mle"] =
-        numRestricted + numUnrestricted;
+      this.tabBadge["mle"] = frequentist_sum;
     } else {
-      this.numSelectedForTabs[this.getModelType][model_subtype] =
-        this.models?.[model_subtype]?.length ?? 0;
+      this.tabBadge[model_subtype] = this.models?.[model_subtype]?.length ?? 0;
     }
   }
 
@@ -101,28 +91,25 @@ class ModelsStore {
     if (!this.hasTabs()) {
       return;
     } else {
-      this.model_subtypes.forEach((subtype) =>
-        this.setNumSelectedForTabs(subtype),
-      );
+      model_subtypes.forEach((subtype) => this.setTabBadge(subtype));
     }
   }
 
-  @action.bound setDefaultsForCurrentTab(model_type) {
+  @action.bound setDefaultsForCurrentTab() {
     if (!this.hasTabs()) {
       this.models = models[this.getModelType];
       return;
-    } else {
-      if (model_type === "loud_bayesian" || model_type === "toxicr_bayesian") {
-        delete this.models[model_type];
-      } else if (model_type === "mle") {
-        this.models["frequentist_restricted"] =
-          models[this.getModelType]["frequentist_restricted"];
-        this.models["frequentist_unrestricted"] =
-          models[this.getModelType]["frequentist_unrestricted"];
-      }
-      this.model_subtypes.forEach((subtype) =>
-        this.setNumSelectedForTabs(subtype),
-      );
+    } else if (
+      this.activeTab === "loud_bayesian" ||
+      this.activeTab === "toxicr_bayesian"
+    ) {
+      delete this.models[this.activeTab];
+      this.setTabBadge(this.activeTab);
+    } else if (this.activeTab === "mle") {
+      frequentist_model_types.forEach((model) => {
+        this.models[model] = models[this.getModelType][model];
+        this.setTabBadge(model);
+      });
     }
   }
 
@@ -146,11 +133,11 @@ class ModelsStore {
     allModelOptions[this.getModelType][name].map((model) => {
       this.setModelSelection(name, model, checked);
     });
-    this.setNumSelectedForTabs(name);
+    this.setTabBadge(name);
   }
 
-  @action.bound resetModelSelection(type) {
-    this.setDefaultsForCurrentTab(type);
+  @action.bound resetModelSelection() {
+    this.setDefaultsForCurrentTab();
     this.rootStore.mainStore.setInputsChangedFlag();
   }
 

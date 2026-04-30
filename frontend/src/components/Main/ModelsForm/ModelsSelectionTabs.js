@@ -11,10 +11,7 @@ const Tabs = observer(({ modelsStore }) => {
   };
 
   // Do not render tabs for other models.
-  if (
-    modelsStore.getModelType !== MODEL_CONTINUOUS &&
-    modelsStore.getModelType !== MODEL_DICHOTOMOUS
-  ) {
+  if (!modelsStore.hasTabs()) {
     return null;
   }
 
@@ -33,11 +30,7 @@ const Tabs = observer(({ modelsStore }) => {
           aria-selected={modelsStore.isActive("loud_bayesian")}
         >
           Loud Bayesian Model Averaging{" ("}
-          {
-            modelsStore.numSelectedForTabs[modelsStore.getModelType][
-              "loud_bayesian"
-            ]
-          }
+          {modelsStore.tabBadge["loud_bayesian"]}
           {")"}
         </NavLink>
       </li>
@@ -55,11 +48,7 @@ const Tabs = observer(({ modelsStore }) => {
             aria-selected={modelsStore.isActive("toxicr_bayesian")}
           >
             ToxicR Bayesian Model Averaging{" ("}
-            {
-              modelsStore.numSelectedForTabs[modelsStore.getModelType][
-                "toxicr_bayesian"
-              ]
-            }
+            {modelsStore.tabBadge["toxicr_bayesian"]}
             {")"}
           </NavLink>
         </li>
@@ -76,7 +65,7 @@ const Tabs = observer(({ modelsStore }) => {
           aria-selected={modelsStore.isActive("mle")}
         >
           Maximum Likelihood Estimate{" ("}
-          {modelsStore.numSelectedForTabs[modelsStore.getModelType]["mle"]}
+          {modelsStore.tabBadge["mle"]}
           {")"}
         </NavLink>
       </li>
