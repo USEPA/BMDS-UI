@@ -71,6 +71,7 @@ class Output extends Component {
         hasAnyError,
         selectedFrequentist,
         selectedToxicRBayesian,
+        selectedLOUDBayesian,
       } = outputStore,
       { analysisSavedAndValidated, canSelectModel } =
         outputStore.rootStore.mainStore;
@@ -180,6 +181,22 @@ class Output extends Component {
               </div>
             </div>
           )
+        ) : null}
+        {selectedLOUDBayesian ? (
+          <div className="row py-2">
+            <div className="col-lg-12">
+              <h3>LOUD Bayesian Model Results</h3>
+              {/* <LOUDBayesianResultTable /> */}
+            </div>
+            <div className="col-lg-12">
+              <span>LOUD bayesian results will display here</span>
+              {/* <DoseResponsePlot
+                onRelayout={outputStore.updateUserPlotSettings}
+                layout={outputStore.drLOUDBayesianPlotLayout}
+                data={outputStore.drLOUDBayesianPlotData}
+              /> */}
+            </div>
+          </div>
         ) : null}
         {selectedToxicRBayesian ? (
           <div className="row py-2">

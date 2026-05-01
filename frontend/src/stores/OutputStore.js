@@ -112,6 +112,14 @@ class OutputStore {
     return null;
   }
 
+  @computed get selectedLOUDBayesian() {
+    const output = this.selectedOutput;
+    if (output && output.loud_bayesian) {
+      return output.loud_bayesian;
+    }
+    return null;
+  }
+
   @computed get selectedDataset() {
     const dataset_index = this.selectedOutput.dataset_index;
     return this.rootStore.dataStore.datasets[dataset_index];
