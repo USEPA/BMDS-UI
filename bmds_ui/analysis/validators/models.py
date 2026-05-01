@@ -12,7 +12,7 @@ from ...common.validation import pydantic_validate
 class ModelTypeSchema(BaseModel):
     restricted: set[str]
     unrestricted: set[str]
-    bayesian: set[str]
+    toxicr_bayesian: set[str]
 
 
 DichotomousModelSchema = ModelTypeSchema(
@@ -35,7 +35,7 @@ DichotomousModelSchema = ModelTypeSchema(
         Models.QuantalLinear,
         Models.Weibull,
     },
-    bayesian={
+    toxicr_bayesian={
         Models.DichotomousHill,
         Models.Gamma,
         Models.Logistic,
@@ -52,23 +52,23 @@ DichotomousModelSchema = ModelTypeSchema(
 ContinuousModelSchema = ModelTypeSchema(
     restricted={Models.Exponential, Models.Hill, Models.Polynomial, Models.Power},
     unrestricted={Models.Hill, Models.Linear, Models.Polynomial, Models.Power},
-    bayesian={Models.Exponential, Models.Hill, Models.Linear, Models.Polynomial, Models.Power},
+    toxicr_bayesian={Models.Exponential, Models.Hill, Models.Linear, Models.Polynomial, Models.Power},
 )
 
 NestedDichotomousModelSchema = ModelTypeSchema(
     restricted={Models.NestedLogistic, Models.NCTR},
     unrestricted={Models.NestedLogistic, Models.NCTR},
-    bayesian=set(),
+    toxicr_bayesian=set(),
 )
 
 MultiTumorModelSchema = ModelTypeSchema(
     restricted={Models.Multistage},
     unrestricted=set(),
-    bayesian=set(),
+    toxicr_bayesian=set(),
 )
 
 
-class BayesianModelSchema(BaseModel):
+class ToxicRBayesianModelSchema(BaseModel):
     model: str
     prior_weight: float = Field(ge=0, le=1)
 
@@ -76,15 +76,15 @@ class BayesianModelSchema(BaseModel):
 class ModelListSchema(BaseModel):
     frequentist_restricted: list[str] = []
     frequentist_unrestricted: list[str] = []
-    bayesian: list[BayesianModelSchema] = []
+    toxicr_bayesian: list[ToxicRBayesianModelSchema] = []
     bmds_model_schema: ModelTypeSchema = Field(alias="model_schema")
 
     @model_validator(mode="after")
-    def bayesian_weights(self):
-        if len(self.bayesian) > 0:
-            weights = sum([b.prior_weight for b in self.bayesian])
+    def toxicr_bayesian_weights(self):
+        if len(self.toxicr_bayesian) > 0:
+            weights = sum([b.prior_weight for b in self.toxicr_bayesian])
             if not np.isclose(weights, 1.0, atol=0.005):
-                raise ValueError("Prior weight in bayesian does not sum to 1")
+                raise ValueError("Prior weight in toxicr bayesian does not sum to 1")
         return self
 
     @model_validator(mode="after")
@@ -102,7 +102,7 @@ class ModelListSchema(BaseModel):
                 raise ValueError(f"Invalid model(s) in {field}: {','.join(extras)}")
 
         for field, valid_models in [
-            ("bayesian", schema.bayesian),
+            ("toxicr_bayesian", schema.toxicr_bayesian),
         ]:
             models = [model.model for model in getattr(self, field)]
             if len(models) != len(set(models)):
@@ -117,7 +117,7 @@ class ModelListSchema(BaseModel):
         num_models = (
             len(self.frequentist_restricted)
             + len(self.frequentist_unrestricted)
-            + len(self.bayesian)
+            + len(self.toxicr_bayesian)
         )
         if num_models == 0:
             raise ValueError("At least one model must be selected")

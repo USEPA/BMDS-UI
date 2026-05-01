@@ -205,8 +205,8 @@ class Analysis(models.Model):
         for session in sessions:
             if session.frequentist:
                 items.append(session.frequentist)
-            if session.bayesian:
-                items.append(session.bayesian)
+            if session.toxicr_bayesian:
+                items.append(session.toxicr_bayesian)
         return BatchSession(sessions=items)
 
     def to_df(self) -> dict[str, pd.DataFrame]:
@@ -332,8 +332,8 @@ class Analysis(models.Model):
             if output.frequentist is not None:
                 bmds_python_version = output.frequentist["version"]
                 break
-            if output.bayesian is not None:
-                bmds_python_version = output.bayesian["version"]
+            if output.toxicr_bayesian is not None:
+                bmds_python_version = output.toxicr_bayesian["version"]
                 break
         # get prepare complete output object
         analysis_output = AnalysisOutput(

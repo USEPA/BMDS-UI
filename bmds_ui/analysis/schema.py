@@ -37,7 +37,7 @@ class AnalysisSessionSchema(BaseModel):
     dataset_index: int
     option_index: int
     frequentist: dict | None = None
-    bayesian: dict | None = None
+    toxicr_bayesian: dict | None = None
     nested_dichotomous_plot_png: Optional[str] = None
     error: str | None = None
 

@@ -13,7 +13,7 @@ import {
   black,
   bmaColor,
   colorCodes,
-  getBayesianBMDLine,
+  getToxicRBayesianBMDLine,
   getBmdDiamond,
   getCsfLine,
   getDrBmdLine,
@@ -104,10 +104,10 @@ class OutputStore {
     return null;
   }
 
-  @computed get selectedBayesian() {
+  @computed get selectedToxicRBayesian() {
     const output = this.selectedOutput;
-    if (output && output.bayesian) {
-      return output.bayesian;
+    if (output && output.toxicr_bayesian) {
+      return output.toxicr_bayesian;
     }
     return null;
   }
@@ -237,11 +237,11 @@ class OutputStore {
   getModel(index) {
     if (this.modalModelClass === modelClasses.frequentist) {
       return this.selectedFrequentist.models[index];
-    } else if (this.modalModelClass === modelClasses.bayesian) {
+    } else if (this.modalModelClass === modelClasses.toxicr_bayesian) {
       if (index === maIndex) {
-        return this.selectedBayesian.model_average;
+        return this.selectedToxicRBayesian.model_average;
       }
-      return this.selectedBayesian.models[index];
+      return this.selectedToxicRBayesian.models[index];
     } else {
       throw `Unknown modelClass: ${this.modalModelClass}`;
     }
@@ -349,11 +349,13 @@ class OutputStore {
     return layout;
   }
 
-  @computed get drBayesianPlotData() {
-    const bayesian_plot_data = [getDrDatasetPlotData(this.selectedDataset)],
+  @computed get drToxicRBayesianPlotData() {
+    const toxicr_bayesian_plot_data = [
+        getDrDatasetPlotData(this.selectedDataset),
+      ],
       output = this.selectedOutput;
-    output.bayesian.models.map((model, index) => {
-      let bayesian_model = {
+    output.toxicr_bayesian.models.map((model, index) => {
+      let toxicr_bayesian_model = {
         x: model.results.plotting.dr_x,
         y: model.results.plotting.dr_y,
         name: model.name,
@@ -362,20 +364,20 @@ class OutputStore {
           color: colorCodes[index],
         },
       };
-      bayesian_plot_data.push(bayesian_model);
+      toxicr_bayesian_plot_data.push(toxicr_bayesian_model);
     });
-    if (output.bayesian.model_average) {
-      let bma_data = getBayesianBMDLine(
-        output.bayesian.model_average,
+    if (output.toxicr_bayesian.model_average) {
+      let bma_data = getToxicRBayesianBMDLine(
+        output.toxicr_bayesian.model_average,
         bmaColor,
       );
-      bayesian_plot_data.push(...bma_data);
+      toxicr_bayesian_plot_data.push(...bma_data);
     }
-    return bayesian_plot_data;
+    return toxicr_bayesian_plot_data;
   }
 
-  @computed get drBayesianPlotLayout() {
-    // the bayesian plot shown on the output page and modal
+  @computed get drToxicRBayesianPlotLayout() {
+    // the toxicr bayesian plot shown on the output page and modal
     const layout = _.cloneDeep(this.drFrequentistPlotLayout);
     layout.legend = { tracegroupgap: 0, x: 1, y: 1 };
     return layout;

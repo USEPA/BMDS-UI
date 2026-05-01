@@ -64,6 +64,8 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             raise exceptions.ValidationError("A `data` object is required")
 
         try:
+            print("============")
+            print(data)
             validators.validate_input(data, partial=partial)
         except ValidationError as err:
             raise exceptions.ValidationError(err.message) from None

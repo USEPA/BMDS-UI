@@ -37,7 +37,7 @@ class WordReportOptionsModal extends Component {
               <p className="text-muted">
                 Download a Microsoft Word report of the current modeling
                 session. This will include all datasets and options which were
-                modeled, as well as both frequentist and bayesian models.
+                modeled, as well as both frequentist and ToxicR Bayesian models.
                 Depending on the complexity of the analysis, it may take a few
                 minutes to generate; please be patient.
               </p>

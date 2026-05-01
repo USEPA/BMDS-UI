@@ -12,7 +12,7 @@ import DoseResponsePlot from "../common/DoseResponsePlot";
 import Icon from "../common/Icon";
 import Button from "../common/Button";
 import SelectInput from "../common/SelectInput";
-import BayesianResultTable from "./BayesianResultTable";
+import ToxicRBayesianResultTable from "./BayesianResultTable";
 import FrequentistResultTable from "./FrequentistResultTable";
 import MultitumorDatasetTable from "./Multitumor/DatasetTable";
 import MultitumorPlot from "./Multitumor/MultitumorPlot";
@@ -20,8 +20,6 @@ import MultitumorResultTable from "./Multitumor/ResultTable";
 import OptionSetTable from "./OptionSetTable";
 import CochranArmitageTable from "./CochranArmitageTable";
 import SelectModel from "./SelectModel";
-
-import { modelClasses } from "@/constants/outputConstants";
 
 const OutputErrorComponent = ({ title, children, alertClass }) => {
   return (
@@ -68,8 +66,12 @@ class Output extends Component {
 
   render() {
     const { outputStore } = this.props,
-      { hasNoResults, hasAnyError, selectedFrequentist, selectedBayesian } =
-        outputStore,
+      {
+        hasNoResults,
+        hasAnyError,
+        selectedFrequentist,
+        selectedToxicRBayesian,
+      } = outputStore,
       { analysisSavedAndValidated, canSelectModel } =
         outputStore.rootStore.mainStore;
 
@@ -179,17 +181,17 @@ class Output extends Component {
             </div>
           )
         ) : null}
-        {selectedBayesian ? (
+        {selectedToxicRBayesian ? (
           <div className="row py-2">
             <div className="col-lg-12">
-              <h3>Bayesian Model Results</h3>
-              <BayesianResultTable />
+              <h3>ToxicR Bayesian Model Results</h3>
+              <ToxicRBayesianResultTable />
             </div>
             <div className="col-lg-12">
               <DoseResponsePlot
                 onRelayout={outputStore.updateUserPlotSettings}
-                layout={outputStore.drBayesianPlotLayout}
-                data={outputStore.drBayesianPlotData}
+                layout={outputStore.drToxicRBayesianPlotLayout}
+                data={outputStore.drToxicRBayesianPlotData}
               />
             </div>
           </div>

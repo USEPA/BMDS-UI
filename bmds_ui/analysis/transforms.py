@@ -13,13 +13,13 @@ from .validators.datasets import AdverseDirection
 class PriorEnum(StrEnum):
     frequentist_restricted = "frequentist_restricted"
     frequentist_unrestricted = "frequentist_unrestricted"
-    bayesian = "bayesian"
+    toxicr_bayesian = "toxicr_bayesian"
 
 
 bmd3_prior_map: dict[str, PriorClass] = {
     PriorEnum.frequentist_restricted: PriorClass.frequentist_restricted,
     PriorEnum.frequentist_unrestricted: PriorClass.frequentist_unrestricted,
-    PriorEnum.bayesian: PriorClass.bayesian,
+    PriorEnum.toxicr_bayesian: PriorClass.bayesian,
 }
 is_increasing_map = {
     AdverseDirection.AUTOMATIC: None,

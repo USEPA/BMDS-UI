@@ -54,7 +54,7 @@ def summary_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
 
     for session in sessions:
         if session.dataset_index not in dataset_data:
-            dataset = session.frequentist.dataset if session.frequentist else session.bayesian
+            dataset = session.frequentist.dataset if session.frequentist else session.toxicr_bayesian
             d = dict(dataset_index=session.dataset_index)
             dataset.update_record(d)
             dataset_data[d["dataset_index"]] = d
@@ -67,13 +67,13 @@ def summary_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
                 "frequentist",
                 session.frequentist,
             )
-        if session.bayesian:
+        if session.toxicr_bayesian:
             add_session(
                 model_data,
                 session.dataset_index,
                 session.option_index,
-                "bayesian",
-                session.bayesian,
+                "toxicr_bayesian",
+                session.toxicr_bayesian,
             )
 
     df1 = pd.DataFrame(dataset_data.values())
@@ -112,15 +112,15 @@ def params_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
                             )
                         )
 
-        if session.bayesian:
-            for model_index, model in enumerate(session.bayesian.models):
+        if session.toxicr_bayesian:
+            for model_index, model in enumerate(session.toxicr_bayesian.models):
                 if model.has_results:
                     data.extend(
                         model.results.parameters.rows(
                             extras=dict(
                                 dataset_index=session.dataset_index,
                                 option_index=session.option_index,
-                                analysis_type="bayesian",
+                                analysis_type="toxicr_bayesian",
                                 model_index=model_index,
                                 model_name=model.name(),
                             )
@@ -134,7 +134,7 @@ def dataset_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
     datasets: set = set()
     for session in sessions:
         if session.dataset_index not in datasets:
-            dataset = session.frequentist.dataset if session.frequentist else session.bayesian
+            dataset = session.frequentist.dataset if session.frequentist else session.toxicr_bayesian
             datasets.add(session.dataset_index)
             data.extend(dataset.rows(extras=dict(dataset_index=session.dataset_index)))
     return pd.DataFrame(data=data)

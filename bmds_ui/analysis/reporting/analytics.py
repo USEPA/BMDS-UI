@@ -129,8 +129,8 @@ def datasets() -> dict:
                 len(analysis.inputs["models"].get("frequentist_restricted", [])) > 0
                 or len(analysis.inputs["models"].get("frequentist_unrestricted", [])) > 0
             )
-            has_bayesian = len(analysis.inputs["models"].get("bayesian", [])) > 0
-            model_classes[(has_frequentist, has_bayesian)] += 1
+            has_toxicr_bayesian = len(analysis.inputs["models"].get("toxicr_bayesian", [])) > 0
+            model_classes[(has_frequentist, has_toxicr_bayesian)] += 1
 
     df = pd.DataFrame(
         data=[(ds, os, count) for (ds, os), count in mappings.items()],
@@ -164,16 +164,16 @@ def datasets() -> dict:
     # cross tab
     df = pd.DataFrame(
         data=[(freq, bayes, count) for (freq, bayes), count in model_classes.items()],
-        columns=["frequentist", "bayesian", "counts"],
+        columns=["frequentist", "toxicr_bayesian", "counts"],
     )
     df = df.assign(
         frequentist=df.frequentist.map({True: "yes", False: "no"}),
-        bayesian=df.bayesian.map({True: "yes", False: "no"}),
+        toxicr_bayesian=df.toxicr_bayesian.map({True: "yes", False: "no"}),
     )
     ct = (
         pd.crosstab(
             df.frequentist,
-            columns=df.bayesian,
+            columns=df.toxicr_bayesian,
             values=df.counts,
             aggfunc="sum",
             margins=True,

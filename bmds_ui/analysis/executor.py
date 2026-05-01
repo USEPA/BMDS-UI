@@ -75,16 +75,16 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Sess
     return session
 
 
-def build_bayesian_session(
+def build_toxicr_bayesian_session(
     dataset: pybmds.datasets.base.DatasetBase, inputs: dict, options: dict, dataset_options: dict
 ) -> Session | None:
-    models = inputs["models"].get(PriorEnum.bayesian, [])
+    models = inputs["models"].get(PriorEnum.toxicr_bayesian, [])
 
     # filter lognormal
     if options.get("dist_type") == DistType.log_normal:
         models = deepcopy(list(filter(lambda d: d["model"] in lognormal_enabled, models)))
 
-    # exit early if we have no bayesian models
+    # exit early if we have no toxicr bayesian models
     if len(models) == 0:
         return None
 
@@ -94,7 +94,7 @@ def build_bayesian_session(
     for name in map(lambda d: d["model"], models):
         model_options = build_model_settings(
             dataset_type,
-            PriorEnum.bayesian,
+            PriorEnum.toxicr_bayesian,
             options,
             dataset_options,
         )
@@ -122,7 +122,7 @@ class AnalysisSession(NamedTuple):
     dataset_index: int
     option_index: int
     frequentist: Session | None
-    bayesian: Session | None
+    toxicr_bayesian: Session | None
 
     @classmethod
     def run(cls, inputs: dict, dataset_index: int, option_index: int) -> AnalysisSessionSchema:
@@ -139,7 +139,7 @@ class AnalysisSession(NamedTuple):
             dataset_index=dataset_index,
             option_index=option_index,
             frequentist=build_frequentist_session(dataset, inputs, options, dataset_options),
-            bayesian=build_bayesian_session(dataset, inputs, options, dataset_options),
+            toxicr_bayesian=build_toxicr_bayesian_session(dataset, inputs, options, dataset_options),
         )
 
     @classmethod
@@ -149,7 +149,7 @@ class AnalysisSession(NamedTuple):
             dataset_index=obj.dataset_index,
             option_index=obj.option_index,
             frequentist=Session.from_serialized(obj.frequentist) if obj.frequentist else None,
-            bayesian=Session.from_serialized(obj.bayesian) if obj.bayesian else None,
+            toxicr_bayesian=Session.from_serialized(obj.toxicr_bayesian) if obj.toxicr_bayesian else None,
         )
 
     def execute(self, inputs):
@@ -170,10 +170,10 @@ class AnalysisSession(NamedTuple):
                     except Exception:
                         pass     
 
-        if self.bayesian:
-            if self.bayesian.dataset.dtype == pybmds.constants.Dtype.DICHOTOMOUS:
-                self.bayesian.add_model_averaging()
-            self.bayesian.execute()
+        if self.toxicr_bayesian:
+            if self.toxicr_bayesian.dataset.dtype == pybmds.constants.Dtype.DICHOTOMOUS:
+                self.toxicr_bayesian.add_model_averaging()
+            self.toxicr_bayesian.execute()
 
     def to_schema(self) -> AnalysisSessionSchema:
         return AnalysisSessionSchema(
@@ -181,7 +181,7 @@ class AnalysisSession(NamedTuple):
             option_index=self.option_index,
             frequentist=self.frequentist.to_dict() if self.frequentist else None,
             nested_dichotomous_plot_png=getattr(self.frequentist, "_plot_png", None) if self.frequentist else None,
-            bayesian=self.bayesian.to_dict() if self.bayesian else None,
+            toxicr_bayesian=self.toxicr_bayesian.to_dict() if self.toxicr_bayesian else None,
         )
 
     def to_dict(self) -> dict:

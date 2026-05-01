@@ -75,6 +75,7 @@ const CheckBoxTd = observer(({ store, type, model, disabled, headers }) => {
         <CheckboxInput
           id={key}
           onChange={(value) => {
+            console.log(store.models);
             store.setModelSelection(type, model, value);
             store.setTabBadge(type);
           }}
