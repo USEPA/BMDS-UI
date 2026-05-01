@@ -31,8 +31,6 @@ def validate_input(data: dict, partial: bool = False) -> None:
 
     # check model schema
     models = data.get("models")
-    print("++++++++++++++++++++models")
-    print(models)
     if models or partial is False:
         validate_models(dataset_type, models)
 

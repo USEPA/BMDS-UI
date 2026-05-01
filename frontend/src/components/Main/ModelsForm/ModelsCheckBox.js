@@ -11,7 +11,7 @@ import FloatInput from "../../common/FloatInput";
 import HelpTextPopover from "../../common/HelpTextPopover";
 
 const multistageHelpText = `All Multistage model polynomial degrees will be run up to a maximum
-        degree as specified by the user. For Bayesian Model Averaging, only the 2nd degree
+        degree as specified by the user. For ToxicR Bayesian Model Averaging, only the 2nd degree
         Multistage model is used (see User Manual for details).`,
   modelsWithHelpText = new Set(["Multistage"]),
   modelDisplayNames = {
@@ -75,7 +75,6 @@ const CheckBoxTd = observer(({ store, type, model, disabled, headers }) => {
         <CheckboxInput
           id={key}
           onChange={(value) => {
-            console.log(store.models);
             store.setModelSelection(type, model, value);
             store.setTabBadge(type);
           }}

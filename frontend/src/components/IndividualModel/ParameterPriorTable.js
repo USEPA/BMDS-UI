@@ -8,7 +8,7 @@ import Table from "@/components/common/Table";
 import { isFrequentist, priorTypeLabels } from "@/constants/outputConstants";
 import { ff } from "@/utils/formatters";
 
-const getToxicrBayesianData = (parameters) => {
+const getToxicRBayesianData = (parameters) => {
     return {
       headers: [
         "Name",
@@ -50,7 +50,7 @@ class ParameterPriorTable extends Component {
     const { parameters, priorClass } = this.props,
       data = isFrequentist(priorClass)
         ? getFrequentistData(parameters)
-        : getToxicrBayesianData(parameters);
+        : getToxicRBayesianData(parameters);
     return <Table data={data} />;
   }
 }
