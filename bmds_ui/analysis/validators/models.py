@@ -13,6 +13,7 @@ class ModelTypeSchema(BaseModel):
     restricted: set[str]
     unrestricted: set[str]
     toxicr_bayesian: set[str]
+    loud_bayesian: set[str]
 
 
 DichotomousModelSchema = ModelTypeSchema(
@@ -46,47 +47,64 @@ DichotomousModelSchema = ModelTypeSchema(
         Models.QuantalLinear,
         Models.Weibull,
     },
+    loud_bayesian={
+        Models.DichotomousHill,
+        Models.Gamma,
+        Models.Logistic,
+        Models.LogLogistic,
+        Models.LogProbit,
+        Models.Multistage,
+        Models.Probit,
+        Models.QuantalLinear,
+        Models.Weibull,
+    }
 )
-
 
 ContinuousModelSchema = ModelTypeSchema(
     restricted={Models.Exponential, Models.Hill, Models.Polynomial, Models.Power},
     unrestricted={Models.Hill, Models.Linear, Models.Polynomial, Models.Power},
-    toxicr_bayesian={Models.Exponential, Models.Hill, Models.Linear, Models.Polynomial, Models.Power},
+    toxicr_bayesian=set(), # Continuous model does not support toxicR Bayesian
+    loud_bayesian={Models.Exponential, Models.Hill, Models.Linear, Models.Polynomial, Models.Power},
 )
 
 NestedDichotomousModelSchema = ModelTypeSchema(
     restricted={Models.NestedLogistic, Models.NCTR},
     unrestricted={Models.NestedLogistic, Models.NCTR},
     toxicr_bayesian=set(),
+    loud_bayesian=set(),
 )
 
 MultiTumorModelSchema = ModelTypeSchema(
     restricted={Models.Multistage},
     unrestricted=set(),
     toxicr_bayesian=set(),
+    loud_bayesian=set(),
 )
 
-
-class ToxicRBayesianModelSchema(BaseModel):
+class BayesianModelSchema(BaseModel):
     model: str
     prior_weight: float = Field(ge=0, le=1)
-
 
 class ModelListSchema(BaseModel):
     frequentist_restricted: list[str] = []
     frequentist_unrestricted: list[str] = []
-    toxicr_bayesian: list[ToxicRBayesianModelSchema] = []
+    toxicr_bayesian: list[BayesianModelSchema] = []
+    loud_bayesian: list[BayesianModelSchema] = []
     bmds_model_schema: ModelTypeSchema = Field(alias="model_schema")
 
-    @model_validator(mode="after")
-    def toxicr_bayesian_weights(self):
-        if len(self.toxicr_bayesian) > 0:
-            weights = sum([b.prior_weight for b in self.toxicr_bayesian])
+    @staticmethod
+    def _ensure_sum_to_one(seq, err_msg):
+        if len(seq) > 0:
+            weights = sum(b.prior_weight for b in seq)
             if not np.isclose(weights, 1.0, atol=0.005):
-                raise ValueError("Prior weight in toxicr bayesian does not sum to 1")
-        return self
+                raise ValueError(err_msg)
 
+    @model_validator(mode="after")
+    def bayesian_weights(self):
+        self._ensure_sum_to_one(self.loud_bayesian, "Prior weight in loud bayesian does not sum to 1") 
+        self._ensure_sum_to_one(self.toxicr_bayesian, "Prior weight in toxicr bayesian does not sum to 1") 
+        return self
+    
     @model_validator(mode="after")
     def uniqueness(self):
         schema = self.bmds_model_schema
@@ -103,6 +121,7 @@ class ModelListSchema(BaseModel):
 
         for field, valid_models in [
             ("toxicr_bayesian", schema.toxicr_bayesian),
+            ("loud_bayesian", schema.loud_bayesian),
         ]:
             models = [model.model for model in getattr(self, field)]
             if len(models) != len(set(models)):
@@ -118,6 +137,7 @@ class ModelListSchema(BaseModel):
             len(self.frequentist_restricted)
             + len(self.frequentist_unrestricted)
             + len(self.toxicr_bayesian)
+            + len(self.loud_bayesian)
         )
         if num_models == 0:
             raise ValueError("At least one model must be selected")
