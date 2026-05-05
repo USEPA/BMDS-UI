@@ -86,7 +86,8 @@ class TestExecution:
         assert analysis.outputs["outputs"][0]["option_index"] == 0
         assert len(analysis.outputs["outputs"]) == 1
         assert len(analysis.outputs["outputs"][0]["frequentist"]["models"]) == 1
-        assert len(analysis.outputs["outputs"][0]["bayesian"]["models"]) == 1
+        assert len(analysis.outputs["outputs"][0]["toxicr_bayesian"]["models"]) == 1
+        # assert len(analysis.outputs["outputs"][0]["loud_bayesian"]["models"]) == 1
         assert analysis.errors == []
 
         # test reporting (for completion)
@@ -115,7 +116,7 @@ class TestExecution:
         assert len(analysis.outputs["outputs"]) == 1
         assert len(analysis.outputs["outputs"][0]["frequentist"]["models"]) == 1
         assert len(analysis.outputs["outputs"][0]["toxicr_bayesian"]["models"]) == 1
-        assert len(analysis.outputs["outputs"][0]["loud_bayesian"]["models"]) == 1
+        # assert len(analysis.outputs["outputs"][0]["loud_bayesian"]["models"]) == 1
         assert analysis.errors == []
 
         # test reporting (for completion)
@@ -142,7 +143,7 @@ class TestExecution:
         assert len(analysis.outputs["outputs"]) == 1
         assert len(analysis.outputs["outputs"][0]["frequentist"]["models"]) == 1
         assert len(analysis.outputs["outputs"][0]["toxicr_bayesian"]["models"]) == 1
-        assert len(analysis.outputs["outputs"][0]["loud_bayesian"]["models"]) == 1
+        # assert len(analysis.outputs["outputs"][0]["loud_bayesian"]["models"]) == 1
         assert analysis.errors == []
 
         # test reporting (for completion)

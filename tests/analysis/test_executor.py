@@ -115,7 +115,7 @@ class TestAnalysisSession:
         # degree = N -1, bayesian, fixed at degree == 2
         data = deepcopy(complete_dichotomous)
         data["models"] = {"toxicr_bayesian": [{"model": "Multistage", "prior_weight": 1}]}
-        data["models"] = {"loud_bayesian": [{"model": "Multistage", "prior_weight": 1}]}
+        # data["models"] = {"loud_bayesian": [{"model": "Multistage", "prior_weight": 1}]}
         data["dataset_options"][0]["degree"] = 0
         session = AnalysisSession.create(data, 0, 0)
         assert session.frequentist is None

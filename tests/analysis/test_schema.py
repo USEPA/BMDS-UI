@@ -78,7 +78,7 @@ class TestRaoScottInput:
     def test_calculate(self, raoscott_dataset):
         analysis = RaoScottInput.model_validate(raoscott_dataset)
         result = analysis.calculate()
-        assert result.df.shape == (7, 9)
+        assert result.df.shape == (7, 12)
 
     def test_validate_dataset(self, raoscott_dataset):
         # confirm success

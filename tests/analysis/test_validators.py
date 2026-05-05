@@ -189,7 +189,6 @@ class TestInputValidation:
         assert validators.validate_input(data, partial=True) is None
         assert validators.validate_input(data) is None
 
-
 class TestModelValidation:
     def test_dichotomous(self):
         dtype = Dtype.DICHOTOMOUS
@@ -217,9 +216,9 @@ class TestModelValidation:
             validators.validate_models(dtype, data)
         assert "At least one model must be selected" in str(err)
 
-        # assert bayesian duplicates
+        # assert toxicr duplicates
         data = {
-            "bayesian": [
+            "toxicr_bayesian": [
                 {"model": probit, "prior_weight": 0.3},
                 {"model": logprobit, "prior_weight": 0.4},
                 {"model": logprobit, "prior_weight": 0.3},
@@ -227,18 +226,18 @@ class TestModelValidation:
         }
         with pytest.raises(ValidationError) as err:
             validators.validate_models(dtype, data)
-        assert "Models in bayesian are not unique" in str(err)
+        assert "Models in toxicr_bayesian are not unique" in str(err)
 
-        # assert bayesian prior_weight sum
+        # assert toxicr bayesian prior_weight sum
         data = {
-            "bayesian": [
+            "toxicr_bayesian": [
                 {"model": probit, "prior_weight": 0.5},
                 {"model": logprobit, "prior_weight": 0.49},
             ]
         }
         with pytest.raises(ValidationError) as err:
             validators.validate_models(dtype, data)
-        assert "Prior weight in bayesian does not sum to 1" in str(err.value)
+        assert "Prior weight in toxicr bayesian does not sum to 1" in str(err.value)
 
     def test_continuous(self):
         dtype = Dtype.CONTINUOUS
@@ -278,32 +277,32 @@ class TestModelValidation:
             )
         assert "At least one model must be selected" in str(err)
 
-        # assert bayesian duplicates
+        # assert toxicr bayesian duplicates
         with pytest.raises(ValidationError) as err:
             validators.validate_models(
                 dtype,
                 {
-                    "bayesian": [
+                    "toxicr_bayesian": [
                         {"model": power, "prior_weight": 0.3},
                         {"model": linear, "prior_weight": 0.4},
                         {"model": linear, "prior_weight": 0.3},
                     ]
                 },
             )
-        assert "Models in bayesian are not unique" in str(err)
+        assert "Models in toxicr_bayesian are not unique" in str(err)
 
         # assert bayesian prior_weight sum
         with pytest.raises(ValidationError) as err:
             validators.validate_models(
                 dtype,
                 {
-                    "bayesian": [
+                    "toxicr_bayesian": [
                         {"model": power, "prior_weight": 0.5},
                         {"model": linear, "prior_weight": 0.49},
                     ]
                 },
             )
-        assert "Prior weight in bayesian does not sum to 1" in str(err.value)
+        assert "Prior weight in toxicr bayesian does not sum to 1" in str(err.value)
 
 
 class TestOptionSetValidation:
@@ -413,7 +412,7 @@ class TestDatasetValidation:
 
         # check minimums
         check = deepcopy(dataset)
-        check.update(doses=[1, 1, 2, 2, 3, 3], responses=[10] * 6)
+        check.update(doses=[1, 1, 2, 2, 3, 3], responses=[10.1, 10.2, 10.3, 10.4, 10.5, 10.6])
         datasets.MaxContinuousIndividualDatasetSchema(**check)
 
         check = deepcopy(dataset)
@@ -429,7 +428,8 @@ class TestDatasetValidation:
         # check maximums
         check = deepcopy(dataset)
         doses = list(range(500)) * 2
-        check.update(doses=doses, responses=[10] * 1000)
+        responses = [10 + (i / 999) for i in range(1000)]
+        check.update(doses=doses, responses=responses)
         datasets.MaxContinuousIndividualDatasetSchema(**check)
 
         check = deepcopy(dataset)
