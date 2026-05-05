@@ -109,7 +109,12 @@ def build_toxicr_bayesian_session(
 def build_loud_bayesian_session(
     dataset: pybmds.datasets.base.DatasetBase, inputs: dict, options: dict, dataset_options: dict
 ) -> Session | None:
-    has_loud_bayesian = 'loud_bayesian' in inputs['models']
+    
+    if 'loud_bayesian' in inputs['models']:
+        return True
+    else:
+        return None
+
     # models = inputs["models"].get(PriorEnum.loud_bayesian, [])
 
     # # filter lognormal
@@ -137,7 +142,6 @@ def build_loud_bayesian_session(
     # session.set_ma_weights(prior_weights)
 
     # return session
-    return has_loud_bayesian
 
 
 class AnalysisSession(NamedTuple):
@@ -188,6 +192,7 @@ class AnalysisSession(NamedTuple):
             frequentist=Session.from_serialized(obj.frequentist) if obj.frequentist else None,
             toxicr_bayesian=Session.from_serialized(obj.toxicr_bayesian) if obj.toxicr_bayesian else None,
             # loud_bayesian=Session.from_serialized(obj.loud_bayesian) if obj.loud_bayesian else None,
+            loud_bayesian=True if obj.loud_bayesian else None,
         )
 
     def execute(self, inputs):

@@ -53,12 +53,13 @@ def complete_continuous():
         "dataset_type": "C",
         "models": {
             "frequentist_restricted": ["Power"],
-            "bayesian": [{"model": "Power", "prior_weight": 1}],
+            "toxicr_bayesian": [{"model": "Power", "prior_weight": 1}],
+            "loud_bayesian": [{"model": "Power", "prior_weight": 1}],
         },
         "datasets": [
             {
                 "dtype": "C",
-                "metadata": {"id": 123},
+                "metadata": {"id": 123, 'model_type': 'CS'},
                 "doses": [0, 50, 100, 150, 200],
                 "ns": [100, 100, 100, 100, 100],
                 "means": [10, 20, 30, 40, 50],
@@ -88,12 +89,13 @@ def complete_continuous_individual():
         "dataset_type": "C",
         "models": {
             "frequentist_restricted": ["Power"],
-            "bayesian": [{"model": "Power", "prior_weight": 1}],
+            "toxicr_bayesian": [{"model": "Power", "prior_weight": 1}],
+            "loud_bayesian": [{"model": "Power", "prior_weight": 1}],
         },
         "datasets": [
             {
                 "dtype": "CI",
-                "metadata": {"id": 123},
+                "metadata": {"id": 123, 'model_type': 'I'},
                 "doses": [
                     0, 0, 0, 0, 0, 0, 0, 0,
                     0.1, 0.1, 0.1, 0.1, 0.1, 0.1,
@@ -137,12 +139,13 @@ def complete_dichotomous():
         "dataset_type": "D",
         "models": {
             "frequentist_unrestricted": ["Logistic"],
-            "bayesian": [{"model": "Logistic", "prior_weight": 1}],
+            "toxicr_bayesian": [{"model": "Logistic", "prior_weight": 1}],
+            "loud_bayesian": [{"model": "Logistic", "prior_weight": 1}],
         },
         "datasets": [
             {
                 "dtype": "D",
-                "metadata": {"id": 123},
+                "metadata": {"id": 123, 'model_type': 'DM'},
                 "doses": [0, 10, 50, 150, 400],
                 "ns": [20, 20, 20, 20, 20],
                 "incidences": [0, 0, 1, 4, 11],
@@ -160,7 +163,7 @@ def nested_dichotomous_datasets():
     return [
         {
             "dtype": "ND",
-            "metadata": {"id": 123},
+            "metadata": {"id": 123, 'model_type': 'ND'},
             "doses": [
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 25, 25, 25, 25, 25, 25, 25, 25, 25,
@@ -220,7 +223,8 @@ def bmds_complete_nd():
                     "dose_name": "Dose",
                     "dose_units": "",
                     "response_name": "Incidence",
-                    "response_units": ""
+                    "response_units": "", 
+                    'model_type': 'ND'
                 },
                 "litter_ns": [
                     16, 9, 15, 14, 13, 9, 10, 14, 10, 11, 14,
@@ -278,7 +282,8 @@ def bmds_complete_mt():
                     "dose_name": "Dose",
                     "dose_units": "",
                     "response_name": "Incidence",
-                    "response_units": ""
+                    "response_units": "",
+                    'model_type': 'DM'
                 },
             },
             {
@@ -292,7 +297,8 @@ def bmds_complete_mt():
                     "dose_name": "Dose",
                     "dose_units": "",
                     "response_name": "Incidence",
-                    "response_units": ""
+                    "response_units": "",
+                    'model_type': 'DM'
                 },
             },
             {
@@ -306,7 +312,8 @@ def bmds_complete_mt():
                     "dose_name": "Dose",
                     "dose_units": "",
                     "response_name": "Incidence",
-                    "response_units": ""
+                    "response_units": "",
+                    'model_type': 'DM'
                 },
             },
         ],

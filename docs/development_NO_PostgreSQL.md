@@ -3,7 +3,7 @@
 Make sure you have the following applications installed locally:
 
 - [Git](https://git-scm.com/)
-- [Python](https://www.python.org/) ≥ 3.13
+- [Python](https://www.python.org/) = 3.12
 - [Node.js](https://nodejs.org) ≥ 20
 - [Yarn](https://yarnpkg.com/)
 - [Visual Studio Build Tools for Desktop C++](https://visualstudio.microsoft.com/downloads/?q=build+tools) (including CMake and C++ compiler)
@@ -25,7 +25,7 @@ git clone https://github.com/USEPA/bmds-ui
 
 # Create virtual environment and install requirements
 cd bmds-ui
-uv venv --python=3.14
+uv venv --python=3.12
 
 # Activate the environment
 .venv\Scripts\activate
@@ -44,7 +44,7 @@ if "fixture" in str(DATABASES["default"]["NAME"]):
 uv pip install -e ".[pg,dev]"
 
 cd ../
-poe sync dev
+poe sync-dev
 ```
 
 ## Running the application
