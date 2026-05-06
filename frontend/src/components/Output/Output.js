@@ -12,7 +12,8 @@ import DoseResponsePlot from "../common/DoseResponsePlot";
 import Icon from "../common/Icon";
 import Button from "../common/Button";
 import SelectInput from "../common/SelectInput";
-import ToxicRBayesianResultTable from "./BayesianResultTable";
+import ToxicRBayesianResultTable from "./ToxicRBayesianResultTable";
+import LOUDBayesianResultTable from "./LOUDBayesianResultTable";
 import FrequentistResultTable from "./FrequentistResultTable";
 import MultitumorDatasetTable from "./Multitumor/DatasetTable";
 import MultitumorPlot from "./Multitumor/MultitumorPlot";
@@ -186,7 +187,7 @@ class Output extends Component {
           <div className="row py-2">
             <div className="col-lg-12">
               <h3>LOUD Bayesian Model Results</h3>
-              {/* <LOUDBayesianResultTable /> */}
+              <LOUDBayesianResultTable />
             </div>
             <div className="col-lg-12">
               <span>LOUD bayesian results will display here</span>
