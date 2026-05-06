@@ -21,7 +21,7 @@ bmd3_prior_map: dict[str, PriorClass] = {
     PriorEnum.frequentist_restricted: PriorClass.frequentist_restricted,
     PriorEnum.frequentist_unrestricted: PriorClass.frequentist_unrestricted,
     PriorEnum.toxicr_bayesian: PriorClass.bayesian,
-    # PriorEnum.loud_bayesian: PriorClass.bayesian_loud,
+    PriorEnum.loud_bayesian: PriorClass.bayesian_loud,
 }
 is_increasing_map = {
     AdverseDirection.AUTOMATIC: None,

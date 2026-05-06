@@ -109,39 +109,34 @@ def build_toxicr_bayesian_session(
 def build_loud_bayesian_session(
     dataset: pybmds.datasets.base.DatasetBase, inputs: dict, options: dict, dataset_options: dict
 ) -> Session | None:
-    
-    if 'loud_bayesian' in inputs['models']:
-        return True
-    else:
+
+    models = inputs["models"].get(PriorEnum.loud_bayesian, [])
+
+    # filter lognormal
+    if options.get("dist_type") == DistType.log_normal:
+        models = deepcopy(list(filter(lambda d: d["model"] in lognormal_enabled, models)))
+
+    # exit early if we have no loud bayesian models
+    if len(models) == 0:
         return None
 
-    # models = inputs["models"].get(PriorEnum.loud_bayesian, [])
+    dataset_type = inputs["dataset_type"]
+    session = Session(dataset=dataset)
+    prior_weights = list(map(lambda d: d["prior_weight"], models))
+    for name in map(lambda d: d["model"], models):
+        model_options = build_model_settings(
+            dataset_type,
+            PriorEnum.loud_bayesian,
+            options,
+            dataset_options,
+        )
+        if name in pybmds.Models.VARIABLE_POLYNOMIAL():
+            model_options.degree = 2
+        session.add_model(name, settings=model_options)
 
-    # # filter lognormal
-    # if options.get("dist_type") == DistType.log_normal:
-    #     models = deepcopy(list(filter(lambda d: d["model"] in lognormal_enabled, models)))
+    session.set_ma_weights(prior_weights)
 
-    # # exit early if we have no loud bayesian models
-    # if len(models) == 0:
-    #     return None
-
-    # dataset_type = inputs["dataset_type"]
-    # session = Session(dataset=dataset)
-    # prior_weights = list(map(lambda d: d["prior_weight"], models))
-    # for name in map(lambda d: d["model"], models):
-    #     model_options = build_model_settings(
-    #         dataset_type,
-    #         PriorEnum.loud_bayesian,
-    #         options,
-    #         dataset_options,
-    #     )
-    #     if name in pybmds.Models.VARIABLE_POLYNOMIAL():
-    #         model_options.degree = 2
-    #     session.add_model(name, settings=model_options)
-
-    # session.set_ma_weights(prior_weights)
-
-    # return session
+    return session
 
 
 class AnalysisSession(NamedTuple):
@@ -166,8 +161,6 @@ class AnalysisSession(NamedTuple):
     def run(cls, inputs: dict, dataset_index: int, option_index: int) -> AnalysisSessionSchema:
         session = cls.create(inputs, dataset_index, option_index)
         session.execute(inputs)
-        print("ANALYSIS SESSION SCHEMA")
-        print(session)
         return session.to_schema()
 
     @classmethod
@@ -191,8 +184,7 @@ class AnalysisSession(NamedTuple):
             option_index=obj.option_index,
             frequentist=Session.from_serialized(obj.frequentist) if obj.frequentist else None,
             toxicr_bayesian=Session.from_serialized(obj.toxicr_bayesian) if obj.toxicr_bayesian else None,
-            # loud_bayesian=Session.from_serialized(obj.loud_bayesian) if obj.loud_bayesian else None,
-            loud_bayesian=True if obj.loud_bayesian else None,
+            loud_bayesian=Session.from_serialized(obj.loud_bayesian) if obj.loud_bayesian else None,
         )
 
     def execute(self, inputs):
@@ -219,10 +211,9 @@ class AnalysisSession(NamedTuple):
             self.toxicr_bayesian.execute()
 
         if self.loud_bayesian:
-            print("loud_bayesian session should be executed. ")
-            # if self.loud_bayesian.dataset.dtype == pybmds.constants.Dtype.DICHOTOMOUS:
-            #     self.loud_bayesian.add_model_averaging()
-            # self.loud_bayesian.execute()      
+            if self.loud_bayesian.dataset.dtype == pybmds.constants.Dtype.DICHOTOMOUS:
+                self.loud_bayesian.add_model_averaging()
+            self.loud_bayesian.execute()      
 
     def to_schema(self) -> AnalysisSessionSchema:
         return AnalysisSessionSchema(
@@ -231,7 +222,7 @@ class AnalysisSession(NamedTuple):
             frequentist=self.frequentist.to_dict() if self.frequentist else None,
             nested_dichotomous_plot_png=getattr(self.frequentist, "_plot_png", None) if self.frequentist else None,
             toxicr_bayesian=self.toxicr_bayesian.to_dict() if self.toxicr_bayesian else None,
-            loud_bayesian=self.loud_bayesian if self.loud_bayesian else None,
+            loud_bayesian=self.loud_bayesian.to_dict() if self.loud_bayesian else None,
         )
 
     def to_dict(self) -> dict:
