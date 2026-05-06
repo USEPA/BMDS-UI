@@ -1,4 +1,5 @@
 from enum import StrEnum
+from typing import Any
 
 import pybmds
 from pybmds.constants import Dtype
@@ -91,15 +92,3 @@ def build_dataset(dataset: dict[str, list[float]]) -> pybmds.datasets.base.Datas
     else:
         raise ValueError(f"Unknown dataset type: {dataset_type}")
     return schema.model_validate(dataset).deserialize()
-
-
-def remap_exponential(models: list[str]) -> list[str]:
-    # expand user-specified "exponential" model into M3 and M5
-    if pybmds.Models.Exponential in models:
-        models = models.copy()  # return a copy so inputs are unchanged
-        pos = models.index(pybmds.Models.Exponential)
-        models[pos : pos + 1] = (
-            pybmds.Models.ExponentialM3,
-            pybmds.Models.ExponentialM5,
-        )
-    return models

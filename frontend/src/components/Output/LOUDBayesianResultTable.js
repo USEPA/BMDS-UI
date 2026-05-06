@@ -15,7 +15,6 @@ class LOUDBayesianResultTable extends Component {
       { selectedLOUDBayesian } = store;
 
     if (!selectedLOUDBayesian) {
-      console.log("RETURNING NULL");
       return null;
     }
 

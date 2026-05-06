@@ -14,8 +14,7 @@ from .schema import AnalysisSessionSchema
 from .transforms import (
     PriorEnum,
     build_dataset,
-    build_model_settings,
-    remap_exponential,
+    build_model_settings
 )
 
 # excluded continuous models if distribution type is lognormal
@@ -35,8 +34,8 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Sess
     session = Session(dataset=dataset, recommendation_settings=recommendation_settings)
 
     for prior_type, model_names in [
-        (PriorEnum.frequentist_restricted, remap_exponential(restricted_models)),
-        (PriorEnum.frequentist_unrestricted, remap_exponential(unrestricted_models)),
+        (PriorEnum.frequentist_restricted, restricted_models),
+        (PriorEnum.frequentist_unrestricted, unrestricted_models),
     ]:
         if options.get("dist_type") == DistType.log_normal:
             model_names = [model for model in model_names if model in lognormal_enabled]
@@ -73,7 +72,6 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Sess
                 session.add_model(model_name, settings=model_options)
 
     return session
-
 
 def build_toxicr_bayesian_session(
     dataset: pybmds.datasets.base.DatasetBase, inputs: dict, options: dict, dataset_options: dict

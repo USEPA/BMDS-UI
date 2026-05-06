@@ -5,7 +5,14 @@ import {
   MODEL_NESTED_DICHOTOMOUS,
 } from "./mainConstants";
 
-const allContinuous = ["Exponential", "Hill", "Linear", "Polynomial", "Power"],
+const allContinuous = [
+    "Exponential-M3",
+    "Exponential-M5",
+    "Hill",
+    "Linear",
+    "Polynomial",
+    "Power",
+  ],
   allDichotomous = [
     "Dichotomous-Hill",
     "Gamma",
@@ -25,7 +32,13 @@ const allContinuous = ["Exponential", "Hill", "Linear", "Polynomial", "Power"],
   },
   models = {
     [MODEL_CONTINUOUS]: {
-      frequentist_restricted: ["Exponential", "Hill", "Polynomial", "Power"],
+      frequentist_restricted: [
+        "Exponential-M3",
+        "Exponential-M5",
+        "Hill",
+        "Polynomial",
+        "Power",
+      ],
       frequentist_unrestricted: ["Linear"],
     },
     [MODEL_DICHOTOMOUS]: {
@@ -54,7 +67,13 @@ const allContinuous = ["Exponential", "Hill", "Linear", "Polynomial", "Power"],
   },
   allModelOptions = {
     [MODEL_CONTINUOUS]: {
-      frequentist_restricted: ["Exponential", "Hill", "Polynomial", "Power"],
+      frequentist_restricted: [
+        "Exponential-M3",
+        "Exponential-M5",
+        "Hill",
+        "Polynomial",
+        "Power",
+      ],
       frequentist_unrestricted: ["Hill", "Linear", "Polynomial", "Power"],
       loud_bayesian: allContinuous,
     },
