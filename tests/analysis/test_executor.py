@@ -53,20 +53,6 @@ class TestAnalysisSession:
         assert session.toxicr_bayesian.models[0].settings.priors.prior_class is PriorClass.bayesian
         # assert session.loud_bayesian.models[0].settings.priors.prior_class is PriorClass.bayesian
 
-    def test_exponential_unpacking(self, complete_continuous):
-        data = deepcopy(complete_continuous)
-        data["models"] = {"frequentist_restricted": ["Exponential"]}
-        session = AnalysisSession.create(data, 0, 0)
-        assert len(session.frequentist.models) == 2
-        assert (
-            session.frequentist.models[0].bmd_model_class.id
-            == ContinuousModelChoices.exp_m3.value.id
-        )
-        assert (
-            session.frequentist.models[1].bmd_model_class.id
-            == ContinuousModelChoices.exp_m5.value.id
-        )
-
     def test_multistage_permutations(self, complete_dichotomous):
         def _expected_degree(session, n: int):
             assert session.toxicr_bayesian is None
@@ -172,7 +158,7 @@ class TestAnalysisSession:
     def test_disttype(self, complete_continuous):
         data = deepcopy(complete_continuous)
         data["models"] = {
-            "frequentist_restricted": ["Exponential", "Hill", "Linear", "Power"],
+            "frequentist_restricted": ["Exponential-M3", "Exponential-M5", "Hill", "Linear", "Power"],
         }
 
         # normal

@@ -48,11 +48,3 @@ class TestOptions:
         assert pytest.approx(res.alpha) == 0.05
         assert res.degree == 1
 
-
-class TestModels:
-    def test_remap_exponential(self):
-        assert transforms.remap_exponential([]) == []
-        expected = [Models.ExponentialM3, Models.ExponentialM5]
-        assert transforms.remap_exponential([Models.Exponential]) == expected
-        expected = ["a", Models.ExponentialM3, Models.ExponentialM5, "b"]
-        assert transforms.remap_exponential(["a", Models.Exponential, "b"]) == expected
