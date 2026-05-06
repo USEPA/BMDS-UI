@@ -12,21 +12,21 @@ class TestAnalysisSession:
         session = AnalysisSession.create(data, 0, 0)
         assert len(session.frequentist.models) == 1
         assert len(session.toxicr_bayesian.models) == 1
-        # assert len(session.loud_bayesian.models) == 1
+        assert len(session.loud_bayesian.models) == 1
 
     def test_default_continuous(self, complete_continuous):
         # assure a default dataset can be created
         data = deepcopy(complete_continuous)
         session = AnalysisSession.create(data, 0, 0)
         assert len(session.frequentist.models) == 1
-        # assert len(session.loud_bayesian.models) == 1
+        assert len(session.loud_bayesian.models) == 1
 
     def test_default_continuous_individual(self, complete_continuous_individual):
         # assure a default dataset can be created
         data = deepcopy(complete_continuous_individual)
         session = AnalysisSession.create(data, 0, 0)
         assert len(session.frequentist.models) == 1
-        # assert len(session.loud_bayesian.models) == 1
+        assert len(session.loud_bayesian.models) == 1
 
     def test_prior_classes(self, complete_dichotomous):
         # assure a default dataset can be created
@@ -40,7 +40,7 @@ class TestAnalysisSession:
         session = AnalysisSession.create(data, 0, 0)
         assert len(session.frequentist.models) == 2
         assert len(session.toxicr_bayesian.models) == 1
-        # assert len(session.loud_bayesian.models) == 1
+        assert len(session.loud_bayesian.models) == 1
 
         assert (
             session.frequentist.models[0].settings.priors.prior_class
@@ -51,7 +51,7 @@ class TestAnalysisSession:
             is PriorClass.frequentist_unrestricted
         )
         assert session.toxicr_bayesian.models[0].settings.priors.prior_class is PriorClass.bayesian
-        # assert session.loud_bayesian.models[0].settings.priors.prior_class is PriorClass.bayesian
+        assert session.loud_bayesian.models[0].settings.priors.prior_class is PriorClass.bayesian_loud
 
     def test_multistage_permutations(self, complete_dichotomous):
         def _expected_degree(session, n: int):
@@ -99,14 +99,11 @@ class TestAnalysisSession:
         # degree = N -1, bayesian, fixed at degree == 2
         data = deepcopy(complete_dichotomous)
         data["models"] = {"toxicr_bayesian": [{"model": "Multistage", "prior_weight": 1}]}
-        # data["models"] = {"loud_bayesian": [{"model": "Multistage", "prior_weight": 1}]}
         data["dataset_options"][0]["degree"] = 0
         session = AnalysisSession.create(data, 0, 0)
         assert session.frequentist is None
         assert len(session.toxicr_bayesian.models) == 1
         model = session.toxicr_bayesian.models[0]
-        # assert len(session.loud_bayesian.models) == 1
-        # model = session.loud_bayesian.models[0]
         assert model.bmd_model_class.id == DichotomousModelChoices.multistage.value.id
         assert model.settings.degree == 2
 
