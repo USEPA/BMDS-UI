@@ -167,7 +167,9 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     def _compute_cochran_armitage(self, instance):
         cochran_armitage_result = []
         try:
-            if instance.inputs["datasets"][0]["metadata"]["model_type"] == "DM":
+            datasets = instance.inputs.get("datasets", [])
+            model_type = datasets[0].get("metadata", {}).get("model_type")
+            if model_type == "DM":
                 for dataset in instance.inputs["datasets"]:
                     settings = pydantic_validate(
                         {"dataset": to_csv(dataset, ["doses", "ns", "incidences"])},
