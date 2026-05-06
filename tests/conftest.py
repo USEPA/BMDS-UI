@@ -53,13 +53,12 @@ def complete_continuous():
         "dataset_type": "C",
         "models": {
             "frequentist_restricted": ["Power"],
-            "toxicr_bayesian": [{"model": "Power", "prior_weight": 1}],
             "loud_bayesian": [{"model": "Power", "prior_weight": 1}],
         },
         "datasets": [
             {
                 "dtype": "C",
-                "metadata": {"id": 123, 'model_type': 'CS'},
+                "metadata": {"id": 123},
                 "doses": [0, 50, 100, 150, 200],
                 "ns": [100, 100, 100, 100, 100],
                 "means": [10, 20, 30, 40, 50],

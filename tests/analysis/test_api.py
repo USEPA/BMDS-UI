@@ -73,7 +73,7 @@ class TestAnalysisViewSet:
             assert response.status_code == 200
 
             response = client.patch(write_url, payload, format="json")
-            assert response.status_code == 200
+            assert response.status_code == 200, getattr(response, "data", None)
 
     def test_default_input(self):
         client = APIClient()

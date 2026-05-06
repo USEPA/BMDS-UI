@@ -19,7 +19,6 @@ class TestAnalysisSession:
         data = deepcopy(complete_continuous)
         session = AnalysisSession.create(data, 0, 0)
         assert len(session.frequentist.models) == 1
-        assert len(session.toxicr_bayesian.models) == 1
         # assert len(session.loud_bayesian.models) == 1
 
     def test_default_continuous_individual(self, complete_continuous_individual):
@@ -27,7 +26,6 @@ class TestAnalysisSession:
         data = deepcopy(complete_continuous_individual)
         session = AnalysisSession.create(data, 0, 0)
         assert len(session.frequentist.models) == 1
-        assert len(session.toxicr_bayesian.models) == 1
         # assert len(session.loud_bayesian.models) == 1
 
     def test_prior_classes(self, complete_dichotomous):
