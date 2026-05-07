@@ -120,7 +120,7 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         payload = {**serializer.data}
         if cochran_armitage_result:
-            payload["cochran_armitage_result"] = cochran_armitage_result   
+            payload["cochran_armitage_result"] = cochran_armitage_result 
         return Response(payload)
 
     @action(detail=True, methods=("post",), url_path="select-model")

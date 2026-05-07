@@ -245,7 +245,7 @@ export const getResponse = (dataset) => {
     }
     return data;
   },
-  getToxicRBayesianBMDLine = function (model, hexColor) {
+  getBayesianBMDLine = function (model, hexColor) {
     const data = [
       {
         x: model.results.dr_x,

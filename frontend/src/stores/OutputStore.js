@@ -13,7 +13,7 @@ import {
   black,
   bmaColor,
   colorCodes,
-  getToxicRBayesianBMDLine,
+  getBayesianBMDLine,
   getBmdDiamond,
   getCsfLine,
   getDrBmdLine,
@@ -250,6 +250,11 @@ class OutputStore {
         return this.selectedToxicRBayesian.model_average;
       }
       return this.selectedToxicRBayesian.models[index];
+    } else if (this.modalModelClass === modelClasses.loud_bayesian) {
+      if (index === maIndex) {
+        return this.selectedLOUDBayesian.model_average;
+      }
+      return this.selectedLOUDBayesian.models[index];
     } else {
       throw `Unknown modelClass: ${this.modalModelClass}`;
     }
@@ -357,13 +362,10 @@ class OutputStore {
     return layout;
   }
 
-  @computed get drToxicRBayesianPlotData() {
-    const toxicr_bayesian_plot_data = [
-        getDrDatasetPlotData(this.selectedDataset),
-      ],
-      output = this.selectedOutput;
-    output.toxicr_bayesian.models.map((model, index) => {
-      let toxicr_bayesian_model = {
+  buildBayesianPlotData(output) {
+    const plot_data = [getDrDatasetPlotData(this.selectedDataset)];
+    output.models.map((model, index) => {
+      let bayesian_model = {
         x: model.results.plotting.dr_x,
         y: model.results.plotting.dr_y,
         name: model.name,
@@ -372,19 +374,24 @@ class OutputStore {
           color: colorCodes[index],
         },
       };
-      toxicr_bayesian_plot_data.push(toxicr_bayesian_model);
+      plot_data.push(bayesian_model);
     });
-    if (output.toxicr_bayesian.model_average) {
-      let bma_data = getToxicRBayesianBMDLine(
-        output.toxicr_bayesian.model_average,
-        bmaColor,
-      );
-      toxicr_bayesian_plot_data.push(...bma_data);
+    if (output.model_average) {
+      let bma_data = getBayesianBMDLine(output.model_average, bmaColor);
+      plot_data.push(...bma_data);
     }
-    return toxicr_bayesian_plot_data;
+    return plot_data;
   }
 
-  @computed get drToxicRBayesianPlotLayout() {
+  @computed get drLOUDBayesianPlotData() {
+    return this.buildBayesianPlotData(this.selectedOutput.loud_bayesian);
+  }
+
+  @computed get drToxicRBayesianPlotData() {
+    return this.buildBayesianPlotData(this.selectedOutput.toxicr_bayesian);
+  }
+
+  @computed get drBayesianPlotLayout() {
     // the toxicr bayesian plot shown on the output page and modal
     const layout = _.cloneDeep(this.drFrequentistPlotLayout);
     layout.legend = { tracegroupgap: 0, x: 1, y: 1 };

@@ -190,12 +190,11 @@ class Output extends Component {
               <LOUDBayesianResultTable />
             </div>
             <div className="col-lg-12">
-              <span>LOUD bayesian results will display here</span>
-              {/* <DoseResponsePlot
+              <DoseResponsePlot
                 onRelayout={outputStore.updateUserPlotSettings}
-                layout={outputStore.drLOUDBayesianPlotLayout}
+                layout={outputStore.drBayesianPlotLayout}
                 data={outputStore.drLOUDBayesianPlotData}
-              /> */}
+              />
             </div>
           </div>
         ) : null}
@@ -208,7 +207,7 @@ class Output extends Component {
             <div className="col-lg-12">
               <DoseResponsePlot
                 onRelayout={outputStore.updateUserPlotSettings}
-                layout={outputStore.drToxicRBayesianPlotLayout}
+                layout={outputStore.drBayesianPlotLayout}
                 data={outputStore.drToxicRBayesianPlotData}
               />
             </div>

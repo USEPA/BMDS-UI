@@ -126,7 +126,7 @@ class ModelAverageBody extends Component {
           </Col>
           <Col xl={9}>
             <DoseResponsePlot
-              layout={outputStore.drToxicRBayesianPlotLayout}
+              layout={outputStore.drBayesianPlotLayout}
               data={outputStore.drToxicRBayesianPlotData}
             />
           </Col>

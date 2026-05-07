@@ -4,6 +4,8 @@ import uuid
 from copy import deepcopy
 from datetime import datetime, timedelta
 from io import BytesIO
+# import json
+# import math
 
 import pandas as pd
 import reversion
@@ -42,6 +44,38 @@ def get_deletion_date(current_deletion_date: datetime | None = None) -> datetime
         return max(current_deletion_date, date)
     return date
 
+# def check_for_nan_inf(obj, *, nan_replacement=None, inf_replacement="infinity"):
+#     """
+#     Recursively replace float NaN with `nan_replacement` (default None),
+#     and float ±Infinity with `inf_replacement` (default "infinity").
+#     Only checks for NaN/Inf; all other types are returned unchanged.
+#     """
+#     if isinstance(obj, float):
+#         if math.isnan(obj):
+#             return nan_replacement
+#         if math.isinf(obj):
+#             return inf_replacement
+#         return obj
+
+#     if isinstance(obj, dict):
+#         return {
+#             k: check_for_nan_inf(v, nan_replacement=nan_replacement, inf_replacement=inf_replacement)
+#             for k, v in obj.items()
+#         }
+
+#     if isinstance(obj, list):
+#         return [
+#             check_for_nan_inf(v, nan_replacement=nan_replacement, inf_replacement=inf_replacement)
+#             for v in obj
+#         ]
+
+#     if isinstance(obj, tuple):
+#         return tuple(
+#             check_for_nan_inf(v, nan_replacement=nan_replacement, inf_replacement=inf_replacement)
+#             for v in obj
+#         )
+
+#     return obj
 
 @reversion.register()
 class Analysis(models.Model):
@@ -335,6 +369,9 @@ class Analysis(models.Model):
             if output.toxicr_bayesian is not None:
                 bmds_python_version = output.toxicr_bayesian["version"]
                 break
+            if output.loud_bayesian is not None:
+                bmds_python_version = output.loud_bayesian["version"]
+                break   
         # get prepare complete output object
         analysis_output = AnalysisOutput(
             analysis_id=str(self.id),
@@ -342,7 +379,21 @@ class Analysis(models.Model):
             bmds_python_version=bmds_python_version,
             outputs=[output.model_dump(by_alias=True) for output in outputs],
         )
+        
         self.outputs = analysis_output.model_dump(by_alias=True)
+
+        # # CHANGED TO PARSE FOR NAN/INFINITY IN DICHOTOMOUS WEIBULL 
+        # # Build Python dict, then sanitize
+        # payload = analysis_output.model_dump(by_alias=True)
+        # # Replace NaN/±Inf (choose "null" to map to None, or "string" to keep as text)
+        # payload = check_for_nan_inf(payload, nan_replacement=None, inf_replacement="infinity")
+        # # Strict validation: ensure no NaN/Inf remain
+        # json.dumps(payload, allow_nan=False)
+        # self.outputs = payload
+        # # holds infinity values for Weibull. This is not valid JSON and is causing the server error. 
+        # print("OUTPUTS FROM MODELS.PY: ")
+        # print(self.outputs["outputs"])
+
         self.errors = [output.error for output in outputs if output.error]
         self.ended = now()
         self.deletion_date = get_deletion_date()
