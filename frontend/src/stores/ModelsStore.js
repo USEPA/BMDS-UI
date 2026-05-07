@@ -180,7 +180,6 @@ class ModelsStore {
         delete this.models[name];
       }
     }
-    console.log(this.models);
     this.rootStore.mainStore.setInputsChangedFlag();
   }
 

@@ -189,7 +189,15 @@ const ModelsCheckBox = observer(({ store }) => {
   const columns = tabColumns[activeTab];
   if (!columns) throw `Unknown activeTab: ${activeTab}`;
 
-  const allModels = rowOrder[getModelType];
+  let allModels;
+  if (
+    store.getModelType === mc.MODEL_CONTINUOUS &&
+    activeTab == "loud_bayesian"
+  ) {
+    allModels = allModelOptions[mc.MODEL_CONTINUOUS]["loud_bayesian"];
+  } else {
+    allModels = rowOrder[getModelType];
+  }
 
   return (
     <tbody>
