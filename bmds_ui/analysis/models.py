@@ -206,6 +206,8 @@ class Analysis(models.Model):
                 items.append(session.frequentist)
             if session.toxicr_bayesian:
                 items.append(session.toxicr_bayesian)
+            if session.loud_bayesian:
+                items.append(session.loud_bayesian)    
         return BatchSession(sessions=items)
 
     def to_df(self) -> dict[str, pd.DataFrame]:
