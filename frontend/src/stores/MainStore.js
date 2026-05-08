@@ -193,7 +193,6 @@ class MainStore {
         if (data.is_executing) {
           setTimeout(pollForResults, pollInterval);
         } else {
-          console.log("OUTPUT DATA", data);
           this.updateModelStateFromApi(data);
           simulateClick(document.getElementById("navlink-output"));
         }

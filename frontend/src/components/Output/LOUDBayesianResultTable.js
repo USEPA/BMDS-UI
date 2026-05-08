@@ -18,6 +18,8 @@ class LOUDBayesianResultTable extends Component {
       return null;
     }
 
+    console.log("LOUD bayesian outputs: ", selectedLOUDBayesian);
+
     const colWidths = [12, 11, 11, 11, 11, 11, 11, 11, 11],
       ma = selectedLOUDBayesian.model_average;
 

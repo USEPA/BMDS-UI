@@ -18,6 +18,8 @@ class ToxicRBayesianResultTable extends Component {
       return null;
     }
 
+    console.log("ToxicR Bayesian outputs: ", selectedToxicRBayesian);
+
     const colWidths = [12, 11, 11, 11, 11, 11, 11, 11, 11],
       ma = selectedToxicRBayesian.model_average;
 

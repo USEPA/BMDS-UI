@@ -33,5 +33,5 @@ export const getPValue = function (dataType, results) {
     { value: 2, label: "Lognormal" },
     { value: 3, label: "Beta" },
     { value: 4, label: "Gamma" },
-    { value: 5, label: "Student_t" },
+    { value: 5, label: "Student t" },
   ];

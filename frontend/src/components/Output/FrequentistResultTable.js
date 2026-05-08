@@ -349,6 +349,8 @@ class FrequentistResultTable extends Component {
       return null;
     }
 
+    console.log("Frequentist outputs: ", selectedFrequentist);
+
     const { models } = selectedFrequentist,
       restrictedModels = getRestricted(models),
       unrestrictedModels = getUnrestricted(models),
