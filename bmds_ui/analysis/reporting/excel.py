@@ -54,78 +54,69 @@ def summary_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
 
     for session in sessions:
         if session.dataset_index not in dataset_data:
-            dataset = session.frequentist.dataset if session.frequentist else session.toxicr_bayesian
+            dataset = None
+            if session.frequentist:
+                dataset = session.frequentist.dataset
+            elif session.toxicr_bayesian:
+                dataset = session.toxicr_bayesian
+            elif session.loud_bayesian:
+                dataset = session.loud_bayesian   
+
             d = dict(dataset_index=session.dataset_index)
             dataset.update_record(d)
             dataset_data[d["dataset_index"]] = d
 
-        if session.frequentist:
-            add_session(
-                model_data,
-                session.dataset_index,
-                session.option_index,
-                "frequentist",
-                session.frequentist,
-            )
-        if session.toxicr_bayesian:
-            add_session(
-                model_data,
-                session.dataset_index,
-                session.option_index,
-                "toxicr_bayesian",
-                session.toxicr_bayesian,
-            )
+        for name, model in (
+            ("frequentist", session.frequentist),
+            ("toxicr_bayesian", session.toxicr_bayesian),
+            ("loud_bayesian", session.loud_bayesian),
+        ):
+            if model:
+                add_session(
+                    model_data,
+                    session.dataset_index,
+                    session.option_index,
+                    name,
+                    model,
+                )    
 
     df1 = pd.DataFrame(dataset_data.values())
     df2 = pd.DataFrame(model_data)
     df3 = df1.merge(df2, on="dataset_index").fillna("-")
     return df3
 
-
 def params_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
     data = []
     for session in sessions:
-        if session.frequentist:
-            for model_index, model in enumerate(session.frequentist.models):
-                if model.has_results:
-                    if session.frequentist.dataset.dtype == Dtype.NESTED_DICHOTOMOUS:
-                        data.extend(
-                            model.results.parameter_rows(
-                                extras=dict(
-                                    dataset_index=session.dataset_index,
-                                    option_index=session.option_index,
-                                    model_index=model_index,
-                                    model_name=model.name(),
-                                )
-                            )
-                        )
-                    else:
-                        data.extend(
-                            model.results.parameters.rows(
-                                extras=dict(
-                                    dataset_index=session.dataset_index,
-                                    option_index=session.option_index,
-                                    analysis_type="frequentist",
-                                    model_index=model_index,
-                                    model_name=model.name(),
-                                )
-                            )
-                        )
+        for analysis_type, analysis in (
+            ("frequentist", session.frequentist),
+            ("toxicr_bayesian", session.toxicr_bayesian),
+            ("loud_bayesian", session.loud_bayesian),
+        ):
+            if analysis is None:
+                continue
 
-        if session.toxicr_bayesian:
-            for model_index, model in enumerate(session.toxicr_bayesian.models):
+            is_nested = (
+                analysis_type == "frequentist"
+                and analysis.dataset.dtype == Dtype.NESTED_DICHOTOMOUS
+            )
+
+            for model_index, model in enumerate(analysis.models):
                 if model.has_results:
-                    data.extend(
-                        model.results.parameters.rows(
-                            extras=dict(
-                                dataset_index=session.dataset_index,
-                                option_index=session.option_index,
-                                analysis_type="toxicr_bayesian",
-                                model_index=model_index,
-                                model_name=model.name(),
-                            )
-                        )
+                    extras = dict(
+                        dataset_index=session.dataset_index,
+                        option_index=session.option_index,
+                        model_index=model_index,
+                        model_name=model.name(),
                     )
+                    if not is_nested:
+                        extras["analysis_type"] = analysis_type
+
+                    if is_nested:
+                        data.extend(model.results.parameter_rows(extras=extras))
+                    else:
+                        data.extend(model.results.parameters.rows(extras=extras))
+
     return pd.DataFrame(data=data)
 
 
@@ -134,7 +125,14 @@ def dataset_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
     datasets: set = set()
     for session in sessions:
         if session.dataset_index not in datasets:
-            dataset = session.frequentist.dataset if session.frequentist else session.toxicr_bayesian
+
+            if session.frequentist:
+                dataset = session.frequentist.dataset
+            elif session.toxicr_bayesian:
+                dataset = session.toxicr_bayesian
+            elif session.loud_bayesian:
+                dataset = session.loud_bayesian 
+
             datasets.add(session.dataset_index)
             data.extend(dataset.rows(extras=dict(dataset_index=session.dataset_index)))
     return pd.DataFrame(data=data)

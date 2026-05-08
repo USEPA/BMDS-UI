@@ -147,7 +147,7 @@ set CMAKE_TOOLCHAIN_FILE=C:\Users\srizwan\BMDS\vcpkg\scripts\buildsystems\vcpkg.
 ```
 
 Activate the venv and install bmds
-_This step needs to be repeated when bmds course code changes_
+_This step needs to be repeated when bmds source code changes_
 
 ```bash
 cd "C:\Users\srizwan\BMDS\bmds-ui"
