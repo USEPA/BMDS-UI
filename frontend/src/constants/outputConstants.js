@@ -25,9 +25,13 @@ export const getPValue = function (dataType, results) {
     { value: 0, label: "Frequentist Unrestricted" },
     { value: 1, label: "Frequentist Restricted" },
     { value: 2, label: "ToxicR Bayesian" },
+    { value: 3, label: "LOUD Bayesian" },
   ],
   priorTypeLabels = [
     { value: 0, label: "Uniform" },
     { value: 1, label: "Normal" },
     { value: 2, label: "Lognormal" },
+    { value: 3, label: "Beta" },
+    { value: 4, label: "Gamma" },
+    { value: 5, label: "Student_t" },
   ];
