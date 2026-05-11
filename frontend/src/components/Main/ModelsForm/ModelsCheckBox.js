@@ -89,10 +89,14 @@ const CheckBoxTd = observer(({ store, type, model, disabled, headers }) => {
 
 const LOUDAccordion = observer(({ store, allModels, columns }) => {
   return (
-    <td colSpan="100%">
+    <td colSpan="3">
       <div id="accordionExample">
         <div className="card">
-          <div className="card-header" id="headingOne">
+          <div
+            className="card-header"
+            id="headingOne"
+            style={{ padding: "0 5px" }}
+          >
             <h2 className="mb-0">
               <button
                 className="btn btn-link"
@@ -111,7 +115,7 @@ const LOUDAccordion = observer(({ store, allModels, columns }) => {
             className="collapse show"
             aria-labelledby="headingOne"
           >
-            <div className="card-body">
+            <div className="card-body" style={{ padding: "0 5px" }}>
               <table width="100%">
                 <tbody>
                   {allModels.map((model) => (
@@ -129,7 +133,11 @@ const LOUDAccordion = observer(({ store, allModels, columns }) => {
         </div>
 
         <div className="card">
-          <div className="card-header" id="headingTwo">
+          <div
+            className="card-header"
+            id="headingTwo"
+            style={{ padding: "0 5px" }}
+          >
             <h2 className="mb-0">
               <button
                 className="btn btn-link collapsed"
@@ -147,6 +155,7 @@ const LOUDAccordion = observer(({ store, allModels, columns }) => {
             id="collapseTwo"
             className="collapse"
             aria-labelledby="headingTwo"
+            style={{ padding: "0 5px" }}
           >
             <div className="card-body">
               <strong>This is the second item’s accordion body.</strong> …
@@ -155,7 +164,11 @@ const LOUDAccordion = observer(({ store, allModels, columns }) => {
         </div>
 
         <div className="card">
-          <div className="card-header" id="headingThree">
+          <div
+            className="card-header"
+            id="headingThree"
+            style={{ padding: "0 5px" }}
+          >
             <h2 className="mb-0">
               <button
                 className="btn btn-link collapsed"
@@ -174,7 +187,7 @@ const LOUDAccordion = observer(({ store, allModels, columns }) => {
             className="collapse"
             aria-labelledby="headingThree"
           >
-            <div className="card-body">
+            <div className="card-body" style={{ padding: "0 5px" }}>
               <strong>This is the third item’s accordion body.</strong> …
             </div>
           </div>
@@ -297,6 +310,14 @@ const ModelsCheckBox = observer(({ store }) => {
   }
 
   if (activeTab == "loud_bayesian") {
+    // return (
+    //   <tbody>
+    //     {allModels.map((model) => (
+    //       <ModelRow key={model} store={store} model={model} columns={columns} />
+    //     ))}
+    //   </tbody>
+    // );
+
     return (
       <tbody>
         <tr>
