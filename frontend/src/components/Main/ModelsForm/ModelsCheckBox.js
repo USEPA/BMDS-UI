@@ -87,6 +87,103 @@ const CheckBoxTd = observer(({ store, type, model, disabled, headers }) => {
   );
 });
 
+const LOUDAccordion = observer(({ store, allModels, columns }) => {
+  return (
+    <td colSpan="100%">
+      <div id="accordionExample">
+        <div className="card">
+          <div className="card-header" id="headingOne">
+            <h2 className="mb-0">
+              <button
+                className="btn btn-link"
+                type="button"
+                data-toggle="collapse"
+                data-target="#collapseOne"
+                aria-expanded="true"
+                aria-controls="collapseOne"
+              >
+                BMDS Models
+              </button>
+            </h2>
+          </div>
+          <div
+            id="collapseOne"
+            className="collapse show"
+            aria-labelledby="headingOne"
+          >
+            <div className="card-body">
+              <table width="100%">
+                <tbody>
+                  {allModels.map((model) => (
+                    <ModelRow
+                      key={model}
+                      store={store}
+                      model={model}
+                      columns={columns}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header" id="headingTwo">
+            <h2 className="mb-0">
+              <button
+                className="btn btn-link collapsed"
+                type="button"
+                data-toggle="collapse"
+                data-target="#collapseTwo"
+                aria-expanded="false"
+                aria-controls="collapseTwo"
+              >
+                PROAST Models
+              </button>
+            </h2>
+          </div>
+          <div
+            id="collapseTwo"
+            className="collapse"
+            aria-labelledby="headingTwo"
+          >
+            <div className="card-body">
+              <strong>This is the second item’s accordion body.</strong> …
+            </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header" id="headingThree">
+            <h2 className="mb-0">
+              <button
+                className="btn btn-link collapsed"
+                type="button"
+                data-toggle="collapse"
+                data-target="#collapseThree"
+                aria-expanded="false"
+                aria-controls="collapseThree"
+              >
+                EFSA Models
+              </button>
+            </h2>
+          </div>
+          <div
+            id="collapseThree"
+            className="collapse"
+            aria-labelledby="headingThree"
+          >
+            <div className="card-body">
+              <strong>This is the third item’s accordion body.</strong> …
+            </div>
+          </div>
+        </div>
+      </div>
+    </td>
+  );
+});
+
 const ModelHeaderTd = ({ model, writeMode }) => {
   return (
     <td className="text-left align-middle" headers="m-name">
@@ -199,13 +296,27 @@ const ModelsCheckBox = observer(({ store }) => {
     allModels = rowOrder[getModelType];
   }
 
-  return (
-    <tbody>
-      {allModels.map((model) => (
-        <ModelRow key={model} store={store} model={model} columns={columns} />
-      ))}
-    </tbody>
-  );
+  if (activeTab == "loud_bayesian") {
+    return (
+      <tbody>
+        <tr>
+          <LOUDAccordion
+            store={store}
+            allModels={allModels}
+            columns={columns}
+          />
+        </tr>
+      </tbody>
+    );
+  } else {
+    return (
+      <tbody>
+        {allModels.map((model) => (
+          <ModelRow key={model} store={store} model={model} columns={columns} />
+        ))}
+      </tbody>
+    );
+  }
 });
 
 ModelsCheckBox.propTypes = {
