@@ -96,19 +96,13 @@ const LOUDAccordion = observer(({ store, allModels, columns }) => {
             className="card-header"
             id="headingOne"
             style={{ padding: "0 5px" }}
+            role="button"
+            data-toggle="collapse"
+            data-target="#collapseOne"
+            aria-expanded="true"
+            aria-controls="collapseOne"
           >
-            <h2 className="mb-0">
-              <button
-                className="btn btn-link"
-                type="button"
-                data-toggle="collapse"
-                data-target="#collapseOne"
-                aria-expanded="true"
-                aria-controls="collapseOne"
-              >
-                BMDS Models
-              </button>
-            </h2>
+            <span style={{ fontSize: "20px" }}>BMDS Models</span>
           </div>
           <div
             id="collapseOne"
@@ -142,19 +136,13 @@ const LOUDAccordion = observer(({ store, allModels, columns }) => {
             className="card-header"
             id="headingTwo"
             style={{ padding: "0 5px" }}
+            role="button"
+            data-toggle="collapse"
+            data-target="#collapseTwo"
+            aria-expanded="true"
+            aria-controls="collapseTwo"
           >
-            <h2 className="mb-0">
-              <button
-                className="btn btn-link collapsed"
-                type="button"
-                data-toggle="collapse"
-                data-target="#collapseTwo"
-                aria-expanded="false"
-                aria-controls="collapseTwo"
-              >
-                PROAST Models
-              </button>
-            </h2>
+            <span style={{ fontSize: "20px" }}>PROAST Models</span>
           </div>
           <div
             id="collapseTwo"
@@ -189,19 +177,13 @@ const LOUDAccordion = observer(({ store, allModels, columns }) => {
             className="card-header"
             id="headingThree"
             style={{ padding: "0 5px" }}
+            role="button"
+            data-toggle="collapse"
+            data-target="#collapseThree"
+            aria-expanded="true"
+            aria-controls="collapseThree"
           >
-            <h2 className="mb-0">
-              <button
-                className="btn btn-link collapsed"
-                type="button"
-                data-toggle="collapse"
-                data-target="#collapseThree"
-                aria-expanded="false"
-                aria-controls="collapseThree"
-              >
-                EFSA Models
-              </button>
-            </h2>
+            <span style={{ fontSize: "20px" }}>EFSA Models</span>
           </div>
           <div
             id="collapseThree"
