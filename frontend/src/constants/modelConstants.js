@@ -75,7 +75,11 @@ const allContinuous = [
         "Power",
       ],
       frequentist_unrestricted: ["Hill", "Linear", "Polynomial", "Power"],
-      loud_bayesian: ["Exponential-M3", "Exponential-M5", "Hill", "Power"],
+      loud_bayesian: {
+        bmds: ["Exponential-M3", "Exponential-M5", "Hill", "Power"],
+        proast: ["Power", "proast_model2", "proast_model3", "proast_model4"],
+        efsa: ["efsa_model1", "efsa_model2", "efsa_model3", "efsa_model4"],
+      },
     },
     [MODEL_DICHOTOMOUS]: {
       frequentist_restricted: [

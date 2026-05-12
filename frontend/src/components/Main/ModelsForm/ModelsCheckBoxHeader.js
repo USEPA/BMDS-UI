@@ -51,7 +51,7 @@ const ModelsCheckBoxHeader = observer((props) => {
             {store.canEdit ? (
               <>
                 <Button
-                  className="mt-4 btn btn-sm btn-block btn-info"
+                  className="mt-4 btn btn-sm btn-info w-50 d-block"
                   onClick={store.resetModelSelection}
                   text="Reset Selection"
                 />

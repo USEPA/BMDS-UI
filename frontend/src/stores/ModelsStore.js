@@ -51,6 +51,8 @@ class ModelsStore {
     );
   }
 
+  col_widths = ["30%", "20%", "50%"];
+
   @observable tabBadge = {
     loud_bayesian: null,
     toxicr_bayesian: null,

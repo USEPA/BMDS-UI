@@ -116,14 +116,20 @@ const LOUDAccordion = observer(({ store, allModels, columns }) => {
             aria-labelledby="headingOne"
           >
             <div className="card-body" style={{ padding: "0 5px" }}>
-              <table width="100%">
+              <table width="100%" style={{ tableLayout: "fixed" }}>
+                <colgroup>
+                  <col style={{ width: store.col_widths[0] }} />
+                  <col style={{ width: store.col_widths[1] }} />
+                  <col style={{ width: store.col_widths[2] }} />
+                </colgroup>
                 <tbody>
-                  {allModels.map((model) => (
+                  {allModels.bmds.map((model) => (
                     <ModelRow
                       key={model}
                       store={store}
                       model={model}
                       columns={columns}
+                      loud_method="bmds"
                     />
                   ))}
                 </tbody>
@@ -157,8 +163,25 @@ const LOUDAccordion = observer(({ store, allModels, columns }) => {
             aria-labelledby="headingTwo"
             style={{ padding: "0 5px" }}
           >
-            <div className="card-body">
-              <strong>This is the second item’s accordion body.</strong> …
+            <div className="card-body" style={{ padding: "0 5px" }}>
+              <table width="100%" style={{ tableLayout: "fixed" }}>
+                <colgroup>
+                  <col style={{ width: store.col_widths[0] }} />
+                  <col style={{ width: store.col_widths[1] }} />
+                  <col style={{ width: store.col_widths[2] }} />
+                </colgroup>
+                <tbody>
+                  {allModels.proast.map((model) => (
+                    <ModelRow
+                      key={model}
+                      store={store}
+                      model={model}
+                      columns={columns}
+                      loud_method="proast"
+                    />
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -188,7 +211,25 @@ const LOUDAccordion = observer(({ store, allModels, columns }) => {
             aria-labelledby="headingThree"
           >
             <div className="card-body" style={{ padding: "0 5px" }}>
-              <strong>This is the third item’s accordion body.</strong> …
+              add EFSA models here
+              {/* <table width="100%" style={{ tableLayout: "fixed" }}>
+                <colgroup>
+                  <col style={{ width: store.col_widths[0] }} />
+                  <col style={{ width: store.col_widths[1] }} />
+                  <col style={{ width: store.col_widths[2] }} />
+                </colgroup>
+                <tbody>
+                  {allModels.efsa.map((model) => (
+                    <ModelRow
+                      key={model}
+                      store={store}
+                      model={model}
+                      columns={columns}
+                      loud_method="efsa"
+                    />
+                  ))}
+                </tbody>
+              </table> */}
             </div>
           </div>
         </div>
@@ -247,11 +288,15 @@ const tabColumns = {
   ],
 };
 
-const ModelRow = observer(({ store, model, columns }) => (
+const ModelRow = observer(({ store, model, columns, loud_method = null }) => (
   <tr>
     <ModelHeaderTd model={model} writeMode={store.canEdit} />
     {columns.map((col) => {
-      const modelOptions = allModelOptions[store.getModelType][col.type] ?? [];
+      const modelOptions =
+        loud_method != null
+          ? (allModelOptions?.[store.getModelType]?.[col.type]?.[loud_method] ??
+            [])
+          : (allModelOptions?.[store.getModelType]?.[col.type] ?? []);
       if (!modelOptions.includes(model)) {
         return <td key={col.headers} />;
       }
@@ -305,19 +350,6 @@ const ModelsCheckBox = observer(({ store }) => {
     activeTab == "loud_bayesian"
   ) {
     allModels = allModelOptions[mc.MODEL_CONTINUOUS]["loud_bayesian"];
-  } else {
-    allModels = rowOrder[getModelType];
-  }
-
-  if (activeTab == "loud_bayesian") {
-    // return (
-    //   <tbody>
-    //     {allModels.map((model) => (
-    //       <ModelRow key={model} store={store} model={model} columns={columns} />
-    //     ))}
-    //   </tbody>
-    // );
-
     return (
       <tbody>
         <tr>
@@ -330,6 +362,7 @@ const ModelsCheckBox = observer(({ store }) => {
       </tbody>
     );
   } else {
+    allModels = rowOrder[getModelType];
     return (
       <tbody>
         {allModels.map((model) => (

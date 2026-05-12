@@ -30,7 +30,12 @@ class ModelsCheckBoxList extends Component {
     return (
       <div className="mt-2">
         <ModelsSelectionTabs />
-        <table className="table table-sm">
+        <table className="table table-sm" style={{ tableLayout: "fixed" }}>
+          <colgroup>
+            <col style={{ width: modelsStore.col_widths[0] }} />
+            <col style={{ width: modelsStore.col_widths[1] }} />
+            <col style={{ width: modelsStore.col_widths[2] }} />
+          </colgroup>
           <ModelsCheckBoxHeader store={modelsStore} />
           <ModelsCheckBox store={modelsStore} />
         </table>
