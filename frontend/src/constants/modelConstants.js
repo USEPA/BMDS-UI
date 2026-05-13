@@ -35,10 +35,23 @@ const allContinuous = [
       //     efsa: [],
       //   },
       // },
+      // {
+      //   mle: allContinuous,
+      //   loud_bayesian: {
+      //     bmds: ["Exponential-M3", "Exponential-M5"],
+      //     proast: ["Hill"],
+      //     efsa: ["Power"],
+      //   },
+      // },
       {
         mle: allContinuous,
         loud_bayesian: {
-          bmds: ["Exponential-M3", "Exponential-M5"],
+          bmds: [
+            "Exponential-M3 CV",
+            "Exponential-M3 NCV",
+            "Exponential-M3 LN",
+            "Exponential-M5",
+          ],
           proast: ["Hill"],
           efsa: ["Power"],
         },
@@ -91,7 +104,15 @@ const allContinuous = [
         "Power",
       ],
       frequentist_unrestricted: ["Hill", "Linear", "Polynomial", "Power"],
-      loud_bayesian: ["Exponential-M3", "Exponential-M5", "Hill", "Power"],
+      // loud_bayesian: ["Exponential-M3", "Exponential-M5", "Hill", "Power"],
+      loud_bayesian: [
+        "Exponential-M3 CV",
+        "Exponential-M3 NCV",
+        "Exponential-M3 LN",
+        "Exponential-M5",
+        "Hill",
+        "Power",
+      ],
     },
     [MODEL_DICHOTOMOUS]: {
       frequentist_restricted: [

@@ -51,8 +51,12 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         """
         Validate input and if successful, patch inputs on server side.
         """
+        
         instance = self.get_object()
         data = request.data.get("data")
+        print("==================================================================================")
+        print("api.py/patch_inputs: ", data)
+
         edit_key = request.data.get("editKey", "")
         partial = bool(request.data.get("partial", False))
 

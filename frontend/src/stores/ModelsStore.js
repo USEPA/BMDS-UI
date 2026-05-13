@@ -16,6 +16,8 @@ const frequentist_model_types = [
   "frequentist_unrestricted",
 ];
 
+const distribution_map = { CV: 1, NCV: 2, LN: 3 };
+
 class ModelsStore {
   constructor(rootStore) {
     this.rootStore = rootStore;
@@ -144,6 +146,8 @@ class ModelsStore {
   }
 
   @action.bound setModelSelection(name, model, checked) {
+    console.log(name);
+    console.log(model);
     if (checked) {
       if (!(name in this.models)) {
         this.models[name] = [];
