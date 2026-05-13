@@ -84,6 +84,7 @@ MultiTumorModelSchema = ModelTypeSchema(
 class BayesianModelSchema(BaseModel):
     model: str
     prior_weight: float = Field(ge=0, le=1)
+    dist_type: int | None = None
 
 class ModelListSchema(BaseModel):
     frequentist_restricted: list[str] = []
@@ -123,12 +124,20 @@ class ModelListSchema(BaseModel):
             ("toxicr_bayesian", schema.toxicr_bayesian),
             ("loud_bayesian", schema.loud_bayesian),
         ]:
-            models = [model.model for model in getattr(self, field)]
-            if len(models) != len(set(models)):
-                raise ValueError(f"Models in {field} are not unique")
+            entries = getattr(self, field)
+            models = [entry.model for entry in entries]
             extras = list(set(models) - valid_models)
+
             if len(extras) > 0:
                 raise ValueError(f"Invalid model(s) in {field}: {','.join(extras)}")
+            
+            if field == "loud_bayesian":
+                pairs = [(entry.model, entry.dist_type) for entry in entries]
+                if len(pairs) != len(set(pairs)):
+                    raise ValueError(f"Model/dist_type combinations in {field} are not unique")
+            else:
+                if len(models) != len(set(models)):
+                    raise ValueError(f"Models in {field} are not unique")
         return self
 
     @model_validator(mode="after")

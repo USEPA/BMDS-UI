@@ -5,6 +5,20 @@ import {
   MODEL_NESTED_DICHOTOMOUS,
 } from "./mainConstants";
 
+const distribution_map = { CV: 1, NCV: 2, LN: 3 };
+
+const parseDisplayName = (displayName) => {
+  const parts = displayName.split(" ");
+  const suffix = parts[parts.length - 1];
+  if (suffix in distribution_map) {
+    return {
+      baseModel: parts.slice(0, -1).join(" "),
+      dist_type: distribution_map[suffix],
+    };
+  }
+  return { baseModel: displayName, dist_type: undefined };
+};
+
 const allContinuous = [
     "Exponential-M3",
     "Exponential-M5",
@@ -50,10 +64,11 @@ const allContinuous = [
             "Exponential-M3 CV",
             "Exponential-M3 NCV",
             "Exponential-M3 LN",
-            "Exponential-M5",
+            "Exponential-M5 CV",
+            "Exponential-M5 LN",
           ],
-          proast: ["Hill"],
-          efsa: ["Power"],
+          proast: ["Hill CV", "Hill NCV"],
+          efsa: ["Power CV", "Power NCV"],
         },
       },
     [MODEL_DICHOTOMOUS]: allDichotomous,
@@ -109,9 +124,12 @@ const allContinuous = [
         "Exponential-M3 CV",
         "Exponential-M3 NCV",
         "Exponential-M3 LN",
-        "Exponential-M5",
-        "Hill",
-        "Power",
+        "Exponential-M5 CV",
+        "Exponential-M5 LN",
+        "Hill CV",
+        "Hill NCV",
+        "Power CV",
+        "Power NCV",
       ],
     },
     [MODEL_DICHOTOMOUS]: {
@@ -141,4 +159,12 @@ const allContinuous = [
   },
   hasDegrees = new Set(["Multistage", "Polynomial"]);
 
-export { allModelOptions, hasDegrees, isLognormal, models, rowOrder };
+export {
+  allModelOptions,
+  distribution_map,
+  hasDegrees,
+  isLognormal,
+  models,
+  parseDisplayName,
+  rowOrder,
+};

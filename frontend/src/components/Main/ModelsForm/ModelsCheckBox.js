@@ -27,12 +27,10 @@ const isModelChecked = (models, type, model) => {
   if (!(type in models)) {
     return false;
   }
-  if (type in models) {
-    if (type === mc.TOXICR_BAYESIAN || type === mc.LOUD_BAYESIAN) {
-      return models[type].findIndex((obj) => obj.model === model) > -1;
-    } else {
-      return models[type].indexOf(model) > -1;
-    }
+  if (type === mc.TOXICR_BAYESIAN || type === mc.LOUD_BAYESIAN) {
+    return models[type].findIndex((obj) => obj._displayName === model) > -1;
+  } else {
+    return models[type].indexOf(model) > -1;
   }
   return checked;
 };
@@ -41,7 +39,7 @@ const getPriorWeightValue = (models, type, model) => {
   if (!(type in models)) {
     return 0;
   }
-  const obj = models[type].find((obj) => obj.model === model);
+  const obj = models[type].find((obj) => obj._displayName === model);
   if (obj != undefined) {
     return obj?.prior_weight ?? 0;
   }

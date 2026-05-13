@@ -24,7 +24,7 @@ classifiers = [
 requires-python = ">=3.11"
 dependencies = [
   # pybmds
-  "pybmds==25.2",
+  # "pybmds==25.2",
 
   # website
   "Django~=5.2.5",
@@ -148,7 +148,7 @@ asyncio_default_fixture_loop_scope="function"
 help = "Sync dev environment after code checkout"
 sequence = [
   {cmd = 'uv pip install -e ".[dev,pg]"'},
-  {cmd = "yarn --cwd frontend"},
+  {cmd = "yarn.cmd --cwd frontend"},
   {cmd = "python manage.py migrate"},
 ]
 
@@ -158,7 +158,7 @@ cmd = "python manage.py runserver 8100"
 
 [tool.poe.tasks.run-js]
 help = "Run javascript developer environment"
-cmd = "npm --prefix ./frontend run start"
+cmd = "npm.cmd --prefix ./frontend run start"
 
 [tool.poe.tasks.test]
 help = "Run python tests"

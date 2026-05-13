@@ -2,7 +2,11 @@ import _ from "lodash";
 import { action, computed, observable, reaction } from "mobx";
 
 import * as mc from "@/constants/mainConstants";
-import { allModelOptions, models } from "@/constants/modelConstants";
+import {
+  allModelOptions,
+  models,
+  parseDisplayName,
+} from "@/constants/modelConstants";
 
 const model_subtypes = [
   "toxicr_bayesian",
@@ -15,8 +19,6 @@ const frequentist_model_types = [
   "frequentist_restricted",
   "frequentist_unrestricted",
 ];
-
-const distribution_map = { CV: 1, NCV: 2, LN: 3 };
 
 class ModelsStore {
   constructor(rootStore) {
@@ -153,11 +155,17 @@ class ModelsStore {
         this.models[name] = [];
       }
       if (name === mc.TOXICR_BAYESIAN || name === mc.LOUD_BAYESIAN) {
+        const { baseModel, dist_type } =
+          name === mc.LOUD_BAYESIAN
+            ? parseDisplayName(model)
+            : { baseModel: model, dist_type: undefined };
         let bma = {
-          model,
+          model: baseModel,
+          dist_type,
           prior_weight: 0,
+          _displayName: model,
         };
-        let obj = this.models[name].find((obj) => obj.model === model);
+        let obj = this.models[name].find((obj) => obj._displayName === model);
         if (obj === undefined) {
           this.models[name].push(bma);
         }
@@ -170,7 +178,9 @@ class ModelsStore {
     } else {
       let index = -1;
       if (name === mc.TOXICR_BAYESIAN || name === mc.LOUD_BAYESIAN) {
-        index = this.models[name].findIndex((obj) => obj.model === model);
+        index = this.models[name].findIndex(
+          (obj) => obj._displayName === model,
+        );
         if (index > -1) {
           this.models[name].splice(index, 1);
           this.setDefaultPriorWeights(name);
@@ -199,7 +209,10 @@ class ModelsStore {
   }
 
   @action.bound setPriorWeight(type, model, value) {
-    let modelIndex = _.findIndex(this.models[type], (d) => d.model === model);
+    let modelIndex = _.findIndex(
+      this.models[type],
+      (d) => d._displayName === model,
+    );
     if (modelIndex >= 0) {
       this.models[type][modelIndex].prior_weight = parseFloat(value);
     }
