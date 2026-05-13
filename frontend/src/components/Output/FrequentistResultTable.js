@@ -4,6 +4,7 @@ import { inject, observer } from "mobx-react";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 
+import { getLabel } from "@/common";
 import FloatingPointHover from "@/components/common/FloatingPointHover";
 import { BIN_LABELS } from "@/constants/logicConstants";
 import {
@@ -11,6 +12,10 @@ import {
   modelClasses,
   priorClass,
 } from "@/constants/outputConstants";
+
+import { MODEL_CONTINUOUS } from "@/constants/mainConstants";
+
+import { distTypeOptions } from "@/constants/optionsConstants";
 import { fractionalFormatter } from "@/utils/formatters";
 import { ff } from "@/utils/formatters";
 
@@ -350,6 +355,7 @@ class FrequentistResultTable extends Component {
     }
 
     console.log("Frequentist outputs: ", selectedFrequentist);
+    console.log("options: ", store.selectedModelOptions);
 
     const { models } = selectedFrequentist,
       restrictedModels = getRestricted(models),
@@ -366,69 +372,78 @@ class FrequentistResultTable extends Component {
       reClass = store.recommendationEnabled ? ` col-l-${numCols}` : "";
 
     return (
-      <table
-        id="frequentist-model-result"
-        className={`table table-sm text-right col-l-1 ${reClass}`}
-      >
-        <colgroup>
-          {_.map(colWidths).map((value, idx) => (
-            <col key={idx} width={`${value}%`}></col>
-          ))}
-        </colgroup>
-        <thead>
-          <tr className="bg-custom">
-            <th id="m-name">Model</th>
-            <th id="bmdl">BMDL</th>
-            <th id="bmd">BMD</th>
-            <th id="bmdu">BMDU</th>
-            <th id="p_value">
-              <i>P</i>-Value
-            </th>
-            <th id="aic">AIC</th>
-            {isNestedDichotomous ? null : (
-              <th id="roi0">Scaled Residual at Control</th>
-            )}
-            {isNestedDichotomous ? null : (
-              <th id="roi1">Scaled Residual near BMD</th>
-            )}
-            {store.recommendationEnabled ? (
-              <th id="rec">
-                <Button
-                  title="Toggle showing notes inline or popover"
-                  className="btn btn-info btn-sm float-right"
-                  onClick={store.toggleInlineNotes}
-                  text={store.showInlineNotes ? "Hide" : "Show"}
-                  icon={store.showInlineNotes ? "eye-slash-fill" : "eye-fill"}
-                />
-                Recommendation
-                <br />
-                and Notes
+      <>
+        {store.getModelType === MODEL_CONTINUOUS && (
+          <span style={{ fontSize: "18px" }} className="bg-custom d-block">
+            <strong>Distibution Type: </strong>
+            {getLabel(store.selectedModelOptions.dist_type, distTypeOptions)}
+          </span>
+        )}
+
+        <table
+          id="frequentist-model-result"
+          className={`table table-sm text-right col-l-1 ${reClass}`}
+        >
+          <colgroup>
+            {_.map(colWidths).map((value, idx) => (
+              <col key={idx} width={`${value}%`}></col>
+            ))}
+          </colgroup>
+          <thead>
+            <tr className="bg-custom">
+              <th id="m-name">Model</th>
+              <th id="bmdl">BMDL</th>
+              <th id="bmd">BMD</th>
+              <th id="bmdu">BMDU</th>
+              <th id="p_value">
+                <i>P</i>-Value
               </th>
-            ) : null}
-          </tr>
-        </thead>
-        <tbody>
-          <FrequentistRowSet
-            store={store}
-            colSpan={numCols}
-            label={"Restricted Models"}
-            dataset={dataset}
-            models={restrictedModels}
-            selectedFrequentist={selectedFrequentist}
-            footnotes={footnotes}
-          />
-          <FrequentistRowSet
-            store={store}
-            colSpan={numCols}
-            label={"Unrestricted Models"}
-            dataset={dataset}
-            models={unrestrictedModels}
-            selectedFrequentist={selectedFrequentist}
-            footnotes={footnotes}
-          />
-        </tbody>
-        <TableFootnotes items={footnotes} colSpan={numCols} />
-      </table>
+              <th id="aic">AIC</th>
+              {isNestedDichotomous ? null : (
+                <th id="roi0">Scaled Residual at Control</th>
+              )}
+              {isNestedDichotomous ? null : (
+                <th id="roi1">Scaled Residual near BMD</th>
+              )}
+              {store.recommendationEnabled ? (
+                <th id="rec">
+                  <Button
+                    title="Toggle showing notes inline or popover"
+                    className="btn btn-info btn-sm float-right"
+                    onClick={store.toggleInlineNotes}
+                    text={store.showInlineNotes ? "Hide" : "Show"}
+                    icon={store.showInlineNotes ? "eye-slash-fill" : "eye-fill"}
+                  />
+                  Recommendation
+                  <br />
+                  and Notes
+                </th>
+              ) : null}
+            </tr>
+          </thead>
+          <tbody>
+            <FrequentistRowSet
+              store={store}
+              colSpan={numCols}
+              label={"Restricted Models"}
+              dataset={dataset}
+              models={restrictedModels}
+              selectedFrequentist={selectedFrequentist}
+              footnotes={footnotes}
+            />
+            <FrequentistRowSet
+              store={store}
+              colSpan={numCols}
+              label={"Unrestricted Models"}
+              dataset={dataset}
+              models={unrestrictedModels}
+              selectedFrequentist={selectedFrequentist}
+              footnotes={footnotes}
+            />
+          </tbody>
+          <TableFootnotes items={footnotes} colSpan={numCols} />
+        </table>
+      </>
     );
   }
 }

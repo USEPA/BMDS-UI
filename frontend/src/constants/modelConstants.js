@@ -26,12 +26,14 @@ const allContinuous = [
   ],
   allNestedDichotomous = ["Nested Logistic", "NCTR"],
   rowOrder = {
-    [MODEL_CONTINUOUS]: allContinuous,
     [MODEL_CONTINUOUS]:
       // {
-      //   bmds: ["Exponential-M3", "Exponential-M5", "Hill", "Power"],
-      //   proast: ["Hill"],
-      //   efsa: ["Power"],
+      //   mle: allContinuous,
+      //   loud_bayesian: {
+      //     bmds: ["Exponential-M3", "Exponential-M5", "Hill", "Power"],
+      //     proast: [],
+      //     efsa: [],
+      //   },
       // },
       {
         mle: allContinuous,

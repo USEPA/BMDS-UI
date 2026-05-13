@@ -277,8 +277,6 @@ class MainStore {
     this.isUpdateComplete = true;
     this.analysisSaved = data.inputs_valid;
     this.analysisValidated = data.inputs_valid;
-
-    console.log("data options: ", data.inputs.options);
   }
   @action.bound loadAnalysisFromFile(file) {
     const { csrfToken } = this.config.editSettings,
