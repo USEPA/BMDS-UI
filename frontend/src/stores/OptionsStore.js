@@ -57,26 +57,6 @@ class OptionsStore {
     }
   }
 
-  @action.bound
-  removeOption(name) {
-    const list = this.optionsList;
-    if (!list) return;
-
-    let changed = false;
-
-    for (const item of list) {
-      if (item && Object.prototype.hasOwnProperty.call(item, name)) {
-        // delete item[name];
-        item[name] = null;
-        changed = true;
-      }
-    }
-
-    if (changed) {
-      this.rootStore.mainStore.setInputsChangedFlag();
-    }
-  }
-
   @action.bound deleteOptions(val) {
     this.optionsList.splice(val, 1);
     this.rootStore.mainStore.setInputsChangedFlag();
