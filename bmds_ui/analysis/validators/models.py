@@ -128,9 +128,6 @@ class ModelListSchema(BaseModel):
             models = [entry.model for entry in entries]
             extras = list(set(models) - valid_models)
 
-            if len(extras) > 0:
-                raise ValueError(f"Invalid model(s) in {field}: {','.join(extras)}")
-            
             if field == "loud_bayesian":
                 pairs = [(entry.model, entry.dist_type) for entry in entries]
                 if len(pairs) != len(set(pairs)):
@@ -138,6 +135,9 @@ class ModelListSchema(BaseModel):
             else:
                 if len(models) != len(set(models)):
                     raise ValueError(f"Models in {field} are not unique")
+                
+            if len(extras) > 0:
+                raise ValueError(f"Invalid model(s) in {field}: {','.join(extras)}")    
         return self
 
     @model_validator(mode="after")

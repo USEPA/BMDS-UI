@@ -237,7 +237,6 @@ class OutputStore {
         return `${dataset.metadata.name} - ${model.name}`;
       }
     } else {
-      console.log(model.name);
       let display_name = model.settings.verbose_name ?? model.name;
       return this.drModelModalIsMA ? "Model Average" : display_name;
     }

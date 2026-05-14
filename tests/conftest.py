@@ -53,7 +53,7 @@ def complete_continuous():
         "dataset_type": "C",
         "models": {
             "frequentist_restricted": ["Power"],
-            "loud_bayesian": [{"model": "Power", "prior_weight": 1}],
+            "loud_bayesian": [{"model": "Power", "prior_weight": 1, "dist_type": 1, "_displayName": "Power CV"}],
         },
         "datasets": [
             {
@@ -89,7 +89,7 @@ def complete_continuous_individual():
         "models": {
             "frequentist_restricted": ["Power"],
             "toxicr_bayesian": [{"model": "Power", "prior_weight": 1}],
-            "loud_bayesian": [{"model": "Power", "prior_weight": 1}],
+            "loud_bayesian": [{"model": "Power", "prior_weight": 1, "dist_type": 1, "_displayName": "Power CV"}],
         },
         "datasets": [
             {

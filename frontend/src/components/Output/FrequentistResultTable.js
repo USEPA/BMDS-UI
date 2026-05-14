@@ -372,7 +372,7 @@ class FrequentistResultTable extends Component {
       <>
         {store.getModelType === MODEL_CONTINUOUS && (
           <span style={{ fontSize: "18px" }} className="bg-custom d-block">
-            <strong>Distibution Type: </strong>
+            <strong>Distribution Type: </strong>
             {getLabel(store.selectedModelOptions.dist_type, distTypeOptions)}
           </span>
         )}
