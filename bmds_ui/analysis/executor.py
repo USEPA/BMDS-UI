@@ -37,6 +37,7 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Sess
         (PriorEnum.frequentist_restricted, restricted_models),
         (PriorEnum.frequentist_unrestricted, unrestricted_models),
     ]:
+        # filter Lognormal. This causes the app to crash if model_names is empty (aka if no lognormal_enabled models were selected)
         if options.get("dist_type") == DistType.log_normal:
             model_names = [model for model in model_names if model in lognormal_enabled]
 
@@ -80,7 +81,7 @@ def build_toxicr_bayesian_session(
 
     # filter lognormal
     if options.get("dist_type") == DistType.log_normal:
-        models = deepcopy(list(filter(lambda d: d["model"] in lognormal_enabled, models)))
+        models = deepcopy(list(filter(lambda d: d["model"] in lognormal_enabled, models)))     
 
     # exit early if we have no toxicr bayesian models
     if len(models) == 0:

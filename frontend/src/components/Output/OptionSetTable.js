@@ -18,15 +18,18 @@ import {
 import { isHybridBmr } from "@/constants/optionsConstants";
 import { ff } from "@/utils/formatters";
 
-@inject("outputStore")
+@inject("outputStore", "modelsStore")
 @observer
 class OptionSetTable extends Component {
   render() {
-    const { outputStore } = this.props,
+    const { outputStore, modelsStore } = this.props,
       { getModelType, selectedModelOptions, selectedDatasetOptions } =
         outputStore,
+      { models } = modelsStore,
       option_index = outputStore.selectedOutput.option_index + 1;
     let rows;
+
+    console.log("models", models);
     if (getModelType === MODEL_CONTINUOUS) {
       rows = [
         [
@@ -34,10 +37,12 @@ class OptionSetTable extends Component {
           getLabel(selectedModelOptions.bmr_type, continuousBmrOptions),
         ],
         ["BMRF", ff(selectedModelOptions.bmr_value)],
-        [
-          "Distribution Type",
-          getLabel(selectedModelOptions.dist_type, distTypeOptions),
-        ],
+        models.frequentist_restricted || models.frequentist_unrestricted
+          ? [
+              "Distribution Type (MLE)",
+              getLabel(selectedModelOptions.dist_type, distTypeOptions),
+            ]
+          : null,
         [
           "Adverse Direction",
           getLabel(
@@ -45,10 +50,12 @@ class OptionSetTable extends Component {
             adverseDirectionOptions,
           ),
         ],
-        [
-          "Maximum Polynomial Degree",
-          getLabel(selectedDatasetOptions.degree, allDegreeOptions),
-        ],
+        models.frequentist_restricted || models.frequentist_unrestricted
+          ? [
+              "Maximum Polynomial Degree (MLE)",
+              getLabel(selectedDatasetOptions.degree, allDegreeOptions),
+            ]
+          : null,
         isHybridBmr(selectedModelOptions.bmr_type)
           ? ["Tail Probability", ff(selectedModelOptions.tail_probability)]
           : null,

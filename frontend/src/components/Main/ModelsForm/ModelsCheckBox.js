@@ -140,7 +140,7 @@ const LOUDAccordion = observer(({ store, allModels, columns }) => {
             aria-expanded="true"
             aria-controls="collapseTwo"
           >
-            <span style={{ fontSize: "20px" }}>PROAST Models</span>
+            <span style={{ fontSize: "20px" }}>Extended Models</span>
           </div>
           <div
             id="collapseTwo"
@@ -156,47 +156,7 @@ const LOUDAccordion = observer(({ store, allModels, columns }) => {
                   <col style={{ width: store.col_widths[2] }} />
                 </colgroup>
                 <tbody>
-                  {allModels.proast.map((model) => (
-                    <ModelRow
-                      key={model}
-                      store={store}
-                      model={model}
-                      columns={columns}
-                    />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div
-            className="card-header"
-            id="headingThree"
-            style={{ padding: "0 5px" }}
-            role="button"
-            data-toggle="collapse"
-            data-target="#collapseThree"
-            aria-expanded="true"
-            aria-controls="collapseThree"
-          >
-            <span style={{ fontSize: "20px" }}>EFSA Models</span>
-          </div>
-          <div
-            id="collapseThree"
-            className="collapse"
-            aria-labelledby="headingThree"
-          >
-            <div className="card-body" style={{ padding: "0 5px" }}>
-              <table width="100%" style={{ tableLayout: "fixed" }}>
-                <colgroup>
-                  <col style={{ width: store.col_widths[0] }} />
-                  <col style={{ width: store.col_widths[1] }} />
-                  <col style={{ width: store.col_widths[2] }} />
-                </colgroup>
-                <tbody>
-                  {allModels.efsa.map((model) => (
+                  {allModels.extended.map((model) => (
                     <ModelRow
                       key={model}
                       store={store}
