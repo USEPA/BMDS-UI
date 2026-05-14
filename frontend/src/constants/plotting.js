@@ -216,24 +216,25 @@ export const getResponse = (dataset) => {
   getDrBmdLine = function (model, hexColor) {
     // https://plotly.com/python/marker-style/
     // https://plotly.com/javascript/reference/scatter/
+    let display_name = model.settings.verbose_name ?? model.name;
     const data = [
       {
         x: model.results.plotting.dr_x,
         y: model.results.plotting.dr_y,
         mode: "lines",
-        name: model.name,
+        name: display_name,
         hoverinfo: "y",
         line: {
           color: hexToRgbA(hexColor, 0.8),
           width: 4,
           opacity: 0.5,
         },
-        legendgroup: model.name,
+        legendgroup: display_name,
       },
     ];
 
     const diamond = getBmdDiamond(
-      model.name,
+      display_name,
       model.results.bmd,
       model.results.bmdl,
       model.results.bmdu,
