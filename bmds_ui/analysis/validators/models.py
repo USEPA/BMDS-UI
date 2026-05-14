@@ -64,7 +64,9 @@ ContinuousModelSchema = ModelTypeSchema(
     restricted={Models.ExponentialM3, Models.ExponentialM5, Models.Hill, Models.Polynomial, Models.Power},
     unrestricted={Models.Hill, Models.Linear, Models.Polynomial, Models.Power},
     toxicr_bayesian=set(), # Continuous model does not support toxicR Bayesian
-    loud_bayesian={Models.ExponentialM3, Models.ExponentialM5, Models.Hill, Models.Linear, Models.Polynomial, Models.Power},
+    loud_bayesian={Models.ExponentialM3, Models.ExponentialM5, Models.Hill, 
+                   Models.Linear, Models.Polynomial, Models.Power, Models.MultiplicativeHill, 
+                   Models.InverseExponential, Models.Lognormal, Models.ContinuousGamma, Models.LMS2},
 )
 
 NestedDichotomousModelSchema = ModelTypeSchema(

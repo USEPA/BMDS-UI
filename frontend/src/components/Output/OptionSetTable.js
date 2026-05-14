@@ -28,8 +28,6 @@ class OptionSetTable extends Component {
       { models } = modelsStore,
       option_index = outputStore.selectedOutput.option_index + 1;
     let rows;
-
-    console.log("models", models);
     if (getModelType === MODEL_CONTINUOUS) {
       rows = [
         [

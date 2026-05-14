@@ -179,7 +179,7 @@ const ModelHeaderTd = ({ model, writeMode }) => {
     <td className="text-left align-middle" headers="m-name">
       {getDisplayName(model)}
       {writeMode && modelsWithHelpText.has(model) ? (
-        <HelpTextPopover content={multistageHelpText} />
+        <HelpTextPopover content={multistageHelpText} title={"note"} />
       ) : null}
     </td>
   );

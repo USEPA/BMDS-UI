@@ -8,6 +8,9 @@ import { allModelOptions } from "@/constants/modelConstants";
 import Button from "../../common/Button";
 import CheckboxInput from "../../common/CheckboxInput";
 import LabelInput from "../../common/LabelInput";
+import HelpTextPopover from "../../common/HelpTextPopover";
+
+const distTypeHelpText = `<p><strong>CV</strong> = normal distribution + constant variance <br><strong>NCV</strong> = normal distribution + non-constant variance <br><strong>LN</strong> = lognormal distribution </p>`;
 
 const areAllModelsChecked = function (modelType, type, models) {
     return (
@@ -47,7 +50,19 @@ const ModelsCheckBoxHeader = observer((props) => {
       <thead className="bg-custom">
         <tr>
           <th className="align-top" rowSpan="2" id="m-name">
-            Model
+            {store.getModelType == mc.MODEL_CONTINUOUS &&
+            activeTab == "loud_bayesian" ? (
+              <>
+                Model / Distribution{" "}
+                <HelpTextPopover
+                  content={distTypeHelpText}
+                  title={"Distribution Type Acronyms"}
+                  maxWidth={30}
+                />
+              </>
+            ) : (
+              "Model"
+            )}
             {store.canEdit ? (
               <>
                 <Button

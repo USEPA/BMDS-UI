@@ -9,7 +9,7 @@ import DatasetModelOption from "./DatasetModelOption";
 
 const maxDegreeText = `<p>Relevant for Maximum Likelihood Estimate methods only.</p> <p>Studies have indicated that higher degree polynomial models are not
     warranted in that they generally do not sufficiently improve fit over simpler models
-    (Nitcheva et al., 2007; PMC2040324).</p> <p> Complex models also increase computer processing time
+    (Nitcheva et al., 2007; PMC2040324).<br>Complex models also increase computer processing time
     and the chance of model failure.</p>`,
   multiTumorDegreeText = `Degree used for each dataset. If set to auto (default), all degrees to N-1 are executed and the best-fitting is used. If a numeric value, only that degree will be modeled.`;
 
@@ -34,7 +34,7 @@ class DatasetModelOptionList extends Component {
               <th>Dataset</th>
               <th>
                 Maximum Polynomial Degree&nbsp;
-                <HelpTextPopover content={maxDegreeText} />
+                <HelpTextPopover content={maxDegreeText} title={"Note"} />
               </th>
               <th>Adverse Direction</th>
             </tr>
@@ -45,7 +45,10 @@ class DatasetModelOptionList extends Component {
               <th>Dataset</th>
               <th>
                 Degree
-                <HelpTextPopover content={multiTumorDegreeText} />
+                <HelpTextPopover
+                  content={multiTumorDegreeText}
+                  title={"Note"}
+                />
               </th>
             </tr>
           ) : null}
@@ -55,7 +58,7 @@ class DatasetModelOptionList extends Component {
               <th>Dataset</th>
               <th>
                 Maximum Multistage Degree
-                <HelpTextPopover content={maxDegreeText} />
+                <HelpTextPopover content={maxDegreeText} title={"Note"} />
               </th>
             </tr>
           ) : null}
