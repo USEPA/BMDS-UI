@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import * as mc from "@/constants/mainConstants";
-import { allModelOptions } from "@/constants/modelConstants";
+import { allModelOptions, selectAllExcluded } from "@/constants/modelConstants";
 
 import Button from "../../common/Button";
 import CheckboxInput from "../../common/CheckboxInput";
@@ -13,10 +13,13 @@ import HelpTextPopover from "../../common/HelpTextPopover";
 const distTypeHelpText = `<p><strong>CV</strong> = normal distribution + constant variance <br><strong>NCV</strong> = normal distribution + non-constant variance <br><strong>LN</strong> = lognormal distribution </p>`;
 
 const areAllModelsChecked = function (modelType, type, models) {
-    return (
-      type in models &&
-      models[type].length === allModelOptions[modelType][type].length
-    );
+    if (!(type in models)) return false;
+
+    const maxSelectable =
+      type === mc.LOUD_BAYESIAN && modelType === mc.MODEL_CONTINUOUS
+        ? allModelOptions[modelType][type].length - selectAllExcluded.length
+        : allModelOptions[modelType][type].length;
+    return models[type].length === maxSelectable;
   },
   SelectAllComponent = observer((props) => {
     const { store, type, disabled, label } = props,

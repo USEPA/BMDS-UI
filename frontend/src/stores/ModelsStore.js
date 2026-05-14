@@ -5,6 +5,7 @@ import * as mc from "@/constants/mainConstants";
 import {
   allModelOptions,
   models,
+  mutuallyExclusive,
   parseDisplayName,
 } from "@/constants/modelConstants";
 
@@ -172,6 +173,16 @@ class ModelsStore {
         let obj = this.models[name].find((obj) => obj._displayName === model);
         if (obj === undefined) {
           this.models[name].push(bma);
+        }
+        if (name === mc.LOUD_BAYESIAN && model in mutuallyExclusive) {
+          mutuallyExclusive[model].forEach((exclusiveModel) => {
+            const index = this.models[name].findIndex(
+              (obj) => obj._displayName === exclusiveModel,
+            );
+            if (index > -1) {
+              this.models[name].splice(index, 1);
+            }
+          });
         }
         this.setDefaultPriorWeights(name);
       } else {

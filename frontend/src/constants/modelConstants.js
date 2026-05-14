@@ -7,6 +7,24 @@ import {
 
 const distribution_map = { CV: 1, NCV: 2, LN: 3 };
 
+const mutuallyExclusive = {
+  "Hill CV": [
+    "Multiplicative Hill CV",
+    "Multiplicative Hill NCV",
+    "Multiplicative Hill LN",
+  ],
+  "Hill NCV": [
+    "Multiplicative Hill CV",
+    "Multiplicative Hill NCV",
+    "Multiplicative Hill LN",
+  ],
+  "Multiplicative Hill CV": ["Hill CV", "Hill NCV"],
+  "Multiplicative Hill NCV": ["Hill CV", "Hill NCV"],
+  "Multiplicative Hill LN": ["Hill CV", "Hill NCV"],
+};
+
+const selectAllExcluded = ["Hill CV", "Hill NCV"];
+
 const parseDisplayName = (displayName) => {
   const parts = displayName.split(" ");
   const suffix = parts[parts.length - 1];
@@ -246,6 +264,8 @@ export {
   hasDegrees,
   isLognormal,
   models,
+  mutuallyExclusive,
+  selectAllExcluded,
   parseDisplayName,
   rowOrder,
 };
