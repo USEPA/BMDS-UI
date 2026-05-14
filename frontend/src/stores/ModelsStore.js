@@ -148,8 +148,6 @@ class ModelsStore {
   }
 
   @action.bound setModelSelection(name, model, checked) {
-    console.log(name);
-    console.log(model);
     if (checked) {
       if (!(name in this.models)) {
         this.models[name] = [];

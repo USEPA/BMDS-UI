@@ -36,6 +36,7 @@ def build_model_settings(
     prior_class: str,
     options: dict,
     dataset_options: dict,
+    model: dict | None = None,
 ) -> DichotomousModelSettings | ContinuousModelSettings | NestedDichotomousModelSettings:
     prior_cls = bmd3_prior_map[prior_class]
     if dataset_type == pybmds.constants.Dtype.DICHOTOMOUS:
@@ -48,16 +49,16 @@ def build_model_settings(
         )
     elif dataset_type in pybmds.constants.Dtype.CONTINUOUS_DTYPES():
         if prior_class == "loud_bayesian":
-            print("we need to set the dist_type a different way..... Currently default to 1 (normal constant)")
             return ContinuousModelSettings(
             bmr=options["bmr_value"],
             alpha=round(1.0 - options["confidence_level"], 3),
             tail_prob=options["tail_probability"],
             bmr_type=options["bmr_type"],
-            disttype=1,
+            disttype=model["dist_type"],
             degree=dataset_options["degree"],
             is_increasing=is_increasing_map[dataset_options["adverse_direction"]],
             priors=prior_cls,
+            verbose_name = model["_displayName"]
         )
         return ContinuousModelSettings(
             bmr=options["bmr_value"],

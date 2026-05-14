@@ -40,37 +40,20 @@ const allContinuous = [
   ],
   allNestedDichotomous = ["Nested Logistic", "NCTR"],
   rowOrder = {
-    [MODEL_CONTINUOUS]:
-      // {
-      //   mle: allContinuous,
-      //   loud_bayesian: {
-      //     bmds: ["Exponential-M3", "Exponential-M5", "Hill", "Power"],
-      //     proast: [],
-      //     efsa: [],
-      //   },
-      // },
-      // {
-      //   mle: allContinuous,
-      //   loud_bayesian: {
-      //     bmds: ["Exponential-M3", "Exponential-M5"],
-      //     proast: ["Hill"],
-      //     efsa: ["Power"],
-      //   },
-      // },
-      {
-        mle: allContinuous,
-        loud_bayesian: {
-          bmds: [
-            "Exponential-M3 CV",
-            "Exponential-M3 NCV",
-            "Exponential-M3 LN",
-            "Exponential-M5 CV",
-            "Exponential-M5 LN",
-          ],
-          proast: ["Hill CV", "Hill NCV"],
-          efsa: ["Power CV", "Power NCV"],
-        },
+    [MODEL_CONTINUOUS]: {
+      mle: allContinuous,
+      loud_bayesian: {
+        bmds: [
+          "Exponential-M3 CV",
+          "Exponential-M3 NCV",
+          "Exponential-M3 LN",
+          "Exponential-M5 CV",
+          "Exponential-M5 LN",
+        ],
+        proast: ["Hill CV", "Hill NCV"],
+        efsa: ["Power CV", "Power NCV"],
       },
+    },
     [MODEL_DICHOTOMOUS]: allDichotomous,
     [MODEL_NESTED_DICHOTOMOUS]: allNestedDichotomous,
   },
@@ -119,7 +102,6 @@ const allContinuous = [
         "Power",
       ],
       frequentist_unrestricted: ["Hill", "Linear", "Polynomial", "Power"],
-      // loud_bayesian: ["Exponential-M3", "Exponential-M5", "Hill", "Power"],
       loud_bayesian: [
         "Exponential-M3 CV",
         "Exponential-M3 NCV",

@@ -365,10 +365,11 @@ class OutputStore {
   buildBayesianPlotData(output) {
     const plot_data = [getDrDatasetPlotData(this.selectedDataset)];
     output.models.map((model, index) => {
+      let display_name = model.settings.verbose_name ?? model.name;
       let bayesian_model = {
         x: model.results.plotting.dr_x,
         y: model.results.plotting.dr_y,
-        name: model.name,
+        name: display_name,
         line: {
           width: 2,
           color: colorCodes[index],

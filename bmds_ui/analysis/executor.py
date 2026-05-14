@@ -110,23 +110,25 @@ def build_loud_bayesian_session(
 
     models = inputs["models"].get(PriorEnum.loud_bayesian, [])
 
-    # filter lognormal
-    if options.get("dist_type") == DistType.log_normal:
-        models = deepcopy(list(filter(lambda d: d["model"] in lognormal_enabled, models)))
+    # Do Not filter lognormal for continuous loud. 
+    # if options.get("dist_type") == DistType.log_normal:
+    #     models = deepcopy(list(filter(lambda d: d["model"] in lognormal_enabled, models)))
 
     # exit early if we have no loud bayesian models
     if len(models) == 0:
         return None
 
-    dataset_type = inputs["dataset_type"]
     session = Session(dataset=dataset)
     prior_weights = list(map(lambda d: d["prior_weight"], models))
-    for name in map(lambda d: d["model"], models):
+
+    for model in models:    
+        name = model["model"]
         model_options = build_model_settings(
-            dataset_type,
-            PriorEnum.loud_bayesian,
-            options,
-            dataset_options,
+            dataset_type=inputs["dataset_type"],
+            prior_class=PriorEnum.loud_bayesian,
+            options=options,
+            dataset_options=dataset_options,
+            model=model
         )
         if name in pybmds.Models.VARIABLE_POLYNOMIAL():
             model_options.degree = 2

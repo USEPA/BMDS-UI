@@ -54,8 +54,6 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         
         instance = self.get_object()
         data = request.data.get("data")
-        print("==================================================================================")
-        print("api.py/patch_inputs: ", data)
 
         edit_key = request.data.get("editKey", "")
         partial = bool(request.data.get("partial", False))
