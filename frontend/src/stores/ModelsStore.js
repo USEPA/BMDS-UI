@@ -109,7 +109,8 @@ class ModelsStore {
       this.activeTab === "loud_bayesian" ||
       this.activeTab === "toxicr_bayesian"
     ) {
-      delete this.models[this.activeTab];
+      this.models[this.activeTab] =
+        models[this.getModelType][this.activeTab] ?? [];
       this.setTabBadge(this.activeTab);
     } else if (this.activeTab === "mle") {
       frequentist_model_types.forEach((model) => {

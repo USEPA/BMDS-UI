@@ -57,7 +57,6 @@ const ModelsCheckBoxHeader = observer((props) => {
                 <HelpTextPopover
                   content={distTypeHelpText}
                   title={"Distribution Type Acronyms"}
-                  maxWidth={30}
                 />
               </>
             ) : (

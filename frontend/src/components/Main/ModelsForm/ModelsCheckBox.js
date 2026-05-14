@@ -32,7 +32,6 @@ const isModelChecked = (models, type, model) => {
   } else {
     return models[type].indexOf(model) > -1;
   }
-  return checked;
 };
 
 const getPriorWeightValue = (models, type, model) => {
@@ -64,9 +63,8 @@ const PriorWeightTd = observer(({ store, type, model, headers }) => {
   );
 });
 
-const CheckBoxTd = observer(({ store, type, model, disabled, headers }) => {
+const CheckBoxTd = observer(({ store, type, model, headers }) => {
   const key = `${type}-${model}`;
-
   return (
     <td headers={headers}>
       {store.canEdit ? (

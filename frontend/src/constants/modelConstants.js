@@ -77,6 +77,7 @@ const allContinuous = [
     [MODEL_DICHOTOMOUS]: allDichotomous,
     [MODEL_NESTED_DICHOTOMOUS]: allNestedDichotomous,
   },
+  // These are the default model selection settings.
   models = {
     [MODEL_CONTINUOUS]: {
       frequentist_restricted: [
@@ -87,6 +88,68 @@ const allContinuous = [
         "Power",
       ],
       frequentist_unrestricted: ["Linear"],
+      loud_bayesian: [
+        {
+          model: "Exponential-M3",
+          dist_type: 1,
+          prior_weight: 0.1,
+          _displayName: "Exponential-M3 CV",
+        },
+        {
+          model: "Exponential-M3",
+          dist_type: 2,
+          prior_weight: 0.1,
+          _displayName: "Exponential-M3 NCV",
+        },
+        {
+          model: "Exponential-M3",
+          dist_type: 3,
+          prior_weight: 0.1,
+          _displayName: "Exponential-M3 LN",
+        },
+        {
+          model: "Exponential-5",
+          dist_type: 1,
+          prior_weight: 0.1,
+          _displayName: "Exponential-M5 CV",
+        },
+        {
+          model: "Exponential-M5",
+          dist_type: 2,
+          prior_weight: 0.1,
+          _displayName: "Exponential-M5 NCV",
+        },
+        {
+          model: "Exponential-M5",
+          dist_type: 3,
+          prior_weight: 0.1,
+          _displayName: "Exponential-M5 LN",
+        },
+        {
+          model: "Hill",
+          dist_type: 1,
+          prior_weight: 0.1,
+          _displayName: "Hill CV",
+        },
+        {
+          model: "Hill",
+          dist_type: 2,
+          prior_weight: 0.1,
+          _displayName: "Hill NCV",
+        },
+        {
+          model: "Power",
+          dist_type: 1,
+          prior_weight: 0.1,
+          _displayName: "Power CV",
+        },
+        {
+          model: "Power",
+          dist_type: 2,
+          prior_weight: 0.1,
+          _displayName: "Power NCV",
+        },
+      ],
     },
     [MODEL_DICHOTOMOUS]: {
       frequentist_restricted: [
