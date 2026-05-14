@@ -39,6 +39,7 @@ class ModelsStore {
     );
   }
 
+  @observable expandAllCount = 0;
   @observable activeTab = "loud_bayesian"; // 'loud_bayesian' | 'toxicr_bayesian' | 'mle'
   @action setActiveTab(tab) {
     this.activeTab = tab;
@@ -141,6 +142,10 @@ class ModelsStore {
       this.setModelSelection(name, model, checked);
     });
     this.setTabBadge(name);
+
+    if (name === mc.LOUD_BAYESIAN && checked) {
+      this.expandAllCount += 1;
+    }
   }
 
   @action.bound resetModelSelection() {

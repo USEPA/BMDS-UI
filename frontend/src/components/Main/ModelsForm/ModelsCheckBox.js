@@ -83,7 +83,7 @@ const CheckBoxTd = observer(({ store, type, model, headers }) => {
   );
 });
 
-const LOUDAccordion = observer(({ store, allModels, columns }) => {
+const LOUDAccordion = observer(({ store, allModels, columns, expandAll }) => {
   return (
     <td colSpan="3">
       <div id="accordionExample">
@@ -142,7 +142,7 @@ const LOUDAccordion = observer(({ store, allModels, columns }) => {
           </div>
           <div
             id="collapseTwo"
-            className="collapse"
+            className={`collapse${expandAll ? " show" : ""}`}
             aria-labelledby="headingTwo"
             style={{ padding: "0 5px" }}
           >
@@ -285,9 +285,11 @@ const ModelsCheckBox = observer(({ store }) => {
       <tbody>
         <tr>
           <LOUDAccordion
+            key={store.expandAllCount}
             store={store}
             allModels={allModels}
             columns={columns}
+            expandAll={store.expandAllCount > 0}
           />
         </tr>
       </tbody>
