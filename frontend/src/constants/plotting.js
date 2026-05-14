@@ -11,6 +11,7 @@ const doseResponseLayout = {
     legend: { yanchor: "top", y: 0.99, xanchor: "left", x: 0.01 },
     margin: { l: 50, r: 5, t: 50, b: 55 },
     showlegend: true,
+    hoverlabel: { namelength: -1 },
     title: {
       text: "ADD",
     },
