@@ -49,17 +49,20 @@ def build_model_settings(
         )
     elif dataset_type in pybmds.constants.Dtype.CONTINUOUS_DTYPES():
         if prior_class == "loud_bayesian":
+            print("dataset_options[`degree`] :::::::::::::::::::")
+            print(dataset_options["degree"])
+
             return ContinuousModelSettings(
-            bmr=options["bmr_value"],
-            alpha=round(1.0 - options["confidence_level"], 3),
-            tail_prob=options["tail_probability"],
-            bmr_type=options["bmr_type"],
-            disttype=model["dist_type"],
-            degree=dataset_options["degree"],
-            is_increasing=is_increasing_map[dataset_options["adverse_direction"]],
-            priors=prior_cls,
-            verbose_name = model["_displayName"]
-        )
+                bmr=options["bmr_value"],
+                alpha=round(1.0 - options["confidence_level"], 3),
+                tail_prob=options["tail_probability"],
+                bmr_type=options["bmr_type"],
+                disttype=model["dist_type"], # dist_type is from model inputs, not options set inputs
+                degree=dataset_options["degree"],
+                is_increasing=is_increasing_map[dataset_options["adverse_direction"]],
+                priors=prior_cls,
+                verbose_name = model["_displayName"]
+            )
         return ContinuousModelSettings(
             bmr=options["bmr_value"],
             alpha=round(1.0 - options["confidence_level"], 3),

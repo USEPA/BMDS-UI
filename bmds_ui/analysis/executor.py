@@ -87,19 +87,20 @@ def build_toxicr_bayesian_session(
     if len(models) == 0:
         return None
 
-    dataset_type = inputs["dataset_type"]
     session = Session(dataset=dataset)
     prior_weights = list(map(lambda d: d["prior_weight"], models))
-    for name in map(lambda d: d["model"], models):
+
+    for model in models:    
+        name = model["model"]
         model_options = build_model_settings(
-            dataset_type,
-            PriorEnum.toxicr_bayesian,
-            options,
-            dataset_options,
+            dataset_type=inputs["dataset_type"],
+            prior_class=PriorEnum.toxicr_bayesian,
+            options=options,
+            dataset_options=dataset_options,
         )
         if name in pybmds.Models.VARIABLE_POLYNOMIAL():
             model_options.degree = 2
-        session.add_model(name, settings=model_options)
+        session.add_model(name, settings=model_options)    
 
     session.set_ma_weights(prior_weights)
 
@@ -110,8 +111,7 @@ def build_loud_bayesian_session(
 ) -> Session | None:
 
     models = inputs["models"].get(PriorEnum.loud_bayesian, [])
-
-    # Do Not filter lognormal for continuous loud. 
+    # Do Not filter lognormal for continuous loud, since dist_type is not reliant on options set
     # if options.get("dist_type") == DistType.log_normal:
     #     models = deepcopy(list(filter(lambda d: d["model"] in lognormal_enabled, models)))
 
@@ -122,11 +122,18 @@ def build_loud_bayesian_session(
     session = Session(dataset=dataset)
     prior_weights = list(map(lambda d: d["prior_weight"], models))
 
+
+    # [{'model': 'Hill', 'dist_type': 1, 'prior_weight': 0.5, '_displayName': 'Hill CV'}, {'model': 'Hill', 'dist_type': 2, 'prior_weight': 0.5, '_displayName': 'Hill NCV'}]
+    print("MODELS::::::::")
+    print(models) 
+    print("PRIOR WEIGHTS::::::::")
+    print(prior_weights) 
+
     for model in models:    
         name = model["model"]
         model_options = build_model_settings(
             dataset_type=inputs["dataset_type"],
-            prior_class=PriorEnum.loud_bayesian,
+            prior_class=PriorEnum.loud_bayesian, # 3
             options=options,
             dataset_options=dataset_options,
             model=model
@@ -156,12 +163,14 @@ class AnalysisSession(NamedTuple):
     option_index: int
     frequentist: Session | None
     toxicr_bayesian: Session | None
-    loud_bayesian: bool | None #TODO implement loud_bayesian: Session 
+    loud_bayesian: Session | None
 
     @classmethod
     def run(cls, inputs: dict, dataset_index: int, option_index: int) -> AnalysisSessionSchema:
         session = cls.create(inputs, dataset_index, option_index)
         session.execute(inputs)
+        print("session.to_schema()::::::::::::::::::::::")
+        print(session.to_schema())
         return session.to_schema()
 
     @classmethod
@@ -212,8 +221,7 @@ class AnalysisSession(NamedTuple):
             self.toxicr_bayesian.execute()
 
         if self.loud_bayesian:
-            if self.loud_bayesian.dataset.dtype == pybmds.constants.Dtype.DICHOTOMOUS:
-                self.loud_bayesian.add_model_averaging()
+            self.loud_bayesian.add_model_averaging()
             self.loud_bayesian.execute()      
 
     def to_schema(self) -> AnalysisSessionSchema:

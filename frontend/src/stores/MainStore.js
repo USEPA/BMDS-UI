@@ -185,11 +185,14 @@ class MainStore {
     })
       .then((response) => {
         if (!response.ok) {
+          console.log("RESPONSE NOT OKAY: ");
           throw response;
         }
         return response.json();
       })
       .then((data) => {
+        console.log("FRONTEND INPUTS: ", data.inputs);
+
         if (data.is_executing) {
           setTimeout(pollForResults, pollInterval);
         } else {
