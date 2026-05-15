@@ -126,7 +126,7 @@ const allContinuous = [
           _displayName: "Exponential-M3 LN",
         },
         {
-          model: "Exponential-5",
+          model: "Exponential-M5",
           dist_type: 1,
           prior_weight: 0.1,
           _displayName: "Exponential-M5 CV",

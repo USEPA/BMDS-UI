@@ -216,7 +216,7 @@ class ModelsStore {
 
   @action.bound setDefaultPriorWeights(name) {
     const value = parseFloat(
-      (this.prior_weight / this.models[name].length).toFixed(3),
+      (this.prior_weight / this.models[name].length).toFixed(4),
     );
     this.models[name].forEach((obj) => {
       obj.prior_weight = value;

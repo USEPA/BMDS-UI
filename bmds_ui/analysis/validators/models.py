@@ -99,6 +99,7 @@ class ModelListSchema(BaseModel):
     def _ensure_sum_to_one(seq, err_msg):
         if len(seq) > 0:
             weights = sum(b.prior_weight for b in seq)
+            print("WEIGHTS SUM: ::::::::::  ", weights)
             if not np.isclose(weights, 1.0, atol=0.005):
                 raise ValueError(err_msg)
 
