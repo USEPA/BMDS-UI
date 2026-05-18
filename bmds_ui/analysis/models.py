@@ -29,7 +29,7 @@ from .executor import AnalysisSession, MultiTumorSession, Session, deserialize
 from .reporting import excel
 from .reporting.cache import DocxReportCache, ExcelReportCache
 from .schema import AnalysisOutput, AnalysisSessionSchema
-from .utils import re_hex_color
+from .utils import re_hex_color, validate_json, log_non_finite_summary, log_infinite_lines, sanitize_json
 
 logger = logging.getLogger(__name__)
 
@@ -324,6 +324,12 @@ class Analysis(models.Model):
         return self._execute_session()
 
     def execute(self):
+        """
+        Execute analysis, build outputs payload, validate/sanitize to ensure
+        SQLite JSON_VALID passes, and log concise summaries of invalid data.
+        """
+
+        # ---------- Execution ----------
         # update start time to actual time started
         self.started = now()
         outputs = self._execute()
@@ -338,18 +344,38 @@ class Analysis(models.Model):
                 break
             if output.loud_bayesian is not None:
                 bmds_python_version = output.loud_bayesian["version"]
-                break   
-        # get prepare complete output object
+                break  
+
+        # Prepare complete output object
         analysis_output = AnalysisOutput(
             analysis_id=str(self.id),
             bmds_ui_version=__version__,
             bmds_python_version=bmds_python_version,
             outputs=[output.model_dump(by_alias=True) for output in outputs],
         )
-        
-        self.outputs = analysis_output.model_dump(by_alias=True)
 
-        self.errors = [output.error for output in outputs if output.error]
+        # ============================================================================================== VALIDATION CODE ADDED ================================
+
+        payload = analysis_output.model_dump(by_alias=True)
+
+        # 5) validate; if invalid, log concise summary, sanitize, re-validate
+        try:
+            validate_json(payload)
+        except (TypeError, ValueError):
+            # Summarize where the bad values are without dumping every element
+            log_non_finite_summary(payload, top=15)
+            log_infinite_lines(payload, path="$", limit=50)
+            # Sanitize and ensure it's now valid
+            payload = sanitize_json(payload)
+            validate_json(payload)
+
+        # 6) finalize fields and save
+        self.outputs = payload
+        
+        # =======================================================================================================================================================
+        # self.outputs = analysis_output.model_dump(by_alias=True)
+
+        self.errors = [str(getattr(output, "error")) for output in outputs if getattr(output, "error", None)]
         self.ended = now()
         self.deletion_date = get_deletion_date()
         self.save()

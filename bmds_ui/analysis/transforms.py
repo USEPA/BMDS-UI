@@ -49,8 +49,6 @@ def build_model_settings(
         )
     elif dataset_type in pybmds.constants.Dtype.CONTINUOUS_DTYPES():
         if prior_class == "loud_bayesian":
-            print("dataset_options[`degree`] :::::::::::::::::::")
-            print(dataset_options["degree"])
 
             return ContinuousModelSettings(
                 bmr=options["bmr_value"],

@@ -122,13 +122,6 @@ def build_loud_bayesian_session(
     session = Session(dataset=dataset)
     prior_weights = list(map(lambda d: d["prior_weight"], models))
 
-
-    # [{'model': 'Hill', 'dist_type': 1, 'prior_weight': 0.5, '_displayName': 'Hill CV'}, {'model': 'Hill', 'dist_type': 2, 'prior_weight': 0.5, '_displayName': 'Hill NCV'}]
-    print("MODELS::::::::")
-    print(models) 
-    print("PRIOR WEIGHTS::::::::")
-    print(prior_weights) 
-
     for model in models:    
         name = model["model"]
         model_options = build_model_settings(
@@ -169,8 +162,6 @@ class AnalysisSession(NamedTuple):
     def run(cls, inputs: dict, dataset_index: int, option_index: int) -> AnalysisSessionSchema:
         session = cls.create(inputs, dataset_index, option_index)
         session.execute(inputs)
-        print("session.to_schema()::::::::::::::::::::::")
-        print(session.to_schema())
         return session.to_schema()
 
     @classmethod
@@ -221,6 +212,8 @@ class AnalysisSession(NamedTuple):
             self.toxicr_bayesian.execute()
 
         if self.loud_bayesian:
+            # if self.loud_bayesian.dataset.dtype == pybmds.constants.Dtype.DICHOTOMOUS:
+            #     self.loud_bayesian.add_model_averaging()
             self.loud_bayesian.add_model_averaging()
             self.loud_bayesian.execute()      
 
