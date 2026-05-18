@@ -48,6 +48,9 @@ class ModelBody extends Component {
       isDichotomous = dtype == dc.Dtype.DICHOTOMOUS,
       isContinuous =
         dtype == dc.Dtype.CONTINUOUS || dtype == dc.Dtype.CONTINUOUS_INDIVIDUAL;
+
+    console.log(model);
+    console.log(priorClass);
     return (
       <Modal.Body>
         <Row>
@@ -83,7 +86,7 @@ class ModelBody extends Component {
               <DichotomousDeviance store={outputStore} />
             </Col>
           ) : null}
-          {isContinuous ? (
+          {isContinuous && priorClass !== 3 ? (
             <Col xl={8}>
               <ContinuousDeviance store={outputStore} />
               <ContinuousTestOfInterest store={outputStore} />
