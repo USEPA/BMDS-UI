@@ -51,17 +51,15 @@ def add_session(
 def summary_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
     dataset_data: dict[int, dict] = {}
     model_data = []
-
     for session in sessions:
         if session.dataset_index not in dataset_data:
             dataset = None
             if session.frequentist:
                 dataset = session.frequentist.dataset
             elif session.toxicr_bayesian:
-                dataset = session.toxicr_bayesian
+                dataset = session.toxicr_bayesian.dataset
             elif session.loud_bayesian:
-                dataset = session.loud_bayesian   
-
+                dataset = session.loud_bayesian.dataset   
             d = dict(dataset_index=session.dataset_index)
             dataset.update_record(d)
             dataset_data[d["dataset_index"]] = d
@@ -129,9 +127,9 @@ def dataset_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
             if session.frequentist:
                 dataset = session.frequentist.dataset
             elif session.toxicr_bayesian:
-                dataset = session.toxicr_bayesian
+                dataset = session.toxicr_bayesian.dataset
             elif session.loud_bayesian:
-                dataset = session.loud_bayesian 
+                dataset = session.loud_bayesian.dataset 
 
             datasets.add(session.dataset_index)
             data.extend(dataset.rows(extras=dict(dataset_index=session.dataset_index)))
