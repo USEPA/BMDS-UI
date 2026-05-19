@@ -3,7 +3,11 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import * as mc from "@/constants/mainConstants";
-import { allModelOptions, rowOrder } from "@/constants/modelConstants";
+import {
+  allModelOptions,
+  rowOrder,
+  computeGroupIndex,
+} from "@/constants/modelConstants";
 
 import { checkOrEmpty } from "../../../common";
 import CheckboxInput from "../../common/CheckboxInput";
@@ -84,6 +88,9 @@ const CheckBoxTd = observer(({ store, type, model, headers }) => {
 });
 
 const LOUDAccordion = observer(({ store, allModels, columns, expandAll }) => {
+  const bmdsGroupIndex = computeGroupIndex(allModels.bmds);
+  const extendedGroupIndex = computeGroupIndex(allModels.extended);
+
   return (
     <td colSpan="3">
       <div id="accordionExample">
@@ -98,7 +105,9 @@ const LOUDAccordion = observer(({ store, allModels, columns, expandAll }) => {
             aria-expanded="true"
             aria-controls="collapseOne"
           >
-            <span style={{ fontSize: "20px" }}>BMDS Models</span>
+            <span style={{ fontSize: "20px" }}>
+              <strong>BMDS Models</strong>
+            </span>
           </div>
           <div
             id="collapseOne"
@@ -119,6 +128,7 @@ const LOUDAccordion = observer(({ store, allModels, columns, expandAll }) => {
                       store={store}
                       model={model}
                       columns={columns}
+                      groupIndex={bmdsGroupIndex[model]}
                     />
                   ))}
                 </tbody>
@@ -138,7 +148,9 @@ const LOUDAccordion = observer(({ store, allModels, columns, expandAll }) => {
             aria-expanded="true"
             aria-controls="collapseTwo"
           >
-            <span style={{ fontSize: "20px" }}>Extended Models</span>
+            <span style={{ fontSize: "20px" }}>
+              <strong>Extended Models</strong>
+            </span>
           </div>
           <div
             id="collapseTwo"
@@ -160,6 +172,7 @@ const LOUDAccordion = observer(({ store, allModels, columns, expandAll }) => {
                       store={store}
                       model={model}
                       columns={columns}
+                      groupIndex={extendedGroupIndex[model]}
                     />
                   ))}
                 </tbody>
@@ -222,8 +235,13 @@ const tabColumns = {
   ],
 };
 
-const ModelRow = observer(({ store, model, columns }) => (
-  <tr>
+const ModelRow = observer(({ store, model, columns, groupIndex = null }) => (
+  <tr
+    style={{
+      backgroundColor:
+        groupIndex != null && groupIndex % 2 !== 0 ? "#f8f9fa" : undefined,
+    }}
+  >
     <ModelHeaderTd model={model} writeMode={store.canEdit} />
     {columns.map((col) => {
       const modelOptions =

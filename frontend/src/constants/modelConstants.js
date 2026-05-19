@@ -37,6 +37,23 @@ const parseDisplayName = (displayName) => {
   return { baseModel: displayName, dist_type: undefined };
 };
 
+const computeGroupIndex = (models) => {
+  const map = {};
+  let index = 0;
+  let lastBase = null;
+  models.forEach((model) => {
+    const { baseModel } = parseDisplayName(model);
+    if (baseModel !== lastBase) {
+      if (lastBase !== null) {
+        index += 1;
+      }
+      lastBase = baseModel;
+    }
+    map[model] = index;
+  });
+  return map;
+};
+
 const allContinuous = [
     "Exponential-M3",
     "Exponential-M5",
@@ -260,6 +277,7 @@ const allContinuous = [
 
 export {
   allModelOptions,
+  computeGroupIndex,
   distribution_map,
   hasDegrees,
   isLognormal,
