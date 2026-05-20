@@ -54,7 +54,7 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Sess
                 for degree in degrees:
                     model_options = model_options.model_copy()
                     model_options.degree = degree
-                    session.add_model(model_name, settings=model_options.model_dump())
+                    session.add_model(model_name, settings=model_options)
             elif dataset_type == ModelClass.NESTED_DICHOTOMOUS:
                 for lsc, ilc in itertools.product(
                     [LitterSpecificCovariate.Unused, 999],
@@ -70,7 +70,7 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Sess
                 if model_name == pybmds.Models.Linear:
                     # a linear model must have a degree of 1
                     model_options.degree = 1
-                session.add_model(model_name, settings=model_options.model_dump())
+                session.add_model(model_name, settings=model_options)
 
     return session
 
@@ -100,7 +100,7 @@ def build_toxicr_bayesian_session(
         )
         if name in pybmds.Models.VARIABLE_POLYNOMIAL():
             model_options.degree = 2
-        session.add_model(name, settings=model_options.model_dump())    
+        session.add_model(name, settings=model_options)    
 
     session.set_ma_weights(prior_weights)
 

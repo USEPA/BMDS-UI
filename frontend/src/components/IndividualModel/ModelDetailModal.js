@@ -49,8 +49,6 @@ class ModelBody extends Component {
       isContinuous =
         dtype == dc.Dtype.CONTINUOUS || dtype == dc.Dtype.CONTINUOUS_INDIVIDUAL;
 
-    console.log(model);
-    console.log(priorClass);
     return (
       <Modal.Body>
         <Row>
