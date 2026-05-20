@@ -95,7 +95,7 @@ dependencies = [
   # "pybmds==25.2",
 ```
 
-Open bmds/vcpkg.json and add pybind11
+Open bmds/vcpkg.json and add the pybind11 dependency and add the luksan feature to nlopt
 
 ```json
 {
@@ -104,14 +104,15 @@ Open bmds/vcpkg.json and add pybind11
   "dependencies": [
     { "name": "gsl" },
     { "name": "eigen3" },
-    { "name": "nlopt" },
+    { "name": "nlopt", "features": ["luksan"] },
+    { "name": "openblas" },
     { "name": "pybind11" }
   ],
-  "builtin-baseline": "c9c17dcea3016bc241df0422e82b8aea212dcb93",
+  "builtin-baseline": "e5a4f54c0d562059e9ccc6f7e7150667da58fe41",
   "overrides": [
     { "name": "gsl", "version": "2.8#1" },
     { "name": "eigen3", "version": "3.4.0#5" },
-    { "name": "nlopt", "version": "2.10.0" }
+    { "name": "nlopt", "version": "2.10.1", "port-version": 1 }
   ]
 }
 ```
@@ -126,7 +127,7 @@ bootstrap-vcpkg.bat
 ```
 
 Install all required C++ dependencies into the bmds folder
-_This will take 20-30 minutes_
+_This will take ~1 hour the first time_
 _Repeat this step if dependencies change_
 
 ```bash
@@ -169,6 +170,7 @@ run
 
 ```bash
 # Terminal #1
+uv pip install -e ".[pg,dev]"
 poe sync-dev
 poe run-py
 ```
