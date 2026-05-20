@@ -95,7 +95,22 @@ dependencies = [
   # "pybmds==25.2",
 ```
 
+In Developer Command Prompt, clone and bootstrap vcpkg
+
+```bash
+cd "C:\Users\srizwan\BMDS\"
+git clone https://github.com/microsoft/vcpkg.git
+cd vcpkg
+bootstrap-vcpkg.bat
+```
+
 Open bmds/vcpkg.json and add the pybind11 dependency and add the luksan feature to nlopt
+optional: retrieve the most recent hash and paste it into "builtin-baseline"
+
+```bash
+cd “C:\Users\srizwan\BMDS\vcpkg”
+git rev-parse HEAD # Paste this hash into the "builtin-baseline" in vcpkg.json
+```
 
 ```json
 {
@@ -115,15 +130,6 @@ Open bmds/vcpkg.json and add the pybind11 dependency and add the luksan feature 
     { "name": "nlopt", "version": "2.10.1", "port-version": 1 }
   ]
 }
-```
-
-In Developer Command Prompt, clone and bootstrap vcpkg
-
-```bash
-cd "C:\Users\srizwan\BMDS\"
-git clone https://github.com/microsoft/vcpkg.git
-cd vcpkg
-bootstrap-vcpkg.bat
 ```
 
 Install all required C++ dependencies into the bmds folder
