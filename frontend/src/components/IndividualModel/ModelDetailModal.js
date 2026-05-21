@@ -41,6 +41,7 @@ const getCdfData = function (model) {
 class ModelBody extends Component {
   render() {
     const { outputStore } = this.props,
+      LOUDParameters = outputStore.selectedLOUDParameters,
       dataset = outputStore.selectedDataset,
       model = outputStore.modalModel,
       dtype = dataset.dtype,
@@ -73,11 +74,12 @@ class ModelBody extends Component {
               data={outputStore.drIndividualPlotData}
             />
           </Col>
-          <Col xl={8}>
+          <Col xl={isContinuous && priorClass === 3 ? 12 : 8}>
             <ModelParameters
               isNestedDichotomous={false}
               model={model}
               isLOUDContinuous={isContinuous && priorClass === 3}
+              LOUDParameters={LOUDParameters}
             />
           </Col>
           <Col xl={isDichotomous ? 8 : 12}>

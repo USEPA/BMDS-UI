@@ -46,21 +46,20 @@ const seFootnote = (
       footnotes: anyBounded ? seFootnote : null,
     };
   },
-  getLOUDCMAData = (model) => {
-    const parameters = model.results.parameters;
-    const indexes = _.range(parameters.names.length);
+  getLOUDCMAData = (model, LOUDParameters) => {
+    const suffix = model.name.match(/\((CV|NCV|Lognormal)\)$/)?.[1];
 
-    return {
-      tblClasses: "table table-sm text-right col-l-1",
-      headers: ["Variable", "Estimate", "Standard Error"],
-      subheader: "Model Parameters TESTING FOR LOUD CMA",
-      rows: indexes.map((i) => [
-        parameters.names[i],
-        parameterFormatter(parameters.values[i]),
-        parameterFormatter(parameters.se[i]),
-      ]),
-      footnotes: null, // No bounded footnote
-    };
+    return LOUDParameters.map((group) => {
+      const columns = group.columns.filter((col) => col !== "Model");
+      return {
+        tblClasses: "table table-sm text-right w-100",
+        headers: columns,
+        subheader: `${model.name} model parameters`,
+        rows: group.rows
+          .filter((rows) => rows.Model === suffix)
+          .map((row) => columns.map((col) => row[col] ?? "")),
+      };
+    }).filter((group) => group.rows.length > 0);
   },
   getNestedData = (model) => {
     const names = model.results.parameter_names,
@@ -96,20 +95,30 @@ const seFootnote = (
 @observer
 class ModelParameters extends Component {
   render() {
-    const { model, isNestedDichotomous, isLOUDContinuous } = this.props;
+    const { model, isNestedDichotomous, isLOUDContinuous, LOUDParameters } =
+      this.props;
 
-    const fn = isLOUDContinuous
-      ? getLOUDCMAData
-      : isNestedDichotomous
-        ? getNestedData
-        : getData;
+    if (isLOUDContinuous && LOUDParameters) {
+      return (
+        <>
+          {getLOUDCMAData(model, LOUDParameters).map((data) => (
+            <Table key={data.subheader} data={data} />
+          ))}
+        </>
+      );
+    }
 
-    return <Table data={fn(model)} />;
+    if (isNestedDichotomous) {
+      return <Table data={getNestedData(model)} />;
+    }
+
+    return <Table data={getData(model)} />;
   }
 }
 ModelParameters.propTypes = {
   isLOUDContinuous: PropTypes.bool.isRequired,
   isNestedDichotomous: PropTypes.bool.isRequired,
+  LOUDParameters: PropTypes.array,
   model: PropTypes.object.isRequired,
 };
 export default ModelParameters;

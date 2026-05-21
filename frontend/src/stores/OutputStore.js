@@ -90,11 +90,18 @@ class OutputStore {
 
   @computed get selectedOutput() {
     const outputs = this.outputs;
-    console.log(outputs);
     if (!_.isObject(outputs)) {
       return null;
     }
     return outputs[this.selectedOutputIndex];
+  }
+
+  @computed get selectedLOUDParameters() {
+    const outputs = this.outputs;
+    if (!_.isObject(outputs)) {
+      return null;
+    }
+    return outputs[this.selectedOutputIndex]["loud_parameter_groups"];
   }
 
   @computed get selectedFrequentist() {
