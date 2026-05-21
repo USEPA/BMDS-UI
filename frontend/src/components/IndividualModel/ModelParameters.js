@@ -48,18 +48,23 @@ const seFootnote = (
   },
   getLOUDCMAData = (model, LOUDParameters) => {
     const suffix = model.name.match(/\((CV|NCV|Lognormal)\)$/)?.[1];
+    const base_model = model.name
+      .replace(/\s*\((CV|NCV|Lognormal)\)$/, "")
+      .trim();
 
-    return LOUDParameters.map((group) => {
-      const columns = group.columns.filter((col) => col !== "Model");
-      return {
-        tblClasses: "table table-sm text-right w-100",
-        headers: columns,
-        subheader: `${model.name} model parameters`,
-        rows: group.rows
-          .filter((rows) => rows.Model === suffix)
-          .map((row) => columns.map((col) => row[col] ?? "")),
-      };
-    }).filter((group) => group.rows.length > 0);
+    return LOUDParameters.filter((group) => group.name === base_model)
+      .map((group) => {
+        const columns = group.columns.filter((col) => col !== "Model");
+        return {
+          tblClasses: "table table-sm text-right w-100",
+          headers: columns,
+          subheader: `${model.name} model parameters`,
+          rows: group.rows
+            .filter((rows) => rows.Model === suffix)
+            .map((row) => columns.map((col) => row[col] ?? "")),
+        };
+      })
+      .filter((group) => group.rows.length > 0);
   },
   getNestedData = (model) => {
     const names = model.results.parameter_names,

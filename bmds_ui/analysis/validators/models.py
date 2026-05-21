@@ -104,8 +104,8 @@ class ModelListSchema(BaseModel):
 
     @model_validator(mode="after")
     def bayesian_weights(self):
-        self._ensure_sum_to_one(self.loud_bayesian, "Prior weight in loud bayesian does not sum to 1") 
-        self._ensure_sum_to_one(self.toxicr_bayesian, "Prior weight in toxicr bayesian does not sum to 1") 
+        self._ensure_sum_to_one(self.loud_bayesian, "Prior weight in loud bayesian does not sum to 1 ± 0.005") 
+        self._ensure_sum_to_one(self.toxicr_bayesian, "Prior weight in toxicr bayesian does not sum to 1 ± 0.005") 
         return self
     
     @model_validator(mode="after")

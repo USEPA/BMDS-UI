@@ -331,6 +331,21 @@ class MainStore {
     })
       .then((response) => response.json())
       .then((json) => {
+        const arr = json?.outputs?.outputs;
+        if (Array.isArray(arr)) {
+          arr.forEach((item) => {
+            if (
+              item &&
+              Object.prototype.hasOwnProperty.call(
+                item,
+                "nested_dichotomous_plot_png",
+              )
+            ) {
+              delete item.nested_dichotomous_plot_png;
+            }
+          });
+        }
+
         const fn = json.inputs.analysis_name
             ? slugify(json.inputs.analysis_name)
             : json.id,
