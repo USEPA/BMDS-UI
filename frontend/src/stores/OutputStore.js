@@ -90,6 +90,7 @@ class OutputStore {
 
   @computed get selectedOutput() {
     const outputs = this.outputs;
+    console.log(outputs);
     if (!_.isObject(outputs)) {
       return null;
     }

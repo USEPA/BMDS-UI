@@ -74,7 +74,11 @@ class ModelBody extends Component {
             />
           </Col>
           <Col xl={8}>
-            <ModelParameters isNestedDichotomous={false} model={model} />
+            <ModelParameters
+              isNestedDichotomous={false}
+              model={model}
+              isLOUDContinuous={isContinuous && priorClass === 3}
+            />
           </Col>
           <Col xl={isDichotomous ? 8 : 12}>
             <GoodnessFit store={outputStore} />
@@ -210,7 +214,11 @@ class MultitumorModalBody extends Component {
             />
           </Col>
           <Col xl={8}>
-            <ModelParameters isNestedDichotomous={false} model={model} />
+            <ModelParameters
+              isNestedDichotomous={false}
+              model={model}
+              isLOUDContinuous={false}
+            />
           </Col>
           <Col xl={8}>
             <GoodnessFit store={outputStore} />
@@ -263,7 +271,11 @@ class NestedDichotomousModalBody extends Component {
             />
           </Col>
           <Col xs={5}>
-            <ModelParameters isNestedDichotomous={true} model={model} />
+            <ModelParameters
+              isNestedDichotomous={true}
+              model={model}
+              isLOUDContinuous={false}
+            />
           </Col>
           <Col xs={7}>
             <ScaledResidual model={model} />

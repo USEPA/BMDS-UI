@@ -104,13 +104,7 @@ cd vcpkg
 bootstrap-vcpkg.bat
 ```
 
-Open bmds/vcpkg.json and add the pybind11 dependency and add the luksan feature to nlopt
-optional: retrieve the most recent hash and paste it into "builtin-baseline"
-
-```bash
-cd “C:\Users\srizwan\BMDS\vcpkg”
-git rev-parse HEAD # Paste this hash into the "builtin-baseline" in vcpkg.json
-```
+Open bmds/vcpkg.json and add the pybind11 dependency
 
 ```json
 {
@@ -119,15 +113,15 @@ git rev-parse HEAD # Paste this hash into the "builtin-baseline" in vcpkg.json
   "dependencies": [
     { "name": "gsl" },
     { "name": "eigen3" },
-    { "name": "nlopt", "features": ["luksan"] },
+    { "name": "nlopt" },
     { "name": "openblas" },
     { "name": "pybind11" }
   ],
-  "builtin-baseline": "e5a4f54c0d562059e9ccc6f7e7150667da58fe41",
+  "builtin-baseline": "c9c17dcea3016bc241df0422e82b8aea212dcb93",
   "overrides": [
     { "name": "gsl", "version": "2.8#1" },
     { "name": "eigen3", "version": "3.4.0#5" },
-    { "name": "nlopt", "version": "2.10.1", "port-version": 1 }
+    { "name": "nlopt", "version": "2.10.0" }
   ]
 }
 ```
@@ -160,7 +154,7 @@ _This step needs to be repeated when bmds source code changes_
 cd "C:\Users\srizwan\BMDS\bmds-ui"
 .venv\Scripts\activate
 pip uninstall pybmds
-uv pip install -e "../bmds"
+uv pip install -e "../bmds" -v
 ```
 
 Copy DLLs next to pyd file so Windows can always find them
@@ -176,7 +170,6 @@ run
 
 ```bash
 # Terminal #1
-uv pip install -e ".[pg,dev]"
 poe sync-dev
 poe run-py
 ```

@@ -9,6 +9,7 @@ from pybmds.constants import DistType, ModelClass
 from pybmds.session import Session
 from pybmds.types.nested_dichotomous import IntralitterCorrelation, LitterSpecificCovariate
 from pybmds.plotting.nested_dichotomous import dose_litter_response_plot
+from pybmds.plotting.LOUD import get_model_average_figures
 
 from .schema import AnalysisSessionSchema
 from .transforms import (
@@ -213,10 +214,17 @@ class AnalysisSession(NamedTuple):
             self.toxicr_bayesian.execute()
 
         if self.loud_bayesian:
-            # if self.loud_bayesian.dataset.dtype == pybmds.constants.Dtype.DICHOTOMOUS:
-            #     self.loud_bayesian.add_model_averaging()
             self.loud_bayesian.add_model_averaging()
-            self.loud_bayesian.execute()      
+            self.loud_bayesian.execute()
+
+            if self.loud_bayesian.model_average:
+                figs = get_model_average_figures(self.loud_bayesian, n_chains=1)
+                self.loud_bayesian._parameter_groups_data = [{
+                    "name": group["name"],
+                    "columns": list(group["summary"].columns),
+                    "rows": group["summary"].fillna("").to_dict(orient="records"),
+                } for group in figs["parameter_groups"]]
+                plt.close("all")
 
     def to_schema(self) -> AnalysisSessionSchema:
         return AnalysisSessionSchema(
@@ -226,6 +234,7 @@ class AnalysisSession(NamedTuple):
             nested_dichotomous_plot_png=getattr(self.frequentist, "_plot_png", None) if self.frequentist else None,
             toxicr_bayesian=self.toxicr_bayesian.to_dict() if self.toxicr_bayesian else None,
             loud_bayesian=self.loud_bayesian.to_dict() if self.loud_bayesian else None,
+            loud_parameter_groups=getattr(self.loud_bayesian, "_parameter_groups_data", None)
         )
 
     def to_dict(self) -> dict:
