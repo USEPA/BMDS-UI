@@ -7,7 +7,7 @@ import Table from "@/components/common/Table";
 import { ff } from "@/utils/formatters";
 
 @observer
-class CDFTable extends Component {
+class ParameterDistPlot extends Component {
   render() {
     const { bmd_dist } = this.props,
       data = {
@@ -23,8 +23,8 @@ class CDFTable extends Component {
     return <Table data={data} />;
   }
 }
-CDFTable.propTypes = {
+ParameterDistPlot.propTypes = {
   bmd_dist: PropTypes.array,
 };
 
-export default CDFTable;
+export default ParameterDistPlot;

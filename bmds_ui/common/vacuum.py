@@ -44,6 +44,7 @@ def vacuum() -> bool:
             logger.info("VACUUM database...")
             cursor.execute("VACUUM")
             cache.set(VACUUM_TIMESTAMP_CACHE_KEY, timezone.now().isoformat())
+            logger.info("VACUUM database complete")
         return True
     return False
 

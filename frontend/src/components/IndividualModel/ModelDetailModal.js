@@ -26,6 +26,7 @@ import MaIndividualModels from "./MaIndividualModels";
 import ModelOptionsTable from "./ModelOptionsTable";
 import ModelParameters from "./ModelParameters";
 import ParameterPriorTable from "./ParameterPriorTable";
+import ParameterDistPlot from "./ParameterDistPlot";
 import Summary from "./Summary";
 
 const getCdfData = function (model) {
@@ -109,6 +110,13 @@ class ModelBody extends Component {
             />
           </Col>
         </Row>
+        {priorClass === 3 ? (
+          <Row>
+            <Col xl={8} style={{ maxHeight: "50vh", overflowY: "scroll" }}>
+              <ParameterDistPlot bmd_dist={model.results.fit.bmd_dist} />
+            </Col>
+          </Row>
+        ) : null}
       </Modal.Body>
     );
   }
