@@ -196,19 +196,25 @@ class Output extends Component {
                 data={outputStore.drLOUDBayesianPlotData}
               />
             </div>
-            <div className="col-lg-12">
+            <div className="col-lg-8">
+              <h4 style={{ paddingTop: "40px" }}>
+                Posterior distribution of model-averaged BMD
+              </h4>
               <img
                 src={outputStore.LOUDPosteriorPlotContent}
                 alt="Posterior distribution of
               model-averaged BMD"
-                style={{ maxWidth: "90%", height: "auto", display: "block" }}
+                style={{ maxWidth: "100%", height: "auto", display: "block" }}
               />
             </div>
-            <div className="col-lg-12">
+            <div className="col-lg-8">
+              <h4 style={{ paddingTop: "40px" }}>
+                Overlay of model-specific and model-averaged BMD distributions
+              </h4>
               <img
                 src={outputStore.LOUDOverlayPlotContent}
                 alt="Overlay of model-specific and model-averaged BMD distributions"
-                style={{ maxWidth: "90%", height: "auto", display: "block" }}
+                style={{ maxWidth: "100%", height: "auto", display: "block" }}
               />
             </div>
           </div>

@@ -74,11 +74,11 @@ class ModelBody extends Component {
               data={outputStore.drIndividualPlotData}
             />
           </Col>
-          <Col xl={isContinuous && priorClass === 3 ? 12 : 8}>
+          <Col xl={priorClass === 3 ? 12 : 8}>
             <ModelParameters
               isNestedDichotomous={false}
               model={model}
-              isLOUDContinuous={isContinuous && priorClass === 3}
+              isLOUD={priorClass === 3}
               LOUDParameters={LOUDParameters}
             />
           </Col>
@@ -219,7 +219,7 @@ class MultitumorModalBody extends Component {
             <ModelParameters
               isNestedDichotomous={false}
               model={model}
-              isLOUDContinuous={false}
+              isLOUD={false}
             />
           </Col>
           <Col xl={8}>
@@ -276,7 +276,7 @@ class NestedDichotomousModalBody extends Component {
             <ModelParameters
               isNestedDichotomous={true}
               model={model}
-              isLOUDContinuous={false}
+              isLOUD={false}
             />
           </Col>
           <Col xs={7}>

@@ -46,7 +46,7 @@ const seFootnote = (
       footnotes: anyBounded ? seFootnote : null,
     };
   },
-  getLOUDCMAData = (model, LOUDParameters) => {
+  getLOUDData = (model, LOUDParameters) => {
     const suffix = model.name.match(/\((CV|NCV|Lognormal)\)$/)?.[1];
     const base_model = model.name
       .replace(/\s*\((CV|NCV|Lognormal)\)$/, "")
@@ -60,7 +60,7 @@ const seFootnote = (
           headers: columns,
           subheader: `${model.name} model parameters`,
           rows: group.rows
-            .filter((rows) => rows.Model === suffix)
+            .filter((rows) => !suffix || rows.Model === suffix)
             .map((row) => columns.map((col) => row[col] ?? "")),
         };
       })
@@ -100,13 +100,12 @@ const seFootnote = (
 @observer
 class ModelParameters extends Component {
   render() {
-    const { model, isNestedDichotomous, isLOUDContinuous, LOUDParameters } =
-      this.props;
+    const { model, isNestedDichotomous, isLOUD, LOUDParameters } = this.props;
 
-    if (isLOUDContinuous && LOUDParameters) {
+    if (isLOUD && LOUDParameters) {
       return (
         <>
-          {getLOUDCMAData(model, LOUDParameters).map((data) => (
+          {getLOUDData(model, LOUDParameters).map((data) => (
             <Table key={data.subheader} data={data} />
           ))}
         </>
@@ -121,7 +120,7 @@ class ModelParameters extends Component {
   }
 }
 ModelParameters.propTypes = {
-  isLOUDContinuous: PropTypes.bool.isRequired,
+  isLOUD: PropTypes.bool.isRequired,
   isNestedDichotomous: PropTypes.bool.isRequired,
   LOUDParameters: PropTypes.array,
   model: PropTypes.object.isRequired,
