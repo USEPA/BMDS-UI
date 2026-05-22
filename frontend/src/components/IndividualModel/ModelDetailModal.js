@@ -135,8 +135,16 @@ class ModelAverageBody extends Component {
     const { outputStore } = this.props,
       dataset = outputStore.selectedDataset,
       model = outputStore.modalModel,
-      toxicr_bayesian_models =
-        outputStore.selectedOutput.toxicr_bayesian.models;
+      priorClass = model.settings.priors.prior_class,
+      isLOUD = priorClass === 3,
+      bayesian_models = isLOUD
+        ? outputStore.selectedLOUDBayesian.models
+        : outputStore.selectedToxicRBayesian.models,
+      plotData = isLOUD
+        ? outputStore.drLOUDBayesianPlotData
+        : outputStore.drToxicRBayesianPlotData;
+
+    console.log("model: ", model);
     return (
       <Modal.Body>
         <Row>
@@ -146,7 +154,7 @@ class ModelAverageBody extends Component {
           <Col xl={9}>
             <DoseResponsePlot
               layout={outputStore.drBayesianPlotLayout}
-              data={outputStore.drToxicRBayesianPlotData}
+              data={plotData}
             />
           </Col>
         </Row>
@@ -154,7 +162,7 @@ class ModelAverageBody extends Component {
           <Col xl={12}>
             <MaIndividualModels
               model_average={model}
-              models={toxicr_bayesian_models}
+              models={bayesian_models}
             />
           </Col>
         </Row>

@@ -112,7 +112,7 @@ class OutputStore {
     }
     const name = this.modalModel.name;
     const match = name.match(/^(.+?)\s*\((.+)\)$/);
-    const groupName = match ? `${match[1]} ${match[2]}` : name;
+    const groupName = match ? `${match[1]} ${match[2]}` : `${name} ${name}`;
     return out.loud_parameter_trace_pngs[groupName]
       ? `data:image/png;base64, ${out.loud_parameter_trace_pngs[groupName]}`
       : null;
