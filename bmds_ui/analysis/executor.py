@@ -201,7 +201,7 @@ class AnalysisSession(NamedTuple):
                 fig = dose_litter_response_plot(self.frequentist)
                 # serialize and stash on the session for later retrieval
                 try:
-                    self.frequentist._plot_png = fig_to_png_b64(fig)
+                    self.frequentist.nested_dichotomous_plot_png = fig_to_png_b64(fig)
                 finally:
                     try:
                         plt.close(fig)
@@ -224,6 +224,10 @@ class AnalysisSession(NamedTuple):
                     "columns": list(group["summary"].columns),
                     "rows": group["summary"].fillna("").to_dict(orient="records"),
                 } for group in figs["parameter_groups"]]
+
+                self.loud_bayesian.loud_posterior_plot_png = fig_to_png_b64(figs["posterior"])
+                self.loud_bayesian.loud_overlay_plot_png = fig_to_png_b64(figs["overlay"])
+                
                 plt.close("all")
 
     def to_schema(self) -> AnalysisSessionSchema:
@@ -231,10 +235,12 @@ class AnalysisSession(NamedTuple):
             dataset_index=self.dataset_index,
             option_index=self.option_index,
             frequentist=self.frequentist.to_dict() if self.frequentist else None,
-            nested_dichotomous_plot_png=getattr(self.frequentist, "_plot_png", None) if self.frequentist else None,
+            nested_dichotomous_plot_png=getattr(self.frequentist, "nested_dichotomous_plot_png", None) if self.frequentist else None,
             toxicr_bayesian=self.toxicr_bayesian.to_dict() if self.toxicr_bayesian else None,
             loud_bayesian=self.loud_bayesian.to_dict() if self.loud_bayesian else None,
-            loud_parameter_groups=getattr(self.loud_bayesian, "_parameter_groups_data", None)
+            loud_parameter_groups=getattr(self.loud_bayesian, "_parameter_groups_data", None) if self.loud_bayesian else None,
+            loud_posterior_plot_png=getattr(self.loud_bayesian, "loud_posterior_plot_png", None) if self.loud_bayesian else None,
+            loud_overlay_plot_png=getattr(self.loud_bayesian, "loud_overlay_plot_png", None) if self.loud_bayesian else None
         )
 
     def to_dict(self) -> dict:

@@ -196,6 +196,21 @@ class Output extends Component {
                 data={outputStore.drLOUDBayesianPlotData}
               />
             </div>
+            <div className="col-lg-12">
+              <img
+                src={outputStore.LOUDPosteriorPlotContent}
+                alt="Posterior distribution of
+              model-averaged BMD"
+                style={{ maxWidth: "90%", height: "auto", display: "block" }}
+              />
+            </div>
+            <div className="col-lg-12">
+              <img
+                src={outputStore.LOUDOverlayPlotContent}
+                alt="Overlay of model-specific and model-averaged BMD distributions"
+                style={{ maxWidth: "90%", height: "auto", display: "block" }}
+              />
+            </div>
           </div>
         ) : null}
         {selectedToxicRBayesian ? (

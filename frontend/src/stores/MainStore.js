@@ -325,35 +325,36 @@ class MainStore {
   }
   @action.bound async saveAnalysisToFile() {
     const apiUrl = this.config.apiUrl;
-    await fetch(apiUrl, {
-      method: "GET",
-      mode: "cors",
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        const arr = json?.outputs?.outputs;
-        if (Array.isArray(arr)) {
-          arr.forEach((item) => {
-            if (
-              item &&
-              Object.prototype.hasOwnProperty.call(
-                item,
-                "nested_dichotomous_plot_png",
-              )
-            ) {
-              delete item.nested_dichotomous_plot_png;
-            }
-          });
-        }
+    const response = await fetch(apiUrl, { method: "GET", mode: "cors" });
+    const json = await response.json();
 
-        const fn = json.inputs.analysis_name
-            ? slugify(json.inputs.analysis_name)
-            : json.id,
-          file = new File([JSON.stringify(json, null, 2)], `${fn}.json`, {
-            type: "application/json",
-          });
-        saveAs(file);
+    // remove long image url strings from downloaded output.
+    const arr = json?.outputs?.outputs;
+    if (Array.isArray(arr)) {
+      const plot_keys = new Set([
+        "nested_dichotomous_plot_png",
+        "loud_posterior_plot_png",
+        "loud_overlay_plot_png",
+      ]);
+
+      arr.forEach((item) => {
+        if (item && typeof item === "object") {
+          for (const key of Object.keys(item)) {
+            if (plot_keys.has(key)) {
+              delete item[key];
+            }
+          }
+        }
       });
+    }
+
+    const fn = json?.inputs?.analysis_name
+      ? slugify(json.inputs.analysis_name)
+      : json.id;
+    const file = new File([JSON.stringify(json, null, 2)], `${fn}.json`, {
+      type: "application/json",
+    });
+    saveAs(file);
   }
 
   @computed get analysisSavedAndValidated() {

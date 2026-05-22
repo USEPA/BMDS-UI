@@ -93,6 +93,7 @@ class OutputStore {
     if (!_.isObject(outputs)) {
       return null;
     }
+    console.log(outputs[this.selectedOutputIndex]);
     return outputs[this.selectedOutputIndex];
   }
 
@@ -475,6 +476,20 @@ class OutputStore {
       this.selectedOutput && this.selectedOutput["nested_dichotomous_plot_png"];
     const dataUrl = out ? "data:image/png;base64," + out : "";
     this.openNestedModal(dataUrl);
+  }
+
+  @computed get LOUDPosteriorPlotContent() {
+    const out =
+      this.selectedOutput && this.selectedOutput["loud_posterior_plot_png"];
+    const dataUrl = out ? "data:image/png;base64," + out : "";
+    return dataUrl;
+  }
+
+  @computed get LOUDOverlayPlotContent() {
+    const out =
+      this.selectedOutput && this.selectedOutput["loud_overlay_plot_png"];
+    const dataUrl = out ? "data:image/png;base64," + out : "";
+    return dataUrl;
   }
 
   @action.bound drPlotAddHover(model) {

@@ -40,6 +40,8 @@ class AnalysisSessionSchema(BaseModel):
     toxicr_bayesian: dict | None = None
     loud_bayesian: dict | None = None
     nested_dichotomous_plot_png: Optional[str] = None
+    loud_posterior_plot_png: Optional[str] = None
+    loud_overlay_plot_png: Optional[str] = None
     loud_parameter_groups: list | None = None
     error: str | None = None
 
