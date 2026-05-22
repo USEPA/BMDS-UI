@@ -357,6 +357,9 @@ class MainStore {
     });
     saveAs(file);
   }
+  @action.bound async saveLOUDInferenceData() {
+    console.log("Add function here");
+  }
 
   @computed get analysisSavedAndValidated() {
     return this.analysisSaved && this.analysisValidated;
