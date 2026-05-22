@@ -9,7 +9,7 @@ from pybmds.constants import DistType, ModelClass
 from pybmds.session import Session
 from pybmds.types.nested_dichotomous import IntralitterCorrelation, LitterSpecificCovariate
 from pybmds.plotting.nested_dichotomous import dose_litter_response_plot
-from pybmds.plotting.LOUD import get_model_average_figures
+from pybmds.plotting.LOUD import get_model_average_figures, _parameter_group_records
 
 from .schema import AnalysisSessionSchema
 from .transforms import (
@@ -227,6 +227,12 @@ class AnalysisSession(NamedTuple):
 
                 self.loud_bayesian.loud_posterior_plot_png = fig_to_png_b64(figs["posterior"])
                 self.loud_bayesian.loud_overlay_plot_png = fig_to_png_b64(figs["overlay"])
+
+                uncompressed_groups = _parameter_group_records(
+                    figs["idata"], self.loud_bayesian, figs["hdi_prob"], compressed=False)
+                self.loud_bayesian._parameter_trace_pngs = {
+                    group["name"]: fig_to_png_b64(group["trace_figure"]) for group in uncompressed_groups
+                }
                 
                 plt.close("all")
 
@@ -239,8 +245,9 @@ class AnalysisSession(NamedTuple):
             toxicr_bayesian=self.toxicr_bayesian.to_dict() if self.toxicr_bayesian else None,
             loud_bayesian=self.loud_bayesian.to_dict() if self.loud_bayesian else None,
             loud_parameter_groups=getattr(self.loud_bayesian, "_parameter_groups_data", None) if self.loud_bayesian else None,
+            loud_parameter_trace_pngs=getattr(self.loud_bayesian, "_parameter_trace_pngs", None) if self.loud_bayesian else None,
             loud_posterior_plot_png=getattr(self.loud_bayesian, "loud_posterior_plot_png", None) if self.loud_bayesian else None,
-            loud_overlay_plot_png=getattr(self.loud_bayesian, "loud_overlay_plot_png", None) if self.loud_bayesian else None
+            loud_overlay_plot_png=getattr(self.loud_bayesian, "loud_overlay_plot_png", None) if self.loud_bayesian else None,
         )
 
     def to_dict(self) -> dict:

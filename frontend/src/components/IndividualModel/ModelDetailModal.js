@@ -26,7 +26,6 @@ import MaIndividualModels from "./MaIndividualModels";
 import ModelOptionsTable from "./ModelOptionsTable";
 import ModelParameters from "./ModelParameters";
 import ParameterPriorTable from "./ParameterPriorTable";
-import ParameterDistPlot from "./ParameterDistPlot";
 import Summary from "./Summary";
 
 const getCdfData = function (model) {
@@ -111,9 +110,14 @@ class ModelBody extends Component {
           </Col>
         </Row>
         {priorClass === 3 ? (
-          <Row>
-            <Col xl={8} style={{ maxHeight: "50vh", overflowY: "scroll" }}>
-              <ParameterDistPlot bmd_dist={model.results.fit.bmd_dist} />
+          <Row className="justify-content-center">
+            <Col xl={12}>
+              {outputStore.LOUDParameterTracePng ? (
+                <img
+                  src={outputStore.LOUDParameterTracePng}
+                  style={{ width: "100%", paddingTop: "50px" }}
+                />
+              ) : null}
             </Col>
           </Row>
         ) : null}

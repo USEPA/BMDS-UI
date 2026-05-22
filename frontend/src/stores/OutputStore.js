@@ -105,6 +105,19 @@ class OutputStore {
     return outputs[this.selectedOutputIndex]["loud_parameter_groups"];
   }
 
+  @computed get LOUDParameterTracePng() {
+    const out = this.selectedOutput;
+    if (!out || !out.loud_parameter_trace_pngs || !this.modalModel) {
+      return null;
+    }
+    const name = this.modalModel.name;
+    const match = name.match(/^(.+?)\s*\((.+)\)$/);
+    const groupName = match ? `${match[1]} ${match[2]}` : name;
+    return out.loud_parameter_trace_pngs[groupName]
+      ? `data:image/png;base64, ${out.loud_parameter_trace_pngs[groupName]}`
+      : null;
+  }
+
   @computed get selectedFrequentist() {
     const output = this.selectedOutput;
     if (output) {

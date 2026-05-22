@@ -43,6 +43,7 @@ class AnalysisSessionSchema(BaseModel):
     loud_posterior_plot_png: Optional[str] = None
     loud_overlay_plot_png: Optional[str] = None
     loud_parameter_groups: list | None = None
+    loud_parameter_trace_pngs: dict | None = None
     error: str | None = None
 
 

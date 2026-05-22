@@ -335,6 +335,7 @@ class MainStore {
         "nested_dichotomous_plot_png",
         "loud_posterior_plot_png",
         "loud_overlay_plot_png",
+        "loud_parameter_trace_pngs",
       ]);
 
       arr.forEach((item) => {
