@@ -116,6 +116,9 @@ class Analysis(models.Model):
     def get_word_url(self):
         return reverse("api:analysis-word", args=(str(self.id),))
 
+    def get_loud_inference_data_url(self):
+        return reverse("api:analysis-loud-inference-data", args=(str(self.id),))
+
     def get_star_url(self):
         return reverse("api:analysis-star", args=(str(self.id),))
 

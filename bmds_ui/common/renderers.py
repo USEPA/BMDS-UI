@@ -74,3 +74,20 @@ class DocxRenderer(BaseRenderer):
         response = renderer_context["response"]
         response["Content-Disposition"] = f'attachment; filename="{data.filename}.docx"'
         return data.data.getvalue()
+
+
+class NetCDFRenderer(BaseRenderer):
+    media_type = "application/x-netcdf"
+    format = "nc"
+
+    def render(self, data: BinaryRendererData, accepted_media_type=None, renderer_context=None):
+        if not isinstance(data, BinaryFile):
+            try:
+                context = json.dumps(data, indent=2)
+            except TypeError:
+                context = "An error occurred"
+            data = write_error_xlsx(context)
+
+        response = renderer_context["response"]
+        response["Content-Disposition"] = f'attachment; filename="{data.filename}.nc"'
+        return data.data.getvalue()

@@ -110,16 +110,19 @@ class Actions extends Component {
               >
                 <Icon name="download" text="Download analysis" />
               </a>
-              <a
-                className="dropdown-item"
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  mainStore.saveLOUDInferenceData();
-                }}
-              >
-                <Icon name="box-seam" text="Download inference data object" />
-              </a>
+
+              {mainStore.hasLOUDBayesian ? (
+                <a
+                  className="dropdown-item"
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    mainStore.saveLOUDInferenceData();
+                  }}
+                >
+                  <Icon name="box-seam" text="Download inference data object" />
+                </a>
+              ) : null}
             </>
           ) : (
             <p className="text-muted pl-4 mb-0">

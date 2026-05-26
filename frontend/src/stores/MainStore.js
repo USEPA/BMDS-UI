@@ -357,8 +357,26 @@ class MainStore {
     });
     saveAs(file);
   }
+
+  @computed get hasLOUDBayesian() {
+    return !!this.rootStore.outputStore.selectedLOUDBayesian;
+  }
+
   @action.bound async saveLOUDInferenceData() {
     console.log("Add function here");
+
+    const output = this.rootStore.outputStore.selectedOutput;
+    const params = new URLSearchParams({
+      dataset_index: output.dataset_index,
+      option_index: output.option_index,
+    });
+    const url = `${this.config.loudUrl}?${params.toString()}`;
+    const response = await fetch(url, { method: "GET", mode: "cors" });
+    const blob = await response.blob();
+    const filename = response.headers
+      .get("content-disposition")
+      .match(/filename="(.*)"/)[1];
+    saveAs(blob, filename);
   }
 
   @computed get analysisSavedAndValidated() {

@@ -221,6 +221,7 @@ class AnalysisDetail(DetailView):
             "url": self.object.get_absolute_url(),
             "excelUrl": self.object.get_excel_url(),
             "wordUrl": self.object.get_word_url(),
+            "loudUrl": self.object.get_loud_inference_data_url(),
             "future": settings.ALWAYS_SHOW_FUTURE
             or (self.request.user.is_staff and bool(self.request.GET.get("future"))),
             "is_desktop": settings.IS_DESKTOP,

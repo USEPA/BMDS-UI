@@ -7,8 +7,11 @@ from rest_framework.schemas.openapi import AutoSchema
 
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott
+from pybmds.plotting.LOUD import model_average_to_inferencedata
 from pandas import DataFrame, ExcelWriter
 from io import BytesIO
+import tempfile
+import os
 
 from ..common import renderers
 from ..common.renderers import BinaryFile
@@ -263,6 +266,52 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             return Response(renderers.BinaryFile(data=data, filename=instance.slug))
 
         return Response(response.model_dump(), content_type="application/json")
+    
+    @action(detail=True, methods=["get"], url_path="loud-inference-data", url_name = "loud-inference-data", renderer_classes=(renderers.NetCDFRenderer,))
+    def loud_inference_data(self, request, *args, **kwargs):
+        instance = self.get_object()
+        dataset_index = request.query_params.get("dataset_index")
+        option_index = request.query_params.get("option_index")
+
+        if dataset_index is None or option_index is None:
+            raise exceptions.ValidationError("dataset_index and option_index are required")
+        
+        try:
+            dataset_index = int(dataset_index)
+            option_index = int(option_index)
+        except ValueError:
+            raise exceptions.ValidationError("dataset_index and option_index must be integers")
+
+        # Find the matching output
+        outputs = instance.outputs.get("outputs", [])
+        output_index = next(
+            (i for i, o in enumerate(outputs)
+             if o["dataset_index"] == dataset_index and o["option_index"] == option_index),
+             None,
+        )    
+        if output_index is None:
+            raise exceptions.NotFound("No outputfound for given dataset_index and option_index")
+
+
+        cache = ExcelReportCache(analysis=instance)
+        response = cache.request_content()
+
+        session = instance.get_session(output_index)
+        if not session.loud_bayesian:
+            raise exceptions.NotFound("No LOUD Bayesian session found for this output")
+        
+        with tempfile.NamedTemporaryFile(suffix=".nc", delete=False) as tmp:
+            tmp_path = tmp.name
+
+        try:
+            model_average_to_inferencedata(session.loud_bayesian, path=tmp_path)
+            with open(tmp_path, "rb") as f:
+                data_bytes=BytesIO(f.read())
+        finally:
+            os.unlink(tmp_path)            
+
+        data=renderers.BinaryFile(data=data_bytes, filename=instance.slug)
+        return Response(data)
 
     @action(detail=True, methods=("post",))
     def star(self, request, *args, **kwargs):
