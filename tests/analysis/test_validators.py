@@ -237,7 +237,7 @@ class TestModelValidation:
         }
         with pytest.raises(ValidationError) as err:
             validators.validate_models(dtype, data)
-        assert "Prior weight in toxicr bayesian does not sum to 1  ± 0.005" in str(err.value)
+        assert "Prior weight in toxicr bayesian does not sum to 1 ± 0.005" in str(err.value)
 
     def test_continuous(self):
         dtype = Dtype.CONTINUOUS
@@ -302,7 +302,7 @@ class TestModelValidation:
                     ]
                 },
             )
-        assert "Prior weight in toxicr bayesian does not sum to 1  ± 0.005" in str(err.value)
+        assert "Prior weight in toxicr bayesian does not sum to 1 ± 0.005" in str(err.value)
 
 
 class TestOptionSetValidation:

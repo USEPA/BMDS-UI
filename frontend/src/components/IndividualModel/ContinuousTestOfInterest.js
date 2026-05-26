@@ -20,7 +20,6 @@ class ContinuousTestOfInterestDatasetFootnote extends Component {
     const model = this.props.outputStore.selectedOutput.frequentist.models[0],
       { p_values } = model.results.tests;
 
-    console.log(model);
     return (
       <>
         <p className="text-muted my-0">
