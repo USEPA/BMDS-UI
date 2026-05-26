@@ -185,3 +185,19 @@ def validate_models(dataset_type: str, data: Any):
     if schema is None:
         raise ValidationError(f"Unknown `dataset_type`: {dataset_type}")
     pydantic_validate(data, schema)
+
+def validate_lognormal_exponential_selected(models: Any, options: Any) -> None:
+    """ If any continuous option set has a lognormal dist_type, at least one exponentail model must be selected """
+    has_dist_type_3 = any(option.get("dist_type") == 3 for option in options)
+    if not has_dist_type_3:
+        return
+    
+    # Only want to check for exponential model if ANY MLE models are selected.
+    freq_restricted = models.get("frequentist_restricted", [])
+    freq_unrestricted = models.get("frequentist_unrestricted", [])
+    if not freq_restricted and not freq_unrestricted:
+        return
+    
+    exponential_models = {Models.ExponentialM3, Models.ExponentialM5}
+    if not set(freq_restricted) & exponential_models:
+        raise ValidationError("To run MLE analysis with lognormal distribution, at least one exponential model must be selected.")

@@ -35,10 +35,6 @@ const getDichotomousData = function (dataset, model) {
     const gof = model.results.gof,
       useFF = dtype === Dtype.CONTINUOUS_INDIVIDUAL;
 
-    console.log(
-      "Goodness of Fit results (Continuous Normal): ",
-      model.results.gof,
-    );
     return {
       headers: [
         "Dose",
@@ -66,11 +62,6 @@ const getDichotomousData = function (dataset, model) {
   getContinuousLognormalData = function (dataset, dtype, model) {
     const gof = model.results.gof,
       useFF = dtype === Dtype.CONTINUOUS_INDIVIDUAL;
-
-    console.log(
-      "Goodness of Fit results (Continuous Lognormal): ",
-      model.results.gof,
-    );
 
     return {
       headers: [

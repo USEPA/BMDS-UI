@@ -144,7 +144,6 @@ class ModelAverageBody extends Component {
         ? outputStore.drLOUDBayesianPlotData
         : outputStore.drToxicRBayesianPlotData;
 
-    console.log("model: ", model);
     return (
       <Modal.Body>
         <Row>

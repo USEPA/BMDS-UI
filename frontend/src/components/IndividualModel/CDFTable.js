@@ -19,7 +19,6 @@ class CDFTable extends Component {
         tblClasses: "table table-sm text-right",
       };
 
-    console.log(bmd_dist);
     return <Table data={data} />;
   }
 }

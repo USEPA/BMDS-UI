@@ -363,8 +363,6 @@ class MainStore {
   }
 
   @action.bound async saveLOUDInferenceData() {
-    console.log("Add function here");
-
     const output = this.rootStore.outputStore.selectedOutput;
     const params = new URLSearchParams({
       dataset_index: output.dataset_index,

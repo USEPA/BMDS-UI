@@ -196,8 +196,8 @@ class Output extends Component {
                 data={outputStore.drLOUDBayesianPlotData}
               />
             </div>
-            <div className="col-lg-8">
-              <h4 style={{ paddingTop: "40px" }}>
+            <div className="col-lg-8" style={{ paddingTop: "40px" }}>
+              <h4 className="bg-custom">
                 Posterior distribution of model-averaged BMD
               </h4>
               <img
@@ -207,8 +207,8 @@ class Output extends Component {
                 style={{ maxWidth: "100%", height: "auto", display: "block" }}
               />
             </div>
-            <div className="col-lg-8">
-              <h4 style={{ paddingTop: "40px" }}>
+            <div className="col-lg-8" style={{ paddingTop: "40px" }}>
+              <h4 className="bg-custom">
                 Overlay of model-specific and model-averaged BMD distributions
               </h4>
               <img

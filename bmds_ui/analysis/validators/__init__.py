@@ -2,10 +2,11 @@ from pybmds.recommender import RecommenderSettings
 
 from ...common.validation import pydantic_validate
 from .datasets import validate_datasets
-from .models import validate_models
+from .models import validate_models, validate_lognormal_exponential_selected
 from .options import validate_options
 from .selectors import AnalysisSelectedSchema  # noqa: F401
 from .session import validate_session
+from pybmds.constants import Dtype
 
 
 def validate_input(data: dict, partial: bool = False) -> None:
@@ -37,6 +38,10 @@ def validate_input(data: dict, partial: bool = False) -> None:
     options = data.get("options")
     if options or partial is False:
         validate_options(dataset_type, data.get("options"))
+
+    if dataset_type in (Dtype.CONTINUOUS, Dtype.CONTINUOUS_INDIVIDUAL):
+        if models and options:
+            validate_lognormal_exponential_selected(models, options)    
 
     recommender = data.get("recommender")
     if recommender:

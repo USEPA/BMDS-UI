@@ -290,7 +290,7 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
              None,
         )    
         if output_index is None:
-            raise exceptions.NotFound("No outputfound for given dataset_index and option_index")
+            raise exceptions.NotFound("No output found for given dataset_index and option_index")
 
 
         cache = ExcelReportCache(analysis=instance)
