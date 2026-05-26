@@ -10,6 +10,7 @@ from pybmds.session import Session
 from pybmds.types.nested_dichotomous import IntralitterCorrelation, LitterSpecificCovariate
 from pybmds.plotting.nested_dichotomous import dose_litter_response_plot
 from pybmds.plotting.LOUD import get_model_average_figures, _parameter_group_records
+from pybmds.models.base import cdf_df
 
 from .schema import AnalysisSessionSchema
 from .transforms import (
@@ -217,6 +218,12 @@ class AnalysisSession(NamedTuple):
             self.loud_bayesian.add_model_averaging()
             self.loud_bayesian.execute()
 
+            for model in self.loud_bayesian.models:
+                df = cdf_df(model.results.fit.bmd_dist)
+                arr = df[["BMD", "Percentile"]].to_numpy(dtype=float, copy=True).T  
+                arr[1] /= 100.0                                          
+                model.results.fit.bmd_dist = arr
+
             if self.loud_bayesian.model_average:
                 figs = get_model_average_figures(self.loud_bayesian, n_chains=1)
                 self.loud_bayesian._parameter_groups_data = [{
@@ -235,6 +242,12 @@ class AnalysisSession(NamedTuple):
                 }
                 
                 plt.close("all")
+
+                df = cdf_df(self.loud_bayesian.model_average.results.bmd_dist)
+                arr = df[["BMD", "Percentile"]].to_numpy(dtype=float, copy=True).T  
+                arr[1] /= 100.0                                          
+                self.loud_bayesian.model_average.results.bmd_dist = arr
+
 
     def to_schema(self) -> AnalysisSessionSchema:
         return AnalysisSessionSchema(
