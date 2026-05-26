@@ -44,6 +44,8 @@ class AnalysisSessionSchema(BaseModel):
     loud_overlay_plot_png: Optional[str] = None
     loud_parameter_groups: list | None = None
     loud_parameter_trace_pngs: dict | None = None
+    loud_model_bmd_dist_cdfs: list | None = None
+    loud_ma_bmd_dist_cdf: list | None = None
     error: str | None = None
 
 

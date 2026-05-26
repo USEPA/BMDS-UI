@@ -48,7 +48,13 @@ class ModelBody extends Component {
       priorClass = model.settings.priors.prior_class,
       isDichotomous = dtype == dc.Dtype.DICHOTOMOUS,
       isContinuous =
-        dtype == dc.Dtype.CONTINUOUS || dtype == dc.Dtype.CONTINUOUS_INDIVIDUAL;
+        dtype == dc.Dtype.CONTINUOUS || dtype == dc.Dtype.CONTINUOUS_INDIVIDUAL,
+      cdfData =
+        priorClass === 3 && outputStore.LOUDModelBmdDistCdfs
+          ? outputStore.LOUDModelBmdDistCdfs[
+              outputStore.selectedLOUDBayesian.models.indexOf(model)
+            ]
+          : model.results.fit.bmd_dist;
 
     return (
       <Modal.Body>
@@ -99,14 +105,10 @@ class ModelBody extends Component {
         </Row>
         <Row>
           <Col xl={4} style={{ maxHeight: "50vh", overflowY: "scroll" }}>
-            <CDFTable bmd_dist={model.results.fit.bmd_dist} />
+            <CDFTable bmd_dist={cdfData} />
           </Col>
           <Col xl={8}>
-            <CDFPlot
-              dataset={dataset}
-              cdf={model.results.fit.bmd_dist}
-              {...getCdfData(model)}
-            />
+            <CDFPlot dataset={dataset} cdf={cdfData} {...getCdfData(model)} />
           </Col>
         </Row>
         {priorClass === 3 ? (
@@ -142,7 +144,11 @@ class ModelAverageBody extends Component {
         : outputStore.selectedToxicRBayesian.models,
       plotData = isLOUD
         ? outputStore.drLOUDBayesianPlotData
-        : outputStore.drToxicRBayesianPlotData;
+        : outputStore.drToxicRBayesianPlotData,
+      cdfData =
+        isLOUD && outputStore.LOUDMaBmdDistCdf
+          ? outputStore.LOUDMaBmdDistCdf
+          : model.results.bmd_dist;
 
     return (
       <Modal.Body>
@@ -167,14 +173,10 @@ class ModelAverageBody extends Component {
         </Row>
         <Row>
           <Col xl={4} style={{ maxHeight: "50vh", overflowY: "scroll" }}>
-            <CDFTable bmd_dist={model.results.bmd_dist} />
+            <CDFTable bmd_dist={cdfData} />
           </Col>
           <Col xl={8}>
-            <CDFPlot
-              dataset={dataset}
-              cdf={model.results.bmd_dist}
-              {...getCdfData(model)}
-            />
+            <CDFPlot dataset={dataset} cdf={cdfData} {...getCdfData(model)} />
           </Col>
         </Row>
       </Modal.Body>

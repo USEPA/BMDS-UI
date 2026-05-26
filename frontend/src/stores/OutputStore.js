@@ -505,6 +505,22 @@ class OutputStore {
     return dataUrl;
   }
 
+  @computed get LOUDModelBmdDistCdfs() {
+    const output = this.selectedOutput;
+    if (!output || !output.loud_model_bmd_dist_cdfs) {
+      return null;
+    }
+    return output.loud_model_bmd_dist_cdfs;
+  }
+
+  @computed get LOUDMaBmdDistCdfs() {
+    const output = this.selectedOutput;
+    if (!output || !output.loud_ma_bmd_dist_cdf) {
+      return null;
+    }
+    return output.loud_ma_bmd_dist_cdf;
+  }
+
   @action.bound drPlotAddHover(model) {
     if (this.drModelSelected && this.drModelSelected[0].name === model.name) {
       return;

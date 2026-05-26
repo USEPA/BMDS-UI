@@ -218,13 +218,21 @@ class AnalysisSession(NamedTuple):
             self.loud_bayesian.add_model_averaging()
             self.loud_bayesian.execute()
 
+            model_cdf_arrs = []
             for model in self.loud_bayesian.models:
                 df = cdf_df(model.results.fit.bmd_dist)
                 arr = df[["BMD", "Percentile"]].to_numpy(dtype=float, copy=True).T  
                 arr[1] /= 100.0                                          
-                model.results.fit.bmd_dist = arr
+                model_cdf_arrs.append(arr)
+            self.loud_bayesian._model_bmd_dist_cdfs = model_cdf_arrs    
 
             if self.loud_bayesian.model_average:
+                df = cdf_df(self.loud_bayesian.model_average.results.bmd_dist)
+                ma_arr = df[["BMD", "Percentile"]].to_numpy(dtype=float, copy=True).T
+                ma_arr[1] /= 100.0 
+                self.loud_bayesian._ma_bmd_dist_cdfs = ma_arr
+
+
                 figs = get_model_average_figures(self.loud_bayesian, n_chains=1)
                 self.loud_bayesian._parameter_groups_data = [{
                     "name": group["name"],
@@ -243,13 +251,18 @@ class AnalysisSession(NamedTuple):
                 
                 plt.close("all")
 
-                df = cdf_df(self.loud_bayesian.model_average.results.bmd_dist)
-                arr = df[["BMD", "Percentile"]].to_numpy(dtype=float, copy=True).T  
-                arr[1] /= 100.0                                          
-                self.loud_bayesian.model_average.results.bmd_dist = arr
-
 
     def to_schema(self) -> AnalysisSessionSchema:
+        loud_model_bmd_dist_cdfs = None
+        loud_ma_bmd_dist_cdf = None
+        if self.loud_bayesian:
+            cdfs = getattr(self.loud_bayesian, "_model_bmd_dist_cdfs", None)
+            if cdfs is not None:
+                loud_model_bmd_dist_cdfs = [arr.tolist() for arr in cdfs]
+            ma_cdf = getattr(self.loud_bayesian, "_ma_bmd_dist_cdf", None)
+            if ma_cdf is not None:
+                loud_ma_bmd_dist_cdf = ma_cdf.tolist()
+
         return AnalysisSessionSchema(
             dataset_index=self.dataset_index,
             option_index=self.option_index,
@@ -261,6 +274,8 @@ class AnalysisSession(NamedTuple):
             loud_parameter_trace_pngs=getattr(self.loud_bayesian, "_parameter_trace_pngs", None) if self.loud_bayesian else None,
             loud_posterior_plot_png=getattr(self.loud_bayesian, "loud_posterior_plot_png", None) if self.loud_bayesian else None,
             loud_overlay_plot_png=getattr(self.loud_bayesian, "loud_overlay_plot_png", None) if self.loud_bayesian else None,
+            loud_model_bmd_dist_cdfs=loud_model_bmd_dist_cdfs,
+            loud_ma_bmd_dist_cdf=loud_ma_bmd_dist_cdf,
         )
 
     def to_dict(self) -> dict:
