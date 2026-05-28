@@ -230,8 +230,7 @@ class AnalysisSession(NamedTuple):
                 df = cdf_df(self.loud_bayesian.model_average.results.bmd_dist)
                 ma_arr = df[["BMD", "Percentile"]].to_numpy(dtype=float, copy=True).T
                 ma_arr[1] /= 100.0 
-                self.loud_bayesian._ma_bmd_dist_cdfs = ma_arr
-
+                self.loud_bayesian._ma_bmd_dist_cdf = ma_arr
 
                 figs = get_model_average_figures(self.loud_bayesian, n_chains=1)
                 self.loud_bayesian._parameter_groups_data = [{

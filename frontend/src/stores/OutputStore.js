@@ -513,7 +513,7 @@ class OutputStore {
     return output.loud_model_bmd_dist_cdfs;
   }
 
-  @computed get LOUDMaBmdDistCdfs() {
+  @computed get LOUDMaBmdDistCdf() {
     const output = this.selectedOutput;
     if (!output || !output.loud_ma_bmd_dist_cdf) {
       return null;
