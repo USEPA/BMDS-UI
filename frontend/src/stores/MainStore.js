@@ -120,7 +120,7 @@ class MainStore {
         }
       })
       .catch((error) => {
-        this.errorMessage = error;
+        this.errorMessage = error.message ?? String(error);
       });
   }
 
@@ -151,7 +151,7 @@ class MainStore {
             "A server error occurred... if the error continues or your analysis does not complete please contact us.";
           return;
         }
-        this.errorMessage = error;
+        this.errorMessage = error.message ?? String(error);
       },
       pollForResults = () => {
         fetch(apiUrl, {
@@ -217,7 +217,7 @@ class MainStore {
         this.updateModelStateFromApi(data);
       })
       .catch((error) => {
-        this.errorMessage = error;
+        this.errorMessage = error.message ?? String(error);
         console.error("error", error);
       });
   }
@@ -232,7 +232,7 @@ class MainStore {
       .then((response) => response.json())
       .then((data) => this.updateModelStateFromApi(data))
       .catch((error) => {
-        this.errorMessage = error;
+        this.errorMessage = error.message ?? String(error);
         console.error("error", error);
       });
   }
@@ -542,7 +542,7 @@ class MainStore {
         this.starred = data.starred;
       })
       .catch((error) => {
-        this.errorMessage = error;
+        this.errorMessage = error.message ?? String(error);
         console.error("error", error);
       });
   }
@@ -571,7 +571,7 @@ class MainStore {
         this.collections = data.collections;
       })
       .catch((error) => {
-        this.errorMessage = error;
+        this.errorMessage = error.message ?? String(error);
         console.error("error", error);
       });
   }

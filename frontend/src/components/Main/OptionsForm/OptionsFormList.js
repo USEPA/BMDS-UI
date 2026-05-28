@@ -26,7 +26,7 @@ class OptionsFormList extends Component {
       modelType = optionsStore.getModelType,
       optionsList = toJS(optionsStore.optionsList),
       distTypeHelpText =
-        "If lognormal is selected, only the Exponential and Hill models can be executed. Other models will be removed during the execution process and will not be shown in the outputs.",
+        "If lognormal is selected, only the Exponential models can be executed. Other models will be removed during the execution process and will not be shown in the outputs.",
       tailProbabilityHelpText = "Only used for Hybrid models.";
     return (
       <div>

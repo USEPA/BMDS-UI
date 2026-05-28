@@ -68,6 +68,7 @@ class MCMCOptionsStore {
   }
 
   @computed get getModelType() {
+    console.log("here");
     return this.rootStore.mainStore.model_type;
   }
 

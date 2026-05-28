@@ -91,7 +91,7 @@ class ModelBody extends Component {
           <Col xl={isDichotomous ? 8 : 12}>
             <GoodnessFit store={outputStore} />
           </Col>
-          {isDichotomous ? (
+          {isDichotomous && priorClass !== 3 ? (
             <Col xl={8}>
               <DichotomousDeviance store={outputStore} />
             </Col>

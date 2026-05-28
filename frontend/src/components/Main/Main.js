@@ -7,12 +7,13 @@ import AnalysisFormReadOnly from "./AnalysisForm/AnalysisFormReadOnly";
 import DatasetModelOptionList from "./DatasetModelOptionList/DatasetModelOptionList";
 import ModelsCheckBoxList from "./ModelsForm/ModelsCheckBoxList";
 import OptionsFormList from "./OptionsForm/OptionsFormList";
+import MCMCOptionsFormList from "./MCMCOptionsForm/MCMCOptionsFormList";
 
-@inject("mainStore")
+@inject("mainStore", "modelsStore")
 @observer
 class Main extends Component {
   render() {
-    const { mainStore } = this.props;
+    const { mainStore, modelsStore } = this.props;
 
     return mainStore.isUpdateComplete ? (
       <div className="row">
@@ -27,6 +28,9 @@ class Main extends Component {
         <div className="col-lg-8">
           <ModelsCheckBoxList />
           <OptionsFormList />
+          {modelsStore.activeTab === "loud_bayesian" ? (
+            <MCMCOptionsFormList />
+          ) : null}
         </div>
       </div>
     ) : null;
@@ -34,6 +38,7 @@ class Main extends Component {
 }
 Main.propTypes = {
   mainStore: PropTypes.object,
+  modelsStore: PropTypes.object,
   isUpdateComplete: PropTypes.bool,
 };
 export default Main;

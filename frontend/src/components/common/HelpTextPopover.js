@@ -21,7 +21,7 @@ HelpTextPopover.propTypes = {
 };
 HelpTextPopover.defaultProps = {
   icon: "question-circle-fill",
-  title: "Help-text",
+  title: "Help Text",
 };
 
 export default HelpTextPopover;

@@ -24,7 +24,6 @@ class FloatInput extends Component {
           className={className}
           type="number"
           defaultValue={value ?? ""}
-          //   onChange={(e) => onChange(parseFloat(e.target.value))}
           onBlur={(e) => {
             const raw = e.target.value.trim();
             if (raw === "") {
