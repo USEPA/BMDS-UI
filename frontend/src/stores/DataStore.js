@@ -223,7 +223,7 @@ class DataStore {
     const dataset = this.selectedDataset;
     Object.keys(dataset).map((key, _i) => {
       if (Array.isArray(dataset[key])) {
-        dataset[key].push("");
+        dataset[key].push(null);
       }
     });
     this.rootStore.mainStore.setInputsChangedFlag();
@@ -243,11 +243,16 @@ class DataStore {
   };
 
   @action.bound saveDatasetCellItem(key, value, rowIdx) {
-    let dataset = this.selectedDataset,
-      parsedValue = parseFloat(value);
-    if (_.isNumber(parsedValue)) {
-      dataset[key][rowIdx] = parsedValue;
+    let dataset = this.selectedDataset;
+    if (value === null) {
+      dataset[key][rowIdx] = null;
+    } else {
+      const parsedValue = parseFloat(value);
+      if (_.isFinite(parsedValue)) {
+        dataset[key][rowIdx] = parsedValue;
+      }
     }
+
     this.rootStore.mainStore.setInputsChangedFlag();
 
     this.datasetChanged();
