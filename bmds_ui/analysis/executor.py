@@ -44,7 +44,7 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Sess
             model_names = [model for model in model_names if model in lognormal_enabled]
 
         for model_name in model_names:
-            model_options = build_model_settings(dataset_type, prior_type, options, dataset_options)
+            model_options = build_model_settings(dataset_type=dataset_type, prior_class=prior_type, options=options, dataset_options=dataset_options, model=None, mcmc_options=None)
             if model_name in pybmds.Models.VARIABLE_POLYNOMIAL():
                 min_degree = 2 if model_name in pybmds.Models.Polynomial else 1
                 max_degree = (
@@ -99,6 +99,8 @@ def build_toxicr_bayesian_session(
             prior_class=PriorEnum.toxicr_bayesian,
             options=options,
             dataset_options=dataset_options,
+            model=None, 
+            mcmc_options=None
         )
         if name in pybmds.Models.VARIABLE_POLYNOMIAL():
             model_options.degree = 2
@@ -109,9 +111,8 @@ def build_toxicr_bayesian_session(
     return session
 
 def build_loud_bayesian_session(
-    dataset: pybmds.datasets.base.DatasetBase, inputs: dict, options: dict, dataset_options: dict
+    dataset: pybmds.datasets.base.DatasetBase, inputs: dict, options: dict, dataset_options: dict, mcmc_options: dict
 ) -> Session | None:
-
     models = inputs["models"].get(PriorEnum.loud_bayesian, [])
     # Do Not filter lognormal for continuous loud, since dist_type is not reliant on options set
     # if options.get("dist_type") == DistType.log_normal:
@@ -131,7 +132,8 @@ def build_loud_bayesian_session(
             prior_class=PriorEnum.loud_bayesian, # 3
             options=options,
             dataset_options=dataset_options,
-            model=model
+            model=model,
+            mcmc_options=mcmc_options
         )
         if name in pybmds.Models.VARIABLE_POLYNOMIAL():
             model_options.degree = 2
@@ -172,12 +174,13 @@ class AnalysisSession(NamedTuple):
         dataset = build_dataset(inputs["datasets"][dataset_index])
         options = inputs["options"][option_index]
         dataset_options = inputs["dataset_options"][dataset_index]
+        mcmc_options = inputs["mcmc_options"]
         return cls(
             dataset_index=dataset_index,
             option_index=option_index,
             frequentist=build_frequentist_session(dataset, inputs, options, dataset_options),
             toxicr_bayesian=build_toxicr_bayesian_session(dataset, inputs, options, dataset_options),
-            loud_bayesian=build_loud_bayesian_session(dataset, inputs, options, dataset_options)
+            loud_bayesian=build_loud_bayesian_session(dataset, inputs, options, dataset_options, mcmc_options)
         )
 
     @classmethod
@@ -308,7 +311,7 @@ class MultiTumorSession(NamedTuple):
         dataset_type = inputs["dataset_type"]
         options = inputs["options"][option_index]
         model_settings = build_model_settings(
-            dataset_type, PriorEnum.frequentist_restricted, options, {}
+            dataset_type=dataset_type, prior_class=PriorEnum.frequentist_restricted, options=options, dataset_options={}, model=None, mcmc_options=None
         )
         session = pybmds.Multitumor(datasets, degrees=degrees, settings=model_settings)
         return cls(option_index=option_index, session=session)

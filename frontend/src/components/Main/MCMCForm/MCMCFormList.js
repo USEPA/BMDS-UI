@@ -10,7 +10,7 @@ import MCMCForm from "./MCMCForm";
 class MCMCFormList extends Component {
   render() {
     const { MCMCStore } = this.props,
-      optionsList = toJS(MCMCStore.optionsList);
+      optionsDict = toJS(MCMCStore.optionsDict);
     return (
       <div>
         <div className="panel panel-default">
@@ -28,15 +28,12 @@ class MCMCFormList extends Component {
                 </tr>
               </thead>
               <tbody>
-                {optionsList.map((options, id) => (
-                  <MCMCForm
-                    key={`${id}-${MCMCStore.resetCount}`}
-                    idx={id}
-                    options={options}
-                    saveOptions={MCMCStore.saveOptions}
-                    setDefaults={() => MCMCStore.setDefaults(true)}
-                  />
-                ))}
+                <MCMCForm
+                  key={`${MCMCStore.resetCount}`}
+                  options={optionsDict}
+                  saveOptions={MCMCStore.saveOptions}
+                  setDefaults={() => MCMCStore.setDefaults(true)}
+                />
               </tbody>
             </table>
           </form>

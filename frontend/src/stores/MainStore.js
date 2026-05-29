@@ -63,7 +63,7 @@ class MainStore {
   }
 
   @computed get getMCMCOptions() {
-    return this.rootStore.MCMCStore.optionsList;
+    return this.rootStore.MCMCStore.optionsDict;
   }
 
   @computed get getEnabledDatasets() {

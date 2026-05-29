@@ -29,10 +29,10 @@ class ContinuousOption(BaseModel):
     dist_type: DistType
 
 class MCMCOption(BaseModel):
-    seed: int = Field(ge=0, le=999999)
+    seed: int = Field(ge=0, le=100000)
     num_chains: int = Field(ge=1, le=4)
-    iterations_per_chain: int = Field(ge=10000, le=999999)
-    burnin: int = Field(ge=1000, le=999999)
+    iterations_per_chain: int = Field(ge=0, le=100000)
+    burnin: int = Field(ge=5, le=100000)
 
 class NestedDichotomousOption(BaseModel):
     bmr_type: DichotomousRiskType
@@ -56,8 +56,7 @@ class NestedDichotomousOptions(BaseModel):
     options: list[NestedDichotomousOption] = Field(min_length=1, max_length=max_length)
 
 class MCMCOptions(BaseModel):
-    mcmc_options: list[MCMCOption] = Field(min_length=1, max_length=1)
-
+    mcmc_options: dict[str, MCMCOption] = Field(min_length=1, max_length=1)
 
 def validate_options(dataset_type: str, data: Any):
     if dataset_type in pybmds.constants.ModelClass.DICHOTOMOUS:
@@ -74,4 +73,5 @@ def validate_options(dataset_type: str, data: Any):
     pydantic_validate({"options": data}, schema)
 
 def validate_mcmc_options(data: Any):
+    print(data)
     pydantic_validate({"mcmc_options": data}, MCMCOptions)

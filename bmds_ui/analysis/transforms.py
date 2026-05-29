@@ -37,9 +37,20 @@ def build_model_settings(
     options: dict,
     dataset_options: dict,
     model: dict | None = None,
+    mcmc_options: dict | None = None,
 ) -> DichotomousModelSettings | ContinuousModelSettings | NestedDichotomousModelSettings:
     prior_cls = bmd3_prior_map[prior_class]
     if dataset_type == pybmds.constants.Dtype.DICHOTOMOUS:
+        if prior_class == "loud_bayesian":
+            return DichotomousModelSettings(
+            bmr=options["bmr_value"],
+            alpha=round(1.0 - options["confidence_level"], 3),
+            bmr_type=options["bmr_type"],
+            samples=mcmc_options["iterations_per_chain"],
+            burnin=mcmc_options["burnin"],
+            degree=dataset_options["degree"],
+            priors=prior_cls,
+        )
         return DichotomousModelSettings(
             bmr=options["bmr_value"],
             alpha=round(1.0 - options["confidence_level"], 3),
@@ -49,12 +60,13 @@ def build_model_settings(
         )
     elif dataset_type in pybmds.constants.Dtype.CONTINUOUS_DTYPES():
         if prior_class == "loud_bayesian":
-
             return ContinuousModelSettings(
                 bmr=options["bmr_value"],
                 alpha=round(1.0 - options["confidence_level"], 3),
                 tail_prob=options["tail_probability"],
                 bmr_type=options["bmr_type"],
+                samples=mcmc_options["iterations_per_chain"],
+                burnin=mcmc_options["burnin"],
                 disttype=model["dist_type"], # dist_type is from model inputs, not options set inputs
                 degree=dataset_options["degree"],
                 is_increasing=is_increasing_map[dataset_options["adverse_direction"]],

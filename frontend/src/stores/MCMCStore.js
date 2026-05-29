@@ -13,23 +13,23 @@ class MCMCStore {
     this.rootStore = rootStore;
   }
 
-  @observable optionsList = [];
+  @observable optionsDict = {};
   @observable resetCount = 0;
 
   @action.bound setDefaults(force) {
-    if (this.optionsList.length === 0 || force) {
-      this.optionsList = [createOption()];
+    if (_.isEmpty(this.optionsDict) || force) {
+      this.optionsDict = createOption();
       this.resetCount++;
     }
   }
 
-  @action.bound saveOptions(name, value, id) {
-    this.optionsList[id][name] = value;
+  @action.bound saveOptions(name, value) {
+    this.optionsDict[name] = value;
     this.rootStore.mainStore.setInputsChangedFlag();
   }
 
   @action.bound setOptions(options) {
-    this.optionsList = options ?? [];
+    this.optionsDict = options ?? {};
     this.setDefaults();
   }
 }

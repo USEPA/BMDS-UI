@@ -20,7 +20,7 @@ const MCMCForm = (props) => {
 
       <td>
         <IntegerInput
-          onChange={(value) => props.saveOptions("seed", value, props.idx)}
+          onChange={(value) => props.saveOptions("seed", value)}
           value={props.options.seed}
           min={limits.seed.min}
           max={limits.seed.max}
@@ -32,9 +32,7 @@ const MCMCForm = (props) => {
           choices={chainOptions.map((option) => {
             return { value: option.value, text: option.label };
           })}
-          onChange={(value) =>
-            props.saveOptions("num_chains", parseInt(value), props.idx)
-          }
+          onChange={(value) => props.saveOptions("num_chains", parseInt(value))}
           value={props.options.num_chains}
         />
       </td>
@@ -42,9 +40,7 @@ const MCMCForm = (props) => {
       <td>
         <IntegerInput
           value={props.options.iterations_per_chain}
-          onChange={(value) =>
-            props.saveOptions("iterations_per_chain", value, props.idx)
-          }
+          onChange={(value) => props.saveOptions("iterations_per_chain", value)}
           min={limits.iterations_per_chain.min}
           max={limits.iterations_per_chain.max}
         />
@@ -53,7 +49,7 @@ const MCMCForm = (props) => {
       <td>
         <IntegerInput
           value={props.options.burnin}
-          onChange={(value) => props.saveOptions("burnin", value, props.idx)}
+          onChange={(value) => props.saveOptions("burnin", value)}
           min={limits.burnin.min}
           max={limits.burnin.max}
         />
@@ -64,7 +60,6 @@ const MCMCForm = (props) => {
 
 MCMCForm.propTypes = {
   MCMCStore: PropTypes.object,
-  idx: PropTypes.number.isRequired,
   options: PropTypes.object.isRequired,
 };
 export default MCMCForm;
