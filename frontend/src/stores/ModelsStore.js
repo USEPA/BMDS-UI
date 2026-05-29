@@ -30,7 +30,12 @@ class ModelsStore {
       () => this.getModelType,
       (type) => {
         if (
-          type !== mc.MODEL_DICHOTOMOUS &&
+          type === mc.MODEL_MULTI_TUMOR ||
+          type == mc.MODEL_NESTED_DICHOTOMOUS
+        ) {
+          this.setActiveTab("mle");
+        } else if (
+          type === mc.MODEL_CONTINUOUS &&
           this.activeTab === "toxicr_bayesian"
         ) {
           this.setActiveTab("loud_bayesian");

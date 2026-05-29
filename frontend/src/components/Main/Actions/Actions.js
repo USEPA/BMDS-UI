@@ -111,7 +111,7 @@ class Actions extends Component {
                 <Icon name="download" text="Download analysis" />
               </a>
 
-              {mainStore.hasLOUDBayesian ? (
+              {mainStore.hasLOUDBayesianOutput ? (
                 <a
                   className="dropdown-item"
                   href="#"

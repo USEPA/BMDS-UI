@@ -84,7 +84,9 @@ class MainStore {
         datasets: this.rootStore.dataStore.datasets,
         dataset_options: this.rootStore.dataOptionStore.options,
         options: this.getOptions,
-        mcmc_options: this.getMCMCOptions,
+        ...(this.hasLOUDBayesianModelSelected && {
+          mcmc_options: this.getMCMCOptions,
+        }),
         recommender: this.rootStore.logicStore.logic,
       },
     };
@@ -255,6 +257,7 @@ class MainStore {
     }
 
     const inputs = data.inputs;
+    console.log(inputs);
 
     if (_.isEmpty(inputs)) {
       this.changeDatasetType(this.model_type);
@@ -366,8 +369,12 @@ class MainStore {
     saveAs(file);
   }
 
-  @computed get hasLOUDBayesian() {
+  @computed get hasLOUDBayesianOutput() {
     return !!this.rootStore.outputStore.selectedLOUDBayesian;
+  }
+
+  @computed get hasLOUDBayesianModelSelected() {
+    return (this.rootStore.modelsStore.models?.loud_bayesian?.length ?? 0) > 0;
   }
 
   @action.bound async saveLOUDInferenceData() {

@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import Button from "../../common/Button";
-import { chainOptions } from "@/constants/MCMCConstants";
+import { chainOptions, limits } from "@/constants/MCMCConstants";
 
 import SelectInput from "../../common/SelectInput";
 import IntegerInput from "../../common/IntegerInput";
@@ -22,6 +22,8 @@ const MCMCForm = (props) => {
         <IntegerInput
           onChange={(value) => props.saveOptions("seed", value, props.idx)}
           value={props.options.seed}
+          min={limits.seed.min}
+          max={limits.seed.max}
         />
       </td>
 
@@ -43,6 +45,8 @@ const MCMCForm = (props) => {
           onChange={(value) =>
             props.saveOptions("iterations_per_chain", value, props.idx)
           }
+          min={limits.iterations_per_chain.min}
+          max={limits.iterations_per_chain.max}
         />
       </td>
 
@@ -50,6 +54,8 @@ const MCMCForm = (props) => {
         <IntegerInput
           value={props.options.burnin}
           onChange={(value) => props.saveOptions("burnin", value, props.idx)}
+          min={limits.burnin.min}
+          max={limits.burnin.max}
         />
       </td>
     </tr>
