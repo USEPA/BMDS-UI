@@ -62,6 +62,10 @@ class MainStore {
     return this.rootStore.optionsStore.optionsList;
   }
 
+  @computed get getMCMCOptions() {
+    return this.rootStore.MCMCStore.optionsList;
+  }
+
   @computed get getEnabledDatasets() {
     return this.rootStore.dataStore.getEnabledDatasets;
   }
@@ -80,6 +84,7 @@ class MainStore {
         datasets: this.rootStore.dataStore.datasets,
         dataset_options: this.rootStore.dataOptionStore.options,
         options: this.getOptions,
+        mcmc_options: this.getMCMCOptions,
         recommender: this.rootStore.logicStore.logic,
       },
     };
@@ -270,6 +275,7 @@ class MainStore {
     this.model_type = inputs.dataset_type;
     this.changeDatasetType(this.model_type);
     this.rootStore.optionsStore.setOptions(inputs.options);
+    this.rootStore.MCMCStore.setOptions(inputs.mcmc_options);
     this.rootStore.dataStore.setDatasets(inputs.datasets);
     this.rootStore.dataOptionStore.setDatasetOptions(inputs.dataset_options);
     this.rootStore.modelsStore.setModels(inputs.models);

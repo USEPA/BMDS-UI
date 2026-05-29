@@ -30,10 +30,11 @@ class MCMCFormList extends Component {
               <tbody>
                 {optionsList.map((options, id) => (
                   <MCMCForm
-                    key={id}
+                    key={`${id}-${MCMCStore.resetCount}`}
                     idx={id}
                     options={options}
                     saveOptions={MCMCStore.saveOptions}
+                    setDefaults={() => MCMCStore.setDefaults(true)}
                   />
                 ))}
               </tbody>

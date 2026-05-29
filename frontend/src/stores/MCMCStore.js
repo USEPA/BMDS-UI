@@ -14,10 +14,12 @@ class MCMCStore {
   }
 
   @observable optionsList = [];
+  @observable resetCount = 0;
 
   @action.bound setDefaults(force) {
     if (this.optionsList.length === 0 || force) {
       this.optionsList = [createOption()];
+      this.resetCount++;
     }
   }
 
@@ -27,7 +29,7 @@ class MCMCStore {
   }
 
   @action.bound setOptions(options) {
-    this.optionsList = options;
+    this.optionsList = options ?? [];
     this.setDefaults();
   }
 }
