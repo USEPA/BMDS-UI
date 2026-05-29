@@ -49,6 +49,7 @@ class MainStore {
     }
     this.rootStore.modelsStore.setDefaultsByDatasetType(true);
     this.rootStore.optionsStore.setDefaultsByDatasetType(true);
+    this.rootStore.MCMCStore.setDefaults(true);
     this.rootStore.dataStore.setDefaultsByDatasetType();
     this.rootStore.dataOptionStore.options = [];
     this.setInputsChangedFlag();
@@ -279,6 +280,7 @@ class MainStore {
     this.analysisSaved = data.inputs_valid;
     this.analysisValidated = data.inputs_valid;
   }
+
   @action.bound loadAnalysisFromFile(file) {
     const { csrfToken } = this.config.editSettings,
       reader = new FileReader(),

@@ -16,7 +16,7 @@ const createOption = (modelType) => {
   return option;
 };
 
-class MCMCOptionsStore {
+class MCMCStore {
   constructor(rootStore) {
     this.rootStore = rootStore;
   }
@@ -84,4 +84,4 @@ class MCMCOptionsStore {
   }
 }
 
-export default MCMCOptionsStore;
+export default MCMCStore;

@@ -7,7 +7,7 @@ import AnalysisFormReadOnly from "./AnalysisForm/AnalysisFormReadOnly";
 import DatasetModelOptionList from "./DatasetModelOptionList/DatasetModelOptionList";
 import ModelsCheckBoxList from "./ModelsForm/ModelsCheckBoxList";
 import OptionsFormList from "./OptionsForm/OptionsFormList";
-import MCMCOptionsFormList from "./MCMCOptionsForm/MCMCOptionsFormList";
+import MCMCFormList from "./MCMCForm/MCMCFormList";
 
 @inject("mainStore", "modelsStore")
 @observer
@@ -28,9 +28,7 @@ class Main extends Component {
         <div className="col-lg-8">
           <ModelsCheckBoxList />
           <OptionsFormList />
-          {modelsStore.activeTab === "loud_bayesian" ? (
-            <MCMCOptionsFormList />
-          ) : null}
+          {modelsStore.activeTab === "loud_bayesian" ? <MCMCFormList /> : null}
         </div>
       </div>
     ) : null;
