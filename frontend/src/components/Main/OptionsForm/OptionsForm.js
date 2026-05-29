@@ -120,8 +120,6 @@ const OptionsForm = (props) => {
               onChange={(value) =>
                 props.saveOptions("bootstrap_iterations", value, props.idx)
               }
-              min={10}
-              max={10000}
             />
           </td>
           <td>
@@ -130,8 +128,6 @@ const OptionsForm = (props) => {
               onChange={(value) =>
                 props.saveOptions("bootstrap_seed", value, props.idx)
               }
-              min={0}
-              max={1000}
             />
           </td>
         </>

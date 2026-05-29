@@ -55,9 +55,6 @@ class ContinuousOptions(BaseModel):
 class NestedDichotomousOptions(BaseModel):
     options: list[NestedDichotomousOption] = Field(min_length=1, max_length=max_length)
 
-class MCMCOptions(BaseModel):
-    mcmc_options: dict[str, MCMCOption] = Field(min_length=1, max_length=1)
-
 def validate_options(dataset_type: str, data: Any):
     if dataset_type in pybmds.constants.ModelClass.DICHOTOMOUS:
         schema = DichotomousOptions
@@ -73,5 +70,4 @@ def validate_options(dataset_type: str, data: Any):
     pydantic_validate({"options": data}, schema)
 
 def validate_mcmc_options(data: Any):
-    print(data)
-    pydantic_validate({"mcmc_options": data}, MCMCOptions)
+    pydantic_validate(data, MCMCOption)

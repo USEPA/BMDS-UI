@@ -18,10 +18,12 @@ class TestOptions:
         }
         dataset_options = {"dataset_id": 123, "enabled": True, "degree": 0, "adverse_direction": -1}
         res = transforms.build_model_settings(
-            pybmds.constants.Dtype.CONTINUOUS,
-            transforms.PriorEnum.frequentist_restricted,
-            options,
-            dataset_options,
+            dataset_type=pybmds.constants.Dtype.CONTINUOUS,
+            prior_class=transforms.PriorEnum.frequentist_restricted,
+            options=options,
+            dataset_options=dataset_options,
+            model=None, 
+            mcmc_options=None
         )
         assert res.bmr_type is ContinuousRiskType.StandardDeviation
         assert pytest.approx(res.bmr) == 1.5
@@ -38,11 +40,13 @@ class TestOptions:
         }
         dataset_options = {"dataset_id": 123, "enabled": True, "degree": 1}
         res = transforms.build_model_settings(
-            pybmds.constants.Dtype.DICHOTOMOUS,
-            transforms.PriorEnum.frequentist_restricted,
-            options,
-            dataset_options,
-        )
+            dataset_type=pybmds.constants.Dtype.DICHOTOMOUS,
+            prior_class=transforms.PriorEnum.frequentist_restricted,
+            options=options,
+            dataset_options=dataset_options,
+            model=None, 
+            mcmc_options=None
+        )                    
         assert res.bmr_type is DichotomousRiskType.AddedRisk
         assert pytest.approx(res.bmr) == 0.15
         assert pytest.approx(res.alpha) == 0.05
