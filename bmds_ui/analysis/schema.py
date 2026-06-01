@@ -32,6 +32,11 @@ class WrappedAnalysisSelectedSchema(BaseModel):
     editKey: str
     data: AnalysisSelectedSchema
 
+class StaticPlots(BaseModel):
+    nested_dichotomous_plot_png: Optional[str] = None
+    loud_posterior_plot_png: Optional[str] = None
+    loud_overlay_plot_png: Optional[str] = None
+    loud_parameter_trace_pngs: dict | None = None
 
 class AnalysisSessionSchema(BaseModel):
     dataset_index: int
@@ -39,11 +44,8 @@ class AnalysisSessionSchema(BaseModel):
     frequentist: dict | None = None
     toxicr_bayesian: dict | None = None
     loud_bayesian: dict | None = None
-    nested_dichotomous_plot_png: Optional[str] = None
-    loud_posterior_plot_png: Optional[str] = None
-    loud_overlay_plot_png: Optional[str] = None
+    static_plots: StaticPlots | None = None
     loud_parameter_groups: list | None = None
-    loud_parameter_trace_pngs: dict | None = None
     loud_model_bmd_dist_cdfs: list | None = None
     loud_ma_bmd_dist_cdf: list | None = None
     error: str | None = None
@@ -406,4 +408,4 @@ class AnalysisMigrator:
         logger.debug("Migrating from 1.0 to 1.1")
         data["outputs"]["bmds_ui_version"] = "2023.03"  # 1.0 bmds_ui_version
         data["outputs"]["analysis_schema_version"] = "1.1"
-        return data
+        return data            

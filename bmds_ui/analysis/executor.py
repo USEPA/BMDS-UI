@@ -12,7 +12,7 @@ from pybmds.plotting.nested_dichotomous import dose_litter_response_plot
 from pybmds.plotting.LOUD import get_model_average_figures, _parameter_group_records
 from pybmds.models.base import cdf_df
 
-from .schema import AnalysisSessionSchema
+from .schema import AnalysisSessionSchema, StaticPlots
 from .transforms import (
     PriorEnum,
     build_dataset,
@@ -265,17 +265,21 @@ class AnalysisSession(NamedTuple):
             if ma_cdf is not None:
                 loud_ma_bmd_dist_cdf = ma_cdf.tolist()
 
+        static_plots = StaticPlots(
+            nested_dichotomous_plot_png=getattr(self.frequentist, "nested_dichotomous_plot_png", None) if self.frequentist else None,
+            loud_posterior_plot_png=getattr(self.loud_bayesian, "loud_posterior_plot_png", None) if self.loud_bayesian else None,
+            loud_overlay_plot_png=getattr(self.loud_bayesian, "loud_overlay_plot_png", None) if self.loud_bayesian else None,
+            loud_parameter_trace_pngs=getattr(self.loud_bayesian, "_parameter_trace_pngs", None) if self.loud_bayesian else None,
+        )
+
         return AnalysisSessionSchema(
             dataset_index=self.dataset_index,
             option_index=self.option_index,
             frequentist=self.frequentist.to_dict() if self.frequentist else None,
-            nested_dichotomous_plot_png=getattr(self.frequentist, "nested_dichotomous_plot_png", None) if self.frequentist else None,
             toxicr_bayesian=self.toxicr_bayesian.to_dict() if self.toxicr_bayesian else None,
             loud_bayesian=self.loud_bayesian.to_dict() if self.loud_bayesian else None,
+            static_plots=static_plots,
             loud_parameter_groups=getattr(self.loud_bayesian, "_parameter_groups_data", None) if self.loud_bayesian else None,
-            loud_parameter_trace_pngs=getattr(self.loud_bayesian, "_parameter_trace_pngs", None) if self.loud_bayesian else None,
-            loud_posterior_plot_png=getattr(self.loud_bayesian, "loud_posterior_plot_png", None) if self.loud_bayesian else None,
-            loud_overlay_plot_png=getattr(self.loud_bayesian, "loud_overlay_plot_png", None) if self.loud_bayesian else None,
             loud_model_bmd_dist_cdfs=loud_model_bmd_dist_cdfs,
             loud_ma_bmd_dist_cdf=loud_ma_bmd_dist_cdf,
         )

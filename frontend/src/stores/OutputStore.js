@@ -107,14 +107,18 @@ class OutputStore {
 
   @computed get LOUDParameterTracePng() {
     const out = this.selectedOutput;
-    if (!out || !out.loud_parameter_trace_pngs || !this.modalModel) {
+    if (
+      !out ||
+      !out.static_plots?.loud_parameter_trace_pngs ||
+      !this.modalModel
+    ) {
       return null;
     }
     const name = this.modalModel.name;
     const match = name.match(/^(.+?)\s*\((.+)\)$/);
     const groupName = match ? `${match[1]} ${match[2]}` : `${name} ${name}`;
-    return out.loud_parameter_trace_pngs[groupName]
-      ? `data:image/png;base64, ${out.loud_parameter_trace_pngs[groupName]}`
+    return out.static_plots.loud_parameter_trace_pngs[groupName]
+      ? `data:image/png;base64, ${out.static_plots.loud_parameter_trace_pngs[groupName]}`
       : null;
   }
 
@@ -486,21 +490,19 @@ class OutputStore {
 
   @action.bound viewAdditionalNestedPlots() {
     const out =
-      this.selectedOutput && this.selectedOutput["nested_dichotomous_plot_png"];
+      this.selectedOutput?.static_plots?.["nested_dichotomous_plot_png"];
     const dataUrl = out ? "data:image/png;base64," + out : "";
     this.openNestedModal(dataUrl);
   }
 
   @computed get LOUDPosteriorPlotContent() {
-    const out =
-      this.selectedOutput && this.selectedOutput["loud_posterior_plot_png"];
+    const out = this.selectedOutput?.static_plots?.["loud_posterior_plot_png"];
     const dataUrl = out ? "data:image/png;base64," + out : "";
     return dataUrl;
   }
 
   @computed get LOUDOverlayPlotContent() {
-    const out =
-      this.selectedOutput && this.selectedOutput["loud_overlay_plot_png"];
+    const out = this.selectedOutput?.static_plots?.["loud_overlay_plot_png"];
     const dataUrl = out ? "data:image/png;base64," + out : "";
     return dataUrl;
   }

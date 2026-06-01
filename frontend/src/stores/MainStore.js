@@ -342,20 +342,9 @@ class MainStore {
     // remove long image url strings from downloaded output.
     const arr = json?.outputs?.outputs;
     if (Array.isArray(arr)) {
-      const plot_keys = new Set([
-        "nested_dichotomous_plot_png",
-        "loud_posterior_plot_png",
-        "loud_overlay_plot_png",
-        "loud_parameter_trace_pngs",
-      ]);
-
       arr.forEach((item) => {
         if (item && typeof item === "object") {
-          for (const key of Object.keys(item)) {
-            if (plot_keys.has(key)) {
-              delete item[key];
-            }
-          }
+          delete item.static_plots;
         }
       });
     }

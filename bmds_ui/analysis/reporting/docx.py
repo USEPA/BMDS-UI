@@ -122,7 +122,7 @@ def build_docx(
             label = p.add_run("Dataset Name: ")
             label.bold = True
             p.add_run(dataset_name)
-            b64_png = output["nested_dichotomous_plot_png"]  # base64 string
+            b64_png = output.get("static_plots", {}).get("nested_dichotomous_plot_png")  # base64 string
             add_png_b64_to_docx(report.document, b64_png, width_in=6)
             report.document.add_paragraph(" ")
 
