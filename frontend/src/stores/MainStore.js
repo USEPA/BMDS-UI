@@ -49,7 +49,7 @@ class MainStore {
     }
     this.rootStore.modelsStore.setDefaultsByDatasetType(true);
     this.rootStore.optionsStore.setDefaultsByDatasetType(true);
-    this.rootStore.MCMCStore.setDefaults(true);
+    this.rootStore.mcmcStore.setDefaults(true);
     this.rootStore.dataStore.setDefaultsByDatasetType();
     this.rootStore.dataOptionStore.options = [];
     this.setInputsChangedFlag();
@@ -63,7 +63,7 @@ class MainStore {
   }
 
   @computed get getMCMCOptions() {
-    return this.rootStore.MCMCStore.optionsDict;
+    return this.rootStore.mcmcStore.optionsDict;
   }
 
   @computed get getEnabledDatasets() {
@@ -278,7 +278,7 @@ class MainStore {
     this.model_type = inputs.dataset_type;
     this.changeDatasetType(this.model_type);
     this.rootStore.optionsStore.setOptions(inputs.options);
-    this.rootStore.MCMCStore.setOptions(inputs.mcmc_options);
+    this.rootStore.mcmcStore.setOptions(inputs.mcmc_options);
     this.rootStore.dataStore.setDatasets(inputs.datasets);
     this.rootStore.dataOptionStore.setDatasetOptions(inputs.dataset_options);
     this.rootStore.modelsStore.setModels(inputs.models);

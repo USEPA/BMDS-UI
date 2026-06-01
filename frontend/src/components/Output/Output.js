@@ -19,6 +19,7 @@ import MultitumorDatasetTable from "./Multitumor/DatasetTable";
 import MultitumorPlot from "./Multitumor/MultitumorPlot";
 import MultitumorResultTable from "./Multitumor/ResultTable";
 import OptionSetTable from "./OptionSetTable";
+import McmcSetTable from "./MCMCSetTable";
 import CochranArmitageTable from "./CochranArmitageTable";
 import SelectModel from "./SelectModel";
 
@@ -131,13 +132,20 @@ class Output extends Component {
           <div className="col-lg-5">
             <div>{this.renderDataset()}</div>
           </div>
-          <div className="col-lg-4">
-            <div className="row g-3">
-              <div className="col-md-6">
+          <div className="col-lg-6">
+            <div className="row g-4">
+              <div className="col-md-4">
                 <OptionSetTable />
               </div>
+
+              {outputStore.selectedLOUDBayesian ? (
+                <div className="col-md-4">
+                  <McmcSetTable />
+                </div>
+              ) : null}
+
               {outputStore.isDichotomous && outputStore.cochranArmitage ? (
-                <div className="col-md-6">
+                <div className="col-md-4">
                   <CochranArmitageTable />
                 </div>
               ) : null}
@@ -197,7 +205,15 @@ class Output extends Component {
               />
             </div>
             <div className="col-lg-8" style={{ paddingTop: "40px" }}>
-              <h4 className="bg-custom">
+              <h4
+                style={{
+                  display: "inline-block",
+                  backgroundColor: "#ffeaa7",
+                  padding: "0 .5rem",
+                  margin: 0,
+                  borderRadius: 4,
+                }}
+              >
                 Posterior distribution of model-averaged BMD
               </h4>
               <img
@@ -208,7 +224,15 @@ class Output extends Component {
               />
             </div>
             <div className="col-lg-8" style={{ paddingTop: "40px" }}>
-              <h4 className="bg-custom">
+              <h4
+                style={{
+                  display: "inline-block",
+                  backgroundColor: "#ffeaa7",
+                  padding: "0 .5rem",
+                  margin: 0,
+                  borderRadius: 4,
+                }}
+              >
                 Overlay of model-specific and model-averaged BMD distributions
               </h4>
               <img

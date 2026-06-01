@@ -2,12 +2,12 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import Button from "../../common/Button";
-import { chainOptions } from "@/constants/MCMCConstants";
+import { chainOptions } from "@/constants/mcmcConstants";
 
 import SelectInput from "../../common/SelectInput";
 import IntegerInput from "../../common/IntegerInput";
 
-const MCMCForm = (props) => {
+const McmcForm = (props) => {
   return (
     <tr className="form-group">
       <td>
@@ -52,8 +52,8 @@ const MCMCForm = (props) => {
   );
 };
 
-MCMCForm.propTypes = {
-  MCMCStore: PropTypes.object,
+McmcForm.propTypes = {
+  mcmcStore: PropTypes.object,
   options: PropTypes.object.isRequired,
 };
-export default MCMCForm;
+export default McmcForm;

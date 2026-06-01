@@ -4,7 +4,7 @@ import LogicStore from "./LogicStore";
 import MainStore from "./MainStore";
 import ModelsStore from "./ModelsStore";
 import OptionsStore from "./OptionsStore";
-import MCMCStore from "./MCMCStore";
+import mcmcStore from "./mcmcStore";
 import OutputStore from "./OutputStore";
 
 class RootStore {
@@ -13,7 +13,7 @@ class RootStore {
     this.dataStore = new DataStore(this);
     this.dataOptionStore = new DatasetModelOptionStore(this);
     this.optionsStore = new OptionsStore(this);
-    this.MCMCStore = new MCMCStore(this);
+    this.mcmcStore = new mcmcStore(this);
     this.modelsStore = new ModelsStore(this);
     this.outputStore = new OutputStore(this);
     this.logicStore = new LogicStore(this);

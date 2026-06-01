@@ -65,6 +65,12 @@ def complete_continuous():
                 "stdevs": [3, 4, 5, 6, 7],
             }
         ],
+        "mcmc_options": {
+            "burnin": 5000, 
+            "iterations_per_chain": 5000, 
+            "num_chains": 1,
+            "seed": 18
+        },
         "options": [
             {
                 "bmr_type": 2,
@@ -115,6 +121,12 @@ def complete_continuous_individual():
                 ],
             }
         ],
+        "mcmc_options": {
+            "burnin": 5000, 
+            "iterations_per_chain": 5000, 
+            "num_chains": 1,
+            "seed": 18
+        },
         "options": [
             {
                 "bmr_type": 2,
@@ -150,6 +162,12 @@ def complete_dichotomous():
                 "incidences": [0, 0, 1, 4, 11],
             }
         ],
+        "mcmc_options": {
+            "burnin": 5000, 
+            "iterations_per_chain": 5000, 
+            "num_chains": 1,
+            "seed": 18
+        },
         "options": [{"bmr_type": 1, "bmr_value": 0.1, "confidence_level": 0.95}],
         "dataset_options": [{"dataset_id": 123, "enabled": True, "degree": 0}],
         "recommender": RecommenderSettings.build_default().model_dump(),

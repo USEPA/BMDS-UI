@@ -28,7 +28,7 @@ class ContinuousOption(BaseModel):
     confidence_level: float = Field(gt=0.5, lt=1)
     dist_type: DistType
 
-class MCMCOption(BaseModel):
+class mcmcOption(BaseModel):
     seed: int = Field(ge=0, le=100000)
     num_chains: int = Field(ge=1, le=4)
     iterations_per_chain: int = Field(ge=0, le=100000)
@@ -70,4 +70,4 @@ def validate_options(dataset_type: str, data: Any):
     pydantic_validate({"options": data}, schema)
 
 def validate_mcmc_options(data: Any):
-    pydantic_validate(data, MCMCOption)
+    pydantic_validate(data, mcmcOption)

@@ -174,7 +174,7 @@ class AnalysisSession(NamedTuple):
         dataset = build_dataset(inputs["datasets"][dataset_index])
         options = inputs["options"][option_index]
         dataset_options = inputs["dataset_options"][dataset_index]
-        mcmc_options = inputs["mcmc_options"]
+        mcmc_options = inputs.get("mcmc_options", {})
         return cls(
             dataset_index=dataset_index,
             option_index=option_index,

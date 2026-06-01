@@ -27,6 +27,7 @@ import ModelOptionsTable from "./ModelOptionsTable";
 import ModelParameters from "./ModelParameters";
 import ParameterPriorTable from "./ParameterPriorTable";
 import Summary from "./Summary";
+import McmcOptionsTable from "./McmcOptionsTable";
 
 const getCdfData = function (model) {
   return {
@@ -46,6 +47,7 @@ class ModelBody extends Component {
       model = outputStore.modalModel,
       dtype = dataset.dtype,
       priorClass = model.settings.priors.prior_class,
+      isLOUD = priorClass === 3,
       isDichotomous = dtype == dc.Dtype.DICHOTOMOUS,
       isContinuous =
         dtype == dc.Dtype.CONTINUOUS || dtype == dc.Dtype.CONTINUOUS_INDIVIDUAL,
@@ -59,50 +61,66 @@ class ModelBody extends Component {
     return (
       <Modal.Body>
         <Row>
-          <Col xl={4}>
+          <Col xl={isLOUD ? 4 : 5}>
             <InfoTable />
           </Col>
-          <Col xl={3}>
-            <ModelOptionsTable dtype={dtype} model={model} />
-          </Col>
+
           <Col xl={5}>
-            <ParameterPriorTable
-              parameters={model.results.parameters}
-              priorClass={priorClass}
-            />
+            {isLOUD ? (
+              <ParameterPriorTable
+                parameters={model.results.parameters}
+                priorClass={priorClass}
+              />
+            ) : (
+              <ModelOptionsTable dtype={dtype} model={model} />
+            )}
           </Col>
+
+          {isLOUD ? (
+            <Col xl={3}>
+              <McmcOptionsTable model={model} />
+            </Col>
+          ) : null}
+
           <Col xl={4}>
+            {isLOUD && <ModelOptionsTable dtype={dtype} model={model} />}
             <Summary />
           </Col>
+
           <Col xl={8}>
             <DoseResponsePlot
               layout={outputStore.drIndividualPlotLayout}
               data={outputStore.drIndividualPlotData}
             />
           </Col>
-          <Col xl={priorClass === 3 ? 12 : 8}>
+
+          <Col xl={isLOUD ? 12 : 8}>
             <ModelParameters
               isNestedDichotomous={false}
               model={model}
-              isLOUD={priorClass === 3}
+              isLOUD={isLOUD}
               LOUDParameters={LOUDParameters}
             />
           </Col>
+
           <Col xl={isDichotomous ? 8 : 12}>
             <GoodnessFit store={outputStore} />
           </Col>
-          {isDichotomous && priorClass !== 3 ? (
+
+          {isDichotomous && !isLOUD ? (
             <Col xl={8}>
               <DichotomousDeviance store={outputStore} />
             </Col>
           ) : null}
-          {isContinuous && priorClass !== 3 ? (
+
+          {isContinuous && !isLOUD ? (
             <Col xl={8}>
               <ContinuousDeviance store={outputStore} />
               <ContinuousTestOfInterest store={outputStore} />
             </Col>
           ) : null}
         </Row>
+
         <Row>
           <Col xl={4} style={{ maxHeight: "50vh", overflowY: "scroll" }}>
             <CDFTable bmd_dist={cdfData} />
@@ -111,7 +129,7 @@ class ModelBody extends Component {
             <CDFPlot dataset={dataset} cdf={cdfData} {...getCdfData(model)} />
           </Col>
         </Row>
-        {priorClass === 3 ? (
+        {isLOUD ? (
           <Row className="justify-content-center">
             <Col xl={12}>
               {outputStore.LOUDParameterTracePng ? (
@@ -155,6 +173,7 @@ class ModelAverageBody extends Component {
         <Row>
           <Col xl={3}>
             <MaBenchmarkDose results={model.results} />
+            {isLOUD ? <McmcOptionsTable model={model} /> : null}
           </Col>
           <Col xl={9}>
             <DoseResponsePlot

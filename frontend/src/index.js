@@ -18,7 +18,7 @@ const Root = (
     mainStore={rootStore.mainStore}
     outputStore={rootStore.outputStore}
     optionsStore={rootStore.optionsStore}
-    MCMCStore={rootStore.MCMCStore}
+    mcmcStore={rootStore.mcmcStore}
     modelsStore={rootStore.modelsStore}
     logicStore={rootStore.logicStore}
   >

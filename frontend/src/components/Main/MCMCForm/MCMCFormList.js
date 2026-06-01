@@ -3,14 +3,14 @@ import { inject, observer } from "mobx-react";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 
-import MCMCForm from "./MCMCForm";
+import McmcForm from "./McmcForm";
 
-@inject("MCMCStore")
+@inject("mcmcStore")
 @observer
-class MCMCFormList extends Component {
+class McmcFormList extends Component {
   render() {
-    const { MCMCStore } = this.props,
-      optionsDict = toJS(MCMCStore.optionsDict);
+    const { mcmcStore } = this.props,
+      optionsDict = toJS(mcmcStore.optionsDict);
     return (
       <div>
         <div className="panel panel-default">
@@ -28,11 +28,11 @@ class MCMCFormList extends Component {
                 </tr>
               </thead>
               <tbody>
-                <MCMCForm
-                  key={`${MCMCStore.resetCount}`}
+                <McmcForm
+                  key={`${mcmcStore.resetCount}`}
                   options={optionsDict}
-                  saveOptions={MCMCStore.saveOptions}
-                  setDefaults={() => MCMCStore.setDefaults(true)}
+                  saveOptions={mcmcStore.saveOptions}
+                  setDefaults={() => mcmcStore.setDefaults(true)}
                 />
               </tbody>
             </table>
@@ -43,8 +43,8 @@ class MCMCFormList extends Component {
   }
 }
 
-MCMCFormList.propTypes = {
-  MCMCStore: PropTypes.object,
+McmcFormList.propTypes = {
+  mcmcStore: PropTypes.object,
 };
 
-export default MCMCFormList;
+export default McmcFormList;

@@ -23,18 +23,8 @@ class FloatInput extends Component {
           disabled={disabled}
           className={className}
           type="number"
-          defaultValue={value ?? ""}
-          onBlur={(e) => {
-            const raw = e.target.value.trim();
-            if (raw === "") {
-              onChange(null);
-              return;
-            }
-            const parsed = parseFloat(e.target.value);
-            if (_.isFinite(parsed)) {
-              onChange(parsed);
-            }
-          }}
+          value={value}
+          onChange={(e) => onChange(parseFloat(e.target.value))}
           onKeyDown={(e) => {
             if (e.key === "ArrowUp" || e.key === "ArrowDown") {
               e.preventDefault();

@@ -1,14 +1,14 @@
 import _ from "lodash";
 import { action, observable } from "mobx";
 
-import * as constant from "@/constants/MCMCConstants";
+import * as constant from "@/constants/mcmcConstants";
 
 const createOption = () => {
   const option = _.cloneDeep(constant.options);
   return option;
 };
 
-class MCMCStore {
+class mcmcStore {
   constructor(rootStore) {
     this.rootStore = rootStore;
   }
@@ -34,4 +34,4 @@ class MCMCStore {
   }
 }
 
-export default MCMCStore;
+export default mcmcStore;
