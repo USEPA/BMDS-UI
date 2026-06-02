@@ -24,7 +24,10 @@ class FloatInput extends Component {
           className={className}
           type="number"
           value={value}
-          onChange={(e) => onChange(parseFloat(e.target.value))}
+          onChange={(e) => {
+            const value = parseFloat(e.target.value);
+            onChange(_.isFinite(value) ? value : "");
+          }}
           onKeyDown={(e) => {
             if (e.key === "ArrowUp" || e.key === "ArrowDown") {
               e.preventDefault();
@@ -40,7 +43,7 @@ FloatInput.propTypes = {
   id: PropTypes.string,
   label: PropTypes.string,
   className: PropTypes.string,
-  value: PropTypes.number,
+  value: PropTypes.any.isRequired,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
 };

@@ -244,8 +244,8 @@ class DataStore {
 
   @action.bound saveDatasetCellItem(key, value, rowIdx) {
     let dataset = this.selectedDataset;
-    if (value === null) {
-      dataset[key][rowIdx] = null;
+    if (value === null || value === "") {
+      dataset[key][rowIdx] = "";
     } else {
       const parsedValue = parseFloat(value);
       if (_.isFinite(parsedValue)) {
