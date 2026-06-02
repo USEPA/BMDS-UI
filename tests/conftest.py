@@ -68,7 +68,7 @@ def complete_continuous():
         "mcmc_options": {
             "burnin": 5000, 
             "iterations_per_chain": 5000, 
-            "num_chains": 1,
+            "n_chains": 1,
             "seed": 18
         },
         "options": [
@@ -124,7 +124,7 @@ def complete_continuous_individual():
         "mcmc_options": {
             "burnin": 5000, 
             "iterations_per_chain": 5000, 
-            "num_chains": 1,
+            "n_chains": 1,
             "seed": 18
         },
         "options": [
@@ -165,7 +165,7 @@ def complete_dichotomous():
         "mcmc_options": {
             "burnin": 5000, 
             "iterations_per_chain": 5000, 
-            "num_chains": 1,
+            "n_chains": 1,
             "seed": 18
         },
         "options": [{"bmr_type": 1, "bmr_value": 0.1, "confidence_level": 0.95}],

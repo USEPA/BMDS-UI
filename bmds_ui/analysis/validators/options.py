@@ -29,10 +29,10 @@ class ContinuousOption(BaseModel):
     dist_type: DistType
 
 class mcmcOption(BaseModel):
-    seed: int = Field(ge=0, le=100000)
-    num_chains: int = Field(ge=1, le=4)
-    iterations_per_chain: int = Field(ge=0, le=100000)
-    burnin: int = Field(ge=5, le=100000)
+    seed: int = Field(ge=0, le=2_147_483_647)
+    n_chains: int = Field(ge=1, le=4)
+    iterations_per_chain: int = Field(ge=10_000, le=50_000)
+    burnin: int = Field(ge=1_000, le=100000)
 
 class NestedDichotomousOption(BaseModel):
     bmr_type: DichotomousRiskType

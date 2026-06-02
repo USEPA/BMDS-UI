@@ -1,6 +1,6 @@
 export const options = {
-    seed: 18,
-    num_chains: 1,
+    seed: 0,
+    n_chains: 1,
     iterations_per_chain: 50000,
     burnin: 5000,
   },

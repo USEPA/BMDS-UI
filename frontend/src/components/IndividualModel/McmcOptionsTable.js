@@ -10,8 +10,8 @@ class McmcOptionsTable extends Component {
   render() {
     const { model } = this.props,
       data = [
-        ["Seed", "FUTURE"],
-        ["# Chains", "FUTURE"],
+        ["Seed", ff(model.settings.seed)],
+        ["# Chains", ff(model.settings.n_chains)],
         ["# Iterations per Chain", ff(model.settings.samples)],
         ["Burn In", ff(model.settings.burnin)],
       ];

@@ -30,8 +30,8 @@ const McmcForm = (props) => {
           choices={chainOptions.map((option) => {
             return { value: option.value, text: option.label };
           })}
-          onChange={(value) => props.saveOptions("num_chains", parseInt(value))}
-          value={props.options.num_chains}
+          onChange={(value) => props.saveOptions("n_chains", parseInt(value))}
+          value={props.options.n_chains}
         />
       </td>
 

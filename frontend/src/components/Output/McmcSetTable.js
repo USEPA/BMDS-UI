@@ -14,7 +14,7 @@ class McmcSetTable extends Component {
       { optionsDict } = mcmcStore,
       rows = [
         ["Seed", ff(optionsDict.seed)],
-        ["# Chains", ff(optionsDict.num_chains)],
+        ["# Chains", ff(optionsDict.n_chains)],
         ["# Iterations per chain", ff(optionsDict.iterations_per_chain)],
         ["Burn In", ff(optionsDict.burnin)],
       ];

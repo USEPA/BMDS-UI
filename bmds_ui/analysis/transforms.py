@@ -48,6 +48,8 @@ def build_model_settings(
             bmr_type=options["bmr_type"],
             samples=mcmc_options["iterations_per_chain"],
             burnin=mcmc_options["burnin"],
+            seed=mcmc_options["seed"],
+            n_chains=mcmc_options["n_chains"],
             degree=dataset_options["degree"],
             priors=prior_cls,
         )
@@ -67,6 +69,8 @@ def build_model_settings(
                 bmr_type=options["bmr_type"],
                 samples=mcmc_options["iterations_per_chain"],
                 burnin=mcmc_options["burnin"],
+                seed=mcmc_options["seed"],
+                n_chains=mcmc_options["n_chains"],
                 disttype=model["dist_type"], # dist_type is from model inputs, not options set inputs
                 degree=dataset_options["degree"],
                 is_increasing=is_increasing_map[dataset_options["adverse_direction"]],
