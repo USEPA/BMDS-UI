@@ -2,7 +2,7 @@ from typing import Any
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 import pybmds
 from pybmds.constants import DistType
@@ -14,6 +14,10 @@ from ...common.validation import pydantic_validate
 
 max_length = 1000 if settings.IS_DESKTOP else 6
 
+MAX_TOTAL_ITERATIONS = 50_000
+
+def get_max_iterations(n_chains: int) -> int:
+    return MAX_TOTAL_ITERATIONS // n_chains
 
 class DichotomousOption(BaseModel):
     bmr_type: DichotomousRiskType
@@ -31,8 +35,17 @@ class ContinuousOption(BaseModel):
 class mcmcOption(BaseModel):
     seed: int = Field(ge=0, le=2_147_483_647)
     n_chains: int = Field(ge=1, le=4)
-    iterations_per_chain: int = Field(ge=10_000, le=50_000)
-    burnin: int = Field(ge=1_000, le=100000)
+    iterations_per_chain: int = Field(ge=10_000)
+    burnin: int = Field(ge=1_000, le=100_000)
+
+    @model_validator(mode="after")
+    def iterations_per_chain_max(self):
+        max_iterations = get_max_iterations(self.n_chains)
+        if max_iterations and self.iterations_per_chain > max_iterations:
+            raise ValueError(
+                f"With {self.n_chains} chain(s), iterations per chain cannot exceed {max_iterations:,}."
+            )
+        return self
 
 class NestedDichotomousOption(BaseModel):
     bmr_type: DichotomousRiskType
