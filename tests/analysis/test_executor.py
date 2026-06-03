@@ -151,25 +151,25 @@ class TestAnalysisSession:
         assert session.toxicr_bayesian is None
         assert session.loud_bayesian is None
 
-    # disttype 3 Linear and power are not added
+    # disttype 3 Hill, Linear, Polynomial, and Power are not added
     def test_disttype(self, complete_continuous):
         data = deepcopy(complete_continuous)
         data["models"] = {
-            "frequentist_restricted": ["Exponential-M3", "Exponential-M5", "Hill", "Linear", "Power"],
+            "frequentist_restricted": ["Exponential-M3", "Exponential-M5", "Hill", "Linear", "Polynomial", "Power"],
         }
 
         # normal
         data["options"][0]["dist_type"] = 1
         session = AnalysisSession.create(data, 0, 0)
-        assert len(session.frequentist.models) == 5
+        assert len(session.frequentist.models) == 8
         names = [model.name() for model in session.frequentist.models]
-        assert names == ["Exponential 3", "Exponential 5", "Hill", "Linear", "Power"]
+        assert names == ['Exponential 3', 'Exponential 5', 'Hill', 'Linear', 'Polynomial 2', 'Polynomial 3', 'Polynomial 4', 'Power']
 
         data["options"][0]["dist_type"] = 2
         session = AnalysisSession.create(data, 0, 0)
-        assert len(session.frequentist.models) == 5
+        assert len(session.frequentist.models) == 8
         names = [model.name() for model in session.frequentist.models]
-        assert names == ["Exponential 3", "Exponential 5", "Hill", "Linear", "Power"]
+        assert names == ['Exponential 3', 'Exponential 5', 'Hill', 'Linear', 'Polynomial 2', 'Polynomial 3', 'Polynomial 4', 'Power']
 
         # lognormal
         data["options"][0]["dist_type"] = 3

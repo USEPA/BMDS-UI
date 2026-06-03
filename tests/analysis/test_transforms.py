@@ -52,3 +52,31 @@ class TestOptions:
         assert pytest.approx(res.alpha) == 0.05
         assert res.degree == 1
 
+    def test_mcmc_options(self):
+        options = {
+            "bmr_type": 0,
+            "bmr_value": 0.15,
+            "confidence_level": 0.95,
+        }
+
+        mcmc_options = {
+            "iterations_per_chain": 50000,
+            "burnin": 5000,
+            "seed": 0,
+            "n_chains": 1
+        }
+
+        dataset_options = {"dataset_id": 123, "enabled": True, "degree": 1}
+        res = transforms.build_model_settings(
+            dataset_type=pybmds.constants.Dtype.DICHOTOMOUS,
+            prior_class=transforms.PriorEnum.loud_bayesian,
+            options=options,
+            dataset_options=dataset_options,
+            model=None, 
+            mcmc_options=mcmc_options
+        )                    
+        assert res.samples == 50000
+        assert res.burnin == 5000
+        assert res.seed == 0
+        assert res.n_chains == 1    
+

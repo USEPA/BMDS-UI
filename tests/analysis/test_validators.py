@@ -237,7 +237,30 @@ class TestModelValidation:
         }
         with pytest.raises(ValidationError) as err:
             validators.validate_models(dtype, data)
-        assert "Prior weight in toxicr bayesian does not sum to 1 ± 0.005" in str(err.value)
+        assert "Prior weight in ToxicR Bayesian does not sum to 1 ± 0.005" in str(err.value)
+
+        # assert loud duplicates
+        data = {
+            "loud_bayesian": [
+                {"model": probit, "prior_weight": 0.3},
+                {"model": logprobit, "prior_weight": 0.4},
+                {"model": logprobit, "prior_weight": 0.3},
+            ]
+        }
+        with pytest.raises(ValidationError) as err:
+            validators.validate_models(dtype, data)
+        assert "Model/dist_type combinations in loud_bayesian are not unique" in str(err.value)
+
+        # assert toxicr bayesian prior_weight sum
+        data = {
+            "loud_bayesian": [
+                {"model": probit, "prior_weight": 0.5},
+                {"model": logprobit, "prior_weight": 0.49},
+            ]
+        }
+        with pytest.raises(ValidationError) as err:
+            validators.validate_models(dtype, data)
+        assert "Prior weight in LOUD Bayesian does not sum to 1 ± 0.005" in str(err.value)
 
     def test_continuous(self):
         dtype = Dtype.CONTINUOUS
@@ -277,32 +300,32 @@ class TestModelValidation:
             )
         assert "At least one model must be selected" in str(err)
 
-        # assert toxicr bayesian duplicates
+        # assert loud bayesian duplicates
         with pytest.raises(ValidationError) as err:
             validators.validate_models(
                 dtype,
                 {
-                    "toxicr_bayesian": [
-                        {"model": power, "prior_weight": 0.3},
-                        {"model": linear, "prior_weight": 0.4},
-                        {"model": linear, "prior_weight": 0.3},
+                    "loud_bayesian": [
+                        {"model": power, "prior_weight": 0.3, "dist_type": 1},
+                        {"model": linear, "prior_weight": 0.4, "dist_type": 1},
+                        {"model": linear, "prior_weight": 0.3, "dist_type": 1},
                     ]
                 },
             )
-        assert "Models in toxicr_bayesian are not unique" in str(err)
+        assert "Model/dist_type combinations in loud_bayesian are not unique" in str(err.value)
 
-        # assert bayesian prior_weight sum
+        # assert loud bayesian prior_weight sum
         with pytest.raises(ValidationError) as err:
             validators.validate_models(
                 dtype,
                 {
-                    "toxicr_bayesian": [
-                        {"model": power, "prior_weight": 0.5},
-                        {"model": linear, "prior_weight": 0.49},
+                    "loud_bayesian": [
+                        {"model": power, "prior_weight": 0.5, "dist_type": 1},
+                        {"model": linear, "prior_weight": 0.49, "dist_type": 1},
                     ]
                 },
             )
-        assert "Prior weight in toxicr bayesian does not sum to 1 ± 0.005" in str(err.value)
+        assert "Prior weight in LOUD Bayesian does not sum to 1 ± 0.005" in str(err.value)
 
 
 class TestOptionSetValidation:
