@@ -1,8 +1,8 @@
-from typing import Any
+from typing import Any, Annotated
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, AfterValidator
 from pydantic_core import PydanticCustomError
 
 import pybmds
@@ -20,18 +20,84 @@ MAX_TOTAL_ITERATIONS = 50_000
 def get_max_iterations(n_chains: int) -> int:
     return MAX_TOTAL_ITERATIONS // n_chains
 
+# VALIDATION LIMITS AND ERROR MESSAGES ======================================================
+def _check_confidence_level(v: float) -> float:
+    if not (0.5 < v < 1):
+        raise PydanticCustomError(
+            "confidence_level_range",
+            "Confidence level must be between 0.5 and 1 (exclusive); got {value}.",
+            {"value": v}
+        )
+    return v
+
+ConfidenceLevel = Annotated[float, AfterValidator(_check_confidence_level)]
+
+def _check_tail_probability(v: float) -> float:
+    if not (0 < v < 1):
+        raise PydanticCustomError(
+            "tail_probability_range",
+            "Tail Probability must be between 0 and 1 (exclusive); got {value}.",
+            {"value": v}
+        )
+    return v
+
+TailProbability = Annotated[float, AfterValidator(_check_tail_probability)]
+
+def _check_bmr_value(v: float) -> float:
+    if not (0 < v):
+        raise PydanticCustomError(
+            "bmr",
+            "BMR must be greater than 0; got {value}.",
+            {"value": v}
+        )
+    return v
+
+BmrValue = Annotated[float, AfterValidator(_check_bmr_value)]
+
+def _check_bootstrap_iterations(v: int) -> int:
+    if not (10 <= v <= 10_000):
+        raise PydanticCustomError(
+            "bootstrap_iterations_range",
+            "Bootstrap Interations must be between 10 and 10,000 (inclusive); got {value}.",
+            {"value": v}
+        )
+    return v
+
+BootstrapIterations = Annotated[int, AfterValidator(_check_bootstrap_iterations)]
+
+def _check_bootstrap_seed(v: int) -> int:
+    if not (0 <= v <= 1_000):
+        raise PydanticCustomError(
+            "bootstrap_seed_range",
+            "Bootstrap Seed must be between 1 and 1,000 (inclusive); got {value}.",
+            {"value": v}
+        )
+    return v
+
+BootstrapSeed = Annotated[int, AfterValidator(_check_bootstrap_seed)]
+
+# =========================================================================================
+
 class DichotomousOption(BaseModel):
     bmr_type: DichotomousRiskType
-    bmr_value: float
-    confidence_level: float = Field(gt=0.5, lt=1)
-
+    bmr_value: BmrValue
+    confidence_level: ConfidenceLevel
 
 class ContinuousOption(BaseModel):
     bmr_type: ContinuousRiskType
-    bmr_value: float
-    tail_probability: float = Field(gt=0, lt=1)
-    confidence_level: float = Field(gt=0.5, lt=1)
+    bmr_value: BmrValue
+    tail_probability: TailProbability
+    confidence_level: ConfidenceLevel
     dist_type: DistType
+
+class NestedDichotomousOption(BaseModel):
+    bmr_type: DichotomousRiskType
+    bmr_value: BmrValue
+    confidence_level: ConfidenceLevel
+    litter_specific_covariate: LitterSpecificCovariate
+    bootstrap_iterations: BootstrapIterations
+    bootstrap_seed: BootstrapSeed
+    estimate_background: bool
 
 class mcmcOption(BaseModel):
     seed: int = Field(ge=0, le=2_147_483_647)
@@ -51,23 +117,11 @@ class mcmcOption(BaseModel):
             )
         return v
 
-class NestedDichotomousOption(BaseModel):
-    bmr_type: DichotomousRiskType
-    bmr_value: float
-    confidence_level: float = Field(gt=0.5, lt=1)
-    litter_specific_covariate: LitterSpecificCovariate
-    bootstrap_iterations: int = Field(ge=10, le=10_000)
-    bootstrap_seed: int = Field(ge=0, le=1_000)
-    estimate_background: bool
-
-
 class DichotomousOptions(BaseModel):
     options: list[DichotomousOption] = Field(min_length=1, max_length=max_length)
 
-
 class ContinuousOptions(BaseModel):
     options: list[ContinuousOption] = Field(min_length=1, max_length=max_length)
-
 
 class NestedDichotomousOptions(BaseModel):
     options: list[NestedDichotomousOption] = Field(min_length=1, max_length=max_length)

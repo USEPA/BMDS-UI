@@ -4,7 +4,29 @@ from typing import Annotated, Any, ClassVar, Literal
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator, AfterValidator
+from pydantic_core import PydanticCustomError
+
+def _check_non_negative(v: float) -> float:
+    if v < 0:
+        raise PydanticCustomError(
+            "non_negative", 
+            "Value must be non-negative; got {value}.",
+            {"value": v}
+        )
+    return v
+
+def _check_positive(v: float) -> float:
+    if v <= 0:
+        raise PydanticCustomError(
+            "positive", 
+            "Value must be positive; got {value}.",
+            {"value": v}
+        )
+    return v
+
+NonNegativeFloat = Annotated[float, AfterValidator(_check_non_negative)]
+PositiveFloat = Annotated[float, AfterValidator(_check_positive)]
 
 import pybmds
 from pybmds.constants import Dtype
@@ -67,11 +89,18 @@ class DatasetValidator(BaseModel):
 
 class MaxDichotomousDatasetSchema(DichotomousDatasetSchema):
     MAX_N: ClassVar = 30
+    doses: list[NonNegativeFloat]
+    ns: list[PositiveFloat]
+    incidences: list[NonNegativeFloat]
 
 
 class MaxContinuousDatasetSchema(ContinuousDatasetSchema):
     MAX_N: ClassVar = 30
     dtype: Literal[Dtype.CONTINUOUS]
+    doses: list[NonNegativeFloat]
+    ns: list[PositiveFloat]
+    means: list[float]
+    stdevs: list[NonNegativeFloat]
 
     @field_validator("ns")
     @classmethod
@@ -85,6 +114,7 @@ class MaxContinuousIndividualDatasetSchema(ContinuousIndividualDatasetSchema):
     MIN_N: ClassVar = 5
     MAX_N: ClassVar = 1000
     dtype: Literal[Dtype.CONTINUOUS_INDIVIDUAL]
+    doses: list[NonNegativeFloat]
 
     @field_validator("doses")
     @classmethod
@@ -96,6 +126,9 @@ class MaxContinuousIndividualDatasetSchema(ContinuousIndividualDatasetSchema):
 
 class MaxNestedDichotomousDatasetSchema(NestedDichotomousDatasetSchema):
     MAX_N: ClassVar = 1000
+    doses: list[NonNegativeFloat]
+    litter_ns: list[PositiveFloat]
+    incidences: list[NonNegativeFloat]
 
 
 class DichotomousDatasets(DatasetValidator):
