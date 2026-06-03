@@ -93,7 +93,6 @@ class OutputStore {
     if (!_.isObject(outputs)) {
       return null;
     }
-    console.log(outputs[this.selectedOutputIndex]);
     return outputs[this.selectedOutputIndex];
   }
 

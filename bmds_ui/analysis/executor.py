@@ -210,7 +210,7 @@ class AnalysisSession(NamedTuple):
                     try:
                         plt.close(fig)
                     except Exception:
-                        pass     
+                        pass           
 
         if self.toxicr_bayesian:
             if self.toxicr_bayesian.dataset.dtype == pybmds.constants.Dtype.DICHOTOMOUS:

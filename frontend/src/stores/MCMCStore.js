@@ -20,6 +20,7 @@ class mcmcStore {
     if (_.isEmpty(this.optionsDict) || force) {
       this.optionsDict = createOption();
       this.resetCount++;
+      this.rootStore.mainStore.setInputsChangedFlag();
     }
   }
 
@@ -31,6 +32,9 @@ class mcmcStore {
   @action.bound setOptions(options) {
     this.optionsDict = options ?? {};
     this.setDefaults();
+    if (_.isEmpty(options)) {
+      this.resetCount++;
+    }
   }
 }
 

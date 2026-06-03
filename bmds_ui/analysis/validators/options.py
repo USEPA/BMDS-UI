@@ -2,7 +2,8 @@ from typing import Any
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator
+from pydantic_core import PydanticCustomError
 
 import pybmds
 from pybmds.constants import DistType
@@ -38,14 +39,17 @@ class mcmcOption(BaseModel):
     iterations_per_chain: int = Field(ge=10_000)
     burnin: int = Field(ge=1_000, le=100_000)
 
-    @model_validator(mode="after")
-    def iterations_per_chain_max(self):
-        max_iterations = get_max_iterations(self.n_chains)
-        if max_iterations and self.iterations_per_chain > max_iterations:
-            raise ValueError(
-                f"With {self.n_chains} chain(s), iterations per chain cannot exceed {max_iterations:,}."
+    @field_validator("iterations_per_chain", mode="after")
+    @classmethod
+    def iterations_per_chain_max(cls, v, info):
+        n_chains = info.data.get("n_chains")
+        max_iterations = get_max_iterations(n_chains) if n_chains is not None else None
+        if max_iterations is not None and v > max_iterations:
+            raise PydanticCustomError(
+                "iterations_per_chain_max",
+                f"With {n_chains} chain(s), iterations per chain cannot exceed {max_iterations:,}."
             )
-        return self
+        return v
 
 class NestedDichotomousOption(BaseModel):
     bmr_type: DichotomousRiskType

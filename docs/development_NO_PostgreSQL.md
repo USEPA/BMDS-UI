@@ -126,9 +126,8 @@ Open bmds/vcpkg.json and add the pybind11 dependency
 }
 ```
 
-Install all required C++ dependencies into the bmds folder
-_This will take ~1 hour the first time_
-_Repeat this step if dependencies change_
+Install all required C++ dependencies into the bmds folder.
+_This will take ~1 hour the first time. Repeat this step if dependencies change._
 
 ```bash
 cd "C:\Users\srizwan\BMDS\bmds"
@@ -137,7 +136,7 @@ cd "C:\Users\srizwan\BMDS\bmds"
 
 ```
 
-Set environmental varibales
+Set environmental varibales.
 _Repeat this step every time a fresh Developer Command Prompt is opened_
 
 ```bash
@@ -147,8 +146,8 @@ set VCPKG_TARGET_TRIPLET=x64-windows
 set CMAKE_TOOLCHAIN_FILE=C:\Users\srizwan\BMDS\vcpkg\scripts\buildsystems\vcpkg.cmake
 ```
 
-Activate the venv and install bmds
-_This step needs to be repeated when bmds source code changes_
+Activate the venv and install bmds.
+_This step needs to be repeated when bmdscore source code changes._
 
 ```bash
 cd "C:\Users\srizwan\BMDS\bmds-ui"

@@ -236,6 +236,7 @@ class ModelsStore {
     if (modelIndex >= 0) {
       this.models[type][modelIndex].prior_weight = parseFloat(value);
     }
+    this.rootStore.mainStore.setInputsChangedFlag();
   }
 }
 

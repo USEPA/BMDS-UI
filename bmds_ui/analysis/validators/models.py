@@ -2,7 +2,8 @@ from typing import Any
 
 import numpy as np
 from django.core.exceptions import ValidationError
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, field_validator
+from pydantic_core import PydanticCustomError
 
 from pybmds.constants import Dtype, ModelClass, Models
 
@@ -97,16 +98,17 @@ class ModelListSchema(BaseModel):
 
     @staticmethod
     def _ensure_sum_to_one(seq, err_msg):
-        if len(seq) > 0:
+        if seq:
             weights = sum(b.prior_weight for b in seq)
             if not np.isclose(weights, 1.0, atol=0.005):
-                raise ValueError(err_msg)
+                raise PydanticCustomError('weights_sum', err_msg)
 
-    @model_validator(mode="after")
-    def bayesian_weights(self):
-        self._ensure_sum_to_one(self.loud_bayesian, "Prior weight in loud bayesian does not sum to 1 ± 0.005") 
-        self._ensure_sum_to_one(self.toxicr_bayesian, "Prior weight in toxicr bayesian does not sum to 1 ± 0.005") 
-        return self
+    @field_validator("loud_bayesian", "toxicr_bayesian", mode="after")
+    @classmethod
+    def check_bayes(cls, v, info):
+        label = "LOUD" if info.field_name == "loud_bayesian" else "ToxicR"
+        cls._ensure_sum_to_one(v, f"Prior weight in {label} Bayesian does not sum to 1 ± 0.005")
+        return v
     
     @model_validator(mode="after")
     def uniqueness(self):
