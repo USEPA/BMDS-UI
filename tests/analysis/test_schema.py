@@ -248,7 +248,7 @@ class TestCochranArmitage:
             
         # bad column names 
         settings = deepcopy(cochranarmitage_dataset)
-        settings["dataset"]= "doses,ns,BAD\n0,20,0\n10,20,0\n50,20,1\n150,20,4\n400,20,11",
+        settings["dataset"] = "doses,ns,BAD\n0,20,0\n10,20,0\n50,20,1\n150,20,4\n400,20,11"
         with pytest.raises(ValidationError, match="Bad column names"): 
             CochranArmitage.model_validate(settings) 
             
@@ -266,7 +266,7 @@ class TestCochranArmitage:
             
         # negative doses 
         settings = deepcopy(cochranarmitage_dataset) 
-        settings["dataset"] = settings["dataset"].replace("0,20,0", "-1,20,0") 
+        settings["dataset"] = settings["dataset"].replace("0,20,0\n10,20,0", "-1,20,0\n10,20,0") 
         with pytest.raises(ValidationError, match="`doses` must be ≥ 0"): 
             CochranArmitage.model_validate(settings) 
             
@@ -278,13 +278,13 @@ class TestCochranArmitage:
             
         # ns must be > 0 
         settings = deepcopy(cochranarmitage_dataset) 
-        settings["dataset"] = settings["dataset"].replace("0,20,0", "0,0,0") 
+        settings["dataset"] = settings["dataset"].replace("0,20,0\n10,20,0", "0,0,0\n10,20,0") 
         with pytest.raises(ValidationError, match="`n` must be > 0"): 
             CochranArmitage.model_validate(settings) 
             
         # incidences must be >= 0 
         settings = deepcopy(cochranarmitage_dataset) 
-        settings["dataset"] = settings["dataset"].replace("0,20,0", "0,20,-1") 
+        settings["dataset"] = settings["dataset"].replace("0,20,0\n10,20,0", "0,20,-1\n10,20,0") 
         with pytest.raises(ValidationError, match="`incidence` must be ≥ 0"): 
             CochranArmitage.model_validate(settings) 
             

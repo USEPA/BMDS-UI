@@ -364,10 +364,10 @@ class TestRaoScottViewSet:
 
 @pytest.mark.django_db
 class TestJonckheereTerpstraViewSet:
-    def test_create(self, jonckheereterpstra_dataset):
+    def test_create(self, jonckheereterpstra_dataset_individual):
         client = APIClient()
         url = reverse("api:jonckheere-terpstra-list")
-        response = client.post(url, jonckheereterpstra_dataset, format="json")
+        response = client.post(url, jonckheereterpstra_dataset_individual, format="json")
         assert response.status_code == 200
         data = response.json()
         assert list(data.keys()) == ["answer"]
