@@ -103,7 +103,7 @@ class mcmcOption(BaseModel):
     seed: int = Field(ge=0, le=2_147_483_647)
     n_chains: int = Field(ge=1, le=4)
     iterations_per_chain: int = Field(ge=10_000)
-    burnin: int = Field(ge=1_000, le=100_000)
+    burnin: int = Field(ge=1_000)
 
     @field_validator("iterations_per_chain", mode="after")
     @classmethod
@@ -113,8 +113,24 @@ class mcmcOption(BaseModel):
         if max_iterations is not None and v > max_iterations:
             raise PydanticCustomError(
                 "iterations_per_chain_max",
-                f"With {n_chains} chain(s), iterations per chain cannot exceed {max_iterations:,}."
+                f"With {n_chains} chain(s), iterations per chain cannot exceed {max_iterations:,}; got {v:,}."
             )
+        return v
+    
+    @field_validator("burnin", mode="after")
+    @classmethod
+    def burnin_max(cls, v, info):
+        print(info)
+        n_chains = info.data.get("n_chains")
+        iterations_per_chain = info.data.get("iterations_per_chain")
+        if n_chains is not None and iterations_per_chain is not None:
+            total_iterations = n_chains * iterations_per_chain
+            max_burnin = int(0.2 * total_iterations)
+            if v > max_burnin:
+                raise PydanticCustomError(
+                    "burnin_max",
+                    f"burn in cannot exceed {max_burnin:,} (20% of total iterations: {total_iterations:,}); got {v:,}."
+                )
         return v
 
 class DichotomousOptions(BaseModel):
