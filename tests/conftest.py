@@ -360,17 +360,26 @@ def raoscott_dataset() -> dict:
     }
 
 @pytest.fixture
-def jonckheereterpstra_dataset() -> dict:
+def jonckheereterpstra_dataset_individual() -> dict:
     return {
         "dataset": "doses,responses\n0,8.1079\n0,9.3063\n0,9.7431\n0,9.7814\n0,10.0517\n0,10.6132\n0,10.7509\n0,11.0567\n0.1,9.1556\n0.1,9.6821\n0.1,9.8256\n0.1,10.2095\n0.1,10.2222\n0.1,12.0382\n1,9.5661\n1,9.7059\n1,9.9905\n1,10.2716\n1,10.471\n1,11.0602\n10,8.8514\n10,10.0107\n10,10.0854\n10,10.5683\n10,11.1394\n10,11.4875\n100,9.5427\n100,9.7211\n100,9.8267\n100,10.0231\n100,10.1833\n100,10.8685\n300,11.368\n300,13.5176\n300,12.3168\n300,14.002\n300,17.1186\n300,13.6368\n500,19.9572\n500,20.1347\n500,16.7743\n500,20.0571\n500,15.1564\n500,15.0368",
         "hypothesis": "increasing",
-        "nperm": None
+        "nperm": None,
+        "model_type": "I"
     }
+
+@pytest.fixture
+def jonckheereterpstra_dataset_continuous_summary() -> dict:
+    return { 
+        "dataset": "doses,ns,means,stdevs\n0,10,5.0,1.0\n10,10,6.0,1.2\n100,10,8.0,1.5", 
+        "hypothesis": "increasing", 
+        "nperm": None, 
+        "model_type": "CS", } 
 
 @pytest.fixture
 def cochranarmitage_dataset() -> dict:
     return {
-        "dataset": "dose,n,incidence\n0,20,0\n10,20,0\n50,20,1\n150,20,4\n400,20,11",
+        "dataset": "doses,ns,incidences\n0,20,0\n10,20,0\n50,20,1\n150,20,4\n400,20,11",
     }
 
 

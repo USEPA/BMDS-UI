@@ -361,3 +361,34 @@ class TestRaoScottViewSet:
         # assert docx loads
         doc = docx.Document(BytesIO(response.content))
         assert isinstance(doc, docx.document.Document)
+
+@pytest.mark.django_db
+class TestJonckheereTerpstraViewSet:
+    def test_create(self, jonckheereterpstra_dataset):
+        client = APIClient()
+        url = reverse("api:jonckheere-terpstra-list")
+        response = client.post(url, jonckheereterpstra_dataset, format="json")
+        assert response.status_code == 200
+        data = response.json()
+        assert list(data.keys()) == ["answer"]
+        assert list(data["answer"].keys()) == [
+            "Hypothesis", 
+            "Statistic", 
+            "Approach (P-Value)", 
+            "P-Value",
+        ]
+
+@pytest.mark.django_db
+class TestCochranArmitageViewSet:
+    def test_create(self, cochranarmitage_dataset):
+        client = APIClient()
+        url = reverse("api:cochran-armitage-list")
+        response = client.post(url, cochranarmitage_dataset, format="json")
+        assert response.status_code == 200
+        data = response.json()
+        assert list(data.keys()) == ["answer"]
+        assert list(data["answer"].keys()) == [
+            "Statistic", 
+            "P-Value (Asymptotic)", 
+            "P-Value (Exact) ",
+        ]
