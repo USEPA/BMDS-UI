@@ -19,7 +19,7 @@ import MultitumorDatasetTable from "./Multitumor/DatasetTable";
 import MultitumorPlot from "./Multitumor/MultitumorPlot";
 import MultitumorResultTable from "./Multitumor/ResultTable";
 import OptionSetTable from "./OptionSetTable";
-import McmcSetTable from "./MCMCSetTable";
+import McmcSetTable from "./McmcSetTable";
 import CochranArmitageTable from "./CochranArmitageTable";
 import SelectModel from "./SelectModel";
 
@@ -129,7 +129,9 @@ class Output extends Component {
               />
             </div>
           ) : null}
-          <div className="col-lg-5">
+          <div
+            className={outputStore.outputs.length > 1 ? "col-lg-4" : "col-lg-5"}
+          >
             <div>{this.renderDataset()}</div>
           </div>
           <div className="col-lg-6">

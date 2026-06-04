@@ -18,7 +18,7 @@ class LOUDBayesianResultTable extends Component {
       return null;
     }
 
-    const colWidths = [12, 11, 11, 11, 11, 11, 11, 11, 11],
+    const colWidths = [12, 11, 11, 11, 11, 11, 11, 11],
       ma = selectedLOUDBayesian.model_average;
 
     return (
@@ -39,7 +39,6 @@ class LOUDBayesianResultTable extends Component {
             <th>BMDL</th>
             <th>BMD</th>
             <th>BMDU</th>
-            <th>Unnormalized Log Posterior Probability</th>
             <th>Scaled Residual at Control</th>
             <th>Scaled Residual near BMD</th>
           </tr>
@@ -75,7 +74,6 @@ class LOUDBayesianResultTable extends Component {
                 <td>
                   <FloatingPointHover value={model.results.bmdu} />
                 </td>
-                <td>{ff(model.results.fit.bic_equiv)}</td>
                 <td>{ff(model.results.gof.residual[0])}</td>
                 <td>{ff(model.results.gof.roi)}</td>
               </tr>
@@ -106,7 +104,6 @@ class LOUDBayesianResultTable extends Component {
               <td>
                 <FloatingPointHover value={ma.results.bmdu} />
               </td>
-              <td>-</td>
               <td>-</td>
               <td>-</td>
             </tr>

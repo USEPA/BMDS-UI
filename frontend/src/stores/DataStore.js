@@ -179,6 +179,12 @@ class DataStore {
     this.selectedDatasetId = id;
     this.updateOptionDegree(dataset);
 
+    console.log("new selectedDatasetID: ", this.selectedDatasetId);
+    console.log(
+      "new dataset doses: ",
+      JSON.stringify(this.selectedDataset?.doses),
+    );
+
     localStorage.setItem("selected_dataset", JSON.stringify(dataset));
 
     if (this.model_type === "DM") {
@@ -327,7 +333,8 @@ class DataStore {
 
   @computed get getMappedArray() {
     let datasetInputForm = [],
-      dataset = this.selectedDataset;
+      // dataset = this.selectedDataset;
+      dataset = toJS(this.selectedDataset);
     Object.keys(dataset).map((key) => {
       if (Array.isArray(dataset[key])) {
         dataset[key].map((val, i) => {

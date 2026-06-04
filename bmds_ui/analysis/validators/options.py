@@ -120,7 +120,6 @@ class mcmcOption(BaseModel):
     @field_validator("burnin", mode="after")
     @classmethod
     def burnin_max(cls, v, info):
-        print(info)
         n_chains = info.data.get("n_chains")
         iterations_per_chain = info.data.get("iterations_per_chain")
         if n_chains is not None and iterations_per_chain is not None:

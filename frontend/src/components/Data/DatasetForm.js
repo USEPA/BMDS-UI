@@ -155,7 +155,7 @@ class DatasetForm extends Component {
             {dataStore.getMappedArray.map((obj, i) => {
               return (
                 <DatasetFormRow
-                  key={i}
+                  key={`${dataStore.selectedDatasetId}-${i}`}
                   rowIdx={i}
                   columns={columnNames}
                   row={obj}
