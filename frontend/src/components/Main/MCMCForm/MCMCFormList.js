@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 
 import McmcForm from "./McmcForm";
+import HelpTextPopover from "@/components/common/HelpTextPopover";
 
 @inject("mcmcStore")
 @observer
@@ -22,7 +23,13 @@ class McmcFormList extends Component {
                   <>
                     <th>Seed</th>
                     <th># Chains</th>
-                    <th># Iterations per Chain</th>
+                    <th>
+                      # Iterations per Chain{" "}
+                      <HelpTextPopover
+                        title="Attention"
+                        content={`Total iterations (# chains  x  # iterations per chain) cannot exceed 50,000`}
+                      />
+                    </th>
                     <th>Burn In</th>
                   </>
                 </tr>

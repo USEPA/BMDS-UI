@@ -333,8 +333,7 @@ class DataStore {
 
   @computed get getMappedArray() {
     let datasetInputForm = [],
-      // dataset = this.selectedDataset;
-      dataset = toJS(this.selectedDataset);
+      dataset = this.selectedDataset;
     Object.keys(dataset).map((key) => {
       if (Array.isArray(dataset[key])) {
         dataset[key].map((val, i) => {

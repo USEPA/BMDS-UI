@@ -45,10 +45,19 @@ class ModelsStore {
     );
   }
 
-  @observable expandAllCount = 0;
   @observable activeTab = "loud_bayesian"; // 'loud_bayesian' | 'toxicr_bayesian' | 'mle'
   @action setActiveTab(tab) {
     this.activeTab = tab;
+  }
+
+  @observable expandAllTrigger = 0;
+  @observable accordionState = {
+    bmds: true,
+    extended: false,
+  };
+
+  @action.bound setAccordionState(card, isExpanded) {
+    this.accordionState[card] = isExpanded;
   }
 
   isActive(tab) {
@@ -150,7 +159,7 @@ class ModelsStore {
     this.setTabBadge(name);
 
     if (name === mc.LOUD_BAYESIAN && checked) {
-      this.expandAllCount += 1;
+      this.expandAllTrigger += 1;
     }
   }
 

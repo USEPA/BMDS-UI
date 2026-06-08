@@ -1,8 +1,8 @@
 import { inject, observer } from "mobx-react";
 import PropTypes from "prop-types";
-import React, { Component, useEffect } from "react";
+import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
-import { MODEL_CONTINUOUS, MODEL_DICHOTOMOUS } from "@/constants/mainConstants";
+import { MODEL_DICHOTOMOUS } from "@/constants/mainConstants";
 
 const Tabs = observer(({ modelsStore }) => {
   const handleClick = (tab) => (e) => {
@@ -73,7 +73,7 @@ const Tabs = observer(({ modelsStore }) => {
   );
 });
 
-@inject(({ modelsStore, optionsStore }) => ({
+@inject(({ modelsStore }) => ({
   modelsStore,
 }))
 @observer

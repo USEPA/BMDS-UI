@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 import * as mc from "@/constants/mainConstants";
 import {
@@ -87,103 +87,140 @@ const CheckBoxTd = observer(({ store, type, model, headers }) => {
   );
 });
 
-const LOUDAccordion = observer(({ store, allModels, columns, expandAll }) => {
-  const bmdsGroupIndex = computeGroupIndex(allModels.bmds);
-  const extendedGroupIndex = computeGroupIndex(allModels.extended);
+const LOUDAccordion = observer(
+  ({ store, allModels, columns, accordionState }) => {
+    const bmdsGroupIndex = computeGroupIndex(allModels.bmds);
+    const extendedGroupIndex = computeGroupIndex(allModels.extended);
+    const lastHandledTrigger = useRef(store.expandAllTrigger);
 
-  return (
-    <td colSpan="3">
-      <div id="accordionExample">
-        <div className="card">
-          <div
-            className="card-header"
-            id="headingOne"
-            style={{ padding: "0 5px" }}
-            role="button"
-            data-toggle="collapse"
-            data-target="#collapseOne"
-            aria-expanded="true"
-            aria-controls="collapseOne"
-          >
-            <span style={{ fontSize: "20px" }}>
-              <strong>BMDS Models</strong>
-            </span>
+    useEffect(() => {
+      if (store.expandAllTrigger > lastHandledTrigger.current) {
+        console.log("reached");
+        store.setAccordionState("bmds", true);
+        store.setAccordionState("extended", true);
+        lastHandledTrigger.current = store.expandAllTrigger;
+      }
+    }, [store.expandAllTrigger]);
+
+    useEffect(() => {
+      const bmdsEl = document.getElementById("collapseOne");
+      const extendedEl = document.getElementById("collapseTwo");
+
+      const onBmdsHide = () => store.setAccordionState("bmds", false);
+      const onBmdsShow = () => store.setAccordionState("bmds", true);
+      const onExtendedHide = () => store.setAccordionState("extended", false);
+      const onExtendedShow = () => store.setAccordionState("extended", true);
+
+      $(bmdsEl).on("hide.bs.collapse", onBmdsHide);
+      $(bmdsEl).on("show.bs.collapse", onBmdsShow);
+      $(extendedEl).on("hide.bs.collapse", onExtendedHide);
+      $(extendedEl).on("show.bs.collapse", onExtendedShow);
+
+      return () => {
+        $(bmdsEl).off("hide.bs.collapse", onBmdsHide);
+        $(bmdsEl).off("show.bs.collapse", onBmdsShow);
+        $(extendedEl).off("hide.bs.collapse", onExtendedHide);
+        $(extendedEl).off("show.bs.collapse", onExtendedShow);
+      };
+    }, []);
+
+    const bmdsExpanded = accordionState?.bmds ?? true;
+    const extendedExpanded = accordionState?.extended ?? true;
+
+    return (
+      <td colSpan="3">
+        <div id="accordionExample">
+          <div className="card">
+            <div
+              className="card-header"
+              id="headingOne"
+              style={{ padding: "0 5px" }}
+              role="button"
+              data-toggle="collapse"
+              data-target="#collapseOne"
+              aria-expanded={bmdsExpanded}
+              aria-controls="collapseOne"
+            >
+              <span style={{ fontSize: "20px" }}>
+                <strong>BMDS Models</strong>
+              </span>
+            </div>
+            <div
+              id="collapseOne"
+              className={`collapse${bmdsExpanded ? " show" : ""}`}
+              aria-labelledby="headingOne"
+            >
+              <div className="card-body" style={{ padding: "0 5px" }}>
+                <table width="100%" style={{ tableLayout: "fixed" }}>
+                  <colgroup>
+                    <col style={{ width: store.col_widths[0] }} />
+                    <col style={{ width: store.col_widths[1] }} />
+                    <col style={{ width: store.col_widths[2] }} />
+                  </colgroup>
+                  <tbody>
+                    {allModels.bmds.map((model) => (
+                      <ModelRow
+                        key={model}
+                        store={store}
+                        model={model}
+                        columns={columns}
+                        groupIndex={bmdsGroupIndex[model]}
+                      />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
-          <div
-            id="collapseOne"
-            className="collapse show"
-            aria-labelledby="headingOne"
-          >
-            <div className="card-body" style={{ padding: "0 5px" }}>
-              <table width="100%" style={{ tableLayout: "fixed" }}>
-                <colgroup>
-                  <col style={{ width: store.col_widths[0] }} />
-                  <col style={{ width: store.col_widths[1] }} />
-                  <col style={{ width: store.col_widths[2] }} />
-                </colgroup>
-                <tbody>
-                  {allModels.bmds.map((model) => (
-                    <ModelRow
-                      key={model}
-                      store={store}
-                      model={model}
-                      columns={columns}
-                      groupIndex={bmdsGroupIndex[model]}
-                    />
-                  ))}
-                </tbody>
-              </table>
+
+          <div className="card">
+            <div
+              className="card-header"
+              id="headingTwo"
+              style={{ padding: "0 5px" }}
+              role="button"
+              data-toggle="collapse"
+              data-target="#collapseTwo"
+              aria-expanded={extendedExpanded}
+              aria-controls="collapseTwo"
+            >
+              <span style={{ fontSize: "20px" }}>
+                <strong>Extended Models</strong>
+              </span>
+            </div>
+            <div
+              id="collapseTwo"
+              className={`collapse${extendedExpanded ? " show" : ""}`}
+              aria-labelledby="headingTwo"
+              style={{ padding: "0 5px" }}
+            >
+              <div className="card-body" style={{ padding: "0 5px" }}>
+                <table width="100%" style={{ tableLayout: "fixed" }}>
+                  <colgroup>
+                    <col style={{ width: store.col_widths[0] }} />
+                    <col style={{ width: store.col_widths[1] }} />
+                    <col style={{ width: store.col_widths[2] }} />
+                  </colgroup>
+                  <tbody>
+                    {allModels.extended.map((model) => (
+                      <ModelRow
+                        key={model}
+                        store={store}
+                        model={model}
+                        columns={columns}
+                        groupIndex={extendedGroupIndex[model]}
+                      />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
-
-        <div className="card">
-          <div
-            className="card-header"
-            id="headingTwo"
-            style={{ padding: "0 5px" }}
-            role="button"
-            data-toggle="collapse"
-            data-target="#collapseTwo"
-            aria-expanded="true"
-            aria-controls="collapseTwo"
-          >
-            <span style={{ fontSize: "20px" }}>
-              <strong>Extended Models</strong>
-            </span>
-          </div>
-          <div
-            id="collapseTwo"
-            className={`collapse${expandAll ? " show" : ""}`}
-            aria-labelledby="headingTwo"
-            style={{ padding: "0 5px" }}
-          >
-            <div className="card-body" style={{ padding: "0 5px" }}>
-              <table width="100%" style={{ tableLayout: "fixed" }}>
-                <colgroup>
-                  <col style={{ width: store.col_widths[0] }} />
-                  <col style={{ width: store.col_widths[1] }} />
-                  <col style={{ width: store.col_widths[2] }} />
-                </colgroup>
-                <tbody>
-                  {allModels.extended.map((model) => (
-                    <ModelRow
-                      key={model}
-                      store={store}
-                      model={model}
-                      columns={columns}
-                      groupIndex={extendedGroupIndex[model]}
-                    />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </td>
-  );
-});
+      </td>
+    );
+  },
+);
 
 const ModelHeaderTd = ({ model, writeMode }) => {
   return (
@@ -303,11 +340,10 @@ const ModelsCheckBox = observer(({ store }) => {
       <tbody>
         <tr>
           <LOUDAccordion
-            key={store.expandAllCount}
             store={store}
             allModels={allModels}
             columns={columns}
-            expandAll={store.expandAllCount > 0}
+            accordionState={store.accordionState}
           />
         </tr>
       </tbody>
