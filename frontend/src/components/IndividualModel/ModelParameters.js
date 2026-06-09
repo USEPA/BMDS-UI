@@ -61,7 +61,14 @@ const seFootnote = (
           subheader: `${model.name} model parameters`,
           rows: group.rows
             .filter((rows) => !suffix || rows.Model === suffix)
-            .map((row) => columns.map((col) => row[col] ?? "")),
+            .map((row) =>
+              columns.map((col) => {
+                const val = row[col] ?? "";
+                return typeof val === "number"
+                  ? parseFloat(val.toFixed(4))
+                  : val;
+              }),
+            ),
         };
       })
       .filter((group) => group.rows.length > 0);
