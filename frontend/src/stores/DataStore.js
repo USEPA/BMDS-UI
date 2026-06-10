@@ -194,7 +194,9 @@ class DataStore {
   }
 
   @action.bound loadExampleData() {
-    const exampleData = getExampleData(this.model_type);
+    const exampleData = getExampleData(
+      this.selectedDataset.metadata.model_type,
+    );
     _.extend(this.selectedDataset, exampleData);
     this.updateOptionDegree(this.selectedDataset);
 
