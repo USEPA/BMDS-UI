@@ -47,6 +47,8 @@ const seFootnote = (
     };
   },
   getLOUDData = (model, LOUDParameters) => {
+    const includeRHat = model.settings.n_chains !== 1;
+
     const suffix = model.name.match(/\((CV|NCV|Lognormal)\)$/)?.[1];
     const base_model = model.name
       .replace(/\s*\((CV|NCV|Lognormal)\)$/, "")
@@ -54,7 +56,9 @@ const seFootnote = (
 
     return LOUDParameters.filter((group) => group.name === base_model)
       .map((group) => {
-        const columns = group.columns.filter((col) => col !== "Model");
+        const columns = group.columns.filter(
+          (col) => col !== "Model" && (includeRHat || col !== "R-hat"),
+        );
         return {
           tblClasses: "table table-sm text-right w-100",
           headers: columns,

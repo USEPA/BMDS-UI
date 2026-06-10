@@ -179,12 +179,6 @@ class DataStore {
     this.selectedDatasetId = id;
     this.updateOptionDegree(dataset);
 
-    console.log("new selectedDatasetID: ", this.selectedDatasetId);
-    console.log(
-      "new dataset doses: ",
-      JSON.stringify(this.selectedDataset?.doses),
-    );
-
     localStorage.setItem("selected_dataset", JSON.stringify(dataset));
 
     if (this.model_type === "DM") {

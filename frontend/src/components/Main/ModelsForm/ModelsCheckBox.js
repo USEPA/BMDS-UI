@@ -95,7 +95,6 @@ const LOUDAccordion = observer(
 
     useEffect(() => {
       if (store.expandAllTrigger > lastHandledTrigger.current) {
-        console.log("reached");
         store.setAccordionState("bmds", true);
         store.setAccordionState("extended", true);
         lastHandledTrigger.current = store.expandAllTrigger;
