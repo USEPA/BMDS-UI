@@ -46,9 +46,7 @@ const seFootnote = (
       footnotes: anyBounded ? seFootnote : null,
     };
   },
-  getLOUDData = (model, LOUDParameters) => {
-    const includeRHat = model.settings.n_chains !== 1;
-
+  getLOUDData = (model, LOUDParameters, includeRHat) => {
     const suffix = model.name.match(/\((CV|NCV|Lognormal)\)$/)?.[1];
     const base_model = model.name
       .replace(/\s*\((CV|NCV|Lognormal)\)$/, "")
@@ -112,14 +110,21 @@ const seFootnote = (
 class ModelParameters extends Component {
   render() {
     const { model, isNestedDichotomous, isLOUD, LOUDParameters } = this.props;
+    const includeRHat = model.settings.n_chains !== 1;
 
     if (isLOUD && LOUDParameters) {
       return (
-        <>
-          {getLOUDData(model, LOUDParameters).map((data) => (
+        <div style={{ marginBottom: !includeRHat ? "20px" : "" }}>
+          {getLOUDData(model, LOUDParameters, includeRHat).map((data) => (
             <Table key={data.subheader} data={data} />
           ))}
-        </>
+          {!includeRHat ? (
+            <i>
+              NOTE: R-hat statistic is calculated only when more than 1 Markov
+              chain is used
+            </i>
+          ) : null}
+        </div>
       );
     }
 
