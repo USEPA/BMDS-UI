@@ -15,10 +15,42 @@ from ...common.validation import pydantic_validate
 
 max_length = 1000 if settings.IS_DESKTOP else 6
 
-MAX_TOTAL_ITERATIONS = 50_000
+limits = {
+    "MCMC": {
+        "iterations": {
+            "max_total_iterations": 50_000,
+            "min": 10_000
+        }, 
+        "seed": {
+            "min": 0, 
+            "max": 2_147_483_647
+        }, 
+        "burnin": {
+            "max_percent": 0.2, 
+            "min": 1000
+        },
+        "chain": {
+            "min": 0, 
+            "max": 4
+        }
+    }, 
+    "NestedDichotomous": {
+        "BootstrapIterations": {
+            "min": 10, 
+            "max": 10_000
+        }, 
+        "BootstrapSeed": {
+            "min": 0, 
+            "max": 1000
+        }
+    }
+}
+
+MCMC_limits = limits["MCMC"]
+ND_limits = limits["NestedDichotomous"]
 
 def get_max_iterations(n_chains: int) -> int:
-    return MAX_TOTAL_ITERATIONS // n_chains
+    return MCMC_limits["iterations"]["max_total_iterations"] // n_chains
 
 # VALIDATION LIMITS AND ERROR MESSAGES ======================================================
 def _check_confidence_level(v: float) -> float:
@@ -55,22 +87,26 @@ def _check_bmr_value(v: float) -> float:
 BmrValue = Annotated[float, AfterValidator(_check_bmr_value)]
 
 def _check_bootstrap_iterations(v: int) -> int:
-    if not (10 <= v <= 10_000):
+    min_v = ND_limits["BootstrapIterations"]["min"]
+    max_v = ND_limits["BootstrapIterations"]["max"]
+    if not (min_v <= v <= max_v):
         raise PydanticCustomError(
             "bootstrap_iterations_range",
-            "Bootstrap Interations must be between 10 and 10,000 (inclusive); got {value}.",
-            {"value": v}
+            "Bootstrap Interations must be between {min} and {max} (inclusive); got {value}.",
+            {"min": f"{min_v:,}", "max": f"{max_v:,}", "value": f"{v:,}"}
         )
     return v
 
 BootstrapIterations = Annotated[int, AfterValidator(_check_bootstrap_iterations)]
 
 def _check_bootstrap_seed(v: int) -> int:
-    if not (0 <= v <= 1_000):
+    min_v = ND_limits["BootstrapSeed"]["min"]
+    max_v = ND_limits["BootstrapSeed"]["max"]
+    if not (min_v <= v <= max_v):
         raise PydanticCustomError(
             "bootstrap_seed_range",
-            "Bootstrap Seed must be between 1 and 1,000 (inclusive); got {value}.",
-            {"value": v}
+            "Bootstrap Seed must be between {min} and {max} (inclusive); got {value}.",
+            {"min": f"{min_v:,}", "max": f"{max_v:,}", "value": f"{v:,}"}
         )
     return v
 
@@ -100,10 +136,10 @@ class NestedDichotomousOption(BaseModel):
     estimate_background: bool
 
 class mcmcOption(BaseModel):
-    seed: int = Field(ge=0, le=2_147_483_647)
-    n_chains: int = Field(ge=1, le=4)
-    iterations_per_chain: int = Field(ge=10_000)
-    burnin: int = Field(ge=1_000)
+    seed: int = Field(ge=MCMC_limits["seed"]["min"], le=MCMC_limits["seed"]["max"])
+    n_chains: int = Field(ge=MCMC_limits["chain"]["min"], le=MCMC_limits["chain"]["max"])
+    iterations_per_chain: int = Field(ge=MCMC_limits["iterations"]["min"])
+    burnin: int = Field(ge=MCMC_limits["burnin"]["min"])
 
     @field_validator("iterations_per_chain", mode="after")
     @classmethod
@@ -124,11 +160,12 @@ class mcmcOption(BaseModel):
         iterations_per_chain = info.data.get("iterations_per_chain")
         if n_chains is not None and iterations_per_chain is not None:
             total_iterations = n_chains * iterations_per_chain
-            max_burnin = int(0.2 * total_iterations)
+            max_burnin_percent = MCMC_limits["burnin"]["max_percent"]
+            max_burnin = int(max_burnin_percent * total_iterations)
             if v > max_burnin:
                 raise PydanticCustomError(
                     "burnin_max",
-                    f"burn in cannot exceed {max_burnin:,} (20% of total iterations: {total_iterations:,}); got {v:,}."
+                    f"burn in cannot exceed {max_burnin:,} ({int(max_burnin_percent * 100)}% of total iterations: {total_iterations:,}); got {v:,}."
                 )
         return v
 
