@@ -19,7 +19,7 @@ limits = {
     "MCMC": {
         "iterations": {
             "max_total_iterations": 50_000,
-            "min": 10_000
+            "min_per_chain": 10_000
         }, 
         "seed": {
             "min": 0, 
@@ -138,7 +138,7 @@ class NestedDichotomousOption(BaseModel):
 class mcmcOption(BaseModel):
     seed: int = Field(ge=MCMC_limits["seed"]["min"], le=MCMC_limits["seed"]["max"])
     n_chains: int = Field(ge=MCMC_limits["chain"]["min"], le=MCMC_limits["chain"]["max"])
-    iterations_per_chain: int = Field(ge=MCMC_limits["iterations"]["min"])
+    iterations_per_chain: int = Field(ge=MCMC_limits["iterations"]["min_per_chain"])
     burnin: int = Field(ge=MCMC_limits["burnin"]["min"])
 
     @field_validator("iterations_per_chain", mode="after")
