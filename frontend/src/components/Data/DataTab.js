@@ -23,7 +23,7 @@ class Data extends Component {
     const cochranArmitageLabels = [
       "Statistic",
       "P-Value (Asymptotic)",
-      "P-Value (Exact) ",
+      "P-Value (Exact)",
     ];
     return (
       <div className="container-fluid">

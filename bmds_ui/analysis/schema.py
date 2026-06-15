@@ -54,6 +54,7 @@ class AnalysisSessionSchema(BaseModel):
 class AnalysisSchemaVersions(StrEnum):
     v1_0 = "1.0"
     v1_1 = "1.1"
+    v1_2 = "1.2"
 
     @classmethod
     def latest_value(cls) -> str:
@@ -309,7 +310,7 @@ class CochranArmitage(BaseModel):
         result_dict = {
             "Statistic": f"{result.statistic:.4f}",
             "P-Value (Asymptotic)": f"{result.p_value_asymptotic:.4e}",
-            "P-Value (Exact) ": f"{result.p_value_exact:.4e}"
+            "P-Value (Exact)": f"{result.p_value_exact:.4e}"
         }
 
         return result_dict
@@ -409,3 +410,12 @@ class AnalysisMigrator:
         data["outputs"]["bmds_ui_version"] = "2023.03"  # 1.0 bmds_ui_version
         data["outputs"]["analysis_schema_version"] = "1.1"
         return data            
+    
+    @classmethod
+    def to_1_2(cls, data: dict) -> dict:
+        logger.debug("Migrating from 1.1 to 1.2")
+        for output in data["outputs"].get("outputs", []):
+            if "bayesian" in output:
+                output["toxicr_bayesian"] = output.pop("bayesian")
+        data["outputs"]["analysis_schema_version"] = "1.2"
+        return data       

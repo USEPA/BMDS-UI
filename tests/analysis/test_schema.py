@@ -228,7 +228,7 @@ class TestCochranArmitage:
     def test_calculate(self, cochranarmitage_dataset): 
         analysis = CochranArmitage.model_validate(cochranarmitage_dataset) 
         result = analysis.calculate() 
-        assert list(result.keys()) == [ "Statistic", "P-Value (Asymptotic)", "P-Value (Exact) "]
+        assert list(result.keys()) == [ "Statistic", "P-Value (Asymptotic)", "P-Value (Exact)"]
         
     def test_validate_dataset(self, cochranarmitage_dataset): 
         # confirm success 
@@ -324,3 +324,12 @@ class TestSchemaMigrator:
         # assert migration works
         data = json.loads((data_path / "analyses" / "v1.1.json").read_text())
         AnalysisMigrator.migrate(data)
+
+    def test_from_1_1_to_1_2(self, data_path):
+        # assert migration works
+        data = json.loads((data_path / "analyses" / "v1.1.json").read_text())
+        migrated = AnalysisMigrator.migrate(data)
+        assert migrated.initial_version == "1.1"
+        assert migrated.analysis.outputs.analysis_schema_version == "1.2"
+        output = migrated.analysis.outputs.outputs[0]
+        assert output.toxicr_bayesian is None

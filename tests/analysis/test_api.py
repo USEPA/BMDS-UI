@@ -90,11 +90,11 @@ class TestAnalysisViewSet:
             assert response.status_code == 400
             assert response.json() == ["Invalid data for migration"]
 
-        # test v1.1
+        # test v1.0 -> v1.1 -> v1.2
         data = json.loads((data_path / "analyses" / "v1.0.json").read_text())
         response = client.post(url, data={"data": data}, format="json")
         assert response.status_code == 200
-        assert response.json()["analysis"]["outputs"]["analysis_schema_version"] == "1.1"
+        assert response.json()["analysis"]["outputs"]["analysis_schema_version"] == "1.2"
 
     def test_patch_auth(self):
         client = APIClient()
@@ -390,5 +390,5 @@ class TestCochranArmitageViewSet:
         assert list(data["answer"].keys()) == [
             "Statistic", 
             "P-Value (Asymptotic)", 
-            "P-Value (Exact) ",
+            "P-Value (Exact)",
         ]
