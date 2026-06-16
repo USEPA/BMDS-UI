@@ -313,17 +313,12 @@ class TestSchemaMigrator:
         with pytest.raises(SchemaMigrationException):
             AnalysisMigrator.migrate(data)
 
-    def test_from_1_0(self, data_path):
+    def test_from_1_0_to_1_2(self, data_path):
         # assert migration works and data is mutated
         data = json.loads((data_path / "analyses" / "v1.0.json").read_text())
         migrated = AnalysisMigrator.migrate(data)
         assert migrated.initial["outputs"].get("bmds_ui_version") is None
         assert migrated.analysis.outputs.bmds_ui_version is not None
-
-    def test_from_1_1(self, data_path):
-        # assert migration works
-        data = json.loads((data_path / "analyses" / "v1.1.json").read_text())
-        AnalysisMigrator.migrate(data)
 
     def test_from_1_1_to_1_2(self, data_path):
         # assert migration works
@@ -332,4 +327,5 @@ class TestSchemaMigrator:
         assert migrated.initial_version == "1.1"
         assert migrated.analysis.outputs.analysis_schema_version == "1.2"
         output = migrated.analysis.outputs.outputs[0]
-        assert output.toxicr_bayesian is None
+        # assert 'bayesian' was mutated to 'toxicr_bayesian'
+        assert output.toxicr_bayesian is not None
