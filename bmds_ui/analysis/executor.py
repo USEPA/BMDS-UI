@@ -235,7 +235,7 @@ class AnalysisSession(NamedTuple):
                 ma_arr[1] /= 100.0 
                 self.loud_bayesian._ma_bmd_dist_cdf = ma_arr
 
-                figs = get_model_average_figures(self.loud_bayesian, n_chains=1)
+                figs = get_model_average_figures(self.loud_bayesian)
                 self.loud_bayesian._parameter_groups_data = [{
                     "name": group["name"],
                     "columns": list(group["summary"].columns),
