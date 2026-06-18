@@ -156,16 +156,14 @@ class mcmcOption(BaseModel):
     @field_validator("burnin", mode="after")
     @classmethod
     def burnin_max(cls, v, info):
-        n_chains = info.data.get("n_chains")
         iterations_per_chain = info.data.get("iterations_per_chain")
-        if n_chains is not None and iterations_per_chain is not None:
-            total_iterations = n_chains * iterations_per_chain
+        if iterations_per_chain is not None:
             max_burnin_percent = MCMC_limits["burnin"]["max_percent"]
-            max_burnin = int(max_burnin_percent * total_iterations)
+            max_burnin = int(max_burnin_percent * iterations_per_chain)
             if v > max_burnin:
                 raise PydanticCustomError(
                     "burnin_max",
-                    f"burn in cannot exceed {max_burnin:,} ({int(max_burnin_percent * 100)}% of total iterations: {total_iterations:,}); got {v:,}."
+                    f"burn in cannot exceed {max_burnin:,} ({int(max_burnin_percent * 100)}% of iterations per chain); got {v:,}."
                 )
         return v
 
