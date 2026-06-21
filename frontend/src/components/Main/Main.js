@@ -7,7 +7,7 @@ import AnalysisFormReadOnly from "./AnalysisForm/AnalysisFormReadOnly";
 import DatasetModelOptionList from "./DatasetModelOptionList/DatasetModelOptionList";
 import ModelsCheckBoxList from "./ModelsForm/ModelsCheckBoxList";
 import OptionsFormList from "./OptionsForm/OptionsFormList";
-import McmcFormList from "./mcmcForm/McmcFormList";
+import McmcFormList from "./MCMCForm/MCMCFormList";
 
 @inject("mainStore", "modelsStore")
 @observer
