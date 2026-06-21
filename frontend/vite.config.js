@@ -34,6 +34,11 @@ export default defineConfig({
             name: "create-empty-gitkeep",
             closeBundle() {
                 const dest = path.resolve(__dirname, outDir, ".gitkeep");
+		//Ensure the parent directory exists before writing the file
+		const dir = path.dirname(dest);
+		    if (!fs.existsSync(dir)) {
+			    fs.mkdirSync(dir, {recursive: true });
+		    }
                 fs.writeFileSync(dest, "");
             },
         },
