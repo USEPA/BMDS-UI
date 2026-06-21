@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { action, observable } from "mobx";
 
-import * as constant from "@/constants/mcmcConstants";
+import * as constant from "@/constants/MCMCConstants";
 
 const createOption = () => {
   const option = _.cloneDeep(constant.options);
