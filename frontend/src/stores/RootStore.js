@@ -4,7 +4,7 @@ import LogicStore from "./LogicStore";
 import MainStore from "./MainStore";
 import ModelsStore from "./ModelsStore";
 import OptionsStore from "./OptionsStore";
-import mcmcStore from "./mcmcStore";
+import mcmcStore from "./MCMCStore";
 import OutputStore from "./OutputStore";
 
 class RootStore {
