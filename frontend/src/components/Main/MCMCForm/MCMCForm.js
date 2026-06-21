@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import Button from "../../common/Button";
-import { chainOptions } from "@/constants/mcmcConstants";
+import { chainOptions } from "@/constants/MCMCConstants";
 
 import SelectInput from "../../common/SelectInput";
 import IntegerInput from "../../common/IntegerInput";
