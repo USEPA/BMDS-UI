@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 
-import McmcForm from "./McmcForm";
+import McmcForm from "./MCMCForm";
 import HelpTextPopover from "@/components/common/HelpTextPopover";
 
 @inject("mcmcStore")
