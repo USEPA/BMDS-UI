@@ -19,7 +19,7 @@ class OutputTabs extends Component {
       <>
         <div className="row d-flex">
           <h3 className="pt-3 mb-0">Results</h3>
-          <div className="dropdown ml-auto align-self-start z-index-10000">
+          <div className="dropdown ml-auto align-self-start z-index-1000">
             <Button
               text="Actions&nbsp;"
               className="btn btn-primary dropdown-toggle"
