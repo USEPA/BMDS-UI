@@ -197,7 +197,7 @@ def build_raoscott_docx(analysis: RaoScott) -> BytesIO:
     report.document.save(f)
     return f
 
-def build_jonckheereterpstra_docx(analysis, dataset):
+def build_jonckheereterpstra_docx(analysis, dataset, synthetic_dataset=None):
     report = Report.build_default()
 
     report.document.add_heading("Jonckheere Terpstra Trend Test", 1)
@@ -215,6 +215,15 @@ def build_jonckheereterpstra_docx(analysis, dataset):
     report.document.add_paragraph(
             df_to_table(report, dataset)
         )
+    
+    if synthetic_dataset is not None:
+        report.document.add_paragraph(
+            "  "
+        )
+
+        report.document.add_heading("Synthetic Individual Dataset", 2)
+
+        report.document.add_paragraph(df_to_table(report, synthetic_dataset))
 
     f = BytesIO()
     report.document.save(f)

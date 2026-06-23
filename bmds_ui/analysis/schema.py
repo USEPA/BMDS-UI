@@ -236,6 +236,9 @@ class JonckheereTerpstraInput(BaseModel):
                 doses=df.doses.tolist(),
                 responses=df.responses.tolist(),
             )
+            result = dataset.trend(hypothesis=self.hypothesis, nperm=self.nperm)
+            synthetic_dataset_obj = None
+        
         elif self.model_type == "CS":
             dataset = ContinuousDataset(
                 doses=df.doses.tolist(),
@@ -243,7 +246,11 @@ class JonckheereTerpstraInput(BaseModel):
                 means=df.means.tolist(),
                 stdevs=df.stdevs.tolist(),
             )
-        result = dataset.trend(hypothesis=self.hypothesis, nperm=self.nperm)
+            result, synthetic = dataset.trend(hypothesis=self.hypothesis, nperm=self.nperm)
+            synthetic_dataset_obj = {
+                "doses": synthetic.individual_doses, 
+                "responses": synthetic.responses,
+            }
 
         result_dict = {
             "Hypothesis": result.hypothesis,
@@ -252,7 +259,7 @@ class JonckheereTerpstraInput(BaseModel):
             "P-Value": f"{result.p_value:.4e}"
         }
 
-        return result_dict
+        return result_dict, synthetic_dataset_obj
  
     
 class CochranArmitage(BaseModel):

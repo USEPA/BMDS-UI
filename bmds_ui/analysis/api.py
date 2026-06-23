@@ -427,20 +427,25 @@ class JonckheereTerpstraViewset(viewsets.GenericViewSet):
         return analysis
 
     def create(self, request, *args, **kwargs):
-        analysis = self._run_analysis(request)
-        return Response({"answer": analysis})
+        analysis, synthetic_dataset_obj = self._run_analysis(request)
+        return Response({"answer": analysis, "synthetic_dataset_obj": synthetic_dataset_obj})
 
     @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
     def excel(self, request, *args, **kwargs):
         computed_result = request.data.get("computed_result")
         if not computed_result:
             raise exceptions.ValidationError("No Jonckheere Terpstra Trend Test result was computed")
+        
+        synthetic_dataset_obj = request.data.get("synthetic_dataset_obj")
+
         binary_stream = BytesIO()
         with ExcelWriter(binary_stream, engine="openpyxl") as writer:
             DataFrame([computed_result]).to_excel(
             writer, index=False, sheet_name="Analysis"
         )
             DataFrame(request.data["dataset_obj"]).to_excel(writer, index=False, sheet_name="Dataset")
+            if synthetic_dataset_obj:
+                DataFrame(request.data["synthetic_dataset_obj"]).to_excel(writer, index=False, sheet_name="Synthetic Individual Data")
 
         binary_stream.seek(0)
         data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
@@ -451,9 +456,12 @@ class JonckheereTerpstraViewset(viewsets.GenericViewSet):
         computed_result = request.data.get("computed_result")
         if not computed_result:
             raise exceptions.ValidationError("No Jonckheere Terpstra Trend Test result was computed")
+        
+        synthetic_dataset_obj = request.data.get("synthetic_dataset_obj")
+        synthetic_df = DataFrame(synthetic_dataset_obj) if synthetic_dataset_obj else None
 
         analysis = DataFrame([computed_result])
-        binary_stream = build_jonckheereterpstra_docx(analysis, DataFrame(request.data['dataset_obj']))
+        binary_stream = build_jonckheereterpstra_docx(analysis, DataFrame(request.data['dataset_obj']), synthetic_df)
         data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
         return Response(data)
 

@@ -124,6 +124,7 @@ class Store {
       body: JSON.stringify({
         ...this.settings,
         computed_result: this.outputs?.answer ?? null,
+        synthetic_dataset_obj: this.outputs?.synthetic_dataset_obj ?? null,
       }),
     };
   }
