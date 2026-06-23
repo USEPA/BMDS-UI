@@ -40,11 +40,14 @@ class AboutModal extends Component {
             hypothesis for the Jonckheere-Terpstra trend test is that the
             continuous response data are all from the same population, that is,
             the sample medians for all dose groups are equal. The alternative
-            hypothesis is that the sample medians have an a priori ordering with
-            at least one dose group sample being larger or smaller than the
-            others. The test statistic counts, for each dose group, the number
-            of times values in that group are greater than those in every lower
-            order dose group and sums these counts across groups. A
+            hypothesis is that the sample medians have an{" "}
+            <i>
+              <strong>a priori</strong>
+            </i>{" "}
+            ordering with at least one dose group sample being larger or smaller
+            than the others. The test statistic counts, for each dose group, the
+            number of times values in that group are greater than those in every
+            lower order dose group and sums these counts across groups. A
             statistically significant tend can be inferred when the trend test
             p-value <IM f="< 0.05" />.
           </p>
@@ -58,22 +61,14 @@ class AboutModal extends Component {
           </p>
           <p>
             When running the Jonckheere-Terpstra trend test, the exact method,
-            utilizing a permutation approach, is preferentially used. This
-            permutation approach is not dependent on any distributional
-            assumptions; it iteratively reshuffles the observed data (i.e.,
-            reshuffles the response data relative to dose group labels) to
-            generate a dataset that might be expected due to chance. For each
-            reshuffled (permuted) dataset, the test statistic is calculated and
-            compared to the original test statistic. The final p-value is then
-            the the proportion of permutted statistics that are greater than or
-            lesser than the original statistic for decreasing and increasing
-            trends, respectively. However, this exact method is only available
-            when there are no ties in the data (i.e., there are no equal
-            response values in the data set across dose groups) and when the
-            total sample size is less than 150. The limit on sample size is
-            based on the observation that computation time for the exact
-            Jonckheere’s test increases in an exponential fashion with
-            increasing total <IM f="N" />:
+            utilizing a convolution approach to compute the null distribution of
+            the Jonckheere-Terpstra statistic, is preferentially used. However,
+            this exact method is only available when there are no ties in the
+            data (i.e., there are no equal response values in the data set
+            across dose groups) and when the total sample size is less than 150.
+            The limit on sample size is based on the observation that
+            computation time for the exact Jonckheere's test increases in an
+            exponential fashion with increasing total <IM f="N" />:
           </p>
           <p
             style={{
@@ -119,11 +114,21 @@ class AboutModal extends Component {
             </tbody>
           </table>
           <p>
-            When the total <IM f="N" /> exceeds 150 or ties in the data exist,
-            the approximate approach, based on a normal approximation of the
-            test statistics, is used instead. Users can opt to use the
-            approximate approach even when there are no ties in the data and
-            total <IM f="N < 150" />.
+            When the total N exceeds 150 or ties in the data exist, the
+            approximate approach, based on a normal approximation of the test
+            statistics, is used instead.
+          </p>
+          <p>
+            Alterntatively, users can also opt to use a permutation approach
+            that is not dependent on any distributional assumptions. This
+            approach iteratively reshuffles the observed data (i.e., reshuffles
+            the response data relative to dose group labels) to generate a
+            dataset that might be expected due to chance. For each reshuffled
+            (permuted) dataset, the test statistic is calculated and compared to
+            the original test statistic. The final p-value is then the the
+            proportion of permutted statistics that are greater than or lesser
+            than the original statistic for decreasing and increasing trends,
+            respectively.
           </p>
           <p>
             Individual data are required for the Jonckheere-Terpstra trend test.
