@@ -432,9 +432,12 @@ class JonckheereTerpstraViewset(viewsets.GenericViewSet):
 
     @action(detail=False, methods=["POST"], renderer_classes=(renderers.XlsxRenderer,))
     def excel(self, request, *args, **kwargs):
+        computed_result = request.data.get("computed_result")
+        if not computed_result:
+            raise exceptions.ValidationError("No Jonckheere Terpstra Trend Test result was computed")
         binary_stream = BytesIO()
         with ExcelWriter(binary_stream, engine="openpyxl") as writer:
-            DataFrame([self._run_analysis(request)]).to_excel(
+            DataFrame([computed_result]).to_excel(
             writer, index=False, sheet_name="Analysis"
         )
             DataFrame(request.data["dataset_obj"]).to_excel(writer, index=False, sheet_name="Dataset")
@@ -445,7 +448,11 @@ class JonckheereTerpstraViewset(viewsets.GenericViewSet):
 
     @action(detail=False, methods=["POST"], renderer_classes=(renderers.DocxRenderer,))
     def word(self, request, *args, **kwargs):
-        analysis = DataFrame([self._run_analysis(request)])
+        computed_result = request.data.get("computed_result")
+        if not computed_result:
+            raise exceptions.ValidationError("No Jonckheere Terpstra Trend Test result was computed")
+
+        analysis = DataFrame([computed_result])
         binary_stream = build_jonckheereterpstra_docx(analysis, DataFrame(request.data['dataset_obj']))
         data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
         return Response(data)

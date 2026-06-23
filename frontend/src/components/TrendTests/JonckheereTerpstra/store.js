@@ -116,10 +116,22 @@ class Store {
     return result_string;
   }
 
+  @computed get reportRequest() {
+    return {
+      method: "POST",
+      mode: "cors",
+      headers: getHeaders(this.token),
+      body: JSON.stringify({
+        ...this.settings,
+        computed_result: this.outputs?.answer ?? null,
+      }),
+    };
+  }
+
   @action.bound
   async downloadExcel() {
     const url = "/api/v1/jonckheere-terpstra/excel/";
-    await fetch(url, this.submissionRequest)
+    await fetch(url, this.reportRequest)
       .then((response) => {
         return getBlob(response, "result.xlsx");
       })
@@ -129,7 +141,7 @@ class Store {
   @action.bound
   async downloadWord() {
     const url = "/api/v1/jonckheere-terpstra/word/";
-    await fetch(url, this.submissionRequest)
+    await fetch(url, this.reportRequest)
       .then((response) => {
         return getBlob(response, "result.docx");
       })
