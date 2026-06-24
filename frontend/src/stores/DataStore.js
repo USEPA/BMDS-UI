@@ -414,9 +414,9 @@ class DataStore {
     const getDefaultText = () => {
         const expectedColumns = columns[this.selectedDataset.dtype],
           value = _.map(this.getMappedArray, (row) => {
-            return _.map(expectedColumns, (col) => row[col].toString()).join(
-              "\t",
-            );
+            return _.map(expectedColumns, (col) =>
+              (row[col] ?? "").toString(),
+            ).join("\t");
           }).join("\n");
         return value;
       },

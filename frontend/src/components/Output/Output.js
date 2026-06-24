@@ -210,7 +210,6 @@ class Output extends Component {
               <h4
                 style={{
                   display: "inline-block",
-                  backgroundColor: "#ffeaa7",
                   padding: "0 .5rem",
                   margin: 0,
                   borderRadius: 4,
@@ -229,7 +228,6 @@ class Output extends Component {
               <h4
                 style={{
                   display: "inline-block",
-                  backgroundColor: "#ffeaa7",
                   padding: "0 .5rem",
                   margin: 0,
                   borderRadius: 4,
