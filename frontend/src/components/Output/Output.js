@@ -195,18 +195,26 @@ class Output extends Component {
         ) : null}
         {selectedLOUDBayesian ? (
           <div className="row py-2">
-            <div className="col-lg-12">
+            <div className="col-lg-7">
               <h3>LOUD Bayesian Model Results</h3>
               <LOUDBayesianResultTable />
             </div>
-            <div className="col-lg-12">
+            <div className="col-lg-5">
               <DoseResponsePlot
                 onRelayout={outputStore.updateUserPlotSettings}
                 layout={outputStore.drBayesianPlotLayout}
                 data={outputStore.drLOUDBayesianPlotData}
               />
             </div>
-            <div className="col-lg-8" style={{ paddingTop: "40px" }}>
+            <div
+              className="col-lg-6"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                paddingTop: "20px",
+              }}
+            >
               <h4
                 style={{
                   display: "inline-block",
@@ -221,10 +229,18 @@ class Output extends Component {
                 src={outputStore.LOUDPosteriorPlotContent}
                 alt="Posterior distribution of
               model-averaged BMD"
-                style={{ maxWidth: "100%", height: "auto", display: "block" }}
+                style={{ maxWidth: "90%", height: "auto", display: "block" }}
               />
             </div>
-            <div className="col-lg-8" style={{ paddingTop: "40px" }}>
+            <div
+              className="col-lg-6"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                paddingTop: "20px",
+              }}
+            >
               <h4
                 style={{
                   display: "inline-block",
@@ -238,18 +254,18 @@ class Output extends Component {
               <img
                 src={outputStore.LOUDOverlayPlotContent}
                 alt="Overlay of model-specific and model-averaged BMD distributions"
-                style={{ maxWidth: "100%", height: "auto", display: "block" }}
+                style={{ maxWidth: "90%", height: "auto", display: "block" }}
               />
             </div>
           </div>
         ) : null}
         {selectedToxicRBayesian ? (
           <div className="row py-2">
-            <div className="col-lg-12">
+            <div className="col-lg-7">
               <h3>ToxicR Bayesian Model Results</h3>
               <ToxicRBayesianResultTable />
             </div>
-            <div className="col-lg-12">
+            <div className="col-lg-5">
               <DoseResponsePlot
                 onRelayout={outputStore.updateUserPlotSettings}
                 layout={outputStore.drBayesianPlotLayout}
