@@ -187,6 +187,53 @@ const allContinuous = [
       ],
     },
     [MODEL_DICHOTOMOUS]: {
+      loud_bayesian: [
+        {
+          model: "Dichotomous-Hill",
+          prior_weight: 0.1111,
+          _displayName: "Dichotomous-Hill",
+        },
+        {
+          model: "Gamma",
+          prior_weight: 0.1111,
+          _displayName: "Gamma",
+        },
+        {
+          model: "Logistic",
+          prior_weight: 0.1111,
+          _displayName: "Logistic",
+        },
+        {
+          model: "LogLogistic",
+          prior_weight: 0.1111,
+          _displayName: "LogLogistic",
+        },
+        {
+          model: "LogProbit",
+          prior_weight: 0.1111,
+          _displayName: "LogProbit",
+        },
+        {
+          model: "Multistage",
+          prior_weight: 0.1111,
+          _displayName: "Multistage",
+        },
+        {
+          model: "Probit",
+          prior_weight: 0.1111,
+          _displayName: "Probit",
+        },
+        {
+          model: "Quantal Linear",
+          prior_weight: 0.1111,
+          _displayName: "Quantal Linear",
+        },
+        {
+          model: "Weibull",
+          prior_weight: 0.1111,
+          _displayName: "Weibull",
+        },
+      ],
       frequentist_restricted: [
         "Dichotomous-Hill",
         "Gamma",
