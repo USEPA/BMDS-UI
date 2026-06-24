@@ -45,11 +45,11 @@ class Store {
   @action.bound
   loadExampleData() {
     this.updateSettings("dataset", this.exampleData);
-    this.selected_dataset = parseCSVToObjects(this.exampleData, this.columns);
+    parsed_example_data = parseCSVToObjects(this.exampleData, this.columns);
     this.updateSettings(
       "dataset_obj",
       Object.fromEntries(
-        this.columns.map((col) => [col, this.selected_dataset[col]]),
+        this.columns.map((col) => [col, parsed_example_data[col]]),
       ),
     );
   }
@@ -74,6 +74,13 @@ class Store {
 
   @action.bound
   async submit() {
+    // dataset_obj should represent the last-analyzed dataset.
+    const parsed = parseCSVToObjects(this.settings.dataset, this.columns);
+    this.updateSettings(
+      "dataset_obj",
+      Object.fromEntries(this.columns.map((col) => [col, parsed[col]])),
+    );
+
     const url = "/api/v1/jonckheere-terpstra/";
     this.error = null;
     await fetch(url, this.submissionRequest)

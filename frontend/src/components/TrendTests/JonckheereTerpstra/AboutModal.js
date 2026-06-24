@@ -145,6 +145,11 @@ class AboutModal extends Component {
           </p>
           <h3>Software Inputs</h3>
           <p>
+            The dataset will initially be populated from the Data tab of the
+            BMDS analysis. Users can also opt to manually enter or paste a
+            dataset.
+          </p>
+          <p>
             The dataset used for the Jonckheere-Terpstra trend test should have
             the same structure as Summarized Continuous or Individual Continuous
             data and should have the following columns in this sequence:
