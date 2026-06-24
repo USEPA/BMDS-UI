@@ -441,7 +441,7 @@ class JonckheereTerpstraViewset(viewsets.GenericViewSet):
         binary_stream = BytesIO()
         with ExcelWriter(binary_stream, engine="openpyxl") as writer:
             DataFrame([computed_result]).to_excel(
-            writer, index=False, sheet_name="Analysis"
+            writer, index=False, sheet_name="Results"
         )
             DataFrame(request.data["dataset_obj"]).to_excel(writer, index=False, sheet_name="Dataset")
             if synthetic_dataset_obj:

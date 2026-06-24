@@ -52,10 +52,9 @@ export const simulateClick = function (el) {
 
     const lines = csv.split(/\r?\n/);
 
+    const normalizedHeader = lines[0].replace(/[\s,]+/g, ",");
     const headerMatches =
-      lines.length > 0 &&
-      lines[0].split(",").length === columns.length &&
-      lines[0] === columns.join(",");
+      lines.length > 0 && normalizedHeader === columns.join(",");
 
     const dataLines = headerMatches ? lines.slice(1) : lines;
 
@@ -64,7 +63,7 @@ export const simulateClick = function (el) {
 
     for (const line of dataLines) {
       if (line.length === 0) continue; // skip completely empty lines
-      const cells = line.split(",");
+      const cells = line.replace(/[\s,]+/g, ",").split(",");
       for (let i = 0; i < columns.length; i++) {
         const raw = cells[i] !== undefined ? cells[i] : "";
         result[columns[i]].push(raw === "" || /^na$/i.test(raw) ? null : raw);

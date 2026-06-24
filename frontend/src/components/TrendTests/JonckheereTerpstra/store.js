@@ -45,7 +45,10 @@ class Store {
   @action.bound
   loadExampleData() {
     this.updateSettings("dataset", this.exampleData);
-    parsed_example_data = parseCSVToObjects(this.exampleData, this.columns);
+    const parsed_example_data = parseCSVToObjects(
+      this.exampleData,
+      this.columns,
+    );
     this.updateSettings(
       "dataset_obj",
       Object.fromEntries(

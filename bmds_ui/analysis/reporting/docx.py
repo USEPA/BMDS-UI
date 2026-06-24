@@ -208,9 +208,17 @@ def build_jonckheereterpstra_docx(analysis, dataset, synthetic_dataset=None):
             "  "
         )
 
+    report.document.add_heading("Results", 3)
+
     report.document.add_paragraph(
             df_to_table(report, analysis)
         )
+    
+    report.document.add_paragraph(
+            "  "
+        )
+
+    report.document.add_heading("Dataset", 3)
     
     report.document.add_paragraph(
             df_to_table(report, dataset)
@@ -221,7 +229,7 @@ def build_jonckheereterpstra_docx(analysis, dataset, synthetic_dataset=None):
             "  "
         )
 
-        report.document.add_heading("Synthetic Individual Dataset", 2)
+        report.document.add_heading("Simulated Individual Dataset", 3)
 
         report.document.add_paragraph(df_to_table(report, synthetic_dataset))
 
