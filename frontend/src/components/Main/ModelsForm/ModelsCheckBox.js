@@ -15,14 +15,16 @@ import FloatInput from "../../common/FloatInput";
 import HelpTextPopover from "../../common/HelpTextPopover";
 
 const multistageHelpText = `All Multistage model polynomial degrees will be run up to a maximum
-        degree as specified by the user. For ToxicR Bayesian Model Averaging, only the 2nd degree
-        Multistage model is used (see User Manual for details).`,
-  modelsWithHelpText = new Set(["Multistage"]),
+        degree as specified by the user.`,
   modelDisplayNames = {
     "Dichotomous-Hill": "Dichotomous Hill",
     LogLogistic: "Log Logistic",
     LogProbit: "Log Probit",
     "Quantal Linear": "Quantal Linear",
+  },
+  bayesianDichotomousDisplayNames = {
+    ...modelDisplayNames,
+    Multistage: "Multistage 2",
   };
 
 const getDisplayName = (model) => modelDisplayNames[model] ?? model;
@@ -221,11 +223,12 @@ const LOUDAccordion = observer(
   },
 );
 
-const ModelHeaderTd = ({ model, writeMode }) => {
+const ModelHeaderTd = ({ model, writeMode, getLabel = getDisplayName }) => {
+  const label = getLabel(model);
   return (
     <td className="text-left align-middle" headers="m-name">
-      {getDisplayName(model)}
-      {writeMode && modelsWithHelpText.has(model) ? (
+      {label}
+      {writeMode && label === "Multistage" ? (
         <HelpTextPopover content={multistageHelpText} title={"note"} />
       ) : null}
     </td>
@@ -271,45 +274,51 @@ const tabColumns = {
   ],
 };
 
-const ModelRow = observer(({ store, model, columns, groupIndex = null }) => (
-  <tr
-    style={{
-      backgroundColor:
-        groupIndex != null && groupIndex % 2 !== 0 ? "#f8f9fa" : undefined,
-    }}
-  >
-    <ModelHeaderTd model={model} writeMode={store.canEdit} />
-    {columns.map((col) => {
-      const modelOptions =
-        allModelOptions?.[store.getModelType]?.[col.type] ?? [];
-      if (!modelOptions.includes(model)) {
-        return <td key={col.headers} />;
-      }
-      if (col.component === "checkbox") {
-        return (
-          <CheckBoxTd
-            key={col.headers}
-            store={store}
-            type={col.type}
-            model={model}
-            headers={col.headers}
-          />
-        );
-      }
-      if (col.component === "priorweight") {
-        return (
-          <PriorWeightTd
-            key={col.headers}
-            store={store}
-            type={col.type}
-            model={model}
-            headers={col.headers}
-          />
-        );
-      }
-    })}
-  </tr>
-));
+const ModelRow = observer(
+  ({ store, model, columns, groupIndex = null, getLabel = getDisplayName }) => (
+    <tr
+      style={{
+        backgroundColor:
+          groupIndex != null && groupIndex % 2 !== 0 ? "#f8f9fa" : undefined,
+      }}
+    >
+      <ModelHeaderTd
+        model={model}
+        writeMode={store.canEdit}
+        getLabel={getLabel}
+      />
+      {columns.map((col) => {
+        const modelOptions =
+          allModelOptions?.[store.getModelType]?.[col.type] ?? [];
+        if (!modelOptions.includes(model)) {
+          return <td key={col.headers} />;
+        }
+        if (col.component === "checkbox") {
+          return (
+            <CheckBoxTd
+              key={col.headers}
+              store={store}
+              type={col.type}
+              model={model}
+              headers={col.headers}
+            />
+          );
+        }
+        if (col.component === "priorweight") {
+          return (
+            <PriorWeightTd
+              key={col.headers}
+              store={store}
+              type={col.type}
+              model={model}
+              headers={col.headers}
+            />
+          );
+        }
+      })}
+    </tr>
+  ),
+);
 
 const ModelsCheckBox = observer(({ store }) => {
   const { getModelType, activeTab } = store;
@@ -353,10 +362,22 @@ const ModelsCheckBox = observer(({ store }) => {
     } else {
       allModels = rowOrder[getModelType];
     }
+
+    const getLabel =
+      store.getModelType === mc.MODEL_DICHOTOMOUS &&
+      (activeTab === "loud_bayesian" || activeTab === "toxicr_bayesian")
+        ? (model) => bayesianDichotomousDisplayNames[model] ?? model
+        : getDisplayName;
     return (
       <tbody>
         {allModels.map((model) => (
-          <ModelRow key={model} store={store} model={model} columns={columns} />
+          <ModelRow
+            key={model}
+            store={store}
+            model={model}
+            columns={columns}
+            getLabel={getLabel}
+          />
         ))}
       </tbody>
     );
