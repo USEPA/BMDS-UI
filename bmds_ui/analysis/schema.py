@@ -71,6 +71,7 @@ class AnalysisOutput(BaseModel):
     bmds_ui_version: str
     bmds_python_version: VersionSchema | None = None
     outputs: list[AnalysisSessionSchema]
+    cochran_armitage_result: list | None = None
 
 
 def all_numeric_and_finite(df: pd.DataFrame) -> bool:

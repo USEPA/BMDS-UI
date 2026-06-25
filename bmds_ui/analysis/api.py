@@ -104,29 +104,7 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         instance.refresh_from_db()
         serializer = self.get_serializer(instance)
 
-        cochran_armitage_result = []
-        if instance.inputs["datasets"][0]["metadata"]["model_type"] == "DM":
-            for dataset in instance.inputs["datasets"]:
-                try:
-                    settings = pydantic_validate(
-                        {"dataset": to_csv(dataset, ["doses", "ns", "incidences"])},
-                        schema.CochranArmitage
-                    )
-                    result = settings.calculate()
-                    result["name"] = dataset.get("metadata", {}).get("name")
-                    cochran_armitage_result.append(result)
-                except ValidationError as err:
-                    raise exceptions.ValidationError(str(err)) from None
-
-        outputs = (instance.outputs or {}).copy()
-        outputs["cochran_armitage_result"] = cochran_armitage_result
-        instance.outputs = outputs
-        instance.save(update_fields=["outputs"])
-
-        payload = {**serializer.data}
-        if cochran_armitage_result:
-            payload["cochran_armitage_result"] = cochran_armitage_result 
-        return Response(payload)
+        return Response(serializer.data)
 
     @action(detail=True, methods=("post",), url_path="select-model")
     def select_model(self, request, *args, **kwargs):
@@ -169,24 +147,6 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-    def _compute_cochran_armitage(self, instance):
-        cochran_armitage_result = []
-        try:
-            datasets = instance.inputs.get("datasets", [])
-            model_type = datasets[0].get("metadata", {}).get("model_type")
-            if model_type == "DM":
-                for dataset in instance.inputs["datasets"]:
-                    settings = pydantic_validate(
-                        {"dataset": to_csv(dataset, ["doses", "ns", "incidences"])},
-                        schema.CochranArmitage
-                    )
-                    result = settings.calculate()
-                    result["name"] = dataset.get("metadata", {}).get("name")
-                    cochran_armitage_result.append(result)
-        except ValidationError as err:
-            raise exceptions.ValidationError(str(err)) from None
-        return cochran_armitage_result
-
     @action(detail=True, renderer_classes=(renderers.XlsxRenderer,))
     def excel(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -196,10 +156,8 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         if response.status == ReportStatus.COMPLETE:
             cache.delete()
 
-            # Fetch persisted results or compute on the fly
+            # Fetch persisted results
             cochran_armitage_result = (instance.outputs or {}).get("cochran_armitage_result")
-            if cochran_armitage_result is None:
-                cochran_armitage_result = self._compute_cochran_armitage(instance)
 
             if cochran_armitage_result:
                 binary_stream = response.content  # should be a BytesIO-like object
@@ -239,8 +197,6 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         # Compute result 
         cochran_armitage_result = (instance.outputs or {}).get("cochran_armitage_result")
-        if cochran_armitage_result is None:
-            cochran_armitage_result = self._compute_cochran_armitage(instance)
 
         if cochran_armitage_result:
             df = (

@@ -23,12 +23,13 @@ from pybmds.constants import ModelClass
 from pybmds.recommender.recommender import RecommenderSettings
 
 from .. import __version__
-from ..common.utils import random_string
+from ..common.utils import random_string, to_csv
+from ..common.validation import pydantic_validate
 from . import constants, tasks, validators
 from .executor import AnalysisSession, MultiTumorSession, Session, deserialize
 from .reporting import excel
 from .reporting.cache import DocxReportCache, ExcelReportCache
-from .schema import AnalysisOutput, AnalysisSessionSchema
+from .schema import AnalysisOutput, AnalysisSessionSchema, CochranArmitage
 from .utils import re_hex_color
 
 logger = logging.getLogger(__name__)
@@ -349,12 +350,29 @@ class Analysis(models.Model):
                 bmds_python_version = output.loud_bayesian["version"]
                 break  
 
+        cochran_armitage_result = []
+        datasets = self.inputs.get("datasets", [])
+
+        if datasets and datasets[0].get("metadata", {}).get("model_type") == "DM":
+            for dataset in datasets:
+                try:
+                    settings = pydantic_validate(
+                        {"dataset": to_csv(dataset, ["doses", "ns", "incidences"])},
+                        CochranArmitage
+                    )
+                    result = settings.calculate()
+                    result["name"] = dataset.get("metadata", {}).get("name")
+                    cochran_armitage_result.append(result)
+                except Exception:
+                    logger.exception(f"{self.id}: cochran-armitage failed for dataset")
+
         # Prepare complete output object
         analysis_output = AnalysisOutput(
             analysis_id=str(self.id),
             bmds_ui_version=__version__,
             bmds_python_version=bmds_python_version,
             outputs=[output.model_dump(by_alias=True) for output in outputs],
+            cochran_armitage_result=cochran_armitage_result or None,
         )
         self.outputs = analysis_output.model_dump(by_alias=True)
 
