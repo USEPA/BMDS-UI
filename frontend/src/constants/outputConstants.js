@@ -19,6 +19,7 @@ export const getPValue = function (dataType, results) {
   modelClasses = {
     frequentist: 0,
     toxicr_bayesian: 1,
+    loud_bayesian: 2,
   },
   maIndex = 999,
   priorClassLabels = [
