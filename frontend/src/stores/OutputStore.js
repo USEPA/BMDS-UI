@@ -104,6 +104,14 @@ class OutputStore {
     return outputs[this.selectedOutputIndex]["loud_parameter_groups"];
   }
 
+  @computed get BMDSummary() {
+    const outputs = this.outputs;
+    if (!_.isObject(outputs)) {
+      return null;
+    }
+    return outputs[this.selectedOutputIndex]["bmd_summary"];
+  }
+
   @computed get LOUDParameterTracePng() {
     const out = this.selectedOutput;
     if (

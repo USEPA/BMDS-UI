@@ -166,7 +166,10 @@ class ModelAverageBody extends Component {
       cdfData =
         isLOUD && outputStore.LOUDMaBmdDistCdf
           ? outputStore.LOUDMaBmdDistCdf
-          : model.results.bmd_dist;
+          : model.results.bmd_dist,
+      BMDSummary = outputStore.BMDSummary;
+
+    console.log(BMDSummary);
 
     return (
       <Modal.Body>
@@ -187,6 +190,7 @@ class ModelAverageBody extends Component {
             <MaIndividualModels
               model_average={model}
               models={bayesian_models}
+              bmdSummary={BMDSummary}
             />
           </Col>
         </Row>

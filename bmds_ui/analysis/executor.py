@@ -236,6 +236,9 @@ class AnalysisSession(NamedTuple):
                 self.loud_bayesian._ma_bmd_dist_cdf = ma_arr
 
                 figs = get_model_average_figures(self.loud_bayesian)
+
+                self.loud_bayesian._bmd_summary = figs["bmd_summary"].to_dict()
+
                 self.loud_bayesian._parameter_groups_data = [{
                     "name": group["name"],
                     "columns": list(group["summary"].columns),
@@ -280,6 +283,7 @@ class AnalysisSession(NamedTuple):
             loud_bayesian=self.loud_bayesian.to_dict() if self.loud_bayesian else None,
             static_plots=static_plots,
             loud_parameter_groups=getattr(self.loud_bayesian, "_parameter_groups_data", None) if self.loud_bayesian else None,
+            bmd_summary=getattr(self.loud_bayesian, "_bmd_summary", None) if self.loud_bayesian else None,
             loud_model_bmd_dist_cdfs=loud_model_bmd_dist_cdfs,
             loud_ma_bmd_dist_cdf=loud_ma_bmd_dist_cdf,
         )

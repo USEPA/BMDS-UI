@@ -46,6 +46,7 @@ class AnalysisSessionSchema(BaseModel):
     loud_bayesian: dict | None = None
     static_plots: StaticPlots | None = None
     loud_parameter_groups: list | None = None
+    bmd_summary: dict | None = None
     loud_model_bmd_dist_cdfs: list | None = None
     loud_ma_bmd_dist_cdf: list | None = None
     error: str | None = None
