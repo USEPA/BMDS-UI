@@ -10,31 +10,58 @@ import { ff } from "@/utils/formatters";
 class MaIndividualModels extends Component {
   render() {
     const { model_average, models, bmdSummary } = this.props,
+      hasRhat = bmdSummary && "R-hat" in bmdSummary,
+      METRICS = [
+        "BMD",
+        "BMDL",
+        "BMDU",
+        ...(hasRhat ? ["R-hat"] : []),
+        "Markov Chain Standard Error (Median)",
+        "Bulk Effective Sample Size",
+        "Tail Effective Sample Size",
+      ],
+      modelRows = models.map((model) => [
+        model.name,
+        ff(model_average.results.priors[models.indexOf(model)]),
+        ff(model_average.results.posteriors[models.indexOf(model)]),
+        ...METRICS.map((metric) => ff(bmdSummary?.[metric]?.[model.name])),
+      ]),
+      maRow = [
+        "Model Average",
+        "-",
+        "-",
+        ...METRICS.map((metric) => ff(bmdSummary?.[metric]?.["MA_BMD"])),
+      ],
       data = {
         headers: [
           "Model",
           "Prior Weights",
           "Posterior Probability",
-          "BMDL",
-          "BMD",
-          "BMDU",
+          ...METRICS,
         ],
-        colWidths: [25, 15, 15, 15, 15, 15],
+        colWidths: hasRhat
+          ? [17, 8, 9, 8, 8, 8, 8, 12, 11, 11]
+          : [18, 9, 10, 9, 9, 9, 12, 12, 12],
         subheader: "Individual Model Results",
         tblClasses: "table table-sm text-right col-l-1",
-        rows: models.map((model, i) => [
-          model.name,
-          ff(model_average.results.priors[i]),
-          ff(model_average.results.posteriors[i]),
-          <FloatingPointHover key={1} value={model.results.bmdl} />,
-          <FloatingPointHover key={2} value={model.results.bmd} />,
-          <FloatingPointHover key={3} value={model.results.bmdu} />,
-        ]),
+        rows: [...modelRows, maRow],
       };
 
-    console.log(bmdSummary);
-
-    return <Table data={data} />;
+    return (
+      <div style={{ marginTop: "20px" }}>
+        <Table data={data} />
+        {!hasRhat && (
+          <div
+            style={{ marginBottom: "20px", position: "relative", top: "-10px" }}
+          >
+            <i>
+              NOTE: R-hat statistic is calculated only when more than 1 Markov
+              chain is used
+            </i>
+          </div>
+        )}
+      </div>
+    );
   }
 }
 MaIndividualModels.propTypes = {

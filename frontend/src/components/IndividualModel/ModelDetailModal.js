@@ -169,8 +169,6 @@ class ModelAverageBody extends Component {
           : model.results.bmd_dist,
       BMDSummary = outputStore.BMDSummary;
 
-    console.log(BMDSummary);
-
     return (
       <Modal.Body>
         <Row>
