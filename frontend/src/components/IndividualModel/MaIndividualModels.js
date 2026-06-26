@@ -24,13 +24,23 @@ class MaIndividualModels extends Component {
         model.name,
         ff(model_average.results.priors[models.indexOf(model)]),
         ff(model_average.results.posteriors[models.indexOf(model)]),
-        ...METRICS.map((metric) => ff(bmdSummary?.[metric]?.[model.name])),
+        ...METRICS.map((metric, i) => (
+          <FloatingPointHover
+            key={i}
+            value={bmdSummary?.[metric]?.[model.name]}
+          />
+        )),
       ]),
       maRow = [
         "Model Average",
         "-",
         "-",
-        ...METRICS.map((metric) => ff(bmdSummary?.[metric]?.["MA_BMD"])),
+        ...METRICS.map((metric, i) => (
+          <FloatingPointHover
+            key={i}
+            value={bmdSummary?.[metric]?.["MA_BMD"]}
+          />
+        )),
       ],
       data = {
         headers: [
