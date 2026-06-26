@@ -370,7 +370,7 @@ class TestJonckheereTerpstraViewSet:
         response = client.post(url, jonckheereterpstra_dataset_individual, format="json")
         assert response.status_code == 200
         data = response.json()
-        assert list(data.keys()) == ["answer"]
+        assert list(data.keys()) == ["answer", "synthetic_dataset_obj"]
         assert list(data["answer"].keys()) == [
             "Hypothesis", 
             "Statistic", 

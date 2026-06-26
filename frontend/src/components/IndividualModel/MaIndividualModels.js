@@ -22,8 +22,8 @@ class MaIndividualModels extends Component {
       ],
       modelRows = models.map((model) => [
         model.name,
-        ff(model_average.results.priors[models.indexOf(model)]),
-        ff(model_average.results.posteriors[models.indexOf(model)]),
+        ff(model_average.priors[models.indexOf(model)]),
+        ff(model_average.posteriors[models.indexOf(model)]),
         ...METRICS.map((metric, i) => (
           <FloatingPointHover
             key={i}

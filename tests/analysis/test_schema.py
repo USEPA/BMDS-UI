@@ -149,7 +149,7 @@ class TestRaoScottInput:
 class TestJonckheereTerpstraInput: 
     def test_calculate(self, jonckheereterpstra_dataset_individual): 
         analysis = JonckheereTerpstraInput.model_validate(jonckheereterpstra_dataset_individual) 
-        result = analysis.calculate() 
+        result, _ = analysis.calculate() 
         assert list(result.keys()) == ["Hypothesis", "Statistic", "Approach (P-Value)", "P-Value"] 
         assert result["Hypothesis"] == "increasing" 
 

@@ -186,7 +186,7 @@ class ModelAverageBody extends Component {
         <Row>
           <Col xl={12}>
             <MaIndividualModels
-              model_average={model}
+              model_average={model.results}
               models={bayesian_models}
               bmdSummary={BMDSummary}
             />
