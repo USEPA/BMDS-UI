@@ -139,7 +139,7 @@ class ModelsStore {
   @computed get numModelsSelected() {
     return _.chain(this.models)
       .values()
-      .reduce((_sum, d) => d.length, 0)
+      .reduce((sum, d) => sum + d.length, 0)
       .value();
   }
 
