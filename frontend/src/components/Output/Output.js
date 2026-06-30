@@ -211,16 +211,14 @@ class Output extends Component {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "space-between",
                 paddingTop: "20px",
+                maxWidth: "45%",
               }}
             >
               <h4
                 style={{
                   display: "inline-block",
-                  padding: "0 .5rem",
-                  margin: 0,
-                  borderRadius: 4,
+                  paddingBottom: "10px",
                 }}
               >
                 Posterior distribution of model-averaged BMD
@@ -229,24 +227,23 @@ class Output extends Component {
                 src={outputStore.LOUDPosteriorPlotContent}
                 alt="Posterior distribution of
               model-averaged BMD"
-                style={{ maxWidth: "90%", height: "auto", display: "block" }}
+                style={{ maxWidth: "100%", height: "auto", display: "block" }}
               />
             </div>
+
             <div
               className="col-lg-6"
               style={{
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "space-between",
                 paddingTop: "20px",
+                maxWidth: "55%",
               }}
             >
               <h4
                 style={{
                   display: "inline-block",
-                  padding: "0 .5rem",
-                  margin: 0,
-                  borderRadius: 4,
+                  paddingBottom: "10px",
                 }}
               >
                 Overlay of model-specific and model-averaged BMD distributions
@@ -254,7 +251,7 @@ class Output extends Component {
               <img
                 src={outputStore.LOUDOverlayPlotContent}
                 alt="Overlay of model-specific and model-averaged BMD distributions"
-                style={{ maxWidth: "90%", height: "auto", display: "block" }}
+                style={{ maxWidth: "100%", height: "auto", display: "block" }}
               />
             </div>
           </div>
