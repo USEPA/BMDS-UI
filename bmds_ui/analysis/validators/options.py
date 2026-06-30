@@ -19,7 +19,7 @@ limits = {
     "MCMC": {
         "iterations": {
             "max_total_iterations": 50_000,
-            "min_per_chain": 10_000
+            "min_per_chain": 2_500
         }, 
         "seed": {
             "min": 0, 
@@ -27,7 +27,7 @@ limits = {
         }, 
         "burnin": {
             "max_percent": 0.2, 
-            "min": 1000
+            "min": 100
         },
         "chain": {
             "min": 0, 
