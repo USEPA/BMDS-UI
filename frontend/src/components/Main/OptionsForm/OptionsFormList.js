@@ -18,11 +18,12 @@ import OptionsReadOnly from "./OptionsReadOnly";
 @inject(({ optionsStore, modelsStore }) => ({
   optionsStore,
   activeTab: modelsStore.activeTab,
+  hasLoudBayesian: modelsStore.hasLoudBayesian,
 }))
 @observer
 class OptionsFormList extends Component {
   render() {
-    const { optionsStore, activeTab } = this.props,
+    const { optionsStore, activeTab, hasLoudBayesian } = this.props,
       modelType = optionsStore.getModelType,
       optionsList = toJS(optionsStore.optionsList),
       distTypeHelpText =
@@ -123,8 +124,11 @@ class OptionsFormList extends Component {
             </table>
             {optionsStore.canAddNewOption ? null : (
               <p className="text-danger">
-                Can have a maximum of {optionsStore.maxItems} option sets per
-                analysis.
+                {hasLoudBayesian
+                  ? `Can have a maximum of ${optionsStore.maxItems} option sets per
+                analysis when LOUD models are selected.`
+                  : `Can have a maximum of ${optionsStore.maxItems} option sets per
+                analysis.`}
               </p>
             )}
           </form>
@@ -137,6 +141,7 @@ class OptionsFormList extends Component {
 OptionsFormList.propTypes = {
   optionsStore: PropTypes.object,
   activeTab: PropTypes.string,
+  hasLoudBayesian: PropTypes.bool,
 };
 
 export default OptionsFormList;

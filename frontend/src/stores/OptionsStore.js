@@ -67,16 +67,26 @@ class OptionsStore {
     this.setDefaultsByDatasetType();
   }
 
+  @action.bound pruneToMaxItems() {
+    if (this.optionsList.length > this.maxItems) {
+      this.optionsList.splice(this.maxItems);
+      this.rootStore.mainStore.setInputsChangedFlag();
+    }
+  }
+
   @computed get getModelType() {
     return this.rootStore.mainStore.model_type;
   }
 
   @computed get maxItems() {
-    return this.rootStore.mainStore.isDesktop
-      ? 1000
-      : this.rootStore.mainStore.isMultiTumor
-        ? 3
-        : 6;
+    const hasLoudBayesian = this.rootStore.modelsStore.hasLoudBayesian;
+
+    const isDesktop = this.rootStore.mainStore.isDesktop;
+
+    if (hasLoudBayesian) {
+      return isDesktop ? 500 : 2;
+    }
+    return isDesktop ? 1000 : this.rootStore.mainStore.isMultiTumor ? 3 : 6;
   }
 
   @computed get canAddNewOption() {

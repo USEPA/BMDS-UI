@@ -105,6 +105,10 @@ class ModelsStore {
     return this.rootStore.mainStore.canEdit;
   }
 
+  @computed get hasLoudBayesian() {
+    return (this.models?.loud_bayesian?.length ?? 0) > 0;
+  }
+
   @action.bound setDefaultsByDatasetType(force) {
     if (this.numModelsSelected === 0 || force) {
       this.models = models[this.getModelType];
@@ -169,6 +173,7 @@ class ModelsStore {
   }
 
   @action.bound setModelSelection(name, model, checked) {
+    console.log(this.models);
     if (checked) {
       if (!(name in this.models)) {
         this.models[name] = [];
@@ -199,6 +204,11 @@ class ModelsStore {
           });
         }
         this.setDefaultPriorWeights(name);
+
+        // Prune option sets if loud_bayesian models are included and over the limit
+        if (name === mc.LOUD_BAYESIAN) {
+          this.rootStore.optionsStore.pruneToMaxItems();
+        }
       } else {
         if (!this.models[name].includes(model)) {
           this.models[name].push(model);
