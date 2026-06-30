@@ -6,11 +6,14 @@ import Button from "../common/Button";
 import LabelInput from "../common/LabelInput";
 import SelectInput from "../common/SelectInput";
 
-@inject("dataStore")
+@inject(({ dataStore, modelsStore }) => ({
+  dataStore,
+  hasLoudBayesian: modelsStore.hasLoudBayesian,
+}))
 @observer
 class SelectModelType extends Component {
   render() {
-    const { dataStore } = this.props;
+    const { dataStore, hasLoudBayesian } = this.props;
     return (
       <div className="model-type mb-2">
         <Button
@@ -35,7 +38,11 @@ class SelectModelType extends Component {
         ) : null}
         {dataStore.canAddNewDataset ? null : (
           <p className="text-danger">
-            Can have a maximum of {dataStore.maxItems} datasets per analysis.
+            {hasLoudBayesian
+              ? `Can have a maximum of ${dataStore.maxItems} datasets per
+                analysis when LOUD models are selected.`
+              : `Can have a maximum of ${dataStore.maxItems} datasets per
+                analysis.`}
           </p>
         )}
       </div>
@@ -44,5 +51,6 @@ class SelectModelType extends Component {
 }
 SelectModelType.propTypes = {
   dataStore: PropTypes.object,
+  hasLoudBayesian: PropTypes.bool,
 };
 export default SelectModelType;

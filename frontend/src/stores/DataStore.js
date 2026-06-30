@@ -291,6 +291,14 @@ class DataStore {
       datasets.length > 0 ? datasets[0].metadata.id : null;
   }
 
+  @action.bound pruneToMaxItems() {
+    while (this.datasets.length > this.maxItems) {
+      this.selectedDatasetId =
+        this.datasets[this.datasets.length - 1].metadata.id;
+      this.deleteDataset();
+    }
+  }
+
   @computed get showDatasetTypeSelector() {
     return this.getModelType == MODEL_CONTINUOUS;
   }
@@ -390,12 +398,16 @@ class DataStore {
   }
 
   @computed get maxItems() {
-    return this.rootStore.mainStore.isDesktop
-      ? 1000
-      : this.rootStore.mainStore.isMultiTumor
-        ? 10
-        : 6;
+    const hasLoudBayesian = this.rootStore.modelsStore.hasLoudBayesian;
+
+    const isDesktop = this.rootStore.mainStore.isDesktop;
+
+    if (hasLoudBayesian) {
+      return isDesktop ? 500 : 2;
+    }
+    return isDesktop ? 1000 : this.rootStore.mainStore.isMultiTumor ? 10 : 6;
   }
+
   @computed get canAddNewDataset() {
     return this.datasets.length < this.maxItems;
   }

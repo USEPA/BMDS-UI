@@ -173,7 +173,6 @@ class ModelsStore {
   }
 
   @action.bound setModelSelection(name, model, checked) {
-    console.log(this.models);
     if (checked) {
       if (!(name in this.models)) {
         this.models[name] = [];
@@ -208,6 +207,7 @@ class ModelsStore {
         // Prune option sets if loud_bayesian models are included and over the limit
         if (name === mc.LOUD_BAYESIAN) {
           this.rootStore.optionsStore.pruneToMaxItems();
+          this.rootStore.dataStore.pruneToMaxItems();
         }
       } else {
         if (!this.models[name].includes(model)) {
