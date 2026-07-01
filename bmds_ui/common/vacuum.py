@@ -1,6 +1,7 @@
 import logging
 import math
 from datetime import datetime
+import time
 
 from django.conf import settings
 from django.core.cache import cache
@@ -41,10 +42,19 @@ def vacuum() -> bool:
     """Vacuum if the database is SQLite, return True if a vacuum completed. Set cache timestamp."""
     if is_sqlite():
         with connection.cursor() as cursor:
-            logger.info("VACUUM database...")
+            logger.info("START VACUUM database...")
+
+            start = time.perf_counter()
             cursor.execute("VACUUM")
+            elapsed = time.perf_counter() - start
+            minutes, seconds = divmod(elapsed, 60)
+            logger.info(
+                "VACUUM database completed in %d:%.2f mins",
+                int(minutes),
+                seconds,
+            )
+
             cache.set(VACUUM_TIMESTAMP_CACHE_KEY, timezone.now().isoformat())
-            logger.info("VACUUM database complete")
         return True
     return False
 

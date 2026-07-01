@@ -294,13 +294,17 @@ class Analysis(models.Model):
             return response
 
     def start_execute(self):
+        print("DEBUG::: START models.py start_execute()  ... ")
         # update model to indicate execution scheduled
         self.started = now()
         self.ended = None
         self.save()
 
+        print("DEBUG::: models.py start_execute() add to analysis queue... ")
         # add to analysis queue...
         tasks.try_execute.delay(str(self.id))
+
+        print("DEBUG::: DONE models.py start_execute()  ... ")
 
     def _execute_session(self) -> list[AnalysisSessionSchema]:
         # build combinations based on enabled datasets
@@ -336,7 +340,12 @@ class Analysis(models.Model):
         # ---------- Execution ----------
         # update start time to actual time started
         self.started = now()
+
+        print("DEBUG::: START models.py execute()  ... ")
+        print("DEBUG::: models.py execute() starting _execute() ... ")
         outputs = self._execute()
+
+        print("DEBUG::: models.py execute() get BMDS version ... ")
         # get bmds version
         bmds_python_version = None
         for output in outputs:
@@ -354,6 +363,7 @@ class Analysis(models.Model):
         datasets = self.inputs.get("datasets", [])
 
         if datasets and datasets[0].get("metadata", {}).get("model_type") == "DM":
+            print("DEBUG::: models.py execute() performing Cochran Armitage analysis ... ")
             for dataset in datasets:
                 try:
                     settings = pydantic_validate(
@@ -364,8 +374,9 @@ class Analysis(models.Model):
                     result["name"] = dataset.get("metadata", {}).get("name")
                     cochran_armitage_result.append(result)
                 except Exception:
-                    logger.exception(f"{self.id}: cochran-armitage failed for dataset")
+                    logger.exception(f"{self.id}: cochran-armitage failed for dataset")        
 
+        print("DEBUG::: models.py execute() prepare complete output object ... ")
         # Prepare complete output object
         analysis_output = AnalysisOutput(
             analysis_id=str(self.id),
@@ -374,12 +385,16 @@ class Analysis(models.Model):
             outputs=[output.model_dump(by_alias=True) for output in outputs],
             cochran_armitage_result=cochran_armitage_result or None,
         )
+
+        print("DEBUG::: models.py execute() saving model_dump to self.outputs ... ")
         self.outputs = analysis_output.model_dump(by_alias=True)
 
         self.errors = [str(getattr(output, "error")) for output in outputs if getattr(output, "error", None)]
         self.ended = now()
         self.deletion_date = get_deletion_date()
         self.save()
+
+        print("DEBUG::: DONE models.py execute()  ... ")
 
     def reset_execution(self):
         """
