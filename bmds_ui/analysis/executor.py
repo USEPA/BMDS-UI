@@ -3,6 +3,7 @@ from copy import deepcopy
 from typing import NamedTuple, Self
 from .utils import fig_to_png_b64
 import matplotlib.pyplot as plt 
+import time
 
 import pybmds
 from pybmds.constants import DistType, ModelClass
@@ -218,47 +219,83 @@ class AnalysisSession(NamedTuple):
                 self.toxicr_bayesian.add_model_averaging()
             self.toxicr_bayesian.execute()
 
+        start_total = time.perf_counter()
         if self.loud_bayesian:
+            start1 = time.perf_counter()
             self.loud_bayesian.add_model_averaging()
+            minutes1, seconds1 = divmod(time.perf_counter() - start1, 60)
+            print(f"DEBUG::: add_model_averaging() completed in {int(minutes1)}:{int(seconds1):02d} mins")
 
+            start2 = time.perf_counter()
             self.loud_bayesian.execute()
+            minutes2, seconds2 = divmod(time.perf_counter() - start2, 60)
+            print(f"DEBUG::: loud_bayesian.execute() completed in {int(minutes2)}:{int(seconds2):02d} mins")
 
+            start3 = time.perf_counter()
             model_cdf_arrs = []
             for model in self.loud_bayesian.models:
                 df = cdf_df(model.results.fit.bmd_dist)
                 arr = df[["BMD", "Percentile"]].to_numpy(dtype=float, copy=True).T  
                 arr[1] /= 100.0                                          
                 model_cdf_arrs.append(arr)
-            self.loud_bayesian._model_bmd_dist_cdfs = model_cdf_arrs    
+            self.loud_bayesian._model_bmd_dist_cdfs = model_cdf_arrs   
+            minutes3, seconds3 = divmod(time.perf_counter() - start3, 60)
+            print(f"DEBUG::: get model cdf arrays completed in {int(minutes3)}:{int(seconds3):02d} mins") 
             
             if self.loud_bayesian.model_average:
+                start4 = time.perf_counter()
                 df = cdf_df(self.loud_bayesian.model_average.results.bmd_dist)
                 ma_arr = df[["BMD", "Percentile"]].to_numpy(dtype=float, copy=True).T
                 ma_arr[1] /= 100.0 
                 self.loud_bayesian._ma_bmd_dist_cdf = ma_arr
+                minutes4, seconds4 = divmod(time.perf_counter() - start4, 60)
+                print(f"DEBUG::: get model average array completed in {int(minutes4)}:{int(seconds4):02d} mins")
 
+                start5 = time.perf_counter()
                 figs = get_model_average_figures(self.loud_bayesian, parameter_visualizations=False)
+                minutes5, seconds5 = divmod(time.perf_counter() - start5, 60)
+                print(f"DEBUG::: get_model_average_figures() completed in {int(minutes5)}:{int(seconds5):02d} mins")
 
+                start6 = time.perf_counter()
                 self.loud_bayesian._bmd_summary = figs["bmd_summary"].to_dict()
+                minutes6, seconds6 = divmod(time.perf_counter() - start6, 60)
+                print(f"DEBUG::: save figs['bmd_summary'] completed in {int(minutes6)}:{int(seconds6):02d} mins")
 
+                start7 = time.perf_counter()
                 self.loud_bayesian._parameter_groups_data = [{
                     "name": group["name"],
                     "columns": list(group["summary"].columns),
                     "rows": group["summary"].fillna("").to_dict(orient="records"),
                 } for group in figs["parameter_groups"]]
+                minutes7, seconds7 = divmod(time.perf_counter() - start7, 60)
+                print(f"DEBUG::: save _parameter_groups_data from figs completed in {int(minutes7)}:{int(seconds7):02d} mins")
 
+                start8 = time.perf_counter()
                 self.loud_bayesian.loud_posterior_plot_png = fig_to_png_b64(figs["posterior"])
                 self.loud_bayesian.loud_overlay_plot_png = fig_to_png_b64(figs["overlay"])
+                minutes8, seconds8 = divmod(time.perf_counter() - start8, 60)
+                print(f"DEBUG::: convert posterior and overlay plots to png b64 completed in {int(minutes8)}:{int(seconds8):02d} mins")
 
+                start9 = time.perf_counter()
                 uncompressed_groups = _parameter_group_records(
                     figs["idata"], self.loud_bayesian, figs["hdi_prob"], compressed=False, summary=figs["multi_summary"])
+                minutes9, seconds9 = divmod(time.perf_counter() - start9, 60)
+                print(f"DEBUG::: get uncompressed groups completed in {int(minutes9)}:{int(seconds9):02d} mins")
                 
+                start10 = time.perf_counter()
                 self.loud_bayesian._parameter_trace_pngs = {
                     group["name"]: fig_to_png_b64(group["trace_figure"]) for group in uncompressed_groups
                 }
+                minutes10, seconds10 = divmod(time.perf_counter() - start10, 60)
+                print(f"DEBUG::: convert parameter trace figs to png_664 completed in {int(minutes10)}:{int(seconds10):02d} mins")
                 
-                plt.close("all")      
-
+                start11 = time.perf_counter()
+                plt.close("all")  
+                minutes11, seconds11 = divmod(time.perf_counter() - start11, 60)
+                print(f"DEBUG::: plt.close('All') completed in {int(minutes11)}:{int(seconds11):02d} mins")    
+        
+        minutes_total, seconds_total = divmod(time.perf_counter() - start_total, 60)
+        print(f"DEBUG::: loud_bayesian completed in {int(minutes_total)}:{int(seconds_total):02d} mins")    
 
     def to_schema(self) -> AnalysisSessionSchema:
         loud_model_bmd_dist_cdfs = None
