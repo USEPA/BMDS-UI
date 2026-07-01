@@ -165,8 +165,10 @@ class AnalysisSession(NamedTuple):
 
     @classmethod
     def run(cls, inputs: dict, dataset_index: int, option_index: int) -> AnalysisSessionSchema:
+        print("DEBUG::: START:::::::: executor.py run()  ... ")
         session = cls.create(inputs, dataset_index, option_index)
         session.execute(inputs)
+        print("DEBUG::: DONE:::::::: executor.py run()  ... ")
         return session.to_schema()
 
     @classmethod
@@ -195,6 +197,9 @@ class AnalysisSession(NamedTuple):
         )
 
     def execute(self, inputs):
+
+        print("DEBUG::: executor.py starting execute()  ... ")
+
         if self.frequentist:
             self.frequentist.execute()
             if self.frequentist.recommendation_enabled:
@@ -219,6 +224,8 @@ class AnalysisSession(NamedTuple):
 
         if self.loud_bayesian:
             self.loud_bayesian.add_model_averaging()
+
+            print("DEBUG::: execute()  loud_bayesian execute() ... ")
             self.loud_bayesian.execute()
 
             model_cdf_arrs = []
@@ -228,13 +235,14 @@ class AnalysisSession(NamedTuple):
                 arr[1] /= 100.0                                          
                 model_cdf_arrs.append(arr)
             self.loud_bayesian._model_bmd_dist_cdfs = model_cdf_arrs    
-
+            
             if self.loud_bayesian.model_average:
                 df = cdf_df(self.loud_bayesian.model_average.results.bmd_dist)
                 ma_arr = df[["BMD", "Percentile"]].to_numpy(dtype=float, copy=True).T
                 ma_arr[1] /= 100.0 
                 self.loud_bayesian._ma_bmd_dist_cdf = ma_arr
 
+                print("DEBUG::: execute()  figs = get_model_average_figures()  ... ")
                 figs = get_model_average_figures(self.loud_bayesian)
 
                 self.loud_bayesian._bmd_summary = figs["bmd_summary"].to_dict()
@@ -248,13 +256,18 @@ class AnalysisSession(NamedTuple):
                 self.loud_bayesian.loud_posterior_plot_png = fig_to_png_b64(figs["posterior"])
                 self.loud_bayesian.loud_overlay_plot_png = fig_to_png_b64(figs["overlay"])
 
+                print("DEBUG::: execute()  set uncompressed groups  ... ")
                 uncompressed_groups = _parameter_group_records(
                     figs["idata"], self.loud_bayesian, figs["hdi_prob"], compressed=False)
+                
+                print("DEBUG::: execute()  set trace PNGs  ... ")
                 self.loud_bayesian._parameter_trace_pngs = {
                     group["name"]: fig_to_png_b64(group["trace_figure"]) for group in uncompressed_groups
                 }
                 
                 plt.close("all")
+
+        print("DEBUG::: executor.py finished execute()  ... ")        
 
 
     def to_schema(self) -> AnalysisSessionSchema:
