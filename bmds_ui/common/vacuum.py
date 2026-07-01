@@ -49,9 +49,9 @@ def vacuum() -> bool:
             elapsed = time.perf_counter() - start
             minutes, seconds = divmod(elapsed, 60)
             logger.info(
-                "VACUUM database completed in %d:%.2f mins",
+                "VACUUM database completed in %d:%.0f mins",
                 int(minutes),
-                seconds,
+                int(seconds),
             )
 
             cache.set(VACUUM_TIMESTAMP_CACHE_KEY, timezone.now().isoformat())
