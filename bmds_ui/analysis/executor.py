@@ -198,8 +198,6 @@ class AnalysisSession(NamedTuple):
 
     def execute(self, inputs):
 
-        print("DEBUG::: executor.py starting execute()  ... ")
-
         if self.frequentist:
             self.frequentist.execute()
             if self.frequentist.recommendation_enabled:
@@ -256,18 +254,15 @@ class AnalysisSession(NamedTuple):
                 self.loud_bayesian.loud_posterior_plot_png = fig_to_png_b64(figs["posterior"])
                 self.loud_bayesian.loud_overlay_plot_png = fig_to_png_b64(figs["overlay"])
 
-                print("DEBUG::: execute()  set uncompressed groups  ... ")
+                print("DEBUG::: execute()  _parameter_group_records()  ... ")
                 uncompressed_groups = _parameter_group_records(
                     figs["idata"], self.loud_bayesian, figs["hdi_prob"], compressed=False)
                 
-                print("DEBUG::: execute()  set trace PNGs  ... ")
                 self.loud_bayesian._parameter_trace_pngs = {
                     group["name"]: fig_to_png_b64(group["trace_figure"]) for group in uncompressed_groups
                 }
                 
-                plt.close("all")
-
-        print("DEBUG::: executor.py finished execute()  ... ")        
+                plt.close("all")      
 
 
     def to_schema(self) -> AnalysisSessionSchema:
