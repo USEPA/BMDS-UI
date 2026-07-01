@@ -99,11 +99,15 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         # start analysis execution
         instance.reset_execution()
+
+        print("DEBUG::: START AnslysisViewset.execute()")
+        print("DEBUG::: start instance.start_execute() ... ")
         instance.start_execute()
 
         instance.refresh_from_db()
         serializer = self.get_serializer(instance)
 
+        print("DEBUG::: END AnalysisViewset.execute()")
         return Response(serializer.data)
 
     @action(detail=True, methods=("post",), url_path="select-model")

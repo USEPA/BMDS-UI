@@ -183,6 +183,7 @@ class MainStore {
           .catch(handleServerError);
       };
 
+    console.log("DEBUG::: start MainStore.js executeAnalysis()");
     await fetch(this.config.editSettings.executeUrl, {
       method: "POST",
       mode: "cors",
@@ -195,6 +196,7 @@ class MainStore {
         if (!response.ok) {
           throw response;
         }
+        console.log("DEBUG::: executeAnalysis() returned response ... ");
         return response.json();
       })
       .then((data) => {
