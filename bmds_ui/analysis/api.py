@@ -99,6 +99,7 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         # start analysis execution
         instance.reset_execution()
+
         instance.start_execute()
 
         instance.refresh_from_db()

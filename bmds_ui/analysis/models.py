@@ -336,7 +336,9 @@ class Analysis(models.Model):
         # ---------- Execution ----------
         # update start time to actual time started
         self.started = now()
+
         outputs = self._execute()
+
         # get bmds version
         bmds_python_version = None
         for output in outputs:
@@ -364,7 +366,7 @@ class Analysis(models.Model):
                     result["name"] = dataset.get("metadata", {}).get("name")
                     cochran_armitage_result.append(result)
                 except Exception:
-                    logger.exception(f"{self.id}: cochran-armitage failed for dataset")
+                    logger.exception(f"{self.id}: cochran-armitage failed for dataset")        
 
         # Prepare complete output object
         analysis_output = AnalysisOutput(
@@ -374,6 +376,7 @@ class Analysis(models.Model):
             outputs=[output.model_dump(by_alias=True) for output in outputs],
             cochran_armitage_result=cochran_armitage_result or None,
         )
+
         self.outputs = analysis_output.model_dump(by_alias=True)
 
         self.errors = [str(getattr(output, "error")) for output in outputs if getattr(output, "error", None)]

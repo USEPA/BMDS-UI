@@ -195,6 +195,7 @@ class AnalysisSession(NamedTuple):
         )
 
     def execute(self, inputs):
+
         if self.frequentist:
             self.frequentist.execute()
             if self.frequentist.recommendation_enabled:
@@ -219,6 +220,7 @@ class AnalysisSession(NamedTuple):
 
         if self.loud_bayesian:
             self.loud_bayesian.add_model_averaging()
+
             self.loud_bayesian.execute()
 
             model_cdf_arrs = []
@@ -228,14 +230,14 @@ class AnalysisSession(NamedTuple):
                 arr[1] /= 100.0                                          
                 model_cdf_arrs.append(arr)
             self.loud_bayesian._model_bmd_dist_cdfs = model_cdf_arrs    
-
+            
             if self.loud_bayesian.model_average:
                 df = cdf_df(self.loud_bayesian.model_average.results.bmd_dist)
                 ma_arr = df[["BMD", "Percentile"]].to_numpy(dtype=float, copy=True).T
                 ma_arr[1] /= 100.0 
                 self.loud_bayesian._ma_bmd_dist_cdf = ma_arr
 
-                figs = get_model_average_figures(self.loud_bayesian)
+                figs = get_model_average_figures(self.loud_bayesian, parameter_visualizations=False)
 
                 self.loud_bayesian._bmd_summary = figs["bmd_summary"].to_dict()
 
@@ -249,12 +251,13 @@ class AnalysisSession(NamedTuple):
                 self.loud_bayesian.loud_overlay_plot_png = fig_to_png_b64(figs["overlay"])
 
                 uncompressed_groups = _parameter_group_records(
-                    figs["idata"], self.loud_bayesian, figs["hdi_prob"], compressed=False)
+                    figs["idata"], self.loud_bayesian, figs["hdi_prob"], compressed=False, summary=figs["multi_summary"])
+                
                 self.loud_bayesian._parameter_trace_pngs = {
                     group["name"]: fig_to_png_b64(group["trace_figure"]) for group in uncompressed_groups
                 }
                 
-                plt.close("all")
+                plt.close("all")      
 
 
     def to_schema(self) -> AnalysisSessionSchema:
