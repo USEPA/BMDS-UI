@@ -165,10 +165,8 @@ class AnalysisSession(NamedTuple):
 
     @classmethod
     def run(cls, inputs: dict, dataset_index: int, option_index: int) -> AnalysisSessionSchema:
-        print("DEBUG::: START:::::::: executor.py run()  ... ")
         session = cls.create(inputs, dataset_index, option_index)
         session.execute(inputs)
-        print("DEBUG::: DONE:::::::: executor.py run()  ... ")
         return session.to_schema()
 
     @classmethod
@@ -223,7 +221,6 @@ class AnalysisSession(NamedTuple):
         if self.loud_bayesian:
             self.loud_bayesian.add_model_averaging()
 
-            print("DEBUG::: execute()  loud_bayesian execute() ... ")
             self.loud_bayesian.execute()
 
             model_cdf_arrs = []
@@ -240,8 +237,7 @@ class AnalysisSession(NamedTuple):
                 ma_arr[1] /= 100.0 
                 self.loud_bayesian._ma_bmd_dist_cdf = ma_arr
 
-                print("DEBUG::: execute()  figs = get_model_average_figures()  ... ")
-                figs = get_model_average_figures(self.loud_bayesian)
+                figs = get_model_average_figures(self.loud_bayesian, parameter_visualizations=False)
 
                 self.loud_bayesian._bmd_summary = figs["bmd_summary"].to_dict()
 
@@ -254,9 +250,8 @@ class AnalysisSession(NamedTuple):
                 self.loud_bayesian.loud_posterior_plot_png = fig_to_png_b64(figs["posterior"])
                 self.loud_bayesian.loud_overlay_plot_png = fig_to_png_b64(figs["overlay"])
 
-                print("DEBUG::: execute()  _parameter_group_records()  ... ")
                 uncompressed_groups = _parameter_group_records(
-                    figs["idata"], self.loud_bayesian, figs["hdi_prob"], compressed=False)
+                    figs["idata"], self.loud_bayesian, figs["hdi_prob"], compressed=False, summary=figs["multi_summary"])
                 
                 self.loud_bayesian._parameter_trace_pngs = {
                     group["name"]: fig_to_png_b64(group["trace_figure"]) for group in uncompressed_groups

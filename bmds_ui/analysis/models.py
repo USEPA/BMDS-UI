@@ -337,7 +337,6 @@ class Analysis(models.Model):
         # update start time to actual time started
         self.started = now()
 
-        print("DEBUG::: START:::::::: models.py execute()  ... ")
         outputs = self._execute()
 
         # get bmds version
@@ -384,8 +383,6 @@ class Analysis(models.Model):
         self.ended = now()
         self.deletion_date = get_deletion_date()
         self.save()
-
-        print("DEBUG::: DONE:::::::: models.py execute()  ... ")
 
     def reset_execution(self):
         """
