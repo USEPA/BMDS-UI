@@ -219,16 +219,11 @@ class AnalysisSession(NamedTuple):
                 self.toxicr_bayesian.add_model_averaging()
             self.toxicr_bayesian.execute()
 
-        start_total = time.perf_counter()
         if self.loud_bayesian:
             self.loud_bayesian.add_model_averaging()
 
-            # ------------------------------------------------------------------------------------------------
-            start1 = time.perf_counter()
             self.loud_bayesian.execute()
-            min1, sec1 = divmod(time.perf_counter() - start1, 60)
-            print(f"DEBUG::: {int(min1)}:{int(sec1):02d} mins: loud_bayesian.execute() completed")
-            # ------------------------------------------------------------------------------------------------
+
 
             model_cdf_arrs = []
             for model in self.loud_bayesian.models:
@@ -244,11 +239,7 @@ class AnalysisSession(NamedTuple):
                 ma_arr[1] /= 100.0 
                 self.loud_bayesian._ma_bmd_dist_cdf = ma_arr
 
-                # ------------------------------------------------------------------------------------------------
-                start2= time.perf_counter()
                 figs = get_model_average_figures(self.loud_bayesian, compressed =False, parameter_visualizations=True)
-                min2, sec2 = divmod(time.perf_counter() - start2, 60)
-                print(f"DEBUG::: {int(min2)}:{int(sec2):02d} mins: get_model_average_figures() completed")
 
                 self.loud_bayesian._bmd_summary = figs["bmd_summary"].to_dict()
 
@@ -261,17 +252,11 @@ class AnalysisSession(NamedTuple):
                 self.loud_bayesian.loud_posterior_plot_png = fig_to_png_b64(figs["posterior"])
                 self.loud_bayesian.loud_overlay_plot_png = fig_to_png_b64(figs["overlay"])
                 
-                start3 = time.perf_counter()
                 self.loud_bayesian._parameter_trace_pngs = {
                     group["name"]: fig_to_png_b64(group["trace_figure"]) for group in figs["parameter_groups"]
                 }
-                min3, sec3 = divmod(time.perf_counter() - start3, 60)
-                print(f"DEBUG::: {int(min3)}:{int(sec3):02d} mins: convert parameter trace figs to png_64 completed")
                 
-                plt.close("all")    
-        
-        min_total, sec_total = divmod(time.perf_counter() - start_total, 60)
-        print(f"DEBUG::: loud_bayesian completed in {int(min_total)}:{int(sec_total):02d} mins")    
+                plt.close("all")       
 
     def to_schema(self) -> AnalysisSessionSchema:
         loud_model_bmd_dist_cdfs = None
