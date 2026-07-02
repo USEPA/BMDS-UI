@@ -47,12 +47,20 @@ const seFootnote = (
     };
   },
   getLOUDData = (model, LOUDParameters, includeRHat) => {
-    const suffix = model.name.match(/\((CV|NCV|Lognormal)\)$/)?.[1];
-    const base_model = model.name
-      .replace(/\s*\((CV|NCV|Lognormal)\)$/, "")
-      .trim();
+    console.log("name", model.name);
+    const match = model.name.match(/^(.+?)\s*\((.+)\)$/);
 
-    return LOUDParameters.filter((group) => group.name === base_model)
+    // Patch for Multistage 2:
+    // Multistage overrides name() to "Multistage {degree}" instead of falling
+    const multistageMatch = model.name.match(/^Multistage\s+\d+$/);
+    const groupName = match
+      ? `${match[1]} ${match[2]}`
+      : multistageMatch
+        ? `Multistage ${model.name}`
+        : `${model.name} ${model.name}`;
+    const suffix = match?.[2];
+
+    return LOUDParameters.filter((group) => group.name === groupName)
       .map((group) => {
         const columns = group.columns.filter(
           (col) => col !== "Model" && (includeRHat || col !== "R-hat"),

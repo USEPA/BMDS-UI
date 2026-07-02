@@ -25,9 +25,12 @@ def get_citation() -> str:
 
 re_hex_color = re.compile("^#(?:[0-9a-fA-F]{3}){1,2}$")
 
-def fig_to_png_b64(fig, dpi: int = 150) -> str:
+def fig_to_png_b64(fig, dpi: int = 150, tight: bool = False) -> str:
     buf = io.BytesIO()
-    fig.savefig(buf, format="png", dpi=dpi, bbox_inches="tight")
+    kwargs = {"format": "png", "dpi": dpi}
+    if tight: 
+        kwargs["bbox_inches"] = "tight"
+    fig.savefig(buf, **kwargs)
     buf.seek(0)
     return base64.b64encode(buf.getvalue()).decode("utf-8")
 
