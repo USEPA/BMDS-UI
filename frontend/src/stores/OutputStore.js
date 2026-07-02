@@ -123,6 +123,9 @@ class OutputStore {
     }
     const name = this.modalModel.name;
     const match = name.match(/^(.+?)\s*\((.+)\)$/);
+
+    // Patch for Multistage 2:
+    // Multistage overrides name() to "Multistage {degree}"
     const multistageMatch = name.match(/^Multistage\s+\d+$/);
     const groupName = match
       ? `${match[1]} ${match[2]}`

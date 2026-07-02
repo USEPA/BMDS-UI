@@ -47,11 +47,10 @@ const seFootnote = (
     };
   },
   getLOUDData = (model, LOUDParameters, includeRHat) => {
-    console.log("name", model.name);
     const match = model.name.match(/^(.+?)\s*\((.+)\)$/);
 
     // Patch for Multistage 2:
-    // Multistage overrides name() to "Multistage {degree}" instead of falling
+    // Multistage overrides name() to "Multistage {degree}"
     const multistageMatch = model.name.match(/^Multistage\s+\d+$/);
     const groupName = match
       ? `${match[1]} ${match[2]}`
