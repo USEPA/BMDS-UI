@@ -1,0 +1,235 @@
+name: ci-checks-dev
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: backend
+    runs-on: ubuntu-24.04
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: bmds
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: bmds-online-test
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+        - 5432/tcp
+      redis:
+        image: redis:7-alpine
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+        - 6379:6379
+
+    env:
+      VCPKG_HOST_TRIPLET: x64-linux
+
+    steps:
+    - name: Checkout bmds-ui
+      uses: actions/checkout@v4
+    - name: Checkout bmds@dev
+      uses: actions/checkout@v4
+      with:
+        repository: USEPA/BMDS
+        path: venv
+        ref: dev
+
+    - name: Cache vcpkg dependencies
+      id: cache-vcpkg-deps
+      uses: actions/cache@v4
+      with:
+        path: venv/vcpkg_installed
+        key: vcpkg-${{ runner.os }}-${{ hashFiles('venv/vcpkg.json') }}
+    - name: Acquire vcpkg
+      if: steps.cache-vcpkg-deps.outputs.cache-hit != 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: "Microsoft/vcpkg"
+        path: venv/vcpkg
+        ref: c9c17dcea3016bc241df0422e82b8aea212dcb93
+    - name: Install libraries with vcpkg.json
+      if: steps.cache-vcpkg-deps.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        cd venv
+        ./vcpkg/bootstrap-vcpkg.sh
+        ./vcpkg/vcpkg install --host-triplet="$VCPKG_HOST_TRIPLET" --overlay-ports=./vendor/ports
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.13"
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        cache-dependency-glob: "**/pyproject.toml"
+
+    - name: Build pybmds
+      run: |
+        cd venv
+        uv pip install pybind11==3.0.0 --target=./pybind11
+        export CMAKE_PREFIX_PATH=$(pwd)/pybind11/pybind11/share/cmake
+        export CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)
+        uv build --wheel
+
+    - name: Install bmds_ui
+      run: |
+        uv pip install --system venv/dist/*.whl
+        uv pip install --system -v -e ".[pg,dev]"
+    - name: loc
+      run: |
+        sudo apt-get install -y cloc
+        echo "# Lines of Code Report" >> $GITHUB_STEP_SUMMARY
+        poe -q loc >> $GITHUB_STEP_SUMMARY
+    - name: lint
+      run: |
+        poe lint-py
+    - name: test
+      env:
+        DJANGO_DB_NAME: bmds-online-test
+        DJANGO_DB_USER: bmds
+        DJANGO_DB_PW: password
+        DJANGO_DB_HOST: localhost
+        DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
+        DJANGO_CACHE_LOCATION: redis://localhost:6379/0
+      run: |
+        coverage run -m pytest --record-mode=none
+        echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
+        coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+        coverage html -d coverage -i
+    - name: Upload pybmds wheel
+      uses: actions/upload-artifact@v4
+      with:
+        name: pybmds
+        path: venv/dist
+        retention-days: 1
+    - name: Upload Coverage Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage
+        path: coverage
+        retention-days: 14
+
+  frontend:
+    name: frontend
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: 'yarn'
+        cache-dependency-path: 'frontend/yarn.lock'
+    - name: install
+      run: |
+        yarn --cwd ./frontend install --frozen-lockfile
+    - name: lint
+      run: |
+        yarn --cwd ./frontend run lint
+    - name: test
+      run: |
+        npm --prefix ./frontend run test
+    - name: build for integration tests
+      run: |
+        npm --prefix ./frontend run build
+    - name: Upload JS build
+      uses: actions/upload-artifact@v4
+      with:
+        name: js
+        path: bmds_ui/static/bundles/
+        retention-days: 1
+
+  integration:
+    name: integration
+    needs: [backend, frontend]
+    runs-on: ubuntu-24.04
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: bmds
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: bmds-online-test
+        ports:
+        - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    env:
+      DJANGO_DB_HOST: localhost
+      DJANGO_DB_NAME: bmds-online-test
+      DJANGO_DB_PW: password
+      DJANGO_DB_USER: bmds
+      INTEGRATION_TESTS: 1
+      LIVESERVER_HOST: localhost
+      LIVESERVER_PORT: 8000
+      NO_VITE_DEV: 1
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.13"
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        cache-dependency-glob: "**/pyproject.toml"
+
+    - name: Download JS build
+      uses: actions/download-artifact@v4
+      with:
+        name: js
+        path: bmds_ui/static/bundles/
+    - name: Download pybmds wheel
+      uses: actions/download-artifact@v4
+      with:
+        name: pybmds
+        path: venv/dist
+    - name: Install bmds_ui
+      run: |
+        uv pip install --system venv/dist/*.whl
+        uv pip install --system -v -e ".[pg,dev]"
+        playwright install --with-deps chromium
+
+    # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
+    - name: run integration tests
+      id: test
+      continue-on-error: true
+      run: |
+        py.test -sv tests/integration/
+    - name: run integration tests (retry)
+      if: steps.test.outcome=='failure'
+      id: retry
+      continue-on-error: true
+      run: |
+        py.test -sv tests/integration/
+    - name: set status
+      if: always()
+      run: |
+        if ${{ steps.test.outcome=='success' || steps.retry.outcome=='success' }}; then
+          echo success!
+        else
+          exit 1
+        fi
+    - name: build wheel
+      run: |
+        manage.py set_git_commit
+        uv build --wheel
+    - name: Upload wheel
+      uses: actions/upload-artifact@v4
+      with:
+        name: wheel
+        path: dist/*.whl
