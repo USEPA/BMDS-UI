@@ -35,6 +35,7 @@ const OutputErrorComponent = ({ title, children, alertClass }) => {
     </div>
   );
 };
+
 OutputErrorComponent.propTypes = {
   title: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
@@ -42,6 +43,27 @@ OutputErrorComponent.propTypes = {
 };
 OutputErrorComponent.defaultProps = {
   alertClass: "alert-danger",
+};
+
+const OutputLoadingComponent = ({ title, children, alertClass }) => {
+  return (
+    <div className={`alert ${alertClass} offset-lg-2 col-lg-8 mt-4`}>
+      <p>
+        <strong>
+          <Icon name="hourglass-split" text={title} />
+        </strong>
+      </p>
+      {children}
+    </div>
+  );
+};
+
+OutputLoadingComponent.propTypes = {
+  title: PropTypes.string.isRequired,
+  alertClass: PropTypes.string,
+};
+OutputLoadingComponent.defaultProps = {
+  alertClass: "alert-info",
 };
 
 @inject("outputStore")
@@ -81,9 +103,9 @@ class Output extends Component {
 
     if (outputLoading && hasNoResults) {
       return (
-        <div className="offset-lg-2 col-lg-8 mt-4">
-          <p>Loading output...</p>
-        </div>
+        <OutputLoadingComponent title="Loading output... ">
+          <p>Please wait</p>
+        </OutputLoadingComponent>
       );
     }
 
