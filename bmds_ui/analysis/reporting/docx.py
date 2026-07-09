@@ -118,10 +118,18 @@ def build_docx(
         report.document.add_heading("Additional Nested Dichotomous Plots", 2)
         for output in analysis.outputs["outputs"]:
             dataset_name = str(output["frequentist"]["dataset"]["metadata"]["name"])
+            optionset_num = str(output["option_index"] + 1)
             p = report.document.add_paragraph()
-            label = p.add_run("Dataset Name: ")
-            label.bold = True
-            p.add_run(dataset_name)
+
+            dataset_label = p.add_run("Dataset Name: ")
+            dataset_label.bold = True
+            optionset_label = p.add_run(dataset_name)
+
+            p2 = report.document.add_paragraph()
+            optionset_label = p2.add_run(f"Option Set: ")
+            optionset_label.bold = True
+            optionset_label = p2.add_run(f"#{optionset_num}")
+
             b64_png = output.get("static_plots", {}).get("nested_dichotomous_plot_png")  # base64 string
             add_png_b64_to_docx(report.document, b64_png, width_in=6)
             report.document.add_paragraph(" ")
