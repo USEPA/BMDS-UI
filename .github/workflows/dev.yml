@@ -1,7 +1,6 @@
 name: ci-checks-dev
 
 on:
-  pull_request:
   push:
     branches:
       - dev 
