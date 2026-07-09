@@ -23,6 +23,9 @@ from . import models, schema, serializers, validators
 from .reporting.cache import DocxReportCache, ExcelReportCache
 from .reporting.docx import add_update_url, build_polyk_docx, build_raoscott_docx, build_jonckheereterpstra_docx
 
+import json, time, logging
+logger = logging.getLogger("bmds_ui")
+
 
 class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = serializers.AnalysisSerializer
@@ -102,8 +105,15 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         instance.start_execute()
 
+        t0 = time.time()
         instance.refresh_from_db()
+        logger.info(f"refresh_from_db took {time.time() - t0:.1f}s")
+
         serializer = self.get_serializer(instance)
+
+        t1 = time.time()
+        full_size = len(json.dumps(serializer.data))
+        logger.info(f"serializer.data size: {full_size} bytes, took {time.time() - t1:.1f}s to json.dumps")
 
         return Response(serializer.data)
 
@@ -269,6 +279,33 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         data=renderers.BinaryFile(data=data_bytes, filename=instance.slug)
         return Response(data)
+
+    @action(detail=True, methods=["get"], url_path="output")
+    def output(self, request, *args, **kwargs):
+        instance = self.get_object()
+        dataset_index = request.query_params.get("dataset_index")
+        option_index = request.query_params.get("option_index")
+
+        if dataset_index is None or option_index is None:
+            raise exceptions.ValidationError("dataset_index and option_index are required")
+        
+        try: 
+            dataset_index = int(dataset_index)
+            option_index = int(option_index)
+        except ValueError:
+            raise exceptions.ValidationError("dataset_index and option_index must be integers")    
+        
+        outputs = instance.outputs.get("outputs", [])
+        match = next(
+            (o for o in outputs
+             if o["dataset_index"] == dataset_index and o["option_index"] == option_index), 
+             None,
+        )
+        if match is None:
+            raise exceptions.NotFound("No output found for given dataser_index and option_index")
+        
+        return Response(match)
+
 
     @action(detail=True, methods=("post",))
     def star(self, request, *args, **kwargs):

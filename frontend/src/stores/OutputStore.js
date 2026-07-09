@@ -44,6 +44,9 @@ class OutputStore {
   @observable showInlineNotes = false;
   @observable cochranArmitage = null;
 
+  @observable outputCache = {};
+  @observable outputLoading = false;
+
   @action.bound toggleInlineNotes() {
     this.showInlineNotes = !this.showInlineNotes;
   }
@@ -51,6 +54,37 @@ class OutputStore {
   @action.bound setSelectedOutputIndex(output_id) {
     this.selectedOutputIndex = output_id;
     this.resetUserPlotSettings();
+    this.fetchSelectedOutput();
+  }
+
+  @action.bound async fetchSelectedOutput() {
+    const manifestEntry = this.outputs?.[this.selectedOutputIndex];
+    if (!manifestEntry) return;
+    const key = `${manifestEntry.dataset_index}-${manifestEntry.option_index}`;
+    if (this.outputCache[key]) return;
+
+    console.log(
+      `loading output for dataset_index=${manifestEntry.dataset_index}, option_index=${manifestEntry.option_index}`,
+    );
+    this.outputLoading = true;
+    const apiUrl = this.rootStore.mainStore.config.apiUrl;
+    const params = new URLSearchParams({
+      dataset_index: manifestEntry.dataset_index,
+      option_index: manifestEntry.option_index,
+    });
+    try {
+      const response = await fetch(`${apiUrl}output/?${params.toString()}`, {
+        method: "GET",
+        mode: "cors",
+      });
+      if (!response.ok) throw response;
+      const data = await response.json();
+      this.outputCache[key] = data;
+    } catch (error) {
+      console.error("error fetching output", error);
+    } finally {
+      this.outputLoading = false;
+    }
   }
 
   @computed get getModelType() {
@@ -89,11 +123,10 @@ class OutputStore {
   }
 
   @computed get selectedOutput() {
-    const outputs = this.outputs;
-    if (!_.isObject(outputs)) {
-      return null;
-    }
-    return outputs[this.selectedOutputIndex];
+    const manifestEntry = this.outputs?.[this.selectedOutputIndex];
+    if (!manifestEntry) return null;
+    const key = `${manifestEntry.dataset_index}-${manifestEntry.option_index}`;
+    return this.outputCache[key] || null;
   }
 
   @computed get selectedLOUDParameters() {

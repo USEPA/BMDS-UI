@@ -269,6 +269,7 @@ class MainStore {
       this.executionOutputs = data.outputs.outputs;
       this.rootStore.outputStore.cochranArmitage =
         data.outputs.cochran_armitage_result ?? null;
+      this.rootStore.outputStore.fetchSelectedOutput();
     }
 
     // unpack general settings
@@ -338,20 +339,29 @@ class MainStore {
     };
     reader.readAsText(file);
   }
+
   @action.bound async saveAnalysisToFile() {
     const apiUrl = this.config.apiUrl;
     const response = await fetch(apiUrl, { method: "GET", mode: "cors" });
     const json = await response.json();
 
-    // remove long image url strings from downloaded output.
-    const arr = json?.outputs?.outputs;
-    if (Array.isArray(arr)) {
-      arr.forEach((item) => {
-        if (item && typeof item === "object") {
-          delete item.static_plots;
-        }
-      });
-    }
+    const manifest = json?.outputs?.outputs ?? [];
+    const fullOutputs = await Promise.all(
+      manifest.map(async (item) => {
+        const params = new URLSearchParams({
+          dataset_index: item.dataset_index,
+          option_index: item.option_index,
+        });
+        const res = await fetch(`${apiUrl}output/?${params.toString()}`, {
+          method: "GET",
+          mode: "cors",
+        });
+        const full = await res.json();
+        delete full.static_plots;
+        return full;
+      }),
+    );
+    json.outputs.outputs = fullOutputs;
 
     const fn = json?.inputs?.analysis_name
       ? slugify(json.inputs.analysis_name)

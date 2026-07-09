@@ -1,6 +1,9 @@
 from rest_framework import serializers
 
 from . import models, validators
+import logging
+
+logger = logging.getLogger("bmds_ui")
 
 
 class CollectionSerializer(serializers.ModelSerializer):
@@ -55,6 +58,20 @@ class AnalysisSerializer(serializers.ModelSerializer):
             "started",
             "ended",
         )
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        outputs = data.get("outputs")
+        if outputs and isinstance(outputs.get("outputs"), list):
+            outputs["outputs"] = [
+                {
+                    "dataset_index": item.get("dataset_index"),
+                    "option_index": item.get("option_index"),
+                    "error": item.get("error"),
+                }
+                for item in outputs["outputs"]
+            ]
+        return data           
 
     def create(self, validated_data):
         instance = super().create(validated_data)

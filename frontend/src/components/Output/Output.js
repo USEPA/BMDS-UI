@@ -74,9 +74,18 @@ class Output extends Component {
         selectedFrequentist,
         selectedToxicRBayesian,
         selectedLOUDBayesian,
+        outputLoading,
       } = outputStore,
       { analysisSavedAndValidated, canSelectModel } =
         outputStore.rootStore.mainStore;
+
+    if (outputLoading && hasNoResults) {
+      return (
+        <div className="offset-lg-2 col-lg-8 mt-4">
+          <p>Loading output...</p>
+        </div>
+      );
+    }
 
     if (hasAnyError) {
       return (
