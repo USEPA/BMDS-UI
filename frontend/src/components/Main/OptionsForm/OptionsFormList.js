@@ -106,6 +106,7 @@ class OptionsFormList extends Component {
                       deleteOptions={optionsStore.deleteOptions}
                       saveOptions={optionsStore.saveOptions}
                       activeTab={activeTab}
+                      hasLoudBayesian={hasLoudBayesian}
                     />
                   ))}
                 </tbody>

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect } from "react";
 
 import * as mc from "@/constants/mainConstants";
 import {
@@ -16,6 +16,16 @@ import IntegerInput from "../../common/IntegerInput";
 import SelectInput from "../../common/SelectInput";
 
 const OptionsForm = (props) => {
+  useEffect(() => {
+    if (
+      props.modelType === mc.MODEL_CONTINUOUS &&
+      props.hasLoudBayesian &&
+      props.options.bmr_type !== 2 &&
+      props.options.bmr_type !== 3
+    ) {
+      props.saveOptions("bmr_type", 2, props.idx);
+    }
+  });
   return (
     <tr className="form-group">
       <td>{props.idx + 1}</td>
@@ -23,7 +33,14 @@ const OptionsForm = (props) => {
         <td>
           <SelectInput
             choices={continuousBmrOptions.map((option) => {
-              return { value: option.value, text: option.label };
+              return {
+                value: option.value,
+                text: option.label,
+                disabled:
+                  props.hasLoudBayesian &&
+                  option.value !== 2 &&
+                  option.value !== 3,
+              };
             })}
             onChange={(value) =>
               props.saveOptions("bmr_type", parseInt(value), props.idx)
@@ -157,5 +174,6 @@ OptionsForm.propTypes = {
   distribution: PropTypes.string,
   variance: PropTypes.string,
   delete: PropTypes.func,
+  hasLoudBayesian: PropTypes.bool,
 };
 export default OptionsForm;

@@ -40,7 +40,7 @@ export const options = {
   continuousBmrOptions = [
     { value: 2, label: "Std. Dev." },
     { value: 3, label: "Rel. Dev." },
-    { value: 1, label: "Abs. Dev" },
+    { value: 1, label: "Abs. Dev." },
     { value: 4, label: "Point" },
     { value: 6, label: "Hybrid-Extra Risk" },
     { value: 7, label: "Hybrid-Added Risk" },
