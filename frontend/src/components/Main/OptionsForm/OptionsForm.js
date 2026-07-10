@@ -6,6 +6,7 @@ import {
   continuousBmrOptions,
   dichotomousBmrOptions,
   distTypeOptions,
+  isHybridBmr,
   litterSpecificCovariateOptions,
 } from "@/constants/optionsConstants";
 
@@ -78,6 +79,7 @@ const OptionsForm = (props) => {
             onChange={(value) =>
               props.saveOptions("tail_probability", value, props.idx)
             }
+            disabled={!isHybridBmr(props.options.bmr_type)}
           />
         </td>
       ) : null}
