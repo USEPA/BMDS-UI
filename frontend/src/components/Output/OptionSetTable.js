@@ -29,8 +29,6 @@ class OptionSetTable extends Component {
       option_index = outputStore.selectedOutput.option_index + 1;
     let rows;
     if (getModelType === MODEL_CONTINUOUS) {
-      console.log(selectedModelOptions);
-
       rows = [
         [
           "BMR Type",

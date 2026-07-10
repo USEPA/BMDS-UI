@@ -63,9 +63,6 @@ class OutputStore {
     const key = `${manifestEntry.dataset_index}-${manifestEntry.option_index}`;
     if (this.outputCache[key]) return;
 
-    console.log(
-      `loading output for dataset_index=${manifestEntry.dataset_index}, option_index=${manifestEntry.option_index}`,
-    );
     this.outputLoading = true;
     const apiUrl = this.rootStore.mainStore.config.apiUrl;
     const params = new URLSearchParams({

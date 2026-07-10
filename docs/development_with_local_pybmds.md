@@ -206,6 +206,19 @@ in bmds-ui/pyproject.toml under [tool.poe.tasks.run-js], change the line
 cmd = "npm.cmd --prefix ./frontend run start"
 ```
 
+### vacuum database step taking a really long time
+
+You can flush your sqlite database and then re-load the startup data.
+Before running these commands, make sure the software is not running. (press the ctrl + c keys in all terminals to close out.)
+
+```bash
+cd "C:\Users\srizwan\BMDS\bmds-ui"
+.venv\Scripts\activate
+python manage.py flush
+python manage.py loaddata bmds_ui/analysis/fixtures/initial_data.json
+
+```
+
 ## Everyday Setup
 
 ```bash
