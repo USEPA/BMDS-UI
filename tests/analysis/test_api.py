@@ -218,9 +218,19 @@ class TestAnalysisViewSet:
         payload = {"editKey": analysis.password}
         response = client.post(url, payload, format="json")
         assert response.status_code == 200
-        bmd = response.data["outputs"]["outputs"][0]["frequentist"]["models"][0]["results"]["bmd"]
         assert response.data["is_finished"] is True
         assert response.data["has_errors"] is False
+
+        output = response.data["outputs"]["outputs"][0]
+        assert output["dataset_index"] == 0
+        assert output["option_index"] == 0
+        assert output["error"] is None
+
+        output_url = reverse("api:analysis-output", args=(analysis.id,))
+        output_response = client.get(output_url, {"dataset_index": 0, "option_index": 0})
+        assert output_response.status_code == 200
+        bmd = output_response.data["frequentist"]["models"][0]["results"]["bmd"]
+
         assert bmd == pytest.approx(164.3, rel=0.05)
 
     def test_reset_execute(self, complete_dichotomous):
@@ -265,15 +275,29 @@ class TestAnalysisViewSet:
         payload["editKey"] = analysis.password
         response = client.post(url, payload, format="json")
         assert response.status_code == 200
-        value = response.data["outputs"]["outputs"][0]["frequentist"]["selected"]
-        assert value == {"notes": "notes", "model_index": 0}
+        output = response.data["outputs"]["outputs"][0]
+        assert output["dataset_index"] == 0
+        assert output["option_index"] == 0
+        assert output["error"] is None
+
+        output_url = reverse("api:analysis-output", args=(analysis.id,))
+        output_response = client.get(output_url, {"dataset_index": 0, "option_index": 0})
+        assert output_response.status_code == 200
+        assert output_response.data["frequentist"]["selected"] == {
+            "notes": "notes",
+            "model_index": 0
+        }
 
         # deselect model
         payload["data"]["selected"] = {"model_index": None, "notes": "no notes"}
         response = client.post(url, payload, format="json")
         assert response.status_code == 200
-        value = response.data["outputs"]["outputs"][0]["frequentist"]["selected"]
-        assert value == {"model_index": None, "notes": "no notes"}
+        output_response = client.get(output_url, {"dataset_index": 0, "option_index": 0})
+        assert output_response.status_code == 200
+        assert output_response.data["frequentist"]["selected"] == {
+            "notes": "no notes",
+            "model_index": None
+        }
 
     @pytest.mark.parametrize("pk", analyses)
     def test_excel(self, pk):
