@@ -58,9 +58,14 @@ class OutputStore {
   }
 
   @action.bound async fetchSelectedOutput() {
+    // this.outputs = the lightweight manifest list.
     const manifestEntry = this.outputs?.[this.selectedOutputIndex];
+
     if (!manifestEntry) return;
+
     const key = `${manifestEntry.dataset_index}-${manifestEntry.option_index}`;
+
+    // return early if selected output already exists in cache because there is no need to re-fetch
     if (this.outputCache[key]) return;
 
     this.outputLoading = true;
@@ -76,6 +81,8 @@ class OutputStore {
       });
       if (!response.ok) throw response;
       const data = await response.json();
+
+      // Store the full response in the cache under the {dataset index}-{option index} key
       this.outputCache[key] = data;
     } catch (error) {
       console.error("error fetching output", error);
@@ -123,6 +130,8 @@ class OutputStore {
     const manifestEntry = this.outputs?.[this.selectedOutputIndex];
     if (!manifestEntry) return null;
     const key = `${manifestEntry.dataset_index}-${manifestEntry.option_index}`;
+
+    // read selected output from cache
     return this.outputCache[key] || null;
   }
 

@@ -23,9 +23,6 @@ from . import models, schema, serializers, validators
 from .reporting.cache import DocxReportCache, ExcelReportCache
 from .reporting.docx import add_update_url, build_polyk_docx, build_raoscott_docx, build_jonckheereterpstra_docx
 
-import json, time, logging
-logger = logging.getLogger("bmds_ui")
-
 
 class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = serializers.AnalysisSerializer
@@ -296,10 +293,9 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
              None,
         )
         if match is None:
-            raise exceptions.NotFound("No output found for given dataser_index and option_index")
+            raise exceptions.NotFound("No output found for given dataset_index and option_index")
         
         return Response(match)
-
 
     @action(detail=True, methods=("post",))
     def star(self, request, *args, **kwargs):

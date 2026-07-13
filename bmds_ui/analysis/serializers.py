@@ -1,9 +1,6 @@
 from rest_framework import serializers
 
 from . import models, validators
-import logging
-
-logger = logging.getLogger("bmds_ui")
 
 
 class CollectionSerializer(serializers.ModelSerializer):
