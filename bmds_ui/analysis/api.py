@@ -105,15 +105,9 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         instance.start_execute()
 
-        t0 = time.time()
         instance.refresh_from_db()
-        logger.info(f"refresh_from_db took {time.time() - t0:.1f}s")
 
         serializer = self.get_serializer(instance)
-
-        t1 = time.time()
-        full_size = len(json.dumps(serializer.data))
-        logger.info(f"serializer.data size: {full_size} bytes, took {time.time() - t1:.1f}s to json.dumps")
 
         return Response(serializer.data)
 
