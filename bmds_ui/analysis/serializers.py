@@ -68,7 +68,7 @@ class AnalysisSerializer(serializers.ModelSerializer):
                 }
                 for item in outputs["outputs"]
             ]
-        return data           
+        return data
 
     def create(self, validated_data):
         instance = super().create(validated_data)

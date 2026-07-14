@@ -4,26 +4,23 @@ from typing import Annotated, Any, ClassVar, Literal
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from pydantic import BaseModel, Field, field_validator, model_validator, AfterValidator
+from pydantic import AfterValidator, BaseModel, Field, field_validator, model_validator
 from pydantic_core import PydanticCustomError
+
 
 def _check_non_negative(v: float) -> float:
     if v < 0:
         raise PydanticCustomError(
-            "non_negative", 
-            "Value must be non-negative; got {value}.",
-            {"value": v}
+            "non_negative", "Value must be non-negative; got {value}.", {"value": v}
         )
     return v
 
+
 def _check_positive(v: float) -> float:
     if v <= 0:
-        raise PydanticCustomError(
-            "positive", 
-            "Value must be positive; got {value}.",
-            {"value": v}
-        )
+        raise PydanticCustomError("positive", "Value must be positive; got {value}.", {"value": v})
     return v
+
 
 NonNegativeFloat = Annotated[float, AfterValidator(_check_non_negative)]
 PositiveFloat = Annotated[float, AfterValidator(_check_positive)]

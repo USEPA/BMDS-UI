@@ -43,16 +43,16 @@ def build_model_settings(
     if dataset_type == pybmds.constants.Dtype.DICHOTOMOUS:
         if prior_class == "loud_bayesian":
             return DichotomousModelSettings(
-            bmr=options["bmr_value"],
-            alpha=round(1.0 - options["confidence_level"], 3),
-            bmr_type=options["bmr_type"],
-            samples=mcmc_options["iterations_per_chain"],
-            burnin=mcmc_options["burnin"],
-            seed=mcmc_options["seed"],
-            n_chains=mcmc_options["n_chains"],
-            degree=dataset_options["degree"],
-            priors=prior_cls,
-        )
+                bmr=options["bmr_value"],
+                alpha=round(1.0 - options["confidence_level"], 3),
+                bmr_type=options["bmr_type"],
+                samples=mcmc_options["iterations_per_chain"],
+                burnin=mcmc_options["burnin"],
+                seed=mcmc_options["seed"],
+                n_chains=mcmc_options["n_chains"],
+                degree=dataset_options["degree"],
+                priors=prior_cls,
+            )
         return DichotomousModelSettings(
             bmr=options["bmr_value"],
             alpha=round(1.0 - options["confidence_level"], 3),
@@ -71,11 +71,13 @@ def build_model_settings(
                 burnin=mcmc_options["burnin"],
                 seed=mcmc_options["seed"],
                 n_chains=mcmc_options["n_chains"],
-                disttype=model["dist_type"], # dist_type is from model inputs, not options set inputs
+                disttype=model[
+                    "dist_type"
+                ],  # dist_type is from model inputs, not options set inputs
                 degree=dataset_options["degree"],
                 is_increasing=is_increasing_map[dataset_options["adverse_direction"]],
                 priors=prior_cls,
-                verbose_name = model["_displayName"]
+                verbose_name=model["_displayName"],
             )
         return ContinuousModelSettings(
             bmr=options["bmr_value"],

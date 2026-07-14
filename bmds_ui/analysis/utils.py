@@ -1,15 +1,15 @@
-import re
-
-import io
 import base64
-from docx.shared import Inches
+import io
+import re
 
 from django.conf import settings
 from django.utils.timezone import now
+from docx.shared import Inches
 
 from pybmds.utils import get_version
 
 from .. import __version__
+
 
 def get_citation() -> str:
     """
@@ -25,16 +25,20 @@ def get_citation() -> str:
 
 re_hex_color = re.compile("^#(?:[0-9a-fA-F]{3}){1,2}$")
 
+
 def fig_to_png_b64(fig, dpi: int = 150, tight: bool = False) -> str:
     buf = io.BytesIO()
     kwargs = {"format": "png", "dpi": dpi}
-    if tight: 
+    if tight:
         kwargs["bbox_inches"] = "tight"
     fig.savefig(buf, **kwargs)
     buf.seek(0)
     return base64.b64encode(buf.getvalue()).decode("utf-8")
 
-def add_png_b64_to_docx(document, b64_png: str, width_in: float | None = 6.0, height_in: float | None = None):
+
+def add_png_b64_to_docx(
+    document, b64_png: str, width_in: float | None = 6.0, height_in: float | None = None
+):
     """
     Add a base64-encoded PNG to a python-docx Document.
     If width_in or height_in is provided, python-docx will scale proportionally.

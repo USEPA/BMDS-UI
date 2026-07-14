@@ -2,9 +2,9 @@ import logging
 import re
 from copy import deepcopy
 from datetime import datetime
-from typing import Optional
 from enum import StrEnum
 from io import StringIO
+from typing import Optional
 from uuid import UUID
 
 import numpy as np
@@ -12,9 +12,8 @@ import pandas as pd
 from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
 from rest_framework.schemas.openapi import SchemaGenerator
 
+from pybmds.datasets.continuous import ContinuousDataset, ContinuousIndividualDataset
 from pybmds.datasets.dichotomous import DichotomousDataset
-from pybmds.datasets.continuous import ContinuousIndividualDataset
-from pybmds.datasets.continuous import ContinuousDataset
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott, Species
 from pybmds.types.session import VersionSchema
@@ -32,11 +31,13 @@ class WrappedAnalysisSelectedSchema(BaseModel):
     editKey: str
     data: AnalysisSelectedSchema
 
+
 class StaticPlots(BaseModel):
-    nested_dichotomous_plot_png: Optional[str] = None
-    loud_posterior_plot_png: Optional[str] = None
-    loud_overlay_plot_png: Optional[str] = None
+    nested_dichotomous_plot_png: str | None = None
+    loud_posterior_plot_png: str | None = None
+    loud_overlay_plot_png: str | None = None
     loud_parameter_trace_pngs: dict | None = None
+
 
 class AnalysisSessionSchema(BaseModel):
     dataset_index: int
@@ -184,8 +185,8 @@ class RaoScottInput(BaseModel):
             incidences=df.incidence.tolist(),
         )
         return RaoScott(dataset=dataset, species=self.species)
- 
-    
+
+
 class JonckheereTerpstraInput(BaseModel):
     dataset: str
     hypothesis: str
@@ -240,7 +241,7 @@ class JonckheereTerpstraInput(BaseModel):
             )
             result = dataset.trend(hypothesis=self.hypothesis, nperm=self.nperm)
             synthetic_dataset_obj = None
-        
+
         elif self.model_type == "CS":
             dataset = ContinuousDataset(
                 doses=df.doses.tolist(),
@@ -250,7 +251,7 @@ class JonckheereTerpstraInput(BaseModel):
             )
             result, synthetic = dataset.trend(hypothesis=self.hypothesis, nperm=self.nperm)
             synthetic_dataset_obj = {
-                "doses": synthetic.individual_doses, 
+                "doses": synthetic.individual_doses,
                 "responses": synthetic.responses,
             }
 
@@ -258,12 +259,12 @@ class JonckheereTerpstraInput(BaseModel):
             "Hypothesis": result.hypothesis,
             "Statistic": result.statistic,
             "Approach (P-Value)": result.approach,
-            "P-Value": f"{result.p_value:.4e}"
+            "P-Value": f"{result.p_value:.4e}",
         }
 
         return result_dict, synthetic_dataset_obj
- 
-    
+
+
 class CochranArmitage(BaseModel):
     dataset: str
 
@@ -291,7 +292,7 @@ class CochranArmitage(BaseModel):
 
         if not (df["doses"] >= 0).all():
             raise ValueError("`doses` must be ≥ 0")
-        
+
         if df.doses.nunique() != df.doses.size:
             raise ValueError("`dose` must be unique")
 
@@ -319,7 +320,7 @@ class CochranArmitage(BaseModel):
         result_dict = {
             "Statistic": f"{result.statistic:.4f}",
             "P-Value (Asymptotic)": f"{result.p_value_asymptotic:.4e}",
-            "P-Value (Exact)": f"{result.p_value_exact:.4e}"
+            "P-Value (Exact)": f"{result.p_value_exact:.4e}",
         }
 
         return result_dict
@@ -418,8 +419,8 @@ class AnalysisMigrator:
         logger.debug("Migrating from 1.0 to 1.1")
         data["outputs"]["bmds_ui_version"] = "2023.03"  # 1.0 bmds_ui_version
         data["outputs"]["analysis_schema_version"] = "1.1"
-        return data            
-    
+        return data
+
     @classmethod
     def to_1_2(cls, data: dict) -> dict:
         logger.debug("Migrating from 1.1 to 1.2")
@@ -427,4 +428,4 @@ class AnalysisMigrator:
             if "bayesian" in output:
                 output["toxicr_bayesian"] = output.pop("bayesian")
         data["outputs"]["analysis_schema_version"] = "1.2"
-        return data       
+        return data

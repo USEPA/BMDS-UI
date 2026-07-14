@@ -6,18 +6,17 @@ from typing import TYPE_CHECKING
 import docx
 from django.conf import settings
 from django.utils.timezone import now
-
 from pandas import DataFrame
 
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott
-from pybmds.reporting.styling import Report, write_setting_p, df_to_table
+from pybmds.reporting.styling import Report, df_to_table, write_setting_p
 from pybmds.utils import get_version
 
 from ... import __version__ as bmds_ui_version
 from ...common.docx import add_url_hyperlink
 from ...common.utils import to_timestamp
-from ..utils import get_citation, add_png_b64_to_docx
+from ..utils import add_png_b64_to_docx, get_citation
 
 if TYPE_CHECKING:
     from ..models import Analysis
@@ -80,7 +79,7 @@ def build_docx(
         df = DataFrame(cochran_armitage_df)
         report.document.add_paragraph("  ")
         report.document.add_heading("Cochran-Armitage Test", 2)
-        
+
         max_cols = 4
         # Assume the first column is the label column (e.g., "Cochran-Armitage")
         label_col = df.columns[0]
@@ -92,7 +91,7 @@ def build_docx(
         else:
             # Split dataset columns into chunks of 3max_cols, render each as its own paragraph
             for i in range(0, len(dataset_cols), max_cols):
-                chunk = dataset_cols[i:i+max_cols]
+                chunk = dataset_cols[i : i + max_cols]
                 sub_df = df[[label_col] + chunk]
                 report.document.add_paragraph(df_to_table(report, sub_df))
 
@@ -126,11 +125,13 @@ def build_docx(
             optionset_label = p.add_run(dataset_name)
 
             p2 = report.document.add_paragraph()
-            optionset_label = p2.add_run(f"Option Set: ")
+            optionset_label = p2.add_run("Option Set: ")
             optionset_label.bold = True
             optionset_label = p2.add_run(f"#{optionset_num}")
 
-            b64_png = output.get("static_plots", {}).get("nested_dichotomous_plot_png")  # base64 string
+            b64_png = output.get("static_plots", {}).get(
+                "nested_dichotomous_plot_png"
+            )  # base64 string
             add_png_b64_to_docx(report.document, b64_png, width_in=6)
             report.document.add_paragraph(" ")
 
@@ -205,6 +206,7 @@ def build_raoscott_docx(analysis: RaoScott) -> BytesIO:
     report.document.save(f)
     return f
 
+
 def build_jonckheereterpstra_docx(analysis, dataset, synthetic_dataset=None):
     report = Report.build_default()
 
@@ -212,30 +214,20 @@ def build_jonckheereterpstra_docx(analysis, dataset, synthetic_dataset=None):
     write_setting_p(report, "Report generated: ", to_timestamp(now()))
     write_current_version_p(report)
 
-    report.document.add_paragraph(
-            "  "
-        )
+    report.document.add_paragraph("  ")
 
     report.document.add_heading("Results", 3)
 
-    report.document.add_paragraph(
-            df_to_table(report, analysis)
-        )
-    
-    report.document.add_paragraph(
-            "  "
-        )
+    report.document.add_paragraph(df_to_table(report, analysis))
+
+    report.document.add_paragraph("  ")
 
     report.document.add_heading("Dataset", 3)
-    
-    report.document.add_paragraph(
-            df_to_table(report, dataset)
-        )
-    
+
+    report.document.add_paragraph(df_to_table(report, dataset))
+
     if synthetic_dataset is not None:
-        report.document.add_paragraph(
-            "  "
-        )
+        report.document.add_paragraph("  ")
 
         report.document.add_heading("Simulated Individual Dataset", 3)
 

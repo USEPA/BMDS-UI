@@ -53,7 +53,9 @@ def complete_continuous():
         "dataset_type": "C",
         "models": {
             "frequentist_restricted": ["Power"],
-            "loud_bayesian": [{"model": "Power", "prior_weight": 1, "dist_type": 1, "_displayName": "Power (CV)"}],
+            "loud_bayesian": [
+                {"model": "Power", "prior_weight": 1, "dist_type": 1, "_displayName": "Power (CV)"}
+            ],
         },
         "datasets": [
             {
@@ -65,12 +67,7 @@ def complete_continuous():
                 "stdevs": [3, 4, 5, 6, 7],
             }
         ],
-        "mcmc_options": {
-            "burnin": 100, 
-            "iterations_per_chain": 2500, 
-            "n_chains": 1,
-            "seed": 18
-        },
+        "mcmc_options": {"burnin": 100, "iterations_per_chain": 2500, "n_chains": 1, "seed": 18},
         "options": [
             {
                 "bmr_type": 2,
@@ -121,8 +118,8 @@ def complete_continuous_individual():
             }
         ],
         "mcmc_options": {
-            "burnin": 100, 
-            "iterations_per_chain": 2500, 
+            "burnin": 100,
+            "iterations_per_chain": 2500,
             "n_chains": 1,
             "seed": 18
         },
@@ -155,18 +152,13 @@ def complete_dichotomous():
         "datasets": [
             {
                 "dtype": "D",
-                "metadata": {"id": 123, 'model_type': 'DM'},
+                "metadata": {"id": 123, "model_type": "DM"},
                 "doses": [0, 10, 50, 150, 400],
                 "ns": [20, 20, 20, 20, 20],
                 "incidences": [0, 0, 1, 4, 11],
             }
         ],
-        "mcmc_options": {
-            "burnin": 100, 
-            "iterations_per_chain": 2500, 
-            "n_chains": 1,
-            "seed": 18
-        },
+        "mcmc_options": {"burnin": 100, "iterations_per_chain": 2500, "n_chains": 1, "seed": 18},
         "options": [{"bmr_type": 1, "bmr_value": 0.1, "confidence_level": 0.95}],
         "dataset_options": [{"dataset_id": 123, "enabled": True, "degree": 0}],
         "recommender": RecommenderSettings.build_default().model_dump(),
@@ -239,7 +231,7 @@ def bmds_complete_nd():
                     "dose_name": "Dose",
                     "dose_units": "",
                     "response_name": "Incidence",
-                    "response_units": "", 
+                    "response_units": "",
                     'model_type': 'ND'
                 },
                 "litter_ns": [
@@ -370,11 +362,11 @@ def jonckheereterpstra_dataset_individual() -> dict:
 
 @pytest.fixture
 def jonckheereterpstra_dataset_continuous_summary() -> dict:
-    return { 
-        "dataset": "doses,ns,means,stdevs\n0,10,5.0,1.0\n10,10,6.0,1.2\n100,10,8.0,1.5", 
-        "hypothesis": "increasing", 
-        "nperm": None, 
-        "model_type": "CS", } 
+    return {
+        "dataset": "doses,ns,means,stdevs\n0,10,5.0,1.0\n10,10,6.0,1.2\n100,10,8.0,1.5",
+        "hypothesis": "increasing",
+        "nperm": None,
+        "model_type": "CS", }
 
 @pytest.fixture
 def cochranarmitage_dataset() -> dict:
