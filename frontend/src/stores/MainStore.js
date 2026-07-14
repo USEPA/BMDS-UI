@@ -267,6 +267,7 @@ class MainStore {
     this.isExecuting = data.is_executing;
     if (data.outputs) {
       this.executionOutputs = data.outputs.outputs;
+      this.rootStore.outputStore.outputCache = {};
       this.rootStore.outputStore.cochranArmitage =
         data.outputs.cochran_armitage_result ?? null;
       this.rootStore.outputStore.fetchSelectedOutput();
