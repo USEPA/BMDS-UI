@@ -248,7 +248,7 @@ class AnalysisSession(NamedTuple):
                 } for group in figs["parameter_groups"]]
 
                 self.loud_bayesian.loud_posterior_plot_png = fig_to_png_b64(figs["posterior"])
-                self.loud_bayesian.loud_overlay_plot_png = fig_to_png_b64(figs["overlay"])
+                self.loud_bayesian.loud_overlay_plot_png = fig_to_png_b64(figs["overlay"], tight=True)
                 
                 self.loud_bayesian._parameter_trace_pngs = {
                     group["name"]: fig_to_png_b64(group["trace_figure"]) for group in figs["parameter_groups"]
