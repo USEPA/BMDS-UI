@@ -78,7 +78,7 @@ const OptionsForm = (props) => {
             value={
               isHybridBmr(props.options.bmr_type)
                 ? props.options.tail_probability
-                : null
+                : ""
             }
             onChange={(value) =>
               props.saveOptions("tail_probability", value, props.idx)
