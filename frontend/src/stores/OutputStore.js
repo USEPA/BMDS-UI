@@ -60,9 +60,7 @@ class OutputStore {
   @action.bound async fetchSelectedOutput() {
     // this.outputs = the lightweight manifest list.
     const manifestEntry = this.outputs?.[this.selectedOutputIndex];
-
     if (!manifestEntry) return;
-
     const key = `${manifestEntry.dataset_index}-${manifestEntry.option_index}`;
 
     // return early if selected output already exists in cache because there is no need to re-fetch

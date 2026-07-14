@@ -75,7 +75,11 @@ const OptionsForm = (props) => {
       {props.modelType === mc.MODEL_CONTINUOUS ? (
         <td>
           <FloatInput
-            value={props.options.tail_probability}
+            value={
+              isHybridBmr(props.options.bmr_type)
+                ? props.options.tail_probability
+                : null
+            }
             onChange={(value) =>
               props.saveOptions("tail_probability", value, props.idx)
             }
