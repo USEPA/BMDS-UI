@@ -379,9 +379,7 @@ class Analysis(models.Model):
 
         self.outputs = analysis_output.model_dump(by_alias=True)
 
-        self.errors = [
-            str(output.error) for output in outputs if getattr(output, "error", None)
-        ]
+        self.errors = [str(output.error) for output in outputs if getattr(output, "error", None)]
         self.ended = now()
         self.deletion_date = get_deletion_date()
         self.save()
