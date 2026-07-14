@@ -1,7 +1,10 @@
 name: ci-checks-dev
 
 on:
+<<<<<<< HEAD
   pull_request:
+=======
+>>>>>>> main
   push:
     branches:
       - dev 
