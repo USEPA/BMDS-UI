@@ -109,13 +109,13 @@ jobs:
         coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
         coverage html -d coverage -i
     - name: Upload pybmds wheel
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: pybmds
         path: venv/dist
         retention-days: 1
     - name: Upload Coverage Report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: coverage
         path: coverage
@@ -145,7 +145,7 @@ jobs:
       run: |
         npm --prefix ./frontend run build
     - name: Upload JS build
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: js
         path: bmds_ui/static/bundles/
@@ -188,12 +188,12 @@ jobs:
         cache-dependency-glob: "**/pyproject.toml"
 
     - name: Download JS build
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
         name: js
         path: bmds_ui/static/bundles/
     - name: Download pybmds wheel
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
         name: pybmds
         path: venv/dist
@@ -228,7 +228,7 @@ jobs:
         manage.py set_git_commit
         uv build --wheel
     - name: Upload wheel
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: wheel
         path: dist/*.whl
