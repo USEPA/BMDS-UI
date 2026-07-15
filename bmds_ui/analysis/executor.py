@@ -1,4 +1,5 @@
 import itertools
+import logging
 from copy import deepcopy
 from typing import NamedTuple, Self
 
@@ -15,6 +16,8 @@ from pybmds.types.nested_dichotomous import IntralitterCorrelation, LitterSpecif
 from .schema import AnalysisSessionSchema, StaticPlots
 from .transforms import PriorEnum, build_dataset, build_model_settings
 from .utils import fig_to_png_b64
+
+logger = logging.getLogger(__name__)
 
 # excluded continuous models if distribution type is lognormal
 lognormal_enabled = {pybmds.Models.ExponentialM3, pybmds.Models.ExponentialM5}
@@ -224,6 +227,7 @@ class AnalysisSession(NamedTuple):
                     try:
                         plt.close(fig)
                     except Exception:
+                        logger.info("Failed to close dose litter response plot")
                         pass
 
         if self.toxicr_bayesian:

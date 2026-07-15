@@ -92,7 +92,7 @@ def build_docx(
             # Split dataset columns into chunks of 3max_cols, render each as its own paragraph
             for i in range(0, len(dataset_cols), max_cols):
                 chunk = dataset_cols[i : i + max_cols]
-                sub_df = df[[label_col] + chunk]
+                sub_df = df[[label_col, *chunk]]
                 report.document.add_paragraph(df_to_table(report, sub_df))
 
     if not analysis.is_finished:

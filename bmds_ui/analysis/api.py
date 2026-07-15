@@ -1,6 +1,6 @@
-import os
 import tempfile
 from io import BytesIO
+from pathlib import Path
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -275,14 +275,14 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             raise exceptions.NotFound("No LOUD Bayesian session found for this output")
 
         with tempfile.NamedTemporaryFile(suffix=".nc", delete=False) as tmp:
-            tmp_path = tmp.name
+            tmp_path = Path(tmp.name)
 
         try:
             model_average_to_inferencedata(session.loud_bayesian, path=tmp_path)
-            with open(tmp_path, "rb") as f:
+            with tmp_path.open("rb") as f:
                 data_bytes = BytesIO(f.read())
         finally:
-            os.unlink(tmp_path)
+            tmp_path.unlink()
 
         data = renderers.BinaryFile(data=data_bytes, filename=instance.slug)
         return Response(data)
@@ -299,8 +299,10 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         try:
             dataset_index = int(dataset_index)
             option_index = int(option_index)
-        except ValueError:
-            raise exceptions.ValidationError("dataset_index and option_index must be integers")
+        except ValueError as err:
+            raise exceptions.ValidationError(
+                "dataset_index and option_index must be integers"
+            ) from err
 
         outputs = instance.outputs.get("outputs", [])
         match = next(
