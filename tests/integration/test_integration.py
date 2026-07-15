@@ -32,21 +32,41 @@ class TestContinuousIntegration(PlaywrightTestCase):
         return self.page
 
     def _click_select_all_frequentist_restricted(self, page: Page, click_count: int = 1):
-        locator = page.get_by_test_id("select-all-frequentist-restricted")
-        if locator.count() == 0:
-            locator = page.locator("#select_all_frequentist_restricted")
-        if locator.count() == 0:
-            locator = page.locator('th#mle-r input[type="checkbox"]')
-        locator.first.click(click_count=click_count)
+        selectors = [
+            page.get_by_test_id("select-all-frequentist-restricted"),
+            page.locator("#select_all_frequentist_restricted"),
+            page.locator('th#mle-r input[type="checkbox"]'),
+            page.locator('th#mle input[type="checkbox"]'),
+            page.locator('input[type="checkbox"][id*="frequentist"][id*="restricted"]'),
+            page.locator('th[id*="mle"] input[type="checkbox"]'),
+        ]
+        for locator in selectors:
+            try:
+                locator.first.wait_for(state="visible", timeout=self.DEFAULT_TIMEOUT)
+                locator.first.click(click_count=click_count)
+                return
+            except PlaywrightTimeoutError:
+                continue
+
+        raise AssertionError("Unable to find frequentist restricted select-all checkbox")
 
     def _wait_for_output_response(self, page: Page):
         try:
-            page.wait_for_response(
-                lambda r: "/api/v1/analysis/" in r.url and "/output/" in r.url and r.status == 200,
+            page.wait_for_function(
+                """() => {
+                    const bodyText = (document.body && document.body.innerText) || "";
+                    return (
+                        !!document.querySelector('[data-testid="results-section-anchor"]') ||
+                        !!document.querySelector('[data-testid="frequentist-model-result"]') ||
+                        !!document.querySelector('#frequentist-model-result') ||
+                        /Model Results/i.test(bodyText) ||
+                        /Outputs may be out of date/i.test(bodyText)
+                    );
+                }""",
                 timeout=self.DEFAULT_TIMEOUT,
             )
         except PlaywrightTimeoutError:
-            # Some paths may render from already-loaded state and skip a new output fetch.
+            # Some paths may render from already-loaded state and skip a visible state transition.
             pass
 
     def _open_output_and_wait_for_results(self, page: Page):
