@@ -115,7 +115,10 @@ class TestContinuousIntegration(PlaywrightTestCase):
         page.locator("#select_all_frequentist_restricted").click(click_count=2)
         page.locator("#select_all_frequentist_unrestricted").click(click_count=2)
         page.locator("#frequentist_unrestricted-Logistic").check()
-        page.locator("#bayesian-Logistic").check()
+
+        # explicitly switch to toxicr tab before interacting with toxicr controls
+        page.locator("#navlink-toxicr").click()
+        page.locator("#toxicr_bayesian-Logistic").check()
 
         # view data tab
         page.get_by_role("link", name="Data").click()
@@ -133,19 +136,19 @@ class TestContinuousIntegration(PlaywrightTestCase):
         # view output summary tables
         page.locator('a:has-text("Output")').click()
         expect(page.locator("#frequentist-model-result tbody tr")).to_have_count(2)
-        expect(page.locator("#bayesian-model-result tbody tr")).to_have_count(2)
+        expect(page.locator("#toxicr-bayesian-model-result tbody tr")).to_have_count(2)
 
         # display frequentist modal
         page.locator("#freq-result-0").click()
         expect(page.locator("#info-table tbody tr")).to_have_count(3)
         page.locator("#close-modal").click()
 
-        # display bayesian modal
-        page.locator("#bayesian-result-0").click()
+        # display toxicr bayesian modal
+        page.locator("#toxicr-bayesian-result-0").click()
         expect(page.locator("#info-table tbody tr")).to_have_count(3)
         page.locator("#close-modal").click()
 
-        # display bayesian model average modal
+        # display toxicr bayesian model average modal
         page.locator("td", has_text="Model Average").click()
         expect(page.locator("#ma-result-summary tbody tr")).to_have_count(3)
         page.locator("#close-modal").click()
