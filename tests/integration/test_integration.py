@@ -1,7 +1,8 @@
 import re
 from pathlib import Path
 
-from playwright.sync_api import Page, TimeoutError as PlaywrightTimeoutError, expect
+from playwright.sync_api import Page, expect
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from bmds_ui.analysis.models import Analysis
 
@@ -41,9 +42,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
     def _wait_for_output_response(self, page: Page):
         try:
             page.wait_for_response(
-                lambda r: "/api/v1/analysis/" in r.url
-                and "/output/" in r.url
-                and r.status == 200,
+                lambda r: "/api/v1/analysis/" in r.url and "/output/" in r.url and r.status == 200,
                 timeout=self.DEFAULT_TIMEOUT,
             )
         except PlaywrightTimeoutError:
