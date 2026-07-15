@@ -35,6 +35,9 @@ class TestContinuousIntegration(PlaywrightTestCase):
         page.locator("#analysis_description").fill("def")
         page.locator("#analysis_model_type").select_option("C")
 
+        # explicitly switch to MLE tab before interacting with frequentist controls
+        page.locator("#navlink-mle").click()
+
         # select models
         page.locator("#select_all_frequentist_restricted").click()
 
@@ -104,6 +107,9 @@ class TestContinuousIntegration(PlaywrightTestCase):
         page.locator("#analysis_name").fill("abc")
         page.locator("#analysis_description").fill("def")
         page.locator("#analysis_model_type").select_option("D")
+
+        # explicitly switch to MLE tab before interacting with frequentist controls
+        page.locator("#navlink-mle").click()
 
         # select models
         page.locator("#select_all_frequentist_restricted").click(click_count=2)

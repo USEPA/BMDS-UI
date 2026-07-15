@@ -19,6 +19,7 @@ const Tabs = observer(({modelsStore}) => {
         <ul className="nav nav-tabs d-flex mt-3 mb-2" role="tablist">
             <li className="nav-item">
                 <NavLink
+                    id="navlink-loud"
                     className={`nav-link ${modelsStore.isActive("loud_bayesian") ? "active" : ""}`}
                     to="/x"
                     exact={true}
@@ -35,6 +36,7 @@ const Tabs = observer(({modelsStore}) => {
             {modelsStore.getModelType !== MODEL_DICHOTOMOUS ? null : (
                 <li className="nav-item">
                     <NavLink
+                        id="navlink-toxicr"
                         className={`nav-link ${modelsStore.isActive("toxicr_bayesian") ? "active" : ""}`}
                         to="/x"
                         onClick={handleClick("toxicr_bayesian")}
@@ -50,7 +52,7 @@ const Tabs = observer(({modelsStore}) => {
 
             <li className="nav-item">
                 <NavLink
-                    id="navlink-output"
+                    id="navlink-mle"
                     className={`nav-link ${modelsStore.isActive("mle") ? "active" : ""}`}
                     to="/x"
                     onClick={handleClick("mle")}
