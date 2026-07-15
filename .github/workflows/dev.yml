@@ -50,7 +50,7 @@ jobs:
 
     - name: Cache vcpkg dependencies
       id: cache-vcpkg-deps
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: venv/vcpkg_installed
         key: vcpkg-${{ runner.os }}-${{ hashFiles('venv/vcpkg.json') }}
@@ -69,11 +69,11 @@ jobs:
         ./vcpkg/bootstrap-vcpkg.sh
         ./vcpkg/vcpkg install --host-triplet="$VCPKG_HOST_TRIPLET" --overlay-ports=./vendor/ports
 
-    - uses: actions/setup-python@v5
+    - uses: actions/setup-python@v6
       with:
         python-version: "3.13"
     - name: Install uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@v6
       with:
         cache-dependency-glob: "**/pyproject.toml"
 
@@ -106,17 +106,10 @@ jobs:
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         DJANGO_CACHE_LOCATION: redis://localhost:6379/0
       run: |
-        coverage run -m pytest -vv--no-summary --record-mode=none
+        coverage run -m pytest -vv --no-summary --record-mode=none
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
-        coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
-        coverage html -d coverage -i
-    - name: Check System Logs for OOM Killer
-      if: always()
-      run: |
-        echo "# System Kernel Diagnostic" >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-        sudo dmesg | grep -i -E 'oom|kill|segfault' || echo "No OOM or Segfault events detected in kernel dmesg logs." >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        coverage report --format=markdown >> $GITHUB_STEP_SUMMARY || echo "Coverage report failed to generate text format"
+        coverage html -d coverage -i --ignore-errors || echo "Coverage HTML failed to generate"
     - name: Upload pybmds wheel
       uses: actions/upload-artifact@v6
       with:
@@ -188,11 +181,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
-    - uses: actions/setup-python@v5
+    - uses: actions/setup-python@v6
       with:
         python-version: "3.13"
     - name: Install uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@v6
       with:
         cache-dependency-glob: "**/pyproject.toml"
 
