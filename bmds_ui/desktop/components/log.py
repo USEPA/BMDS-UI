@@ -1,4 +1,5 @@
 from threading import Event, Thread
+
 from textual.widgets import Log, Static
 
 from ..log import stream
