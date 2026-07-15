@@ -166,7 +166,7 @@ class ModelAverageBody extends Component {
                 isLOUD && outputStore.LOUDMaBmdDistCdf
                     ? outputStore.LOUDMaBmdDistCdf
                     : model.results.bmd_dist,
-            BMDSummary = outputStore.BMDSummary; 
+            BMDSummary = outputStore.BMDSummary;
 
         return (
             <Modal.Body>
