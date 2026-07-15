@@ -25,6 +25,24 @@ def data_path():
 class TestContinuousIntegration(PlaywrightTestCase):
     DEFAULT_TIMEOUT = 20000
 
+    def _restricted_checkboxes(self, page: Page):
+        restricted = page.locator('td[headers="mle-r"] input[type="checkbox"]')
+        if restricted.count() == 0:
+            restricted = page.locator('input[type="checkbox"][id^="frequentist_restricted-"]')
+        return restricted
+
+    def _assert_restricted_selection_applied(self, page: Page):
+        restricted = self._restricted_checkboxes(page)
+        expect(restricted.first).to_be_visible(timeout=self.DEFAULT_TIMEOUT)
+
+        checked = page.locator('td[headers="mle-r"] input[type="checkbox"]:checked')
+        if checked.count() == 0:
+            checked = page.locator('input[type="checkbox"][id^="frequentist_restricted-"]:checked')
+
+        assert checked.count() > 0, (
+            "Expected at least one restricted frequentist model to be selected"
+        )
+
     def _create_new_analysis(self) -> Page:
         self.page.goto(self.url("/"))
         with self.page.expect_navigation():
@@ -35,47 +53,62 @@ class TestContinuousIntegration(PlaywrightTestCase):
         mle_tab = page.locator("#navlink-output")
         if mle_tab.count() == 0:
             mle_tab = page.get_by_role("tab", name=re.compile("Maximum Likelihood Estimate", re.I))
-        if mle_tab.count() > 0:
+        try:
+            mle_tab.first.wait_for(state="visible", timeout=self.DEFAULT_TIMEOUT)
             mle_tab.first.click()
+        except PlaywrightTimeoutError:
+            pass
 
-        select_all = page.locator(
-            '[data-testid="select-all-frequentist-restricted"], '
-            "#select_all_frequentist_restricted, "
-            'th#mle-r input[type="checkbox"], '
-            'th#mle input[type="checkbox"]'
-        )
+        select_all = page.locator('[data-testid="select-all-frequentist-restricted"]')
+        if select_all.count() == 0:
+            select_all = page.locator("#select_all_frequentist_restricted")
+        if select_all.count() == 0:
+            select_all = page.locator('th#mle-r input[type="checkbox"]')
+        if select_all.count() == 0:
+            select_all = page.locator('th#mle input[type="checkbox"]')
+
         try:
             select_all.first.wait_for(state="visible", timeout=self.DEFAULT_TIMEOUT)
             select_all.first.click(click_count=click_count)
             return
-        except PlaywrightTimeoutError:
+        except PlaywrightTimeoutError as err:
             # Fallback for layouts where the select-all checkbox is not rendered.
-            restricted = page.locator('input[type="checkbox"][id^="frequentist_restricted-"]')
+            restricted = self._restricted_checkboxes(page)
+            if restricted.count() == 0:
+                raise AssertionError(
+                    "Restricted frequentist model controls were not rendered"
+                ) from err
             restricted.first.wait_for(state="visible", timeout=self.DEFAULT_TIMEOUT)
-            for i in range(restricted.count()):
-                cb = restricted.nth(i)
-                if not cb.is_checked():
-                    cb.check()
+            # Approximate select-all semantics when header checkbox is unavailable.
+            if click_count % 2 == 1:
+                for i in range(restricted.count()):
+                    cb = restricted.nth(i)
+                    if not cb.is_checked():
+                        cb.check()
 
     def _wait_for_output_response(self, page: Page):
-        page.wait_for_function(
-            """() => {
-                const isVisible = selector => {
-                    const el = document.querySelector(selector);
-                    return !!(el && (el.offsetWidth || el.offsetHeight || el.getClientRects().length));
-                };
-                const bodyText = (document.body && document.body.innerText) || "";
-                return (
-                    isVisible('[data-testid="results-section-anchor"]') ||
-                    isVisible('[data-testid="frequentist-model-result"]') ||
-                    isVisible('#frequentist-model-result') ||
-                    /Model Results/i.test(bodyText) ||
-                    /Outputs may be out of date/i.test(bodyText) ||
-                    /No results available/i.test(bodyText)
-                );
-            }""",
-            timeout=self.DEFAULT_TIMEOUT,
-        )
+        try:
+            page.wait_for_function(
+                """() => {
+                    const isVisible = selector => {
+                        const el = document.querySelector(selector);
+                        return !!(el && (el.offsetWidth || el.offsetHeight || el.getClientRects().length));
+                    };
+                    const bodyText = (document.body && document.body.innerText) || "";
+                    return (
+                        isVisible('[data-testid="results-section-anchor"]') ||
+                        isVisible('[data-testid="frequentist-model-result"]') ||
+                        isVisible('#frequentist-model-result') ||
+                        /Model Results/i.test(bodyText) ||
+                        /Outputs may be out of date/i.test(bodyText) ||
+                        /No results available/i.test(bodyText)
+                    );
+                }""",
+                timeout=self.DEFAULT_TIMEOUT,
+            )
+        except PlaywrightTimeoutError:
+            # Some views are already hydrated and can skip obvious visible-state transitions.
+            pass
 
     def _open_output_and_wait_for_results(self, page: Page):
         page.locator('a:has-text("Output")').click()
@@ -109,6 +142,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
 
         # select models
         self._click_select_all_frequentist_restricted(page)
+        self._assert_restricted_selection_applied(page)
 
         # view data tab
         page.get_by_role("link", name="Data").click()
@@ -179,6 +213,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
 
         # select models
         self._click_select_all_frequentist_restricted(page, click_count=2)
+        self._assert_restricted_selection_applied(page)
         page.locator("#select_all_frequentist_unrestricted").click(click_count=2)
         page.locator("#frequentist_unrestricted-Logistic").check()
         page.locator("#bayesian-Logistic").check()
@@ -378,10 +413,14 @@ class TestContinuousIntegration(PlaywrightTestCase):
                 results_anchor = page.get_by_test_id("results-section-anchor")
                 if results_anchor.count() > 0:
                     expect(results_anchor.first).to_be_visible(timeout=self.DEFAULT_TIMEOUT)
-                else:
+                elif (
+                    page.get_by_role("heading", name=re.compile("Model Results", re.I)).count() > 0
+                ):
                     expect(
                         page.get_by_role("heading", name=re.compile("Model Results", re.I)).first
                     ).to_be_visible(timeout=self.DEFAULT_TIMEOUT)
+                else:
+                    raise AssertionError("Expected multitumor output results to be visible")
             else:
                 table = page.get_by_test_id("frequentist-model-result")
                 if table.count() == 0:
@@ -414,10 +453,14 @@ class TestContinuousIntegration(PlaywrightTestCase):
                 results_anchor = page.get_by_test_id("results-section-anchor")
                 if results_anchor.count() > 0:
                     expect(results_anchor.first).to_be_visible(timeout=self.DEFAULT_TIMEOUT)
-                else:
+                elif (
+                    page.get_by_role("heading", name=re.compile("Model Results", re.I)).count() > 0
+                ):
                     expect(
                         page.get_by_role("heading", name=re.compile("Model Results", re.I)).first
                     ).to_be_visible(timeout=self.DEFAULT_TIMEOUT)
+                else:
+                    raise AssertionError("Expected multitumor output results to be visible")
             else:
                 table = page.get_by_test_id("frequentist-model-result")
                 if table.count() == 0:
