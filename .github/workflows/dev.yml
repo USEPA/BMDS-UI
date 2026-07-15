@@ -35,6 +35,8 @@ jobs:
 
     env:
       VCPKG_HOST_TRIPLET: x64-linux
+      # Force Python to flush output streams instantly so logs don't get lost in a crash buffer
+      PYTHONUNBUFFERED: "1"
 
     steps:
     - name: Checkout bmds-ui
@@ -80,7 +82,7 @@ jobs:
         cd venv
         uv pip install pybind11==3.0.0 --target=./pybind11
         export CMAKE_PREFIX_PATH=$(pwd)/pybind11/pybind11/share/cmake
-        export CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)
+        export CMAKE_BUILD_PARALLEL_LEVEL=2
         uv build --wheel
 
     - name: Install bmds_ui
@@ -104,10 +106,17 @@ jobs:
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         DJANGO_CACHE_LOCATION: redis://localhost:6379/0
       run: |
-        coverage run -m pytest --record-mode=none
+        coverage run -m pytest -vv--no-summary --record-mode=none
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
         coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
         coverage html -d coverage -i
+    - name: Check System Logs for OOM Killer
+      if: always()
+      run: |
+        echo "# System Kernel Diagnostic" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        sudo dmesg | grep -i -E 'oom|kill|segfault' || echo "No OOM or Segfault events detected in kernel dmesg logs." >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
     - name: Upload pybmds wheel
       uses: actions/upload-artifact@v6
       with:
