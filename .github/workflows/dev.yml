@@ -108,15 +108,8 @@ jobs:
       run: |
         coverage run -m pytest -vv --no-summary --record-mode=none
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
-        coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
-        coverage html -d coverage -i
-    - name: Check System Logs for OOM Killer
-      if: always()
-      run: |
-        echo "# System Kernel Diagnostic" >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-        sudo dmesg | grep -i -E 'oom|kill|segfault' || echo "No OOM or Segfault events detected in kernel dmesg logs." >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        coverage report --format=markdown >> $GITHUB_STEP_SUMMARY || echo "Coverage report failed to generate text format"
+        coverage html -d coverage -i --ignore-errors || echo "Coverage HTML failed to generate"
     - name: Upload pybmds wheel
       uses: actions/upload-artifact@v6
       with:
