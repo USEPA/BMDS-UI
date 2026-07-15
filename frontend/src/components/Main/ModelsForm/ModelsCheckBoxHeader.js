@@ -1,162 +1,161 @@
-import { observer } from "mobx-react";
+import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
 
 import * as mc from "@/constants/mainConstants";
-import { allModelOptions, selectAllExcluded } from "@/constants/modelConstants";
+import {allModelOptions, selectAllExcluded} from "@/constants/modelConstants";
 
 import Button from "../../common/Button";
 import CheckboxInput from "../../common/CheckboxInput";
-import LabelInput from "../../common/LabelInput";
 import HelpTextPopover from "../../common/HelpTextPopover";
+import LabelInput from "../../common/LabelInput";
 
 const distTypeHelpText = `<p><strong>CV</strong> = normal distribution + constant variance <br><strong>NCV</strong> = normal distribution + non-constant variance <br><strong>LN</strong> = lognormal distribution </p>`;
 
 const areAllModelsChecked = function (modelType, type, models) {
-    if (!(type in models)) return false;
+        if (!(type in models)) return false;
 
-    const maxSelectable =
-      type === mc.LOUD_BAYESIAN && modelType === mc.MODEL_CONTINUOUS
-        ? allModelOptions[modelType][type].length - selectAllExcluded.length
-        : allModelOptions[modelType][type].length;
-    return models[type].length === maxSelectable;
-  },
-  SelectAllComponent = observer((props) => {
-    const { store, type, disabled, label } = props,
-      id = `select_all_${type}`;
+        const maxSelectable =
+            type === mc.LOUD_BAYESIAN && modelType === mc.MODEL_CONTINUOUS
+                ? allModelOptions[modelType][type].length - selectAllExcluded.length
+                : allModelOptions[modelType][type].length;
+        return models[type].length === maxSelectable;
+    },
+    SelectAllComponent = observer(props => {
+        const {store, type, disabled, label} = props,
+            id = `select_all_${type}`;
+        return (
+            <>
+                <CheckboxInput
+                    id={id}
+                    disabled={disabled}
+                    onChange={value => store.enableAll(type, value)}
+                    checked={areAllModelsChecked(store.getModelType, type, store.models)}
+                />
+                &nbsp;
+                <LabelInput label={label} htmlFor={id} />
+            </>
+        );
+    });
+
+const ModelsCheckBoxHeader = observer(props => {
+    const {store} = props;
+    const activeTab = store.getModelType == mc.MODEL_NESTED_DICHOTOMOUS ? "mle" : store.activeTab;
+
+    const activeTabToTitle = {
+        mle: "Maximum Likelihood Estimate",
+        loud_bayesian: "LOUD Bayesian Model Averaging",
+        toxicr_bayesian: "ToxicR Bayesian Model Averaging",
+    };
     return (
-      <>
-        <CheckboxInput
-          id={id}
-          disabled={disabled}
-          onChange={(value) => store.enableAll(type, value)}
-          checked={areAllModelsChecked(store.getModelType, type, store.models)}
-        />
-        &nbsp;
-        <LabelInput label={label} htmlFor={id} />
-      </>
+        <>
+            <thead className="bg-custom">
+                <tr>
+                    <th className="align-top" rowSpan="2" id="m-name">
+                        {store.getModelType == mc.MODEL_CONTINUOUS &&
+                        activeTab == "loud_bayesian" ? (
+                            <>
+                                Model / Distribution{" "}
+                                <HelpTextPopover
+                                    content={distTypeHelpText}
+                                    title={"Distribution Type Acronyms"}
+                                />
+                            </>
+                        ) : (
+                            "Model"
+                        )}
+                        {store.canEdit ? (
+                            <>
+                                <Button
+                                    className="mt-4 btn btn-sm btn-info w-50 d-block"
+                                    onClick={store.resetModelSelection}
+                                    text="Reset Selection"
+                                />
+                            </>
+                        ) : null}
+                    </th>
+                    <th colSpan="2">{activeTabToTitle[activeTab]}</th>
+                </tr>
+                <tr>
+                    {activeTab === "mle" ? (
+                        <>
+                            <th id="mle-r">
+                                Restricted
+                                {store.canEdit ? (
+                                    <>
+                                        <br />
+                                        <SelectAllComponent
+                                            store={store}
+                                            key={"mle-frequentist_restricted"}
+                                            type={"frequentist_restricted"}
+                                            label="Select All"
+                                        />
+                                    </>
+                                ) : null}
+                            </th>
+                            <th id="mle-u">
+                                Unrestricted
+                                {store.canEdit ? (
+                                    <>
+                                        <br />
+                                        <SelectAllComponent
+                                            store={store}
+                                            key={"mle-frequentist_unrestricted"}
+                                            type={"frequentist_unrestricted"}
+                                            label="Select All"
+                                        />
+                                    </>
+                                ) : null}
+                            </th>
+                        </>
+                    ) : activeTab === "loud_bayesian" ? (
+                        <>
+                            <th id="lb-i">
+                                Include
+                                {store.canEdit ? (
+                                    <>
+                                        <br />
+                                        <SelectAllComponent
+                                            store={store}
+                                            key={"loud_bayesian"}
+                                            type={"loud_bayesian"}
+                                            label="Select All"
+                                        />
+                                    </>
+                                ) : null}
+                            </th>
+                            <th id="lb-p">
+                                <span className="mb-1">Prior Weight</span>
+                            </th>
+                        </>
+                    ) : activeTab === "toxicr_bayesian" ? (
+                        <>
+                            <th id="tb-i">
+                                Include
+                                {store.canEdit ? (
+                                    <>
+                                        <br />
+                                        <SelectAllComponent
+                                            store={store}
+                                            key={"toxicr_bayesian"}
+                                            type={"toxicr_bayesian"}
+                                            label="Select All"
+                                        />
+                                    </>
+                                ) : null}
+                            </th>
+                            <th id="tb-p">
+                                <span className="mb-1">Prior Weight</span>
+                            </th>
+                        </>
+                    ) : null}
+                </tr>
+            </thead>
+        </>
     );
-  });
-
-const ModelsCheckBoxHeader = observer((props) => {
-  const { store } = props;
-  const activeTab =
-    store.getModelType == mc.MODEL_NESTED_DICHOTOMOUS ? "mle" : store.activeTab;
-
-  const activeTabToTitle = {
-    mle: "Maximum Likelihood Estimate",
-    loud_bayesian: "LOUD Bayesian Model Averaging",
-    toxicr_bayesian: "ToxicR Bayesian Model Averaging",
-  };
-  return (
-    <>
-      <thead className="bg-custom">
-        <tr>
-          <th className="align-top" rowSpan="2" id="m-name">
-            {store.getModelType == mc.MODEL_CONTINUOUS &&
-            activeTab == "loud_bayesian" ? (
-              <>
-                Model / Distribution{" "}
-                <HelpTextPopover
-                  content={distTypeHelpText}
-                  title={"Distribution Type Acronyms"}
-                />
-              </>
-            ) : (
-              "Model"
-            )}
-            {store.canEdit ? (
-              <>
-                <Button
-                  className="mt-4 btn btn-sm btn-info w-50 d-block"
-                  onClick={store.resetModelSelection}
-                  text="Reset Selection"
-                />
-              </>
-            ) : null}
-          </th>
-          <th colSpan="2">{activeTabToTitle[activeTab]}</th>
-        </tr>
-        <tr>
-          {activeTab === "mle" ? (
-            <>
-              <th id="mle-r">
-                Restricted
-                {store.canEdit ? (
-                  <>
-                    <br />
-                    <SelectAllComponent
-                      store={store}
-                      key={"mle-frequentist_restricted"}
-                      type={"frequentist_restricted"}
-                      label="Select All"
-                    />
-                  </>
-                ) : null}
-              </th>
-              <th id="mle-u">
-                Unrestricted
-                {store.canEdit ? (
-                  <>
-                    <br />
-                    <SelectAllComponent
-                      store={store}
-                      key={"mle-frequentist_unrestricted"}
-                      type={"frequentist_unrestricted"}
-                      label="Select All"
-                    />
-                  </>
-                ) : null}
-              </th>
-            </>
-          ) : activeTab === "loud_bayesian" ? (
-            <>
-              <th id="lb-i">
-                Include
-                {store.canEdit ? (
-                  <>
-                    <br />
-                    <SelectAllComponent
-                      store={store}
-                      key={"loud_bayesian"}
-                      type={"loud_bayesian"}
-                      label="Select All"
-                    />
-                  </>
-                ) : null}
-              </th>
-              <th id="lb-p">
-                <span className="mb-1">Prior Weight</span>
-              </th>
-            </>
-          ) : activeTab === "toxicr_bayesian" ? (
-            <>
-              <th id="tb-i">
-                Include
-                {store.canEdit ? (
-                  <>
-                    <br />
-                    <SelectAllComponent
-                      store={store}
-                      key={"toxicr_bayesian"}
-                      type={"toxicr_bayesian"}
-                      label="Select All"
-                    />
-                  </>
-                ) : null}
-              </th>
-              <th id="tb-p">
-                <span className="mb-1">Prior Weight</span>
-              </th>
-            </>
-          ) : null}
-        </tr>
-      </thead>
-    </>
-  );
 });
 ModelsCheckBoxHeader.propTypes = {
-  store: PropTypes.object,
+    store: PropTypes.object,
 };
 
 export default ModelsCheckBoxHeader;

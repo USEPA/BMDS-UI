@@ -1,23 +1,20 @@
 import itertools
 from copy import deepcopy
 from typing import NamedTuple, Self
-from .utils import fig_to_png_b64
-import matplotlib.pyplot as plt 
+
+import matplotlib.pyplot as plt
 
 import pybmds
 from pybmds.constants import DistType, ModelClass
+from pybmds.models.base import cdf_df
+from pybmds.plotting.LOUD import get_model_average_figures
+from pybmds.plotting.nested_dichotomous import dose_litter_response_plot
 from pybmds.session import Session
 from pybmds.types.nested_dichotomous import IntralitterCorrelation, LitterSpecificCovariate
-from pybmds.plotting.nested_dichotomous import dose_litter_response_plot
-from pybmds.plotting.LOUD import get_model_average_figures
-from pybmds.models.base import cdf_df
 
 from .schema import AnalysisSessionSchema, StaticPlots
-from .transforms import (
-    PriorEnum,
-    build_dataset,
-    build_model_settings
-)
+from .transforms import PriorEnum, build_dataset, build_model_settings
+from .utils import fig_to_png_b64
 
 # excluded continuous models if distribution type is lognormal
 lognormal_enabled = {pybmds.Models.ExponentialM3, pybmds.Models.ExponentialM5}
@@ -44,7 +41,14 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Sess
             model_names = [model for model in model_names if model in lognormal_enabled]
 
         for model_name in model_names:
-            model_options = build_model_settings(dataset_type=dataset_type, prior_class=prior_type, options=options, dataset_options=dataset_options, model=None, mcmc_options=None)
+            model_options = build_model_settings(
+                dataset_type=dataset_type,
+                prior_class=prior_type,
+                options=options,
+                dataset_options=dataset_options,
+                model=None,
+                mcmc_options=None,
+            )
             if model_name in pybmds.Models.VARIABLE_POLYNOMIAL():
                 min_degree = 2 if model_name in pybmds.Models.Polynomial else 1
                 max_degree = (
@@ -76,6 +80,7 @@ def build_frequentist_session(dataset, inputs, options, dataset_options) -> Sess
 
     return session
 
+
 def build_toxicr_bayesian_session(
     dataset: pybmds.datasets.base.DatasetBase, inputs: dict, options: dict, dataset_options: dict
 ) -> Session | None:
@@ -83,7 +88,7 @@ def build_toxicr_bayesian_session(
 
     # filter lognormal
     if options.get("dist_type") == DistType.log_normal:
-        models = deepcopy(list(filter(lambda d: d["model"] in lognormal_enabled, models)))     
+        models = deepcopy(list(filter(lambda d: d["model"] in lognormal_enabled, models)))
 
     # exit early if we have no toxicr bayesian models
     if len(models) == 0:
@@ -92,26 +97,31 @@ def build_toxicr_bayesian_session(
     session = Session(dataset=dataset)
     prior_weights = list(map(lambda d: d["prior_weight"], models))
 
-    for model in models:    
+    for model in models:
         name = model["model"]
         model_options = build_model_settings(
             dataset_type=inputs["dataset_type"],
             prior_class=PriorEnum.toxicr_bayesian,
             options=options,
             dataset_options=dataset_options,
-            model=None, 
-            mcmc_options=None
+            model=None,
+            mcmc_options=None,
         )
         if name in pybmds.Models.VARIABLE_POLYNOMIAL():
             model_options.degree = 2
-        session.add_model(name, settings=model_options)    
+        session.add_model(name, settings=model_options)
 
     session.set_ma_weights(prior_weights)
 
     return session
 
+
 def build_loud_bayesian_session(
-    dataset: pybmds.datasets.base.DatasetBase, inputs: dict, options: dict, dataset_options: dict, mcmc_options: dict
+    dataset: pybmds.datasets.base.DatasetBase,
+    inputs: dict,
+    options: dict,
+    dataset_options: dict,
+    mcmc_options: dict,
 ) -> Session | None:
     models = inputs["models"].get(PriorEnum.loud_bayesian, [])
     # Do Not filter lognormal for continuous loud, since dist_type is not reliant on options set
@@ -125,15 +135,15 @@ def build_loud_bayesian_session(
     session = Session(dataset=dataset)
     prior_weights = list(map(lambda d: d["prior_weight"], models))
 
-    for model in models:    
+    for model in models:
         name = model["model"]
         model_options = build_model_settings(
             dataset_type=inputs["dataset_type"],
-            prior_class=PriorEnum.loud_bayesian, # 3
+            prior_class=PriorEnum.loud_bayesian,  # 3
             options=options,
             dataset_options=dataset_options,
             model=model,
-            mcmc_options=mcmc_options
+            mcmc_options=mcmc_options,
         )
         if name in pybmds.Models.VARIABLE_POLYNOMIAL():
             model_options.degree = 2
@@ -179,8 +189,12 @@ class AnalysisSession(NamedTuple):
             dataset_index=dataset_index,
             option_index=option_index,
             frequentist=build_frequentist_session(dataset, inputs, options, dataset_options),
-            toxicr_bayesian=build_toxicr_bayesian_session(dataset, inputs, options, dataset_options),
-            loud_bayesian=build_loud_bayesian_session(dataset, inputs, options, dataset_options, mcmc_options)
+            toxicr_bayesian=build_toxicr_bayesian_session(
+                dataset, inputs, options, dataset_options
+            ),
+            loud_bayesian=build_loud_bayesian_session(
+                dataset, inputs, options, dataset_options, mcmc_options
+            ),
         )
 
     @classmethod
@@ -190,16 +204,17 @@ class AnalysisSession(NamedTuple):
             dataset_index=obj.dataset_index,
             option_index=obj.option_index,
             frequentist=Session.from_serialized(obj.frequentist) if obj.frequentist else None,
-            toxicr_bayesian=Session.from_serialized(obj.toxicr_bayesian) if obj.toxicr_bayesian else None,
+            toxicr_bayesian=Session.from_serialized(obj.toxicr_bayesian)
+            if obj.toxicr_bayesian
+            else None,
             loud_bayesian=Session.from_serialized(obj.loud_bayesian) if obj.loud_bayesian else None,
         )
 
     def execute(self, inputs):
-
         if self.frequentist:
             self.frequentist.execute()
             if self.frequentist.recommendation_enabled:
-                self.frequentist.recommend()  
+                self.frequentist.recommend()
 
             dataset_type = inputs["dataset_type"]
             if dataset_type == ModelClass.NESTED_DICHOTOMOUS:
@@ -211,7 +226,7 @@ class AnalysisSession(NamedTuple):
                     try:
                         plt.close(fig)
                     except Exception:
-                        pass           
+                        pass
 
         if self.toxicr_bayesian:
             if self.toxicr_bayesian.dataset.dtype == pybmds.constants.Dtype.DICHOTOMOUS:
@@ -226,35 +241,43 @@ class AnalysisSession(NamedTuple):
             model_cdf_arrs = []
             for model in self.loud_bayesian.models:
                 df = cdf_df(model.results.fit.bmd_dist)
-                arr = df[["BMD", "Percentile"]].to_numpy(dtype=float, copy=True).T  
-                arr[1] /= 100.0                                          
+                arr = df[["BMD", "Percentile"]].to_numpy(dtype=float, copy=True).T
+                arr[1] /= 100.0
                 model_cdf_arrs.append(arr)
-            self.loud_bayesian._model_bmd_dist_cdfs = model_cdf_arrs   
-            
+            self.loud_bayesian._model_bmd_dist_cdfs = model_cdf_arrs
+
             if self.loud_bayesian.model_average:
                 df = cdf_df(self.loud_bayesian.model_average.results.bmd_dist)
                 ma_arr = df[["BMD", "Percentile"]].to_numpy(dtype=float, copy=True).T
-                ma_arr[1] /= 100.0 
+                ma_arr[1] /= 100.0
                 self.loud_bayesian._ma_bmd_dist_cdf = ma_arr
 
-                figs = get_model_average_figures(self.loud_bayesian, compressed =False, parameter_visualizations=True)
+                figs = get_model_average_figures(
+                    self.loud_bayesian, compressed=False, parameter_visualizations=True
+                )
 
                 self.loud_bayesian._bmd_summary = figs["bmd_summary"].to_dict()
 
-                self.loud_bayesian._parameter_groups_data = [{
-                    "name": group["name"],
-                    "columns": list(group["summary"].columns),
-                    "rows": group["summary"].fillna("").to_dict(orient="records"),
-                } for group in figs["parameter_groups"]]
+                self.loud_bayesian._parameter_groups_data = [
+                    {
+                        "name": group["name"],
+                        "columns": list(group["summary"].columns),
+                        "rows": group["summary"].fillna("").to_dict(orient="records"),
+                    }
+                    for group in figs["parameter_groups"]
+                ]
 
                 self.loud_bayesian.loud_posterior_plot_png = fig_to_png_b64(figs["posterior"])
-                self.loud_bayesian.loud_overlay_plot_png = fig_to_png_b64(figs["overlay"], tight=True)
-                
+                self.loud_bayesian.loud_overlay_plot_png = fig_to_png_b64(
+                    figs["overlay"], tight=True
+                )
+
                 self.loud_bayesian._parameter_trace_pngs = {
-                    group["name"]: fig_to_png_b64(group["trace_figure"]) for group in figs["parameter_groups"]
+                    group["name"]: fig_to_png_b64(group["trace_figure"])
+                    for group in figs["parameter_groups"]
                 }
-                
-                plt.close("all")      
+
+                plt.close("all")
 
     def to_schema(self) -> AnalysisSessionSchema:
         loud_model_bmd_dist_cdfs = None
@@ -268,10 +291,20 @@ class AnalysisSession(NamedTuple):
                 loud_ma_bmd_dist_cdf = ma_cdf.tolist()
 
         static_plots = StaticPlots(
-            nested_dichotomous_plot_png=getattr(self.frequentist, "nested_dichotomous_plot_png", None) if self.frequentist else None,
-            loud_posterior_plot_png=getattr(self.loud_bayesian, "loud_posterior_plot_png", None) if self.loud_bayesian else None,
-            loud_overlay_plot_png=getattr(self.loud_bayesian, "loud_overlay_plot_png", None) if self.loud_bayesian else None,
-            loud_parameter_trace_pngs=getattr(self.loud_bayesian, "_parameter_trace_pngs", None) if self.loud_bayesian else None,
+            nested_dichotomous_plot_png=getattr(
+                self.frequentist, "nested_dichotomous_plot_png", None
+            )
+            if self.frequentist
+            else None,
+            loud_posterior_plot_png=getattr(self.loud_bayesian, "loud_posterior_plot_png", None)
+            if self.loud_bayesian
+            else None,
+            loud_overlay_plot_png=getattr(self.loud_bayesian, "loud_overlay_plot_png", None)
+            if self.loud_bayesian
+            else None,
+            loud_parameter_trace_pngs=getattr(self.loud_bayesian, "_parameter_trace_pngs", None)
+            if self.loud_bayesian
+            else None,
         )
 
         return AnalysisSessionSchema(
@@ -281,8 +314,12 @@ class AnalysisSession(NamedTuple):
             toxicr_bayesian=self.toxicr_bayesian.to_dict() if self.toxicr_bayesian else None,
             loud_bayesian=self.loud_bayesian.to_dict() if self.loud_bayesian else None,
             static_plots=static_plots,
-            loud_parameter_groups=getattr(self.loud_bayesian, "_parameter_groups_data", None) if self.loud_bayesian else None,
-            bmd_summary=getattr(self.loud_bayesian, "_bmd_summary", None) if self.loud_bayesian else None,
+            loud_parameter_groups=getattr(self.loud_bayesian, "_parameter_groups_data", None)
+            if self.loud_bayesian
+            else None,
+            bmd_summary=getattr(self.loud_bayesian, "_bmd_summary", None)
+            if self.loud_bayesian
+            else None,
             loud_model_bmd_dist_cdfs=loud_model_bmd_dist_cdfs,
             loud_ma_bmd_dist_cdf=loud_ma_bmd_dist_cdf,
         )
@@ -318,7 +355,12 @@ class MultiTumorSession(NamedTuple):
         dataset_type = inputs["dataset_type"]
         options = inputs["options"][option_index]
         model_settings = build_model_settings(
-            dataset_type=dataset_type, prior_class=PriorEnum.frequentist_restricted, options=options, dataset_options={}, model=None, mcmc_options=None
+            dataset_type=dataset_type,
+            prior_class=PriorEnum.frequentist_restricted,
+            options=options,
+            dataset_options={},
+            model=None,
+            mcmc_options=None,
         )
         session = pybmds.Multitumor(datasets, degrees=degrees, settings=model_settings)
         return cls(option_index=option_index, session=session)

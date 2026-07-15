@@ -1,5 +1,10 @@
+import os
+import tempfile
+from io import BytesIO
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from pandas import DataFrame, ExcelWriter
 from rest_framework import exceptions, mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -8,20 +13,21 @@ from rest_framework.schemas.openapi import AutoSchema
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott
 from pybmds.plotting.LOUD import model_average_to_inferencedata
-from pandas import DataFrame, ExcelWriter
-from io import BytesIO
-import tempfile
-import os
 
 from ..common import renderers
 from ..common.renderers import BinaryFile
 from ..common.serializers import UnusedSerializer
 from ..common.task_cache import ReportStatus
-from ..common.utils import get_bool, to_csv
+from ..common.utils import get_bool
 from ..common.validation import pydantic_validate
 from . import models, schema, serializers, validators
 from .reporting.cache import DocxReportCache, ExcelReportCache
-from .reporting.docx import add_update_url, build_polyk_docx, build_raoscott_docx, build_jonckheereterpstra_docx
+from .reporting.docx import (
+    add_update_url,
+    build_jonckheereterpstra_docx,
+    build_polyk_docx,
+    build_raoscott_docx,
+)
 
 
 class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -54,7 +60,7 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         """
         Validate input and if successful, patch inputs on server side.
         """
-        
+
         instance = self.get_object()
         data = request.data.get("data")
 
@@ -168,8 +174,7 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
                     df = (
                         DataFrame(cochran_armitage_result)
                         .set_index("name")
-                        .T
-                        .rename_axis("Cochran-Armitage")
+                        .T.rename_axis("Cochran-Armitage")
                         .reset_index()
                     )
                     df.to_excel(writer, index=False, sheet_name="Cochran Armitage")
@@ -194,18 +199,19 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             "dataset_format_long": get_bool(request.query_params.get("datasetFormatLong")),
             "all_models": get_bool(request.query_params.get("allModels")),
             "bmd_cdf_table": get_bool(request.query_params.get("bmdCdfTable")),
-            "additionalNestedDichotomousPlots": get_bool(request.query_params.get("additionalNestedDichotomousPlots")),
+            "additionalNestedDichotomousPlots": get_bool(
+                request.query_params.get("additionalNestedDichotomousPlots")
+            ),
         }
 
-        # Compute result 
+        # Compute result
         cochran_armitage_result = (instance.outputs or {}).get("cochran_armitage_result")
 
         if cochran_armitage_result:
             df = (
                 DataFrame(cochran_armitage_result)
                 .set_index("name")
-                .T
-                .rename_axis("Cochran-Armitage")
+                .T.rename_axis("Cochran-Armitage")
                 .reset_index()
             )
             # Pass a JSON-serializable payload
@@ -224,8 +230,14 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             return Response(renderers.BinaryFile(data=data, filename=instance.slug))
 
         return Response(response.model_dump(), content_type="application/json")
-    
-    @action(detail=True, methods=["get"], url_path="loud-inference-data", url_name = "loud-inference-data", renderer_classes=(renderers.NetCDFRenderer,))
+
+    @action(
+        detail=True,
+        methods=["get"],
+        url_path="loud-inference-data",
+        url_name="loud-inference-data",
+        renderer_classes=(renderers.NetCDFRenderer,),
+    )
     def loud_inference_data(self, request, *args, **kwargs):
         instance = self.get_object()
         dataset_index = request.query_params.get("dataset_index")
@@ -233,42 +245,44 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         if dataset_index is None or option_index is None:
             raise exceptions.ValidationError("dataset_index and option_index are required")
-        
+
         try:
             dataset_index = int(dataset_index)
             option_index = int(option_index)
-        except ValueError:
-            raise exceptions.ValidationError("dataset_index and option_index must be integers")
+        except ValueError as err:
+            raise exceptions.ValidationError("dataset_index and option_index must be integers") from err
 
         # Find the matching output
         outputs = instance.outputs.get("outputs", [])
         output_index = next(
-            (i for i, o in enumerate(outputs)
-             if o["dataset_index"] == dataset_index and o["option_index"] == option_index),
-             None,
-        )    
+            (
+                i
+                for i, o in enumerate(outputs)
+                if o["dataset_index"] == dataset_index and o["option_index"] == option_index
+            ),
+            None,
+        )
         if output_index is None:
             raise exceptions.NotFound("No output found for given dataset_index and option_index")
 
-
         cache = ExcelReportCache(analysis=instance)
-        response = cache.request_content()
+        cache.request_content()
 
         session = instance.get_session(output_index)
         if not session.loud_bayesian:
             raise exceptions.NotFound("No LOUD Bayesian session found for this output")
-        
+
         with tempfile.NamedTemporaryFile(suffix=".nc", delete=False) as tmp:
             tmp_path = tmp.name
 
         try:
             model_average_to_inferencedata(session.loud_bayesian, path=tmp_path)
             with open(tmp_path, "rb") as f:
-                data_bytes=BytesIO(f.read())
+                data_bytes = BytesIO(f.read())
         finally:
-            os.unlink(tmp_path)            
+            os.unlink(tmp_path)
 
-        data=renderers.BinaryFile(data=data_bytes, filename=instance.slug)
+        data = renderers.BinaryFile(data=data_bytes, filename=instance.slug)
         return Response(data)
 
     @action(detail=True, methods=["get"], url_path="output")
@@ -279,22 +293,25 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         if dataset_index is None or option_index is None:
             raise exceptions.ValidationError("dataset_index and option_index are required")
-        
-        try: 
+
+        try:
             dataset_index = int(dataset_index)
             option_index = int(option_index)
         except ValueError:
-            raise exceptions.ValidationError("dataset_index and option_index must be integers")    
-        
+            raise exceptions.ValidationError("dataset_index and option_index must be integers")
+
         outputs = instance.outputs.get("outputs", [])
         match = next(
-            (o for o in outputs
-             if o["dataset_index"] == dataset_index and o["option_index"] == option_index), 
-             None,
+            (
+                o
+                for o in outputs
+                if o["dataset_index"] == dataset_index and o["option_index"] == option_index
+            ),
+            None,
         )
         if match is None:
             raise exceptions.NotFound("No output found for given dataset_index and option_index")
-        
+
         return Response(match)
 
     @action(detail=True, methods=("post",))
@@ -398,9 +415,9 @@ class RaoScottViewset(viewsets.GenericViewSet):
 
 
 class JonckheereTerpstraViewset(viewsets.GenericViewSet):
-    queryset = models.Analysis.objects.none() # not needed
-    serializer_class = UnusedSerializer # not needed, pydantic is used instead
-    schema = AutoSchema(operation_id_base="JonckheereTerpstra") 
+    queryset = models.Analysis.objects.none()  # not needed
+    serializer_class = UnusedSerializer  # not needed, pydantic is used instead
+    schema = AutoSchema(operation_id_base="JonckheereTerpstra")
 
     def _run_analysis(self, request):
         try:
@@ -418,18 +435,22 @@ class JonckheereTerpstraViewset(viewsets.GenericViewSet):
     def excel(self, request, *args, **kwargs):
         computed_result = request.data.get("computed_result")
         if not computed_result:
-            raise exceptions.ValidationError("No Jonckheere Terpstra Trend Test result was computed")
-        
+            raise exceptions.ValidationError(
+                "No Jonckheere Terpstra Trend Test result was computed"
+            )
+
         synthetic_dataset_obj = request.data.get("synthetic_dataset_obj")
 
         binary_stream = BytesIO()
         with ExcelWriter(binary_stream, engine="openpyxl") as writer:
-            DataFrame([computed_result]).to_excel(
-            writer, index=False, sheet_name="Results"
-        )
-            DataFrame(request.data["dataset_obj"]).to_excel(writer, index=False, sheet_name="Dataset")
+            DataFrame([computed_result]).to_excel(writer, index=False, sheet_name="Results")
+            DataFrame(request.data["dataset_obj"]).to_excel(
+                writer, index=False, sheet_name="Dataset"
+            )
             if synthetic_dataset_obj:
-                DataFrame(request.data["synthetic_dataset_obj"]).to_excel(writer, index=False, sheet_name="Synthetic Individual Data")
+                DataFrame(request.data["synthetic_dataset_obj"]).to_excel(
+                    writer, index=False, sheet_name="Synthetic Individual Data"
+                )
 
         binary_stream.seek(0)
         data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
@@ -439,21 +460,25 @@ class JonckheereTerpstraViewset(viewsets.GenericViewSet):
     def word(self, request, *args, **kwargs):
         computed_result = request.data.get("computed_result")
         if not computed_result:
-            raise exceptions.ValidationError("No Jonckheere Terpstra Trend Test result was computed")
-        
+            raise exceptions.ValidationError(
+                "No Jonckheere Terpstra Trend Test result was computed"
+            )
+
         synthetic_dataset_obj = request.data.get("synthetic_dataset_obj")
         synthetic_df = DataFrame(synthetic_dataset_obj) if synthetic_dataset_obj else None
 
         analysis = DataFrame([computed_result])
-        binary_stream = build_jonckheereterpstra_docx(analysis, DataFrame(request.data['dataset_obj']), synthetic_df)
+        binary_stream = build_jonckheereterpstra_docx(
+            analysis, DataFrame(request.data["dataset_obj"]), synthetic_df
+        )
         data = BinaryFile(binary_stream, "jonckheere-terpstra-trend-test")
         return Response(data)
 
 
 class CochranArmitageViewset(viewsets.GenericViewSet):
-    queryset = models.Analysis.objects.none() # not needed
-    serializer_class = UnusedSerializer # not needed, pydantic is used instead
-    schema = AutoSchema(operation_id_base="CochranArmitage") 
+    queryset = models.Analysis.objects.none()  # not needed
+    serializer_class = UnusedSerializer  # not needed, pydantic is used instead
+    schema = AutoSchema(operation_id_base="CochranArmitage")
 
     def _run_analysis(self, request):
         try:

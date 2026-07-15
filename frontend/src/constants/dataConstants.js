@@ -3,150 +3,145 @@ import _ from "lodash";
 import * as mc from "./mainConstants";
 
 const Dtype = {
-  DICHOTOMOUS: "D",
-  CONTINUOUS: "C",
-  CONTINUOUS_INDIVIDUAL: "CI",
-  NESTED_DICHOTOMOUS: "ND",
-  MULTI_TUMOR: "MT",
+    DICHOTOMOUS: "D",
+    CONTINUOUS: "C",
+    CONTINUOUS_INDIVIDUAL: "CI",
+    NESTED_DICHOTOMOUS: "ND",
+    MULTI_TUMOR: "MT",
 };
 
-export { Dtype };
+export {Dtype};
 export const DATA_CONTINUOUS_SUMMARY = "CS",
-  DATA_CONTINUOUS_INDIVIDUAL = "I",
-  DATA_DICHOTOMOUS = "DM",
-  DATA_NESTED_DICHOTOMOUS = "ND",
-  DATA_MULTI_TUMOR = "MT",
-  datasetTypesByModelType = function (modelType) {
-    switch (modelType) {
-      case mc.MODEL_DICHOTOMOUS:
-        return [{ value: DATA_DICHOTOMOUS, name: "Dichotomous" }];
-      case mc.MODEL_CONTINUOUS:
-        return [
-          { value: DATA_CONTINUOUS_SUMMARY, name: "Summarized" },
-          { value: DATA_CONTINUOUS_INDIVIDUAL, name: "Individual" },
-        ];
-      case mc.MODEL_NESTED_DICHOTOMOUS:
-        return [{ value: DATA_NESTED_DICHOTOMOUS, name: "Nested Dichotomous" }];
-      case mc.MODEL_MULTI_TUMOR:
-        return [{ value: DATA_DICHOTOMOUS, name: "Dichotomous" }];
-      default:
-        throw `Unknown modelType: ${modelType}`;
-    }
-  },
-  columns = {
-    [Dtype.CONTINUOUS]: ["doses", "ns", "means", "stdevs"],
-    [Dtype.CONTINUOUS_INDIVIDUAL]: ["doses", "responses"],
-    [Dtype.DICHOTOMOUS]: ["doses", "ns", "incidences"],
-    [Dtype.NESTED_DICHOTOMOUS]: [
-      "doses",
-      "litter_ns",
-      "incidences",
-      "litter_covariates",
-    ],
-  },
-  columnNames = {
-    [DATA_CONTINUOUS_SUMMARY]: {
-      doses: "Dose",
-      ns: "N",
-      means: "Mean",
-      stdevs: "Std. Dev.",
+    DATA_CONTINUOUS_INDIVIDUAL = "I",
+    DATA_DICHOTOMOUS = "DM",
+    DATA_NESTED_DICHOTOMOUS = "ND",
+    DATA_MULTI_TUMOR = "MT",
+    datasetTypesByModelType = function (modelType) {
+        switch (modelType) {
+            case mc.MODEL_DICHOTOMOUS:
+                return [{value: DATA_DICHOTOMOUS, name: "Dichotomous"}];
+            case mc.MODEL_CONTINUOUS:
+                return [
+                    {value: DATA_CONTINUOUS_SUMMARY, name: "Summarized"},
+                    {value: DATA_CONTINUOUS_INDIVIDUAL, name: "Individual"},
+                ];
+            case mc.MODEL_NESTED_DICHOTOMOUS:
+                return [{value: DATA_NESTED_DICHOTOMOUS, name: "Nested Dichotomous"}];
+            case mc.MODEL_MULTI_TUMOR:
+                return [{value: DATA_DICHOTOMOUS, name: "Dichotomous"}];
+            default:
+                throw `Unknown modelType: ${modelType}`;
+        }
     },
-    [DATA_CONTINUOUS_INDIVIDUAL]: {
-      doses: "Dose",
-      responses: "Response",
+    columns = {
+        [Dtype.CONTINUOUS]: ["doses", "ns", "means", "stdevs"],
+        [Dtype.CONTINUOUS_INDIVIDUAL]: ["doses", "responses"],
+        [Dtype.DICHOTOMOUS]: ["doses", "ns", "incidences"],
+        [Dtype.NESTED_DICHOTOMOUS]: ["doses", "litter_ns", "incidences", "litter_covariates"],
     },
-    [DATA_DICHOTOMOUS]: {
-      doses: "Dose",
-      ns: "N",
-      incidences: "Incidence",
+    columnNames = {
+        [DATA_CONTINUOUS_SUMMARY]: {
+            doses: "Dose",
+            ns: "N",
+            means: "Mean",
+            stdevs: "Std. Dev.",
+        },
+        [DATA_CONTINUOUS_INDIVIDUAL]: {
+            doses: "Dose",
+            responses: "Response",
+        },
+        [DATA_DICHOTOMOUS]: {
+            doses: "Dose",
+            ns: "N",
+            incidences: "Incidence",
+        },
+        [DATA_NESTED_DICHOTOMOUS]: {
+            doses: "Dose",
+            litter_ns: "Litter Size",
+            incidences: "Incidence",
+            litter_covariates: "Litter Specific Covariate",
+        },
     },
-    [DATA_NESTED_DICHOTOMOUS]: {
-      doses: "Dose",
-      litter_ns: "Litter Size",
-      incidences: "Incidence",
-      litter_covariates: "Litter Specific Covariate",
+    columnHeaders = {
+        doses: "Dose",
+        ns: "N",
+        means: "Mean",
+        stdevs: "Std. Dev.",
+        responses: "Response",
+        incidences: "Incidence",
+        litter_ns: "Litter Size",
+        litter_covariates: "Litter Specific Covariate",
     },
-  },
-  columnHeaders = {
-    doses: "Dose",
-    ns: "N",
-    means: "Mean",
-    stdevs: "Std. Dev.",
-    responses: "Response",
-    incidences: "Incidence",
-    litter_ns: "Litter Size",
-    litter_covariates: "Litter Specific Covariate",
-  },
-  getDefaultDataset = function (dtype) {
-    switch (dtype) {
-      case DATA_CONTINUOUS_SUMMARY:
-        return {
-          dtype: Dtype.CONTINUOUS,
-          metadata: {
-            id: null,
-            name: "",
-            dose_units: "",
-            response_units: "",
-            dose_name: "Dose",
-            response_name: "Response",
-          },
-          doses: [null, null, null, null, null],
-          ns: [null, null, null, null, null],
-          means: [null, null, null, null, null],
-          stdevs: [null, null, null, null, null],
-        };
-      case DATA_CONTINUOUS_INDIVIDUAL:
-        return {
-          dtype: Dtype.CONTINUOUS_INDIVIDUAL,
-          metadata: {
-            id: null,
-            name: "",
-            dose_units: "",
-            response_units: "",
-            dose_name: "Dose",
-            response_name: "Response",
-          },
-          doses: [null, null, null, null, null],
-          responses: [null, null, null, null, null],
-        };
-      case DATA_DICHOTOMOUS:
-        return {
-          dtype: Dtype.DICHOTOMOUS,
-          metadata: {
-            id: null,
-            name: "",
-            dose_units: "",
-            response_units: "",
-            dose_name: "Dose",
-            response_name: "Incidence",
-          },
-          doses: [null, null, null, null, null],
-          ns: [null, null, null, null, null],
-          incidences: [null, null, null, null, null],
-        };
-      case DATA_NESTED_DICHOTOMOUS:
-        return {
-          dtype: Dtype.NESTED_DICHOTOMOUS,
-          metadata: {
-            id: null,
-            name: "",
-            dose_units: "",
-            response_units: "",
-            dose_name: "Dose",
-            response_name: "Incidence",
-          },
-          doses: [null, null, null, null, null],
-          litter_ns: [null, null, null, null, null],
-          incidences: [null, null, null, null, null],
-          litter_covariates: [null, null, null, null, null],
-        };
-      default:
-        throw `Unknown dataset type ${dtype}`;
-    }
-  },
-  getExampleData = function (dtype) {
-    // biome-ignore format: this block is manually formatted
-    switch (dtype) {
+    getDefaultDataset = function (dtype) {
+        switch (dtype) {
+            case DATA_CONTINUOUS_SUMMARY:
+                return {
+                    dtype: Dtype.CONTINUOUS,
+                    metadata: {
+                        id: null,
+                        name: "",
+                        dose_units: "",
+                        response_units: "",
+                        dose_name: "Dose",
+                        response_name: "Response",
+                    },
+                    doses: [null, null, null, null, null],
+                    ns: [null, null, null, null, null],
+                    means: [null, null, null, null, null],
+                    stdevs: [null, null, null, null, null],
+                };
+            case DATA_CONTINUOUS_INDIVIDUAL:
+                return {
+                    dtype: Dtype.CONTINUOUS_INDIVIDUAL,
+                    metadata: {
+                        id: null,
+                        name: "",
+                        dose_units: "",
+                        response_units: "",
+                        dose_name: "Dose",
+                        response_name: "Response",
+                    },
+                    doses: [null, null, null, null, null],
+                    responses: [null, null, null, null, null],
+                };
+            case DATA_DICHOTOMOUS:
+                return {
+                    dtype: Dtype.DICHOTOMOUS,
+                    metadata: {
+                        id: null,
+                        name: "",
+                        dose_units: "",
+                        response_units: "",
+                        dose_name: "Dose",
+                        response_name: "Incidence",
+                    },
+                    doses: [null, null, null, null, null],
+                    ns: [null, null, null, null, null],
+                    incidences: [null, null, null, null, null],
+                };
+            case DATA_NESTED_DICHOTOMOUS:
+                return {
+                    dtype: Dtype.NESTED_DICHOTOMOUS,
+                    metadata: {
+                        id: null,
+                        name: "",
+                        dose_units: "",
+                        response_units: "",
+                        dose_name: "Dose",
+                        response_name: "Incidence",
+                    },
+                    doses: [null, null, null, null, null],
+                    litter_ns: [null, null, null, null, null],
+                    incidences: [null, null, null, null, null],
+                    litter_covariates: [null, null, null, null, null],
+                };
+            default:
+                throw `Unknown dataset type ${dtype}`;
+        }
+    },
+    getExampleData = function (dtype) {
+        // biome-ignore format: this block is manually formatted
+        switch (dtype) {
       case DATA_CONTINUOUS_SUMMARY:
         return {
           doses: [0, 50, 100, 200, 400],
@@ -201,58 +196,56 @@ export const DATA_CONTINUOUS_SUMMARY = "CS",
       default:
         throw `Unknown dataset type ${dtype}`;
     }
-  },
-  datasetOptions = {
-    [mc.MODEL_CONTINUOUS]: {
-      enabled: true,
-      degree: 0,
-      adverse_direction: -1,
     },
-    [mc.MODEL_DICHOTOMOUS]: {
-      enabled: true,
-      degree: 0,
+    datasetOptions = {
+        [mc.MODEL_CONTINUOUS]: {
+            enabled: true,
+            degree: 0,
+            adverse_direction: -1,
+        },
+        [mc.MODEL_DICHOTOMOUS]: {
+            enabled: true,
+            degree: 0,
+        },
+        [mc.MODEL_NESTED_DICHOTOMOUS]: {
+            enabled: true,
+        },
+        [mc.MODEL_MULTI_TUMOR]: {
+            enabled: true,
+            degree: 0,
+        },
     },
-    [mc.MODEL_NESTED_DICHOTOMOUS]: {
-      enabled: true,
+    adverseDirectionOptions = [
+        {value: -1, label: "Automatic"},
+        {value: 1, label: "Up"},
+        {value: 0, label: "Down"},
+    ],
+    allDegreeOptions = [
+        {value: 0, label: "N-1"},
+        {value: 1, label: "1"},
+        {value: 2, label: "2"},
+        {value: 3, label: "3"},
+        {value: 4, label: "4"},
+        {value: 5, label: "5"},
+        {value: 6, label: "6"},
+        {value: 7, label: "7"},
+        {value: 8, label: "8"},
+    ],
+    getNumDoseGroups = function (dataset) {
+        return _.uniq(dataset.doses).length;
     },
-    [mc.MODEL_MULTI_TUMOR]: {
-      enabled: true,
-      degree: 0,
+    getDefaultDegree = function (dtype, dataset) {
+        if (dtype === Dtype.MULTI_TUMOR) {
+            return 0; // auto
+        }
+        const n = getNumDoseGroups(dataset) - 1;
+        return _.clamp(n, 1, 3);
     },
-  },
-  adverseDirectionOptions = [
-    { value: -1, label: "Automatic" },
-    { value: 1, label: "Up" },
-    { value: 0, label: "Down" },
-  ],
-  allDegreeOptions = [
-    { value: 0, label: "N-1" },
-    { value: 1, label: "1" },
-    { value: 2, label: "2" },
-    { value: 3, label: "3" },
-    { value: 4, label: "4" },
-    { value: 5, label: "5" },
-    { value: 6, label: "6" },
-    { value: 7, label: "7" },
-    { value: 8, label: "8" },
-  ],
-  getNumDoseGroups = function (dataset) {
-    return _.uniq(dataset.doses).length;
-  },
-  getDefaultDegree = function (dtype, dataset) {
-    if (dtype === Dtype.MULTI_TUMOR) {
-      return 0; // auto
-    }
-    const n = getNumDoseGroups(dataset) - 1;
-    return _.clamp(n, 1, 3);
-  },
-  getDegreeOptions = function (dtype, dataset) {
-    const maxDegree = Math.max(Math.min(8, getNumDoseGroups(dataset) - 1), 1),
-      options = _.cloneDeep(allDegreeOptions).filter(
-        (d) => d.value <= maxDegree,
-      );
-    if (dtype === Dtype.MULTI_TUMOR) {
-      options[0].label = "auto";
-    }
-    return options;
-  };
+    getDegreeOptions = function (dtype, dataset) {
+        const maxDegree = Math.max(Math.min(8, getNumDoseGroups(dataset) - 1), 1),
+            options = _.cloneDeep(allDegreeOptions).filter(d => d.value <= maxDegree);
+        if (dtype === Dtype.MULTI_TUMOR) {
+            options[0].label = "auto";
+        }
+        return options;
+    };

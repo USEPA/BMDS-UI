@@ -22,8 +22,8 @@ class TestOptions:
             prior_class=transforms.PriorEnum.frequentist_restricted,
             options=options,
             dataset_options=dataset_options,
-            model=None, 
-            mcmc_options=None
+            model=None,
+            mcmc_options=None,
         )
         assert res.bmr_type is ContinuousRiskType.StandardDeviation
         assert pytest.approx(res.bmr) == 1.5
@@ -44,9 +44,9 @@ class TestOptions:
             prior_class=transforms.PriorEnum.frequentist_restricted,
             options=options,
             dataset_options=dataset_options,
-            model=None, 
-            mcmc_options=None
-        )                    
+            model=None,
+            mcmc_options=None,
+        )
         assert res.bmr_type is DichotomousRiskType.AddedRisk
         assert pytest.approx(res.bmr) == 0.15
         assert pytest.approx(res.alpha) == 0.05
@@ -59,12 +59,7 @@ class TestOptions:
             "confidence_level": 0.95,
         }
 
-        mcmc_options = {
-            "iterations_per_chain": 50000,
-            "burnin": 5000,
-            "seed": 0,
-            "n_chains": 1
-        }
+        mcmc_options = {"iterations_per_chain": 50000, "burnin": 5000, "seed": 0, "n_chains": 1}
 
         dataset_options = {"dataset_id": 123, "enabled": True, "degree": 1}
         res = transforms.build_model_settings(
@@ -72,11 +67,10 @@ class TestOptions:
             prior_class=transforms.PriorEnum.loud_bayesian,
             options=options,
             dataset_options=dataset_options,
-            model=None, 
-            mcmc_options=mcmc_options
-        )                    
+            model=None,
+            mcmc_options=mcmc_options,
+        )
         assert res.samples == 50000
         assert res.burnin == 5000
         assert res.seed == 0
-        assert res.n_chains == 1    
-
+        assert res.n_chains == 1

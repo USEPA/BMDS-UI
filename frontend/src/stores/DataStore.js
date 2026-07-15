@@ -1,484 +1,453 @@
 import _ from "lodash";
-import { action, computed, observable, toJS } from "mobx";
+import {action, computed, observable, toJS} from "mobx";
 
-import { getHeaders, toCSV } from "../common";
 import * as dc from "@/constants/dataConstants";
 import {
-  columns,
-  datasetTypesByModelType,
-  getDefaultDataset,
-  getExampleData,
+    columns,
+    datasetTypesByModelType,
+    getDefaultDataset,
+    getExampleData,
 } from "@/constants/dataConstants";
-import { MODEL_CONTINUOUS } from "@/constants/mainConstants";
-import { getDrDatasetPlotData, getDrLayout } from "@/constants/plotting";
+import {MODEL_CONTINUOUS} from "@/constants/mainConstants";
+import {getDrDatasetPlotData, getDrLayout} from "@/constants/plotting";
+import {getHeaders, toCSV} from "../common";
 
 let validateTabularData = function (text, columns) {
-  let data = [],
-    errors = [];
+    let data = [],
+        errors = [];
 
-  data = _.chain(text)
-    .split("\n")
-    .filter((line) => line.length > 0)
-    .map((line) =>
-      _.chain(line)
-        .split("\t")
-        .map(parseFloat)
-        .filter((d) => _.isFinite(d))
-        .value(),
-    )
-    .compact()
-    .value();
+    data = _.chain(text)
+        .split("\n")
+        .filter(line => line.length > 0)
+        .map(line =>
+            _.chain(line)
+                .split("\t")
+                .map(parseFloat)
+                .filter(d => _.isFinite(d))
+                .value()
+        )
+        .compact()
+        .value();
 
-  if (
-    data.length > 0 &&
-    _.chain(data)
-      .map((d) => d.length)
-      .uniq()
-      .value().length !== 1
-  ) {
-    errors.push("Data are not of equal length or contain non-numeric values.");
-  }
+    if (
+        data.length > 0 &&
+        _.chain(data)
+            .map(d => d.length)
+            .uniq()
+            .value().length !== 1
+    ) {
+        errors.push("Data are not of equal length or contain non-numeric values.");
+    }
 
-  data = _.zip(...data);
+    data = _.zip(...data);
 
-  if (data.length !== columns.length) {
-    errors.push(
-      `Expecting ${columns.length} columns; got ${data.length} columns`,
-    );
-  }
+    if (data.length !== columns.length) {
+        errors.push(`Expecting ${columns.length} columns; got ${data.length} columns`);
+    }
 
-  if (data[0].length < 3) {
-    errors.push(`Expecting 3+ rows; got ${data[0].length} rows`);
-  }
+    if (data[0].length < 3) {
+        errors.push(`Expecting 3+ rows; got ${data[0].length} rows`);
+    }
 
-  if (errors.length == 0) {
-    data = _.zipObject(columns, data);
-  }
+    if (errors.length == 0) {
+        data = _.zipObject(columns, data);
+    }
 
-  return { data, errors };
+    return {data, errors};
 };
 
 class DataStore {
-  constructor(rootStore, token) {
-    this.rootStore = rootStore;
-    this.token = token;
-  }
+    constructor(rootStore, token) {
+        this.rootStore = rootStore;
+        this.token = token;
+    }
 
-  @observable CochranArmitageResult = null;
-  @observable canRunCochranArmitage = false;
-  @observable model_type = dc.DATA_CONTINUOUS_SUMMARY;
-  @observable datasets = [];
-  @observable selectedDatasetId = null;
+    @observable CochranArmitageResult = null;
+    @observable canRunCochranArmitage = false;
+    @observable model_type = dc.DATA_CONTINUOUS_SUMMARY;
+    @observable datasets = [];
+    @observable selectedDatasetId = null;
 
-  @computed get submissionRequest() {
-    return {
-      method: "POST",
-      mode: "cors",
-      headers: getHeaders(this.rootStore.csrfToken),
-      body: JSON.stringify(this.settings),
-    };
-  }
+    @computed get submissionRequest() {
+        return {
+            method: "POST",
+            mode: "cors",
+            headers: getHeaders(this.rootStore.csrfToken),
+            body: JSON.stringify(this.settings),
+        };
+    }
 
-  datasetChanged() {
-    localStorage.setItem(
-      "selected_dataset",
-      JSON.stringify(this.selectedDataset),
-    );
-    this.canRunCochranArmitage = true;
-  }
+    datasetChanged() {
+        localStorage.setItem("selected_dataset", JSON.stringify(this.selectedDataset));
+        this.canRunCochranArmitage = true;
+    }
 
-  @action.bound
-  async performCochranArmitage() {
-    this.selected_data = toCSV(this.selectedDataset, [
-      "doses",
-      "ns",
-      "incidences",
-    ]);
+    @action.bound
+    async performCochranArmitage() {
+        this.selected_data = toCSV(this.selectedDataset, ["doses", "ns", "incidences"]);
 
-    this.settings = {
-      dataset: this.selected_data,
-    };
+        this.settings = {
+            dataset: this.selected_data,
+        };
 
-    const url = "/api/v1/cochran-armitage/";
-    this.error = null;
-    await fetch(url, this.submissionRequest)
-      .then((response) => {
-        if (response.ok) {
-          response.json().then((data) => {
-            this.CochranArmitageResult = data.answer;
-            this.canRunCochranArmitage = false;
-          });
-        } else {
-          this.CochranArmitageResult = null;
-          this.canRunCochranArmitage = true;
-          response
-            .json()
-            .then((data) => {
-              this.error = true;
-              console.error(data);
-              try {
-                this.error = JSON.parse(data);
-              } catch (err) {
-                console.error(err);
-              }
+        const url = "/api/v1/cochran-armitage/";
+        this.error = null;
+        await fetch(url, this.submissionRequest)
+            .then(response => {
+                if (response.ok) {
+                    response.json().then(data => {
+                        this.CochranArmitageResult = data.answer;
+                        this.canRunCochranArmitage = false;
+                    });
+                } else {
+                    this.CochranArmitageResult = null;
+                    this.canRunCochranArmitage = true;
+                    response
+                        .json()
+                        .then(data => {
+                            this.error = true;
+                            console.error(data);
+                            try {
+                                this.error = JSON.parse(data);
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        })
+                        .catch(error => {
+                            this.error = true;
+                            console.error(error);
+                        });
+                }
             })
-            .catch((error) => {
-              this.error = true;
-              console.error(error);
+            .catch(error => {
+                this.error = true;
+                console.error(error);
             });
+    }
+
+    @action.bound setDefaultsByDatasetType() {
+        this.selectedDatasetId = null;
+        this.datasets = [];
+        this.model_type = this.getFilteredDatasetTypes[0].value;
+    }
+
+    @action.bound setModelType(model_type) {
+        this.model_type = model_type;
+    }
+
+    @action.bound setSelectedDataset(id) {
+        this.selectedDatasetId = id;
+
+        if (this.model_type === "DM") {
+            this.performCochranArmitage();
         }
-      })
-      .catch((error) => {
-        this.error = true;
-        console.error(error);
-      });
-  }
 
-  @action.bound setDefaultsByDatasetType() {
-    this.selectedDatasetId = null;
-    this.datasets = [];
-    this.model_type = this.getFilteredDatasetTypes[0].value;
-  }
-
-  @action.bound setModelType(model_type) {
-    this.model_type = model_type;
-  }
-
-  @action.bound setSelectedDataset(id) {
-    this.selectedDatasetId = id;
-
-    if (this.model_type === "DM") {
-      this.performCochranArmitage();
+        localStorage.setItem("selected_dataset", JSON.stringify(this.selectedDataset));
     }
 
-    localStorage.setItem(
-      "selected_dataset",
-      JSON.stringify(this.selectedDataset),
-    );
-  }
-
-  @action.bound setDatasetMetadata(key, value) {
-    this.selectedDataset.metadata[key] = value;
-    this.rootStore.mainStore.setInputsChangedFlag();
-  }
-
-  @action.bound addDataset() {
-    const dataset = getDefaultDataset(this.model_type),
-      id =
-        _.chain(this.datasets)
-          .map((d) => d.metadata.id)
-          .max()
-          .defaultTo(-1)
-          .value() + 1;
-
-    dataset.metadata.id = id;
-    dataset.metadata.name = `Dataset #${id + 1}`;
-    dataset.metadata.model_type = this.model_type;
-    this.datasets.push(dataset);
-    this.rootStore.dataOptionStore.createOption(dataset);
-    this.selectedDatasetId = id;
-    this.updateOptionDegree(dataset);
-
-    localStorage.setItem("selected_dataset", JSON.stringify(dataset));
-
-    if (this.model_type === "DM") {
-      this.CochranArmitageResult = null;
-      this.canRunCochranArmitage = false;
+    @action.bound setDatasetMetadata(key, value) {
+        this.selectedDataset.metadata[key] = value;
+        this.rootStore.mainStore.setInputsChangedFlag();
     }
-  }
 
-  @action.bound updateOptionDegree() {
-    // whenever the number of doses change, change the default degree
-    this.rootStore.dataOptionStore.updateDefaultDegree(this.selectedDataset);
-    this.rootStore.mainStore.setInputsChangedFlag();
-  }
+    @action.bound addDataset() {
+        const dataset = getDefaultDataset(this.model_type),
+            id =
+                _.chain(this.datasets)
+                    .map(d => d.metadata.id)
+                    .max()
+                    .defaultTo(-1)
+                    .value() + 1;
 
-  @action.bound loadExampleData() {
-    const exampleData = getExampleData(
-      this.selectedDataset.metadata.model_type,
-    );
-    _.extend(this.selectedDataset, exampleData);
-    this.updateOptionDegree(this.selectedDataset);
+        dataset.metadata.id = id;
+        dataset.metadata.name = `Dataset #${id + 1}`;
+        dataset.metadata.model_type = this.model_type;
+        this.datasets.push(dataset);
+        this.rootStore.dataOptionStore.createOption(dataset);
+        this.selectedDatasetId = id;
+        this.updateOptionDegree(dataset);
 
-    this.datasetChanged();
-  }
+        localStorage.setItem("selected_dataset", JSON.stringify(dataset));
 
-  @action.bound cleanRows() {
-    // removes empty rows from each dataset
-    this.datasets.map((dataset) => {
-      // get keys of row properties, and zip values into row arrays
-      let keys = Object.keys(dataset).filter((key) =>
-          Array.isArray(dataset[key]),
-        ),
-        rows = _.zip(...keys.map((key) => dataset[key]));
-      // splice out indices where all row properties are blank
-      _.forEachRight(rows, (row, index) => {
-        let isEmpty = _.every(row, (e) => e == "");
-        if (isEmpty) {
-          keys.forEach((key) => dataset[key].splice(index, 1));
+        if (this.model_type === "DM") {
+            this.CochranArmitageResult = null;
+            this.canRunCochranArmitage = false;
         }
-      });
-    });
-  }
-
-  @action.bound addRow() {
-    const dataset = this.selectedDataset;
-    Object.keys(dataset).map((key, _i) => {
-      if (Array.isArray(dataset[key])) {
-        dataset[key].push(null);
-      }
-    });
-    this.rootStore.mainStore.setInputsChangedFlag();
-  }
-
-  @action.bound deleteRow = (index) => {
-    const dataset = this.selectedDataset;
-    Object.keys(dataset).map((key) => {
-      if (Array.isArray(dataset[key])) {
-        dataset[key].splice(index, 1);
-      }
-    });
-    this.updateOptionDegree(dataset);
-    this.rootStore.mainStore.setInputsChangedFlag();
-
-    this.datasetChanged();
-  };
-
-  @action.bound saveDatasetCellItem(key, value, rowIdx) {
-    let dataset = this.selectedDataset;
-    if (value === null || value === "") {
-      dataset[key][rowIdx] = "";
-    } else {
-      const parsedValue = parseFloat(value);
-      if (_.isFinite(parsedValue)) {
-        dataset[key][rowIdx] = parsedValue;
-      }
     }
 
-    this.rootStore.mainStore.setInputsChangedFlag();
-
-    this.datasetChanged();
-  }
-
-  @action.bound changeColumnName(name, value) {
-    this.selectedDataset.column_names[name] = value;
-    this.rootStore.mainStore.setInputsChangedFlag();
-  }
-
-  @action.bound deleteDataset() {
-    var index = this.selectedDatasetIndex,
-      datasetId = toJS(this.selectedDatasetId);
-    if (index > -1) {
-      this.datasets.splice(index, 1);
-      this.rootStore.dataOptionStore.deleteOption(datasetId);
+    @action.bound updateOptionDegree() {
+        // whenever the number of doses change, change the default degree
+        this.rootStore.dataOptionStore.updateDefaultDegree(this.selectedDataset);
+        this.rootStore.mainStore.setInputsChangedFlag();
     }
-    this.selectedDatasetId = null;
-    if (this.datasets.length > 0) {
-      this.selectedDatasetId =
-        this.datasets[this.datasets.length - 1].metadata.id;
+
+    @action.bound loadExampleData() {
+        const exampleData = getExampleData(this.selectedDataset.metadata.model_type);
+        _.extend(this.selectedDataset, exampleData);
+        this.updateOptionDegree(this.selectedDataset);
+
+        this.datasetChanged();
     }
-    this.rootStore.mainStore.setInputsChangedFlag();
 
-    localStorage.setItem(
-      "selected_dataset",
-      JSON.stringify(this.selectedDataset),
-    );
-  }
-
-  @action.bound setDatasets(datasets) {
-    this.datasets = datasets;
-    this.selectedDatasetId =
-      datasets.length > 0 ? datasets[0].metadata.id : null;
-  }
-
-  @action.bound pruneToMaxItems() {
-    while (this.datasets.length > this.maxItems) {
-      this.selectedDatasetId =
-        this.datasets[this.datasets.length - 1].metadata.id;
-      this.deleteDataset();
-    }
-  }
-
-  @computed get showDatasetTypeSelector() {
-    return this.getModelType == MODEL_CONTINUOUS;
-  }
-
-  @computed get selectedDataset() {
-    return this.datasets.find(
-      (item) => item.metadata.id === this.selectedDatasetId,
-    );
-  }
-
-  @computed get selectedDatasetIndex() {
-    return _.findIndex(
-      this.datasets,
-      (item) => item.metadata.id === this.selectedDatasetId,
-    );
-  }
-
-  @computed get selectedDatasetErrors() {
-    const data = this.rootStore.mainStore.errorData;
-    if (!_.isArray(data)) {
-      return null;
-    }
-    const index = this.selectedDatasetIndex,
-      filtered = data.filter((error) => {
-        return error.loc && error.loc[0] == "datasets" && error.loc[1] == index;
-      });
-    return filtered;
-  }
-
-  @computed get selectedDatasetErrorText() {
-    const data = this.selectedDatasetErrors;
-    return this.selectedDatasetErrors
-      ? _.uniq(data.map((el) => el.msg)).join("\n")
-      : "";
-  }
-
-  @computed get getMappedArray() {
-    let datasetInputForm = [],
-      dataset = this.selectedDataset;
-    Object.keys(dataset).map((key) => {
-      if (Array.isArray(dataset[key])) {
-        dataset[key].map((val, i) => {
-          if (!datasetInputForm[i]) {
-            datasetInputForm.push({ [key]: val });
-          } else {
-            datasetInputForm[i][key] = val;
-          }
+    @action.bound cleanRows() {
+        // removes empty rows from each dataset
+        this.datasets.map(dataset => {
+            // get keys of row properties, and zip values into row arrays
+            let keys = Object.keys(dataset).filter(key => Array.isArray(dataset[key])),
+                rows = _.zip(...keys.map(key => dataset[key]));
+            // splice out indices where all row properties are blank
+            _.forEachRight(rows, (row, index) => {
+                let isEmpty = _.every(row, e => e == "");
+                if (isEmpty) {
+                    keys.forEach(key => dataset[key].splice(index, 1));
+                }
+            });
         });
-      }
-    });
-    return datasetInputForm;
-  }
-
-  @computed get drPlotLayout() {
-    return getDrLayout(this.selectedDataset);
-  }
-
-  @computed get drPlotData() {
-    const dataset = this.selectedDataset;
-    return [getDrDatasetPlotData(dataset)];
-  }
-
-  @computed get getDatasets() {
-    return this.datasets;
-  }
-
-  @computed get getDataLength() {
-    return this.datasets.length;
-  }
-
-  @computed get canEdit() {
-    return this.rootStore.mainStore.canEdit;
-  }
-
-  @computed get getExecutionOutputs() {
-    return this.rootStore.mainStore.getExecutionOutputs;
-  }
-
-  @computed get getModelTypeDatasets() {
-    return this.datasets.filter((item) =>
-      item.model_type.includes(this.getModelType),
-    );
-  }
-
-  @computed get getFilteredDatasetTypes() {
-    return datasetTypesByModelType(toJS(this.getModelType));
-  }
-
-  @computed get getModelType() {
-    return this.rootStore.mainStore.model_type;
-  }
-
-  @computed get getEnabledDatasets() {
-    return this.rootStore.dataOptionStore.options
-      .filter((d) => d.enabled === true)
-      .map((d) => d.dataset);
-  }
-
-  @computed get maxItems() {
-    const hasLoudBayesian = this.rootStore.modelsStore.hasLoudBayesian;
-
-    const isDesktop = this.rootStore.mainStore.isDesktop;
-
-    if (hasLoudBayesian) {
-      return isDesktop ? 500 : 2;
-    }
-    return isDesktop ? 1000 : this.rootStore.mainStore.isMultiTumor ? 10 : 6;
-  }
-
-  @computed get canAddNewDataset() {
-    return this.datasets.length < this.maxItems;
-  }
-
-  @computed get hasSelectedDataset() {
-    return this.selectedDatasetId !== null;
-  }
-
-  // *** TABULAR MODAL DATASET ***
-  @observable showTabularModal = false;
-  @observable tabularModalError = "";
-  @observable tabularModalText = "";
-  @observable tabularModalData = null;
-  @observable tabularModalDataValidated = false;
-  @action.bound toggleDatasetModal() {
-    const getDefaultText = () => {
-        const expectedColumns = columns[this.selectedDataset.dtype],
-          value = _.map(this.getMappedArray, (row) => {
-            return _.map(expectedColumns, (col) =>
-              (row[col] ?? "").toString(),
-            ).join("\t");
-          }).join("\n");
-        return value;
-      },
-      willShow = !this.showTabularModal,
-      tabularModalText = willShow ? getDefaultText() : "";
-
-    this.tabularModalDataValidated = false;
-    this.tabularModalText = tabularModalText;
-    this.tabularModalError = "";
-    this.tabularModalData = null;
-    this.showTabularModal = willShow;
-  }
-  @action.bound changeDatasetFromModal(text) {
-    text = text.trim();
-    this.tabularModalDataValidated = false;
-    this.tabularModalText = text;
-
-    if (text == "") {
-      return;
     }
 
-    let expectedColumns = columns[this.selectedDataset.dtype],
-      results = validateTabularData(text, expectedColumns);
-
-    if (results.errors.length > 0) {
-      this.tabularModalError = results.errors.join("\n");
-      this.tabularModalData = null;
-    } else {
-      this.tabularModalError = "";
-      this.tabularModalData = results.data;
+    @action.bound addRow() {
+        const dataset = this.selectedDataset;
+        Object.keys(dataset).map((key, _i) => {
+            if (Array.isArray(dataset[key])) {
+                dataset[key].push(null);
+            }
+        });
+        this.rootStore.mainStore.setInputsChangedFlag();
     }
 
-    this.tabularModalDataValidated = results.errors.length === 0;
-  }
-  @action.bound updateDatasetFromModal() {
-    if (!this.tabularModalData) {
-      return;
+    @action.bound deleteRow = index => {
+        const dataset = this.selectedDataset;
+        Object.keys(dataset).map(key => {
+            if (Array.isArray(dataset[key])) {
+                dataset[key].splice(index, 1);
+            }
+        });
+        this.updateOptionDegree(dataset);
+        this.rootStore.mainStore.setInputsChangedFlag();
+
+        this.datasetChanged();
+    };
+
+    @action.bound saveDatasetCellItem(key, value, rowIdx) {
+        let dataset = this.selectedDataset;
+        if (value === null || value === "") {
+            dataset[key][rowIdx] = "";
+        } else {
+            const parsedValue = parseFloat(value);
+            if (_.isFinite(parsedValue)) {
+                dataset[key][rowIdx] = parsedValue;
+            }
+        }
+
+        this.rootStore.mainStore.setInputsChangedFlag();
+
+        this.datasetChanged();
     }
 
-    const dataset = _.cloneDeep(this.selectedDataset),
-      index = this.selectedDatasetIndex;
+    @action.bound changeColumnName(name, value) {
+        this.selectedDataset.column_names[name] = value;
+        this.rootStore.mainStore.setInputsChangedFlag();
+    }
 
-    _.each(this.tabularModalData, (value, key) => {
-      dataset[key] = value;
-    });
-    this.datasets[index] = dataset;
-    this.updateOptionDegree(dataset);
-    this.toggleDatasetModal();
-  }
-  // *** END TABULAR MODAL DATASET ***
+    @action.bound deleteDataset() {
+        var index = this.selectedDatasetIndex,
+            datasetId = toJS(this.selectedDatasetId);
+        if (index > -1) {
+            this.datasets.splice(index, 1);
+            this.rootStore.dataOptionStore.deleteOption(datasetId);
+        }
+        this.selectedDatasetId = null;
+        if (this.datasets.length > 0) {
+            this.selectedDatasetId = this.datasets[this.datasets.length - 1].metadata.id;
+        }
+        this.rootStore.mainStore.setInputsChangedFlag();
+
+        localStorage.setItem("selected_dataset", JSON.stringify(this.selectedDataset));
+    }
+
+    @action.bound setDatasets(datasets) {
+        this.datasets = datasets;
+        this.selectedDatasetId = datasets.length > 0 ? datasets[0].metadata.id : null;
+    }
+
+    @action.bound pruneToMaxItems() {
+        while (this.datasets.length > this.maxItems) {
+            this.selectedDatasetId = this.datasets[this.datasets.length - 1].metadata.id;
+            this.deleteDataset();
+        }
+    }
+
+    @computed get showDatasetTypeSelector() {
+        return this.getModelType == MODEL_CONTINUOUS;
+    }
+
+    @computed get selectedDataset() {
+        return this.datasets.find(item => item.metadata.id === this.selectedDatasetId);
+    }
+
+    @computed get selectedDatasetIndex() {
+        return _.findIndex(this.datasets, item => item.metadata.id === this.selectedDatasetId);
+    }
+
+    @computed get selectedDatasetErrors() {
+        const data = this.rootStore.mainStore.errorData;
+        if (!_.isArray(data)) {
+            return null;
+        }
+        const index = this.selectedDatasetIndex,
+            filtered = data.filter(error => {
+                return error.loc && error.loc[0] == "datasets" && error.loc[1] == index;
+            });
+        return filtered;
+    }
+
+    @computed get selectedDatasetErrorText() {
+        const data = this.selectedDatasetErrors;
+        return this.selectedDatasetErrors ? _.uniq(data.map(el => el.msg)).join("\n") : "";
+    }
+
+    @computed get getMappedArray() {
+        let datasetInputForm = [],
+            dataset = this.selectedDataset;
+        Object.keys(dataset).map(key => {
+            if (Array.isArray(dataset[key])) {
+                dataset[key].map((val, i) => {
+                    if (!datasetInputForm[i]) {
+                        datasetInputForm.push({[key]: val});
+                    } else {
+                        datasetInputForm[i][key] = val;
+                    }
+                });
+            }
+        });
+        return datasetInputForm;
+    }
+
+    @computed get drPlotLayout() {
+        return getDrLayout(this.selectedDataset);
+    }
+
+    @computed get drPlotData() {
+        const dataset = this.selectedDataset;
+        return [getDrDatasetPlotData(dataset)];
+    }
+
+    @computed get getDatasets() {
+        return this.datasets;
+    }
+
+    @computed get getDataLength() {
+        return this.datasets.length;
+    }
+
+    @computed get canEdit() {
+        return this.rootStore.mainStore.canEdit;
+    }
+
+    @computed get getExecutionOutputs() {
+        return this.rootStore.mainStore.getExecutionOutputs;
+    }
+
+    @computed get getModelTypeDatasets() {
+        return this.datasets.filter(item => item.model_type.includes(this.getModelType));
+    }
+
+    @computed get getFilteredDatasetTypes() {
+        return datasetTypesByModelType(toJS(this.getModelType));
+    }
+
+    @computed get getModelType() {
+        return this.rootStore.mainStore.model_type;
+    }
+
+    @computed get getEnabledDatasets() {
+        return this.rootStore.dataOptionStore.options
+            .filter(d => d.enabled === true)
+            .map(d => d.dataset);
+    }
+
+    @computed get maxItems() {
+        const hasLoudBayesian = this.rootStore.modelsStore.hasLoudBayesian;
+
+        const isDesktop = this.rootStore.mainStore.isDesktop;
+
+        if (hasLoudBayesian) {
+            return isDesktop ? 500 : 2;
+        }
+        return isDesktop ? 1000 : this.rootStore.mainStore.isMultiTumor ? 10 : 6;
+    }
+
+    @computed get canAddNewDataset() {
+        return this.datasets.length < this.maxItems;
+    }
+
+    @computed get hasSelectedDataset() {
+        return this.selectedDatasetId !== null;
+    }
+
+    // *** TABULAR MODAL DATASET ***
+    @observable showTabularModal = false;
+    @observable tabularModalError = "";
+    @observable tabularModalText = "";
+    @observable tabularModalData = null;
+    @observable tabularModalDataValidated = false;
+    @action.bound toggleDatasetModal() {
+        const getDefaultText = () => {
+                const expectedColumns = columns[this.selectedDataset.dtype],
+                    value = _.map(this.getMappedArray, row => {
+                        return _.map(expectedColumns, col => (row[col] ?? "").toString()).join(
+                            "\t"
+                        );
+                    }).join("\n");
+                return value;
+            },
+            willShow = !this.showTabularModal,
+            tabularModalText = willShow ? getDefaultText() : "";
+
+        this.tabularModalDataValidated = false;
+        this.tabularModalText = tabularModalText;
+        this.tabularModalError = "";
+        this.tabularModalData = null;
+        this.showTabularModal = willShow;
+    }
+    @action.bound changeDatasetFromModal(text) {
+        text = text.trim();
+        this.tabularModalDataValidated = false;
+        this.tabularModalText = text;
+
+        if (text == "") {
+            return;
+        }
+
+        let expectedColumns = columns[this.selectedDataset.dtype],
+            results = validateTabularData(text, expectedColumns);
+
+        if (results.errors.length > 0) {
+            this.tabularModalError = results.errors.join("\n");
+            this.tabularModalData = null;
+        } else {
+            this.tabularModalError = "";
+            this.tabularModalData = results.data;
+        }
+
+        this.tabularModalDataValidated = results.errors.length === 0;
+    }
+    @action.bound updateDatasetFromModal() {
+        if (!this.tabularModalData) {
+            return;
+        }
+
+        const dataset = _.cloneDeep(this.selectedDataset),
+            index = this.selectedDatasetIndex;
+
+        _.each(this.tabularModalData, (value, key) => {
+            dataset[key] = value;
+        });
+        this.datasets[index] = dataset;
+        this.updateOptionDegree(dataset);
+        this.toggleDatasetModal();
+    }
+    // *** END TABULAR MODAL DATASET ***
 }
 
 export default DataStore;

@@ -53,13 +53,21 @@ def timeout_cache(key: str, timeout: int) -> Callable:
 
     return decorator
 
+
 def to_csv(data, headers):
     def isnan(x):
-        try: return math.isnan(x)
-        except: return False
+        try:
+            return math.isnan(x)
+        except:
+            return False
+
     n = len(data[headers[0]])
     rows = [[data[h][i] if i < len(data[h]) else None for h in headers] for i in range(n)]
     rows = [r for r in rows if any(c not in ("", None) and not isnan(c) for c in r)]
-    return ",".join(headers) + "\n" + "\n".join(
-        ",".join("" if c is None else ("NaN" if isnan(c) else str(c)) for c in r) for r in rows
+    return (
+        ",".join(headers)
+        + "\n"
+        + "\n".join(
+            ",".join("" if c is None else ("NaN" if isnan(c) else str(c)) for c in r) for r in rows
+        )
     )

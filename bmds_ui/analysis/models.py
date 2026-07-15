@@ -43,6 +43,7 @@ def get_deletion_date(current_deletion_date: datetime | None = None) -> datetime
         return max(current_deletion_date, date)
     return date
 
+
 @reversion.register()
 class Analysis(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -211,7 +212,7 @@ class Analysis(models.Model):
             if session.toxicr_bayesian:
                 items.append(session.toxicr_bayesian)
             if session.loud_bayesian:
-                items.append(session.loud_bayesian)    
+                items.append(session.loud_bayesian)
         return BatchSession(sessions=items)
 
     def to_df(self) -> dict[str, pd.DataFrame]:
@@ -350,7 +351,7 @@ class Analysis(models.Model):
                 break
             if output.loud_bayesian is not None:
                 bmds_python_version = output.loud_bayesian["version"]
-                break  
+                break
 
         cochran_armitage_result = []
         datasets = self.inputs.get("datasets", [])
@@ -359,14 +360,13 @@ class Analysis(models.Model):
             for dataset in datasets:
                 try:
                     settings = pydantic_validate(
-                        {"dataset": to_csv(dataset, ["doses", "ns", "incidences"])},
-                        CochranArmitage
+                        {"dataset": to_csv(dataset, ["doses", "ns", "incidences"])}, CochranArmitage
                     )
                     result = settings.calculate()
                     result["name"] = dataset.get("metadata", {}).get("name")
                     cochran_armitage_result.append(result)
                 except Exception:
-                    logger.exception(f"{self.id}: cochran-armitage failed for dataset")        
+                    logger.exception(f"{self.id}: cochran-armitage failed for dataset")
 
         # Prepare complete output object
         analysis_output = AnalysisOutput(
@@ -379,7 +379,9 @@ class Analysis(models.Model):
 
         self.outputs = analysis_output.model_dump(by_alias=True)
 
-        self.errors = [str(getattr(output, "error")) for output in outputs if getattr(output, "error", None)]
+        self.errors = [
+            str(output.error) for output in outputs if getattr(output, "error", None)
+        ]
         self.ended = now()
         self.deletion_date = get_deletion_date()
         self.save()

@@ -1,56 +1,56 @@
-import { inject, observer } from "mobx-react";
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import React, {Component} from "react";
 
 import Button from "../common/Button";
 import LabelInput from "../common/LabelInput";
 import SelectInput from "../common/SelectInput";
 
-@inject(({ dataStore, modelsStore }) => ({
-  dataStore,
-  hasLoudBayesian: modelsStore.hasLoudBayesian,
+@inject(({dataStore, modelsStore}) => ({
+    dataStore,
+    hasLoudBayesian: modelsStore.hasLoudBayesian,
 }))
 @observer
 class SelectModelType extends Component {
-  render() {
-    const { dataStore, hasLoudBayesian } = this.props;
-    return (
-      <div className="model-type mb-2">
-        <Button
-          className="btn btn-primary btn-sm float-right"
-          disabled={!dataStore.canAddNewDataset}
-          icon="plus-circle"
-          text="New"
-          onClick={dataStore.addDataset}
-        />
-        <LabelInput label="New dataset" htmlFor="datasetType" />
-        {dataStore.showDatasetTypeSelector ? (
-          <SelectInput
-            id="datasetType"
-            onChange={(value) => {
-              dataStore.setModelType(value);
-            }}
-            value={dataStore.model_type}
-            choices={dataStore.getFilteredDatasetTypes.map((item) => {
-              return { value: item.value, text: item.name };
-            })}
-          />
-        ) : null}
-        {dataStore.canAddNewDataset ? null : (
-          <p className="text-danger">
-            {hasLoudBayesian
-              ? `Can have a maximum of ${dataStore.maxItems} datasets per
+    render() {
+        const {dataStore, hasLoudBayesian} = this.props;
+        return (
+            <div className="model-type mb-2">
+                <Button
+                    className="btn btn-primary btn-sm float-right"
+                    disabled={!dataStore.canAddNewDataset}
+                    icon="plus-circle"
+                    text="New"
+                    onClick={dataStore.addDataset}
+                />
+                <LabelInput label="New dataset" htmlFor="datasetType" />
+                {dataStore.showDatasetTypeSelector ? (
+                    <SelectInput
+                        id="datasetType"
+                        onChange={value => {
+                            dataStore.setModelType(value);
+                        }}
+                        value={dataStore.model_type}
+                        choices={dataStore.getFilteredDatasetTypes.map(item => {
+                            return {value: item.value, text: item.name};
+                        })}
+                    />
+                ) : null}
+                {dataStore.canAddNewDataset ? null : (
+                    <p className="text-danger">
+                        {hasLoudBayesian
+                            ? `Can have a maximum of ${dataStore.maxItems} datasets per
                 analysis when LOUD models are selected.`
-              : `Can have a maximum of ${dataStore.maxItems} datasets per
+                            : `Can have a maximum of ${dataStore.maxItems} datasets per
                 analysis.`}
-          </p>
-        )}
-      </div>
-    );
-  }
+                    </p>
+                )}
+            </div>
+        );
+    }
 }
 SelectModelType.propTypes = {
-  dataStore: PropTypes.object,
-  hasLoudBayesian: PropTypes.bool,
+    dataStore: PropTypes.object,
+    hasLoudBayesian: PropTypes.bool,
 };
 export default SelectModelType;

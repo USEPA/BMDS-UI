@@ -189,6 +189,7 @@ class TestInputValidation:
         assert validators.validate_input(data, partial=True) is None
         assert validators.validate_input(data) is None
 
+
 class TestModelValidation:
     def test_dichotomous(self):
         dtype = Dtype.DICHOTOMOUS

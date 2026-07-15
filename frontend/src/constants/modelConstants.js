@@ -1,336 +1,324 @@
 import {
-  MODEL_CONTINUOUS,
-  MODEL_DICHOTOMOUS,
-  MODEL_MULTI_TUMOR,
-  MODEL_NESTED_DICHOTOMOUS,
+    MODEL_CONTINUOUS,
+    MODEL_DICHOTOMOUS,
+    MODEL_MULTI_TUMOR,
+    MODEL_NESTED_DICHOTOMOUS,
 } from "./mainConstants";
 
-const distribution_map = { "(CV)": 1, "(NCV)": 2, "(LN)": 3 };
+const distribution_map = {"(CV)": 1, "(NCV)": 2, "(LN)": 3};
 
 const mutuallyExclusive = {
-  "Hill (CV)": [
-    "Multiplicative Hill (CV)",
-    "Multiplicative Hill (NCV)",
-    "Multiplicative Hill (LN)",
-  ],
-  "Hill (NCV)": [
-    "Multiplicative Hill (CV)",
-    "Multiplicative Hill (NCV)",
-    "Multiplicative Hill (LN)",
-  ],
-  "Multiplicative Hill (CV)": ["Hill (CV)", "Hill (NCV)"],
-  "Multiplicative Hill (NCV)": ["Hill (CV)", "Hill (NCV)"],
-  "Multiplicative Hill (LN)": ["Hill (CV)", "Hill (NCV)"],
+    "Hill (CV)": [
+        "Multiplicative Hill (CV)",
+        "Multiplicative Hill (NCV)",
+        "Multiplicative Hill (LN)",
+    ],
+    "Hill (NCV)": [
+        "Multiplicative Hill (CV)",
+        "Multiplicative Hill (NCV)",
+        "Multiplicative Hill (LN)",
+    ],
+    "Multiplicative Hill (CV)": ["Hill (CV)", "Hill (NCV)"],
+    "Multiplicative Hill (NCV)": ["Hill (CV)", "Hill (NCV)"],
+    "Multiplicative Hill (LN)": ["Hill (CV)", "Hill (NCV)"],
 };
 
 const selectAllExcluded = ["Hill (CV)", "Hill (NCV)"];
 
-const parseDisplayName = (displayName) => {
-  const parts = displayName.split(" ");
-  const suffix = parts[parts.length - 1];
-  if (suffix in distribution_map) {
-    return {
-      baseModel: parts.slice(0, -1).join(" "),
-      dist_type: distribution_map[suffix],
-    };
-  }
-  return { baseModel: displayName, dist_type: undefined };
-};
-
-const computeGroupIndex = (models) => {
-  const map = {};
-  let index = 0;
-  let lastBase = null;
-  models.forEach((model) => {
-    const { baseModel } = parseDisplayName(model);
-    if (baseModel !== lastBase) {
-      if (lastBase !== null) {
-        index += 1;
-      }
-      lastBase = baseModel;
+const parseDisplayName = displayName => {
+    const parts = displayName.split(" ");
+    const suffix = parts[parts.length - 1];
+    if (suffix in distribution_map) {
+        return {
+            baseModel: parts.slice(0, -1).join(" "),
+            dist_type: distribution_map[suffix],
+        };
     }
-    map[model] = index;
-  });
-  return map;
+    return {baseModel: displayName, dist_type: undefined};
 };
 
-const allContinuous = [
-    "Exponential-M3",
-    "Exponential-M5",
-    "Hill",
-    "Linear",
-    "Polynomial",
-    "Power",
-  ],
-  allDichotomous = [
-    "Dichotomous-Hill",
-    "Gamma",
-    "Logistic",
-    "LogLogistic",
-    "LogProbit",
-    "Multistage",
-    "Probit",
-    "Quantal Linear",
-    "Weibull",
-  ],
-  allNestedDichotomous = ["Nested Logistic", "NCTR"],
-  rowOrder = {
-    [MODEL_CONTINUOUS]: {
-      mle: allContinuous,
-      loud_bayesian: {
-        bmds: [
-          "Exponential-M3 (CV)",
-          "Exponential-M3 (NCV)",
-          "Exponential-M3 (LN)",
-          "Exponential-M5 (CV)",
-          "Exponential-M5 (NCV)",
-          "Exponential-M5 (LN)",
-          "Hill (CV)",
-          "Hill (NCV)",
-          "Power (CV)",
-          "Power (NCV)",
-        ],
-        extended: [
-          "Multiplicative Hill (CV)",
-          "Multiplicative Hill (NCV)",
-          "Multiplicative Hill (LN)",
-          "Inverse Exponential (CV)",
-          "Inverse Exponential (NCV)",
-          "Inverse Exponential (LN)",
-          "Lognormal (CV)",
-          "Lognormal (NCV)",
-          "Lognormal (LN)",
-          "Continuous Gamma (CV)",
-          "Continuous Gamma (NCV)",
-          "Continuous Gamma (LN)",
-          "LMS 2-Stage (CV)",
-          "LMS 2-Stage (NCV)",
-          "LMS 2-Stage (LN)",
-        ],
-      },
-    },
-    [MODEL_DICHOTOMOUS]: allDichotomous,
-    [MODEL_NESTED_DICHOTOMOUS]: allNestedDichotomous,
-  },
-  // These are the default model selection settings.
-  models = {
-    [MODEL_CONTINUOUS]: {
-      frequentist_restricted: [
-        "Exponential-M3",
-        "Exponential-M5",
-        "Hill",
-        "Polynomial",
-        "Power",
-      ],
-      frequentist_unrestricted: ["Linear"],
-      loud_bayesian: [
-        {
-          model: "Exponential-M3",
-          dist_type: 1,
-          prior_weight: 0.1,
-          _displayName: "Exponential-M3 (CV)",
-        },
-        {
-          model: "Exponential-M3",
-          dist_type: 2,
-          prior_weight: 0.1,
-          _displayName: "Exponential-M3 (NCV)",
-        },
-        {
-          model: "Exponential-M3",
-          dist_type: 3,
-          prior_weight: 0.1,
-          _displayName: "Exponential-M3 (LN)",
-        },
-        {
-          model: "Exponential-M5",
-          dist_type: 1,
-          prior_weight: 0.1,
-          _displayName: "Exponential-M5 (CV)",
-        },
-        {
-          model: "Exponential-M5",
-          dist_type: 2,
-          prior_weight: 0.1,
-          _displayName: "Exponential-M5 (NCV)",
-        },
-        {
-          model: "Exponential-M5",
-          dist_type: 3,
-          prior_weight: 0.1,
-          _displayName: "Exponential-M5 (LN)",
-        },
-        {
-          model: "Hill",
-          dist_type: 1,
-          prior_weight: 0.1,
-          _displayName: "Hill (CV)",
-        },
-        {
-          model: "Hill",
-          dist_type: 2,
-          prior_weight: 0.1,
-          _displayName: "Hill (NCV)",
-        },
-        {
-          model: "Power",
-          dist_type: 1,
-          prior_weight: 0.1,
-          _displayName: "Power (CV)",
-        },
-        {
-          model: "Power",
-          dist_type: 2,
-          prior_weight: 0.1,
-          _displayName: "Power (NCV)",
-        },
-      ],
-    },
-    [MODEL_DICHOTOMOUS]: {
-      loud_bayesian: [
-        {
-          model: "Dichotomous-Hill",
-          prior_weight: 0.1111,
-          _displayName: "Dichotomous-Hill",
-        },
-        {
-          model: "Gamma",
-          prior_weight: 0.1111,
-          _displayName: "Gamma",
-        },
-        {
-          model: "Logistic",
-          prior_weight: 0.1111,
-          _displayName: "Logistic",
-        },
-        {
-          model: "LogLogistic",
-          prior_weight: 0.1111,
-          _displayName: "LogLogistic",
-        },
-        {
-          model: "LogProbit",
-          prior_weight: 0.1111,
-          _displayName: "LogProbit",
-        },
-        {
-          model: "Multistage",
-          prior_weight: 0.1111,
-          _displayName: "Multistage",
-        },
-        {
-          model: "Probit",
-          prior_weight: 0.1111,
-          _displayName: "Probit",
-        },
-        {
-          model: "Quantal Linear",
-          prior_weight: 0.1111,
-          _displayName: "Quantal Linear",
-        },
-        {
-          model: "Weibull",
-          prior_weight: 0.1111,
-          _displayName: "Weibull",
-        },
-      ],
-      frequentist_restricted: [
+const computeGroupIndex = models => {
+    const map = {};
+    let index = 0;
+    let lastBase = null;
+    models.forEach(model => {
+        const {baseModel} = parseDisplayName(model);
+        if (baseModel !== lastBase) {
+            if (lastBase !== null) {
+                index += 1;
+            }
+            lastBase = baseModel;
+        }
+        map[model] = index;
+    });
+    return map;
+};
+
+const allContinuous = ["Exponential-M3", "Exponential-M5", "Hill", "Linear", "Polynomial", "Power"],
+    allDichotomous = [
         "Dichotomous-Hill",
         "Gamma",
-        "LogLogistic",
-        "Multistage",
-        "Weibull",
-      ],
-      frequentist_unrestricted: [
         "Logistic",
+        "LogLogistic",
         "LogProbit",
+        "Multistage",
         "Probit",
         "Quantal Linear",
-      ],
-    },
-    [MODEL_NESTED_DICHOTOMOUS]: {
-      frequentist_restricted: allNestedDichotomous,
-      frequentist_unrestricted: [],
-    },
-    [MODEL_MULTI_TUMOR]: {
-      frequentist_restricted: ["Multistage"],
-      frequentist_unrestricted: [],
-    },
-  },
-  allModelOptions = {
-    [MODEL_CONTINUOUS]: {
-      frequentist_restricted: [
-        "Exponential-M3",
-        "Exponential-M5",
-        "Hill",
-        "Polynomial",
-        "Power",
-      ],
-      frequentist_unrestricted: ["Hill", "Linear", "Polynomial", "Power"],
-      loud_bayesian: [
-        "Exponential-M3 (CV)",
-        "Exponential-M3 (NCV)",
-        "Exponential-M3 (LN)",
-        "Exponential-M5 (CV)",
-        "Exponential-M5 (NCV)",
-        "Exponential-M5 (LN)",
-        "Hill (CV)",
-        "Hill (NCV)",
-        "Power (CV)",
-        "Power (NCV)",
-        "Multiplicative Hill (CV)",
-        "Multiplicative Hill (NCV)",
-        "Multiplicative Hill (LN)",
-        "Inverse Exponential (CV)",
-        "Inverse Exponential (NCV)",
-        "Inverse Exponential (LN)",
-        "Lognormal (CV)",
-        "Lognormal (NCV)",
-        "Lognormal (LN)",
-        "Continuous Gamma (CV)",
-        "Continuous Gamma (NCV)",
-        "Continuous Gamma (LN)",
-        "LMS 2-Stage (CV)",
-        "LMS 2-Stage (NCV)",
-        "LMS 2-Stage (LN)",
-      ],
-    },
-    [MODEL_DICHOTOMOUS]: {
-      frequentist_restricted: [
-        "Dichotomous-Hill",
-        "Gamma",
-        "LogLogistic",
-        "LogProbit",
-        "Multistage",
         "Weibull",
-      ],
-      frequentist_unrestricted: allDichotomous,
-      toxicr_bayesian: allDichotomous,
-      loud_bayesian: allDichotomous,
+    ],
+    allNestedDichotomous = ["Nested Logistic", "NCTR"],
+    rowOrder = {
+        [MODEL_CONTINUOUS]: {
+            mle: allContinuous,
+            loud_bayesian: {
+                bmds: [
+                    "Exponential-M3 (CV)",
+                    "Exponential-M3 (NCV)",
+                    "Exponential-M3 (LN)",
+                    "Exponential-M5 (CV)",
+                    "Exponential-M5 (NCV)",
+                    "Exponential-M5 (LN)",
+                    "Hill (CV)",
+                    "Hill (NCV)",
+                    "Power (CV)",
+                    "Power (NCV)",
+                ],
+                extended: [
+                    "Multiplicative Hill (CV)",
+                    "Multiplicative Hill (NCV)",
+                    "Multiplicative Hill (LN)",
+                    "Inverse Exponential (CV)",
+                    "Inverse Exponential (NCV)",
+                    "Inverse Exponential (LN)",
+                    "Lognormal (CV)",
+                    "Lognormal (NCV)",
+                    "Lognormal (LN)",
+                    "Continuous Gamma (CV)",
+                    "Continuous Gamma (NCV)",
+                    "Continuous Gamma (LN)",
+                    "LMS 2-Stage (CV)",
+                    "LMS 2-Stage (NCV)",
+                    "LMS 2-Stage (LN)",
+                ],
+            },
+        },
+        [MODEL_DICHOTOMOUS]: allDichotomous,
+        [MODEL_NESTED_DICHOTOMOUS]: allNestedDichotomous,
     },
-    [MODEL_NESTED_DICHOTOMOUS]: {
-      frequentist_restricted: allNestedDichotomous,
-      frequentist_unrestricted: allNestedDichotomous,
+    // These are the default model selection settings.
+    models = {
+        [MODEL_CONTINUOUS]: {
+            frequentist_restricted: [
+                "Exponential-M3",
+                "Exponential-M5",
+                "Hill",
+                "Polynomial",
+                "Power",
+            ],
+            frequentist_unrestricted: ["Linear"],
+            loud_bayesian: [
+                {
+                    model: "Exponential-M3",
+                    dist_type: 1,
+                    prior_weight: 0.1,
+                    _displayName: "Exponential-M3 (CV)",
+                },
+                {
+                    model: "Exponential-M3",
+                    dist_type: 2,
+                    prior_weight: 0.1,
+                    _displayName: "Exponential-M3 (NCV)",
+                },
+                {
+                    model: "Exponential-M3",
+                    dist_type: 3,
+                    prior_weight: 0.1,
+                    _displayName: "Exponential-M3 (LN)",
+                },
+                {
+                    model: "Exponential-M5",
+                    dist_type: 1,
+                    prior_weight: 0.1,
+                    _displayName: "Exponential-M5 (CV)",
+                },
+                {
+                    model: "Exponential-M5",
+                    dist_type: 2,
+                    prior_weight: 0.1,
+                    _displayName: "Exponential-M5 (NCV)",
+                },
+                {
+                    model: "Exponential-M5",
+                    dist_type: 3,
+                    prior_weight: 0.1,
+                    _displayName: "Exponential-M5 (LN)",
+                },
+                {
+                    model: "Hill",
+                    dist_type: 1,
+                    prior_weight: 0.1,
+                    _displayName: "Hill (CV)",
+                },
+                {
+                    model: "Hill",
+                    dist_type: 2,
+                    prior_weight: 0.1,
+                    _displayName: "Hill (NCV)",
+                },
+                {
+                    model: "Power",
+                    dist_type: 1,
+                    prior_weight: 0.1,
+                    _displayName: "Power (CV)",
+                },
+                {
+                    model: "Power",
+                    dist_type: 2,
+                    prior_weight: 0.1,
+                    _displayName: "Power (NCV)",
+                },
+            ],
+        },
+        [MODEL_DICHOTOMOUS]: {
+            loud_bayesian: [
+                {
+                    model: "Dichotomous-Hill",
+                    prior_weight: 0.1111,
+                    _displayName: "Dichotomous-Hill",
+                },
+                {
+                    model: "Gamma",
+                    prior_weight: 0.1111,
+                    _displayName: "Gamma",
+                },
+                {
+                    model: "Logistic",
+                    prior_weight: 0.1111,
+                    _displayName: "Logistic",
+                },
+                {
+                    model: "LogLogistic",
+                    prior_weight: 0.1111,
+                    _displayName: "LogLogistic",
+                },
+                {
+                    model: "LogProbit",
+                    prior_weight: 0.1111,
+                    _displayName: "LogProbit",
+                },
+                {
+                    model: "Multistage",
+                    prior_weight: 0.1111,
+                    _displayName: "Multistage",
+                },
+                {
+                    model: "Probit",
+                    prior_weight: 0.1111,
+                    _displayName: "Probit",
+                },
+                {
+                    model: "Quantal Linear",
+                    prior_weight: 0.1111,
+                    _displayName: "Quantal Linear",
+                },
+                {
+                    model: "Weibull",
+                    prior_weight: 0.1111,
+                    _displayName: "Weibull",
+                },
+            ],
+            frequentist_restricted: [
+                "Dichotomous-Hill",
+                "Gamma",
+                "LogLogistic",
+                "Multistage",
+                "Weibull",
+            ],
+            frequentist_unrestricted: ["Logistic", "LogProbit", "Probit", "Quantal Linear"],
+        },
+        [MODEL_NESTED_DICHOTOMOUS]: {
+            frequentist_restricted: allNestedDichotomous,
+            frequentist_unrestricted: [],
+        },
+        [MODEL_MULTI_TUMOR]: {
+            frequentist_restricted: ["Multistage"],
+            frequentist_unrestricted: [],
+        },
     },
-    [MODEL_MULTI_TUMOR]: {
-      frequentist_restricted: ["Multistage"],
-      frequentist_unrestricted: [],
+    allModelOptions = {
+        [MODEL_CONTINUOUS]: {
+            frequentist_restricted: [
+                "Exponential-M3",
+                "Exponential-M5",
+                "Hill",
+                "Polynomial",
+                "Power",
+            ],
+            frequentist_unrestricted: ["Hill", "Linear", "Polynomial", "Power"],
+            loud_bayesian: [
+                "Exponential-M3 (CV)",
+                "Exponential-M3 (NCV)",
+                "Exponential-M3 (LN)",
+                "Exponential-M5 (CV)",
+                "Exponential-M5 (NCV)",
+                "Exponential-M5 (LN)",
+                "Hill (CV)",
+                "Hill (NCV)",
+                "Power (CV)",
+                "Power (NCV)",
+                "Multiplicative Hill (CV)",
+                "Multiplicative Hill (NCV)",
+                "Multiplicative Hill (LN)",
+                "Inverse Exponential (CV)",
+                "Inverse Exponential (NCV)",
+                "Inverse Exponential (LN)",
+                "Lognormal (CV)",
+                "Lognormal (NCV)",
+                "Lognormal (LN)",
+                "Continuous Gamma (CV)",
+                "Continuous Gamma (NCV)",
+                "Continuous Gamma (LN)",
+                "LMS 2-Stage (CV)",
+                "LMS 2-Stage (NCV)",
+                "LMS 2-Stage (LN)",
+            ],
+        },
+        [MODEL_DICHOTOMOUS]: {
+            frequentist_restricted: [
+                "Dichotomous-Hill",
+                "Gamma",
+                "LogLogistic",
+                "LogProbit",
+                "Multistage",
+                "Weibull",
+            ],
+            frequentist_unrestricted: allDichotomous,
+            toxicr_bayesian: allDichotomous,
+            loud_bayesian: allDichotomous,
+        },
+        [MODEL_NESTED_DICHOTOMOUS]: {
+            frequentist_restricted: allNestedDichotomous,
+            frequentist_unrestricted: allNestedDichotomous,
+        },
+        [MODEL_MULTI_TUMOR]: {
+            frequentist_restricted: ["Multistage"],
+            frequentist_unrestricted: [],
+        },
     },
-  },
-  isLognormal = function (disttype) {
-    return disttype == 3;
-  },
-  hasDegrees = new Set(["Multistage", "Polynomial"]);
+    isLognormal = function (disttype) {
+        return disttype == 3;
+    },
+    hasDegrees = new Set(["Multistage", "Polynomial"]);
 
 export {
-  allModelOptions,
-  computeGroupIndex,
-  distribution_map,
-  hasDegrees,
-  isLognormal,
-  models,
-  mutuallyExclusive,
-  selectAllExcluded,
-  parseDisplayName,
-  rowOrder,
+    allModelOptions,
+    computeGroupIndex,
+    distribution_map,
+    hasDegrees,
+    isLognormal,
+    models,
+    mutuallyExclusive,
+    selectAllExcluded,
+    parseDisplayName,
+    rowOrder,
 };

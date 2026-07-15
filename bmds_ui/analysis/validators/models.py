@@ -2,7 +2,7 @@ from typing import Any
 
 import numpy as np
 from django.core.exceptions import ValidationError
-from pydantic import BaseModel, Field, model_validator, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from pydantic_core import PydanticCustomError
 
 from pybmds.constants import Dtype, ModelClass, Models
@@ -58,16 +58,32 @@ DichotomousModelSchema = ModelTypeSchema(
         Models.Probit,
         Models.QuantalLinear,
         Models.Weibull,
-    }
+    },
 )
 
 ContinuousModelSchema = ModelTypeSchema(
-    restricted={Models.ExponentialM3, Models.ExponentialM5, Models.Hill, Models.Polynomial, Models.Power},
+    restricted={
+        Models.ExponentialM3,
+        Models.ExponentialM5,
+        Models.Hill,
+        Models.Polynomial,
+        Models.Power,
+    },
     unrestricted={Models.Hill, Models.Linear, Models.Polynomial, Models.Power},
-    toxicr_bayesian=set(), # Continuous model does not support toxicR Bayesian
-    loud_bayesian={Models.ExponentialM3, Models.ExponentialM5, Models.Hill, 
-                   Models.Linear, Models.Polynomial, Models.Power, Models.MultiplicativeHill, 
-                   Models.InverseExponential, Models.Lognormal, Models.ContinuousGamma, Models.LMS2},
+    toxicr_bayesian=set(),  # Continuous model does not support toxicR Bayesian
+    loud_bayesian={
+        Models.ExponentialM3,
+        Models.ExponentialM5,
+        Models.Hill,
+        Models.Linear,
+        Models.Polynomial,
+        Models.Power,
+        Models.MultiplicativeHill,
+        Models.InverseExponential,
+        Models.Lognormal,
+        Models.ContinuousGamma,
+        Models.LMS2,
+    },
 )
 
 NestedDichotomousModelSchema = ModelTypeSchema(
@@ -84,10 +100,12 @@ MultiTumorModelSchema = ModelTypeSchema(
     loud_bayesian=set(),
 )
 
+
 class BayesianModelSchema(BaseModel):
     model: str
     prior_weight: float = Field(ge=0, le=1)
     dist_type: int | None = None
+
 
 class ModelListSchema(BaseModel):
     frequentist_restricted: list[str] = []
@@ -101,7 +119,7 @@ class ModelListSchema(BaseModel):
         if seq:
             weights = sum(b.prior_weight for b in seq)
             if not np.isclose(weights, 1.0, atol=0.005):
-                raise PydanticCustomError('weights_sum', err_msg)
+                raise PydanticCustomError("weights_sum", err_msg)
 
     @field_validator("loud_bayesian", "toxicr_bayesian", mode="after")
     @classmethod
@@ -109,7 +127,7 @@ class ModelListSchema(BaseModel):
         label = "LOUD" if info.field_name == "loud_bayesian" else "ToxicR"
         cls._ensure_sum_to_one(v, f"Prior weight in {label} Bayesian does not sum to 1 ± 0.005")
         return v
-    
+
     @model_validator(mode="after")
     def uniqueness(self):
         schema = self.bmds_model_schema
@@ -139,9 +157,9 @@ class ModelListSchema(BaseModel):
             else:
                 if len(models) != len(set(models)):
                     raise ValueError(f"Models in {field} are not unique")
-                
+
             if len(extras) > 0:
-                raise ValueError(f"Invalid model(s) in {field}: {','.join(extras)}")    
+                raise ValueError(f"Invalid model(s) in {field}: {','.join(extras)}")
         return self
 
     @model_validator(mode="after")
@@ -188,18 +206,21 @@ def validate_models(dataset_type: str, data: Any):
         raise ValidationError(f"Unknown `dataset_type`: {dataset_type}")
     pydantic_validate(data, schema)
 
+
 def validate_lognormal_exponential_selected(models: Any, options: Any) -> None:
-    """ If any continuous option set has a lognormal dist_type, at least one exponentail model must be selected """
+    """If any continuous option set has a lognormal dist_type, at least one exponentail model must be selected"""
     has_dist_type_3 = any(option.get("dist_type") == 3 for option in options)
     if not has_dist_type_3:
         return
-    
+
     # Only want to check for exponential model if ANY MLE models are selected.
     freq_restricted = models.get("frequentist_restricted", [])
     freq_unrestricted = models.get("frequentist_unrestricted", [])
     if not freq_restricted and not freq_unrestricted:
         return
-    
+
     exponential_models = {Models.ExponentialM3, Models.ExponentialM5}
     if not set(freq_restricted) & exponential_models:
-        raise ValidationError("To run MLE analysis with lognormal distribution, at least one exponential model must be selected.")
+        raise ValidationError(
+            "To run MLE analysis with lognormal distribution, at least one exponential model must be selected."
+        )

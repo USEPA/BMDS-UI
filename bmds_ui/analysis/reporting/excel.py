@@ -59,7 +59,7 @@ def summary_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
             elif session.toxicr_bayesian:
                 dataset = session.toxicr_bayesian.dataset
             elif session.loud_bayesian:
-                dataset = session.loud_bayesian.dataset   
+                dataset = session.loud_bayesian.dataset
             d = dict(dataset_index=session.dataset_index)
             dataset.update_record(d)
             dataset_data[d["dataset_index"]] = d
@@ -76,12 +76,13 @@ def summary_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
                     session.option_index,
                     name,
                     model,
-                )    
+                )
 
     df1 = pd.DataFrame(dataset_data.values())
     df2 = pd.DataFrame(model_data)
     df3 = df1.merge(df2, on="dataset_index").fillna("-")
     return df3
+
 
 def params_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
     data = []
@@ -123,13 +124,12 @@ def dataset_df(sessions: list[AnalysisSession]) -> pd.DataFrame:
     datasets: set = set()
     for session in sessions:
         if session.dataset_index not in datasets:
-
             if session.frequentist:
                 dataset = session.frequentist.dataset
             elif session.toxicr_bayesian:
                 dataset = session.toxicr_bayesian.dataset
             elif session.loud_bayesian:
-                dataset = session.loud_bayesian.dataset 
+                dataset = session.loud_bayesian.dataset
 
             datasets.add(session.dataset_index)
             data.extend(dataset.rows(extras=dict(dataset_index=session.dataset_index)))

@@ -51,7 +51,9 @@ class TestAnalysisSession:
             is PriorClass.frequentist_unrestricted
         )
         assert session.toxicr_bayesian.models[0].settings.priors.prior_class is PriorClass.bayesian
-        assert session.loud_bayesian.models[0].settings.priors.prior_class is PriorClass.bayesian_loud
+        assert (
+            session.loud_bayesian.models[0].settings.priors.prior_class is PriorClass.bayesian_loud
+        )
 
     def test_multistage_permutations(self, complete_dichotomous):
         def _expected_degree(session, n: int):
@@ -155,7 +157,14 @@ class TestAnalysisSession:
     def test_disttype(self, complete_continuous):
         data = deepcopy(complete_continuous)
         data["models"] = {
-            "frequentist_restricted": ["Exponential-M3", "Exponential-M5", "Hill", "Linear", "Polynomial", "Power"],
+            "frequentist_restricted": [
+                "Exponential-M3",
+                "Exponential-M5",
+                "Hill",
+                "Linear",
+                "Polynomial",
+                "Power",
+            ],
         }
 
         # normal
@@ -163,13 +172,31 @@ class TestAnalysisSession:
         session = AnalysisSession.create(data, 0, 0)
         assert len(session.frequentist.models) == 8
         names = [model.name() for model in session.frequentist.models]
-        assert names == ['Exponential 3', 'Exponential 5', 'Hill', 'Linear', 'Polynomial 2', 'Polynomial 3', 'Polynomial 4', 'Power']
+        assert names == [
+            "Exponential 3",
+            "Exponential 5",
+            "Hill",
+            "Linear",
+            "Polynomial 2",
+            "Polynomial 3",
+            "Polynomial 4",
+            "Power",
+        ]
 
         data["options"][0]["dist_type"] = 2
         session = AnalysisSession.create(data, 0, 0)
         assert len(session.frequentist.models) == 8
         names = [model.name() for model in session.frequentist.models]
-        assert names == ['Exponential 3', 'Exponential 5', 'Hill', 'Linear', 'Polynomial 2', 'Polynomial 3', 'Polynomial 4', 'Power']
+        assert names == [
+            "Exponential 3",
+            "Exponential 5",
+            "Hill",
+            "Linear",
+            "Polynomial 2",
+            "Polynomial 3",
+            "Polynomial 4",
+            "Power",
+        ]
 
         # lognormal
         data["options"][0]["dist_type"] = 3

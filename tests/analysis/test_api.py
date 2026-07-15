@@ -285,7 +285,7 @@ class TestAnalysisViewSet:
         assert output_response.status_code == 200
         assert output_response.data["frequentist"]["selected"] == {
             "notes": "notes",
-            "model_index": 0
+            "model_index": 0,
         }
 
         # deselect model
@@ -296,7 +296,7 @@ class TestAnalysisViewSet:
         assert output_response.status_code == 200
         assert output_response.data["frequentist"]["selected"] == {
             "notes": "no notes",
-            "model_index": None
+            "model_index": None,
         }
 
     @pytest.mark.parametrize("pk", analyses)
@@ -386,6 +386,7 @@ class TestRaoScottViewSet:
         doc = docx.Document(BytesIO(response.content))
         assert isinstance(doc, docx.document.Document)
 
+
 @pytest.mark.django_db
 class TestJonckheereTerpstraViewSet:
     def test_create(self, jonckheereterpstra_dataset_individual):
@@ -396,11 +397,12 @@ class TestJonckheereTerpstraViewSet:
         data = response.json()
         assert list(data.keys()) == ["answer", "synthetic_dataset_obj"]
         assert list(data["answer"].keys()) == [
-            "Hypothesis", 
-            "Statistic", 
-            "Approach (P-Value)", 
+            "Hypothesis",
+            "Statistic",
+            "Approach (P-Value)",
             "P-Value",
         ]
+
 
 @pytest.mark.django_db
 class TestCochranArmitageViewSet:
@@ -412,7 +414,7 @@ class TestCochranArmitageViewSet:
         data = response.json()
         assert list(data.keys()) == ["answer"]
         assert list(data["answer"].keys()) == [
-            "Statistic", 
-            "P-Value (Asymptotic)", 
+            "Statistic",
+            "P-Value (Asymptotic)",
             "P-Value (Exact)",
         ]
