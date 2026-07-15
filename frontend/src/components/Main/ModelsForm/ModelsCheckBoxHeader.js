@@ -23,11 +23,13 @@ const areAllModelsChecked = function (modelType, type, models) {
     },
     SelectAllComponent = observer(props => {
         const {store, type, disabled, label} = props,
-            id = `select_all_${type}`;
+            id = `select_all_${type}`,
+            dataTestId = id.replaceAll("_", "-");
         return (
             <>
                 <CheckboxInput
                     id={id}
+                    dataTestId={dataTestId}
                     disabled={disabled}
                     onChange={value => store.enableAll(type, value)}
                     checked={areAllModelsChecked(store.getModelType, type, store.models)}

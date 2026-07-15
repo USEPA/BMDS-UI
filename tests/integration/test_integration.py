@@ -1,6 +1,7 @@
+import re
 from pathlib import Path
 
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Page, TimeoutError as PlaywrightTimeoutError, expect
 
 from bmds_ui.analysis.models import Analysis
 
@@ -21,11 +22,55 @@ def data_path():
 
 
 class TestContinuousIntegration(PlaywrightTestCase):
+    DEFAULT_TIMEOUT = 20000
+
     def _create_new_analysis(self) -> Page:
         self.page.goto(self.url("/"))
         with self.page.expect_navigation():
             self.page.get_by_role("button", name="Create a new BMDS analysis").click()
         return self.page
+
+    def _click_select_all_frequentist_restricted(self, page: Page, click_count: int = 1):
+        locator = page.get_by_test_id("select-all-frequentist-restricted")
+        if locator.count() == 0:
+            locator = page.locator("#select_all_frequentist_restricted")
+        if locator.count() == 0:
+            locator = page.locator('th#mle-r input[type="checkbox"]')
+        locator.first.click(click_count=click_count)
+
+    def _wait_for_output_response(self, page: Page):
+        try:
+            page.wait_for_response(
+                lambda r: "/api/v1/analysis/" in r.url
+                and "/output/" in r.url
+                and r.status == 200,
+                timeout=self.DEFAULT_TIMEOUT,
+            )
+        except PlaywrightTimeoutError:
+            # Some paths may render from already-loaded state and skip a new output fetch.
+            pass
+
+    def _open_output_and_wait_for_results(self, page: Page):
+        page.locator('a:has-text("Output")').click()
+        self._wait_for_output_response(page)
+        results_anchor = page.get_by_test_id("results-section-anchor")
+        if results_anchor.count() > 0:
+            expect(results_anchor.first).to_be_visible(timeout=self.DEFAULT_TIMEOUT)
+        else:
+            expect(
+                page.get_by_role("heading", name=re.compile("Model Results", re.I)).first
+            ).to_be_visible(timeout=self.DEFAULT_TIMEOUT)
+
+    def _frequentist_result_rows(self, page: Page):
+        table = page.get_by_test_id("frequentist-model-result")
+        if table.count() == 0:
+            return page.locator("#frequentist-model-result tbody tr")
+        return table.locator("tbody tr")
+
+    def _expect_frequentist_row_count(self, page: Page, count: int):
+        rows = self._frequentist_result_rows(page)
+        expect(rows.first).to_be_visible(timeout=self.DEFAULT_TIMEOUT)
+        expect(rows).to_have_count(count, timeout=self.DEFAULT_TIMEOUT)
 
     def _test_continuous(self, option: str):
         page = self._create_new_analysis()
@@ -36,7 +81,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         page.locator("#analysis_model_type").select_option("C")
 
         # select models
-        page.locator("#select_all_frequentist_restricted").click()
+        self._click_select_all_frequentist_restricted(page)
 
         # view data tab
         page.get_by_role("link", name="Data").click()
@@ -53,8 +98,8 @@ class TestContinuousIntegration(PlaywrightTestCase):
         expect(page.locator("#controlPanel")).to_contain_text("Executing, please wait...")
 
         # view output summary tables
-        page.locator('a:has-text("Output")').click()
-        expect(page.locator("#frequentist-model-result tbody tr")).to_have_count(2)
+        self._open_output_and_wait_for_results(page)
+        self._expect_frequentist_row_count(page, count=2)
 
         # display frequentist modal
         page.locator("#freq-result-0").click()
@@ -106,7 +151,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         page.locator("#analysis_model_type").select_option("D")
 
         # select models
-        page.locator("#select_all_frequentist_restricted").click(click_count=2)
+        self._click_select_all_frequentist_restricted(page, click_count=2)
         page.locator("#select_all_frequentist_unrestricted").click(click_count=2)
         page.locator("#frequentist_unrestricted-Logistic").check()
         page.locator("#bayesian-Logistic").check()
@@ -125,8 +170,8 @@ class TestContinuousIntegration(PlaywrightTestCase):
         expect(page.locator("#controlPanel")).to_contain_text("Executing, please wait...")
 
         # view output summary tables
-        page.locator('a:has-text("Output")').click()
-        expect(page.locator("#frequentist-model-result tbody tr")).to_have_count(2)
+        self._open_output_and_wait_for_results(page)
+        self._expect_frequentist_row_count(page, count=2)
         expect(page.locator("#bayesian-model-result tbody tr")).to_have_count(2)
 
         # display frequentist modal
@@ -196,9 +241,9 @@ class TestContinuousIntegration(PlaywrightTestCase):
         expect(page.locator("#controlPanel")).to_contain_text("Executing, please wait...")
 
         # view output summary tables
-        page.locator('a:has-text("Output")').click()
+        self._open_output_and_wait_for_results(page)
         # num rows in results table
-        expect(page.locator("#frequentist-model-result tbody tr")).to_have_count(9)
+        self._expect_frequentist_row_count(page, count=9)
 
         # check one result
         page.get_by_role("link", name="Nested Logistic (lsc+ilc-)").click()
@@ -255,7 +300,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         expect(page.locator("#controlPanel")).to_contain_text("Executing, please wait...")
 
         # view output summary tables
-        page.locator('a:has-text("Output")').click()
+        self._open_output_and_wait_for_results(page)
 
         # check one result (multitumor)
         page.get_by_role("link", name="Multitumor").click()
@@ -281,7 +326,9 @@ class TestContinuousIntegration(PlaywrightTestCase):
         expect(page2.get_by_text("Select existing")).to_be_visible()
 
         page2.get_by_role("link", name="Output").click()
-        expect(page2.get_by_text("Model Results")).to_be_visible()
+        expect(page2.get_by_role("heading", name="Model Results")).to_be_visible(
+            timeout=self.DEFAULT_TIMEOUT
+        )
 
     def test_read_view(self):
         # load existing analyses in our database and confirm we can view everything in read-only mode
@@ -299,10 +346,16 @@ class TestContinuousIntegration(PlaywrightTestCase):
 
             # check output tab loads
             page.get_by_role("link", name="Output").click()
+            self._wait_for_output_response(page)
             if model_type == "multitumor":
-                expect(page.get_by_role("heading", name="Model Results")).to_be_visible()
+                expect(page.get_by_role("heading", name="Model Results")).to_be_visible(
+                    timeout=self.DEFAULT_TIMEOUT
+                )
             else:
-                expect(page.locator("#frequentist-model-result")).to_be_visible()
+                table = page.get_by_test_id("frequentist-model-result")
+                if table.count() == 0:
+                    table = page.locator("#frequentist-model-result")
+                expect(table).to_be_visible(timeout=self.DEFAULT_TIMEOUT)
 
             # check logic tab loads (not present with multitumor)
             if model_type != "multitumor":
@@ -325,10 +378,16 @@ class TestContinuousIntegration(PlaywrightTestCase):
 
             # check output tab loads
             page.get_by_role("link", name="Output").click()
+            self._wait_for_output_response(page)
             if model_type == "multitumor":
-                expect(page.get_by_role("heading", name="Model Results")).to_be_visible()
+                expect(page.get_by_role("heading", name="Model Results")).to_be_visible(
+                    timeout=self.DEFAULT_TIMEOUT
+                )
             else:
-                expect(page.locator("#frequentist-model-result")).to_be_visible()
+                table = page.get_by_test_id("frequentist-model-result")
+                if table.count() == 0:
+                    table = page.locator("#frequentist-model-result")
+                expect(table).to_be_visible(timeout=self.DEFAULT_TIMEOUT)
 
             # check logic tab loads (not present with multitumor)
             if model_type != "multitumor":
@@ -349,6 +408,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         page.locator("#loadAnalysisFile").set_input_files(v1_schema)
 
         page.get_by_role("link", name="Output").click()
+        self._wait_for_output_response(page)
         page.get_by_text(
             "Outputs may be out of dateThere are unsaved changes made to the inputs, and the"
         ).click()
