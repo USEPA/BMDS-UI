@@ -344,7 +344,6 @@ class FrequentistResultTable extends Component {
         return (
             <table
                 id="frequentist-model-result"
-                data-testid="frequentist-model-result"
                 className={`table table-sm text-right col-l-1 ${reClass}`}>
                 <colgroup>
                     {_.map(colWidths).map((value, idx) => (

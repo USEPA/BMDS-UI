@@ -180,7 +180,7 @@ class Output extends Component {
                 </div>
                 {selectedFrequentist ? (
                     outputStore.isMultiTumor ? (
-                        <div className="row" data-testid="results-section-anchor">
+                        <div className="row">
                             <div className="col-lg-12">
                                 <h3>Model Results</h3>
                                 <MultitumorResultTable />
@@ -188,7 +188,7 @@ class Output extends Component {
                             </div>
                         </div>
                     ) : (
-                        <div className="row py-2" data-testid="results-section-anchor">
+                        <div className="row py-2">
                             <div className="col-lg-8">
                                 <h3>Maximum Likelihood Approach Model Results</h3>
                                 <FrequentistResultTable />

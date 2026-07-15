@@ -11,11 +11,10 @@ class CheckboxInput extends Component {
         this._id = props.id || randomString();
     }
     render() {
-        const {onChange, checked, disabled, dataTestId} = this.props;
+        const {onChange, checked, disabled} = this.props;
         return (
             <input
                 id={this._id}
-                data-testid={dataTestId}
                 type="checkbox"
                 checked={checked}
                 disabled={disabled}
@@ -30,11 +29,9 @@ CheckboxInput.propTypes = {
     onChange: PropTypes.func.isRequired,
     checked: PropTypes.any.isRequired,
     disabled: PropTypes.bool,
-    dataTestId: PropTypes.string,
 };
 CheckboxInput.defaultProps = {
     disabled: false,
-    dataTestId: undefined,
 };
 
 export default CheckboxInput;
