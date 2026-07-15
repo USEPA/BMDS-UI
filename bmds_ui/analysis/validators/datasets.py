@@ -7,6 +7,14 @@ from django.core.exceptions import ValidationError
 from pydantic import AfterValidator, BaseModel, Field, field_validator, model_validator
 from pydantic_core import PydanticCustomError
 
+import pybmds
+from pybmds.constants import Dtype
+from pybmds.datasets.continuous import ContinuousDatasetSchema, ContinuousIndividualDatasetSchema
+from pybmds.datasets.dichotomous import DichotomousDatasetSchema
+from pybmds.datasets.nested_dichotomous import NestedDichotomousDatasetSchema
+
+from ...common.validation import pydantic_validate
+
 
 def _check_non_negative(v: float) -> float:
     if v < 0:
@@ -24,14 +32,6 @@ def _check_positive(v: float) -> float:
 
 NonNegativeFloat = Annotated[float, AfterValidator(_check_non_negative)]
 PositiveFloat = Annotated[float, AfterValidator(_check_positive)]
-
-import pybmds
-from pybmds.constants import Dtype
-from pybmds.datasets.continuous import ContinuousDatasetSchema, ContinuousIndividualDatasetSchema
-from pybmds.datasets.dichotomous import DichotomousDatasetSchema
-from pybmds.datasets.nested_dichotomous import NestedDichotomousDatasetSchema
-
-from ...common.validation import pydantic_validate
 
 max_length = 1000 if settings.IS_DESKTOP else 10
 

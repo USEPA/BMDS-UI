@@ -1,5 +1,4 @@
 from enum import StrEnum
-from typing import Any
 
 import pybmds
 from pybmds.constants import Dtype

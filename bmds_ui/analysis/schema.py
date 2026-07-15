@@ -4,7 +4,6 @@ from copy import deepcopy
 from datetime import datetime
 from enum import StrEnum
 from io import StringIO
-from typing import Optional
 from uuid import UUID
 
 import numpy as np

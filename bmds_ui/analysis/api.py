@@ -250,7 +250,9 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             dataset_index = int(dataset_index)
             option_index = int(option_index)
         except ValueError as err:
-            raise exceptions.ValidationError("dataset_index and option_index must be integers") from err
+            raise exceptions.ValidationError(
+                "dataset_index and option_index must be integers"
+            ) from err
 
         # Find the matching output
         outputs = instance.outputs.get("outputs", [])

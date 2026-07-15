@@ -124,9 +124,7 @@ def build_loud_bayesian_session(
     mcmc_options: dict,
 ) -> Session | None:
     models = inputs["models"].get(PriorEnum.loud_bayesian, [])
-    # Do Not filter lognormal for continuous loud, since dist_type is not reliant on options set
-    # if options.get("dist_type") == DistType.log_normal:
-    #     models = deepcopy(list(filter(lambda d: d["model"] in lognormal_enabled, models)))
+    # Do Not filter out lognormal for continuous loud, since dist_type is not reliant on options set
 
     # exit early if we have no loud bayesian models
     if len(models) == 0:

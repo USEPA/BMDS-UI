@@ -58,7 +58,7 @@ def to_csv(data, headers):
     def isnan(x):
         try:
             return math.isnan(x)
-        except:
+        except TypeError:
             return False
 
     n = len(data[headers[0]])

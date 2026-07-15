@@ -2,7 +2,6 @@ import pytest
 
 import pybmds
 from bmds_ui.analysis import transforms
-from pybmds.constants import Models
 from pybmds.types.continuous import ContinuousRiskType
 from pybmds.types.dichotomous import DichotomousRiskType
 
