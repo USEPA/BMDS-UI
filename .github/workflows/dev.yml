@@ -38,9 +38,9 @@ jobs:
 
     steps:
     - name: Checkout bmds-ui
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: Checkout bmds@dev
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: USEPA/BMDS
         path: venv
@@ -54,7 +54,7 @@ jobs:
         key: vcpkg-${{ runner.os }}-${{ hashFiles('venv/vcpkg.json') }}
     - name: Acquire vcpkg
       if: steps.cache-vcpkg-deps.outputs.cache-hit != 'true'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: "Microsoft/vcpkg"
         path: venv/vcpkg
@@ -109,13 +109,13 @@ jobs:
         coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
         coverage html -d coverage -i
     - name: Upload pybmds wheel
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: pybmds
         path: venv/dist
         retention-days: 1
     - name: Upload Coverage Report
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: coverage
         path: coverage
@@ -126,8 +126,8 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         node-version: 22
         cache: 'yarn'
@@ -145,7 +145,7 @@ jobs:
       run: |
         npm --prefix ./frontend run build
     - name: Upload JS build
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: js
         path: bmds_ui/static/bundles/
@@ -178,7 +178,7 @@ jobs:
       NO_VITE_DEV: 1
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: actions/setup-python@v5
       with:
         python-version: "3.13"
@@ -188,12 +188,12 @@ jobs:
         cache-dependency-glob: "**/pyproject.toml"
 
     - name: Download JS build
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v6
       with:
         name: js
         path: bmds_ui/static/bundles/
     - name: Download pybmds wheel
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v6
       with:
         name: pybmds
         path: venv/dist
@@ -228,7 +228,7 @@ jobs:
         manage.py set_git_commit
         uv build --wheel
     - name: Upload wheel
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: wheel
         path: dist/*.whl
