@@ -133,19 +133,19 @@ class OutputStore {
     }
 
     @computed get selectedLOUDParameters() {
-        const outputs = this.outputs;
-        if (!_.isObject(outputs)) {
+        const output = this.selectedOutput;
+        if (!output) {
             return null;
         }
-        return outputs[this.selectedOutputIndex]["loud_parameter_groups"];
+        return output["loud_parameter_groups"];
     }
 
     @computed get BMDSummary() {
-        const outputs = this.outputs;
-        if (!_.isObject(outputs)) {
+        const output = this.selectedOutput;
+        if (!output) {
             return null;
         }
-        return outputs[this.selectedOutputIndex]["bmd_summary"];
+        return output["bmd_summary"];
     }
 
     @computed get LOUDParameterTracePng() {
