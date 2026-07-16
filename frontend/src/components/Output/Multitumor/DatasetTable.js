@@ -51,9 +51,14 @@ class DatasetTable extends Component {
         return (
             <>
                 <Table data={getData(store.multitumorDatasets)} />
-                <Table
-                    data={getCochranArmitageData(store.multitumorDatasets, store.cochranArmitage)}
-                />
+                {store.cochranArmitage ? (
+                    <Table
+                        data={getCochranArmitageData(
+                            store.multitumorDatasets,
+                            store.cochranArmitage
+                        )}
+                    />
+                ) : null}
             </>
         );
     }

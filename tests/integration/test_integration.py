@@ -318,8 +318,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
             # check output tab loads
             page.get_by_role("link", name="Output").click()
             if model_type == "multitumor":
-                logger.info(page.content())  # temp debug statement
-                expect(page.get_by_text("Model Results")).to_be_visible()
+                expect(page.get_by_role("heading", name="Model Results")).to_be_visible()
             else:
                 expect(page.locator("#frequentist-model-result")).to_be_visible()
 
@@ -345,8 +344,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
             # check output tab loads
             page.get_by_role("link", name="Output").click()
             if model_type == "multitumor":
-                logger.info(page.content())  # temp debug statement
-                expect(page.get_by_text("Model Results")).to_be_visible()
+                expect(page.get_by_role("heading", name="Model Results")).to_be_visible()
             else:
                 expect(page.locator("#frequentist-model-result")).to_be_visible()
 
