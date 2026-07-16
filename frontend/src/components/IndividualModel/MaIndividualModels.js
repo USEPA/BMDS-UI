@@ -9,44 +9,77 @@ import {ff} from "@/utils/formatters";
 @observer
 class MaIndividualModels extends Component {
     render() {
-        const {model_average, models, bmdSummary} = this.props,
-            hasRhat = bmdSummary && "R-hat" in bmdSummary,
-            METRICS = [
-                "BMD",
-                "BMDL",
-                "BMDU",
-                ...(hasRhat ? ["R-hat"] : []),
-                "Markov Chain Standard Error (Median)",
-                "Bulk Effective Sample Size",
-                "Tail Effective Sample Size",
-            ],
-            modelRows = models.map(model => [
-                model.name,
-                ff(model_average.priors[models.indexOf(model)]),
-                ff(model_average.posteriors[models.indexOf(model)]),
-                ...METRICS.map((metric, i) => (
-                    <FloatingPointHover key={i} value={bmdSummary?.[metric]?.[model.name]} />
-                )),
-            ]),
-            maRow = [
-                "Model Average",
-                "-",
-                "-",
-                ...METRICS.map((metric, i) => (
-                    <FloatingPointHover key={i} value={bmdSummary?.[metric]?.["MA_BMD"]} />
-                )),
-            ],
-            data = {
-                headers: ["Model", "Prior Weights", "Posterior Probability", ...METRICS],
-                colWidths: hasRhat
-                    ? [17, 8, 9, 8, 8, 8, 8, 12, 11, 11]
-                    : [18, 9, 10, 9, 9, 9, 12, 12, 12],
-                subheader: "Individual Model Results",
-                tblClasses: "table table-sm text-right col-l-1",
-                rows: [...modelRows, maRow],
-            };
+        const {model_average, models, bmdSummary, isLOUD} = this.props;
 
-        return (
+        // loud table setup
+        const hasRhat = bmdSummary && "R-hat" in bmdSummary;
+        const METRICS = isLOUD
+            ? [
+                  "BMD",
+                  "BMDL",
+                  "BMDU",
+                  ...(hasRhat ? ["R-hat"] : []),
+                  "Markov Chain Standard Error (Median)",
+                  "Bulk Effective Sample Size",
+                  "Tail Effective Sample Size",
+              ]
+            : null;
+
+        const modelRows = isLOUD
+            ? models.map(model => [
+                  model.name,
+                  ff(model_average.priors[models.indexOf(model)]),
+                  ff(model_average.posteriors[models.indexOf(model)]),
+                  ...METRICS.map((metric, i) => (
+                      <FloatingPointHover key={i} value={bmdSummary?.[metric]?.[model.name]} />
+                  )),
+              ])
+            : models.map((model, i) => [
+                  model.name,
+                  ff(model_average.priors[i]),
+                  ff(model_average.posteriors[i]),
+                  <FloatingPointHover key={1} value={model.results.bmdl} />,
+                  <FloatingPointHover key={2} value={model.results.bmd} />,
+                  <FloatingPointHover key={3} value={model.results.bmdu} />,
+              ]);
+
+        const maRow = isLOUD
+            ? [
+                  "Model Average",
+                  "-",
+                  "-",
+                  ...METRICS.map((metric, i) => (
+                      <FloatingPointHover key={i} value={bmdSummary?.[metric]?.["MA_BMD"]} />
+                  )),
+              ]
+            : null;
+
+        const data = isLOUD
+            ? {
+                  headers: ["Model", "Prior Weights", "Posterior Probability", ...METRICS],
+                  colWidths: hasRhat
+                      ? [17, 8, 9, 8, 8, 8, 8, 12, 11, 11]
+                      : [18, 9, 10, 9, 9, 9, 12, 12, 12],
+                  subheader: "Individual Model Results",
+                  tblClasses: "table table-sm text-right col-l-1",
+                  rows: [...modelRows, maRow],
+              }
+            : {
+                  headers: [
+                      "Model",
+                      "Prior Weights",
+                      "Posterior Probability",
+                      "BMDL",
+                      "BMD",
+                      "BMDU",
+                  ],
+                  colWidths: [18, 18, 18, 17, 17, 17],
+                  subheader: "Individual Model Results",
+                  tblClasses: "table table-sm text-right col-l-1",
+                  rows: modelRows,
+              };
+
+        const table = isLOUD ? (
             <div style={{marginTop: "20px"}}>
                 <Table data={data} />
                 {!hasRhat && (
@@ -58,12 +91,17 @@ class MaIndividualModels extends Component {
                     </div>
                 )}
             </div>
+        ) : (
+            <Table data={data} />
         );
+
+        return table;
     }
 }
 MaIndividualModels.propTypes = {
     model_average: PropTypes.object.isRequired,
     models: PropTypes.array.isRequired,
-    bmdSummary: PropTypes.object.isRequired,
+    bmdSummary: PropTypes.object,
+    isLOUD: PropTypes.bool.isRequired,
 };
 export default MaIndividualModels;

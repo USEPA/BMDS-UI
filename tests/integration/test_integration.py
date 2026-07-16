@@ -36,8 +36,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         page.locator("#analysis_model_type").select_option("C")
 
         # un-select loud models
-        page.locator("#select_all_loud_bayesian").click()
-        page.locator("#select_all_loud_bayesian").click()
+        page.locator("#select_all_loud_bayesian").click(click_count=2)
 
         # explicitly switch to MLE tab before interacting with frequentist controls
         page.locator("#navlink-mle").click()
@@ -111,6 +110,9 @@ class TestContinuousIntegration(PlaywrightTestCase):
         page.locator("#analysis_name").fill("abc")
         page.locator("#analysis_description").fill("def")
         page.locator("#analysis_model_type").select_option("D")
+
+        # un-select loud models
+        page.locator("#select_all_loud_bayesian").click()
 
         # explicitly switch to MLE tab before interacting with frequentist controls
         page.locator("#navlink-mle").click()

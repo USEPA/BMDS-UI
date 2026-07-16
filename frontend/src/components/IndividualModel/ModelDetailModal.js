@@ -188,6 +188,7 @@ class ModelAverageBody extends Component {
                             model_average={model.results}
                             models={bayesian_models}
                             bmdSummary={BMDSummary}
+                            isLOUD={isLOUD}
                         />
                     </Col>
                 </Row>
