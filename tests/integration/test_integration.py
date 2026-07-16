@@ -369,9 +369,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         page.locator("#loadAnalysisFile").set_input_files(v1_schema)
 
         page.get_by_role("link", name="Output").click()
-        page.get_by_text(
-            "Outputs may be out of dateThere are unsaved changes made to the inputs, and the"
-        ).click()
+        page.get_by_text("Outputs may be out of date").click()
         page.get_by_role("link", name="Hill").click()
         page.get_by_text("Hill Model").click()
         page.locator("#close-modal").click()
