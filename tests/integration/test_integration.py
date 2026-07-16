@@ -155,7 +155,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         page.locator("#close-modal").click()
 
         # display toxicr bayesian model average modal
-        page.locator("td", has_text="Model Average").click()
+        page.locator("#toxicr-bayesian-result-ma").click()
         expect(page.locator("#ma-result-summary tbody tr")).to_have_count(3)
         page.locator("#close-modal").click()
 
