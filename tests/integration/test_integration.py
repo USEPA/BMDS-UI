@@ -370,6 +370,6 @@ class TestContinuousIntegration(PlaywrightTestCase):
 
         page.get_by_role("link", name="Output").click()
         page.get_by_text("Outputs may be out of date").click()
-        page.get_by_role("link", name="Hill").click()
+        page.locator("#freq-result-0").click()
         page.get_by_text("Hill Model").click()
         page.locator("#close-modal").click()
