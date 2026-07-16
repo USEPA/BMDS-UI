@@ -35,6 +35,10 @@ class TestContinuousIntegration(PlaywrightTestCase):
         page.locator("#analysis_description").fill("def")
         page.locator("#analysis_model_type").select_option("C")
 
+        # un-select loud models
+        page.locator("#select_all_loud_bayesian").click()
+        page.locator("#select_all_loud_bayesian").click()
+
         # explicitly switch to MLE tab before interacting with frequentist controls
         page.locator("#navlink-mle").click()
 
