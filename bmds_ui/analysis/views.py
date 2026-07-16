@@ -238,6 +238,7 @@ class AnalysisDetail(DetailView):
                 "renewUrl": self.request.build_absolute_uri(self.object.get_renew_url()),
                 "deleteUrl": self.request.build_absolute_uri(self.object.get_delete_url()),
                 "patchInputUrl": self.object.get_api_patch_inputs_url(),
+                "loadFileUrl": self.object.get_api_load_file_url(),
                 "executeUrl": self.object.get_api_execute_url(),
                 "executeResetUrl": self.object.get_api_execute_reset_url(),
                 "deleteDateStr": self.object.deletion_date_str,

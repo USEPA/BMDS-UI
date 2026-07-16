@@ -51,6 +51,37 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             raise exceptions.ValidationError("Invalid data for migration") from None
         return Response(update.model_dump())
 
+    @action(detail=True, methods=("post",), url_path="load-file")
+    def load_file(self, request, *args, **kwargs):
+        """
+        Load a previously-exported analysis file's inputs/outputs onto this analysis instance.
+        """
+        instance = self.get_object()
+
+        # permissions check
+        if instance.password != request.data.get("editKey", ""):
+            raise exceptions.PermissionDenied()
+
+        data = request.data.get("data")
+        if not isinstance(data, dict):
+            raise exceptions.ValidationError("A 'data' object is required")
+
+        try:
+            update = schema.AnalysisMigrator.migrate(data)
+        except schema.SchemaMigrationException:
+            raise exceptions.ValidationError("Invalid data for migration") from None
+
+        migrated = update.analysis
+        instance.inputs = migrated.inputs
+        instance.outputs = migrated.outputs.model_dump(by_alias=True)
+        instance.errors = migrated.errors
+        instance.started = migrated.started
+        instance.ended = migrated.ended
+        instance.save()
+
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
     @action(
         detail=True,
         methods=("patch",),

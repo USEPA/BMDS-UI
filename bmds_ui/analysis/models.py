@@ -94,6 +94,9 @@ class Analysis(models.Model):
     def get_api_url(self):
         return reverse("api:analysis-detail", args=(str(self.id),))
 
+    def get_api_load_file_url(self):
+        return reverse("api:analysis-load-file", args=(str(self.id),))
+
     def get_api_patch_inputs_url(self):
         return reverse("api:analysis-patch-inputs", args=(str(self.id),))
 

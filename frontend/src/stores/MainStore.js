@@ -4,6 +4,7 @@ import {action, computed, observable, toJS} from "mobx";
 import slugify from "slugify";
 
 import {getHeaders, simulateClick} from "@/common";
+import Data from "@/components/Data/DataTab";
 import * as mc from "@/constants/mainConstants";
 import {parseServerErrors} from "@/utils/parsers";
 
@@ -292,13 +293,13 @@ class MainStore {
     }
 
     @action.bound loadAnalysisFromFile(file) {
-        const {csrfToken} = this.config.editSettings,
-            reader = new FileReader(),
-            migrateUrl = "/api/v1/analysis/migrate/";
+        const {csrfToken, editKey, loadFileUrl} = this.config.editSettings,
+            reader = new FileReader();
+
         reader.onload = e => {
             let payload;
             try {
-                payload = {data: JSON.parse(e.target.result)};
+                payload = {editKey, data: JSON.parse(e.target.result)};
             } catch {
                 this.showToast(
                     "Error - Cannot Load File",
@@ -307,15 +308,20 @@ class MainStore {
                 window.setTimeout(this.hideToast, 5000);
                 return;
             }
-            fetch(migrateUrl, {
+            fetch(loadFileUrl, {
                 method: "POST",
                 mode: "cors",
                 headers: getHeaders(csrfToken),
                 body: JSON.stringify(payload),
             })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw response;
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    this.updateModelStateFromApi(data.analysis);
+                    this.updateModelStateFromApi(data);
                     this.analysisValidated = true;
                     this.analysisSaved = false;
                     this.showToast(
