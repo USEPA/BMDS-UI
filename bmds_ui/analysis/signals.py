@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -8,4 +9,6 @@ from .models import Analysis
 
 @receiver(post_save, sender=Analysis)
 def vacuum_database(**kwargs):
+    if settings.IS_TESTING:
+        return
     transaction.on_commit(maybe_vacuum, robust=True)
