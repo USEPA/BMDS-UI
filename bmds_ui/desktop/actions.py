@@ -56,6 +56,7 @@ def setup_django_environment(db: Database):
     desktop.PUBLIC_DATA_ROOT = public_data_root
     desktop.STATIC_ROOT = public_data_root / "static"
     desktop.MEDIA_ROOT = public_data_root / "media"
+    desktop.DJANGO_VITE["default"]["manifest_path"] = str(public_data_root / "static" / "bundles" / "manifest.json")
 
     desktop.LOGS_PATH = logs_path
     desktop.LOGGING = desktop.setup_logging(logs_path)
