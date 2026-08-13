@@ -2,6 +2,7 @@ import tempfile
 from io import BytesIO
 from pathlib import Path
 
+from django.http import JsonResponse
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from pandas import DataFrame, ExcelWriter
@@ -217,7 +218,7 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             data = renderers.BinaryFile(data=response.content, filename=instance.slug)
             return Response(data)
 
-        return Response(response.model_dump(), content_type="application/json")
+        return JsonResponse(response.model_dump())
 
     @action(detail=True, renderer_classes=(renderers.DocxRenderer,))
     def word(self, request, *args, **kwargs):
@@ -260,7 +261,7 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             )
             return Response(renderers.BinaryFile(data=data, filename=instance.slug))
 
-        return Response(response.model_dump(), content_type="application/json")
+        return JsonResponse(response.model_dump())
 
     @action(
         detail=True,

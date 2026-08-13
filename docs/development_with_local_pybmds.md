@@ -40,8 +40,6 @@ if "fixture" in str(DATABASES["default"]["NAME"]):
 
 ```bash
 uv pip install -e ".[pg,dev]"
-
-cd ../
 poe sync-dev
 ```
 
