@@ -73,7 +73,7 @@ Access the app http://127.0.0.1:8100/
 Install Python 3.12
 
 ```bash
-cd "C:\Users\srizwan\BMDS\bmds-ui"
+cd "C:\Users\srizwan\PROJECTS\BMDS\bmds-ui"
 .venv\Scripts\activate
 uv python install 3.12.9
 ```
@@ -81,7 +81,7 @@ uv python install 3.12.9
 If needed, delete the existing venv and create a new one with python 3.12
 
 ```bash
-cd "C:\Users\srizwan\BMDS\bmds-ui"
+cd "C:\Users\srizwan\PROJECTS\BMDS\bmds-ui"
 rmdir /s /q .venv
 uv venv --python 3.12 .venv
 ```
@@ -98,7 +98,7 @@ dependencies = [
 In Developer Command Prompt, clone and bootstrap vcpkg
 
 ```bash
-cd "C:\Users\srizwan\BMDS\"
+cd "C:\Users\srizwan\PROJECTS\BMDS\"
 git clone https://github.com/microsoft/vcpkg.git
 cd vcpkg
 bootstrap-vcpkg.bat
@@ -130,27 +130,27 @@ Install all required C++ dependencies into the bmds folder.
 _This will take ~1 hour the first time. Repeat this step if dependencies change._
 
 ```bash
-cd "C:\Users\srizwan\BMDS\bmds"
+cd "C:\Users\srizwan\PROJECTS\BMDS\bmds"
 
-"C:\Users\srizwan\BMDS\vcpkg\vcpkg.exe" install --triplet x64-windows --x-install-root=vcpkg_installed
+"C:\Users\srizwan\PROJECTS\BMDS\vcpkg\vcpkg.exe" install --triplet x64-windows --x-install-root=vcpkg_installed
 
 ```
 
-Set environmental varibales.
+Set environmental variables.
 _Repeat this step every time a fresh Developer Command Prompt is opened_
 
 ```bash
-set VCPKG_ROOT=C:\Users\srizwan\BMDS\vcpkg
+set VCPKG_ROOT=C:\Users\srizwan\PROJECTS\BMDS\vcpkg
 set VCPKG_HOST_TRIPLET=x64-windows
 set VCPKG_TARGET_TRIPLET=x64-windows
-set CMAKE_TOOLCHAIN_FILE=C:\Users\srizwan\BMDS\vcpkg\scripts\buildsystems\vcpkg.cmake
+set CMAKE_TOOLCHAIN_FILE=C:\Users\srizwan\PROJECTS\BMDS\vcpkg\scripts\buildsystems\vcpkg.cmake
 ```
 
 Activate the venv and install bmds.
 _This step needs to be repeated when bmdscore source code changes._
 
 ```bash
-cd "C:\Users\srizwan\BMDS\bmds-ui"
+cd "C:\Users\srizwan\PROJECTS\BMDS\bmds-ui"
 .venv\Scripts\activate
 pip uninstall pybmds
 uv pip install -e "../bmds" -v
@@ -159,9 +159,9 @@ uv pip install -e "../bmds" -v
 Copy DLLs next to pyd file so Windows can always find them
 
 ```bash
-copy "C:\Users\srizwan\BMDS\bmds\vcpkg_installed\x64-windows\bin\gsl.dll" "C:\Users\srizwan\BMDS\bmds\src\pybmds\"
-copy "C:\Users\srizwan\BMDS\bmds\vcpkg_installed\x64-windows\bin\gslcblas.dll" "C:\Users\srizwan\BMDS\bmds\src\pybmds\"
-copy "C:\Users\srizwan\BMDS\bmds\vcpkg_installed\x64-windows\bin\nlopt.dll" "C:\Users\srizwan\BMDS\bmds\src\pybmds\"
+copy "C:\Users\srizwan\PROJECTS\BMDS\bmds\vcpkg_installed\x64-windows\bin\gsl.dll" "C:\Users\srizwan\PROJECTS\BMDS\bmds\src\pybmds\"
+copy "C:\Users\srizwan\PROJECTS\BMDS\bmds\vcpkg_installed\x64-windows\bin\gslcblas.dll" "C:\Users\srizwan\PROJECTS\BMDS\bmds\src\pybmds\"
+copy "C:\Users\srizwan\PROJECTS\BMDS\bmds\vcpkg_installed\x64-windows\bin\nlopt.dll" "C:\Users\srizwan\PROJECTS\BMDS\bmds\src\pybmds\"
 
 ```
 
@@ -177,7 +177,7 @@ Open another terminal and boot up frontend
 
 ```bash
 # Terminal #2
-cd "C:\Users\srizwan\BMDS\bmds-ui"
+cd "C:\Users\srizwan\PROJECTS\BMDS\bmds-ui"
 .venv\Scripts\activate
 poe run-js
 ```
@@ -212,7 +212,7 @@ You can flush your sqlite database and then re-load the startup data.
 Before running these commands, make sure the software is not running. (press the ctrl + c keys in all terminals to close out.)
 
 ```bash
-cd "C:\Users\srizwan\BMDS\bmds-ui"
+cd "C:\Users\srizwan\PROJECTS\BMDS\bmds-ui"
 .venv\Scripts\activate
 python manage.py flush
 python manage.py loaddata bmds_ui/analysis/fixtures/initial_data.json
@@ -223,15 +223,15 @@ python manage.py loaddata bmds_ui/analysis/fixtures/initial_data.json
 
 ```bash
 # Developer Command Prompt terminal #1
-cd "C:\Users\srizwan\BMDS\bmds-ui"
+cd "C:\Users\srizwan\PROJECTS\BMDS\bmds-ui"
 .venv\Scripts\activate
 
 # Set session varibles
 # *** Skip this step if you are not using local pybmds ***
-set VCPKG_ROOT="C:\Users\srizwan\BMDS\vcpkg"
+set VCPKG_ROOT="C:\Users\srizwan\PROJECTS\BMDS\vcpkg"
 set VCPKG_HOST_TRIPLET=x64-windows
 set VCPKG_TARGET_TRIPLET=x64-windows
-set CMAKE_TOOLCHAIN_FILE= " C:\Users\srizwan\BMDS\vcpkg\scripts\buildsystems\vcpkg.cmake"
+set CMAKE_TOOLCHAIN_FILE= "C:\Users\srizwan\PROJECTS\BMDS\vcpkg\scripts\buildsystems\vcpkg.cmake"
 
 # spin up backend
 poe run-py
@@ -239,7 +239,7 @@ poe run-py
 
 ```bash
 # terminal #2
-cd "C:\Users\srizwan\BMDS\bmds-ui"
+cd "C:\Users\srizwan\PROJECTS\BMDS\bmds-ui"
 .venv\Scripts\activate
 poe run-js
 ```
@@ -249,7 +249,7 @@ Access the app http://127.0.0.1:8100/
 ## Run UI TESTS
 
 ```bash
-cd "C:\Users\srizwan\BMDS\bmds-ui"
+cd "C:\Users\srizwan\PROJECTS\BMDS\bmds-ui"
 .venv\Scripts\activate
 uv run pytest tests
 ```
