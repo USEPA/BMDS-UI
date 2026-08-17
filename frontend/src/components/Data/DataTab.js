@@ -1,6 +1,7 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import CochranArmitageAboutModal from "./CochranArmitageAboutModal";
 
 import Button from "../common/Button";
 import DoseResponsePlot from "../common/DoseResponsePlot";
@@ -17,6 +18,7 @@ import {MODEL_DICHOTOMOUS, MODEL_MULTI_TUMOR} from "@/constants/mainConstants";
 class Data extends Component {
     render() {
         const {dataStore} = this.props;
+
         const cochranArmitageLabels = ["Statistic", "P-Value (Asymptotic)", "P-Value (Exact)"];
         return (
             <div className="container-fluid">
@@ -44,7 +46,7 @@ class Data extends Component {
                                 {[MODEL_DICHOTOMOUS, MODEL_MULTI_TUMOR].includes(
                                     dataStore.rootStore.mainStore.model_type
                                 ) && (
-                                    <div style={{paddingTop: "2px"}}>
+                                    <div className="pt-4">
                                         <Button
                                             id="cochranArmitageButton"
                                             className="btn btn-primary"
@@ -52,6 +54,17 @@ class Data extends Component {
                                             disabled={!dataStore.canRunCochranArmitage}
                                             onClick={() => dataStore.performCochranArmitage()}
                                         />
+                                        <Button
+                                            id="cochranArmitageAboutButton"
+                                            className="btn btn-info btn ml-1"
+                                            text="About"
+                                            onClick={() => dataStore.setAboutModal(true)}
+                                        />
+                                        <>
+                                            {dataStore.showAboutModal ? (
+                                                <CochranArmitageAboutModal store={dataStore} />
+                                            ) : null}
+                                        </>
                                         <div>
                                             {dataStore.CochranArmitageResult && (
                                                 <>

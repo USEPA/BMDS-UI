@@ -82,6 +82,12 @@ class DataStore {
         this.canRunCochranArmitage = true;
     }
 
+    @observable showAboutModal = false;
+    @action.bound
+    setAboutModal(value) {
+        this.showAboutModal = value;
+    }
+
     @action.bound
     async performCochranArmitage() {
         this.selected_data = toCSV(this.selectedDataset, ["doses", "ns", "incidences"]);
