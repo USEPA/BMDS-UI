@@ -202,15 +202,21 @@ class Output extends Component {
                                 />
                                 <div>
                                     {outputStore.isNestedDichotomous ? (
-                                        <Button
-                                            className="btn btn-info btn-sm float-right mt-2"
-                                            icon="eye-fill"
-                                            onClick={e => {
-                                                e.preventDefault();
-                                                outputStore.viewAdditionalNestedPlots();
-                                            }}
-                                            text="View Additional Plots"
-                                        />
+                                        <>
+                                            <div className="mt-4">
+                                                <div className="">View additional plots: </div>
+
+                                                <Button
+                                                    className="btn btn-info btn-m float-left"
+                                                    icon="eye-fill"
+                                                    onClick={e => {
+                                                        e.preventDefault();
+                                                        outputStore.viewAdditionalNestedPlots();
+                                                    }}
+                                                    text="Variability within dose groups"
+                                                />
+                                            </div>
+                                        </>
                                     ) : null}
                                 </div>
                             </div>

@@ -114,7 +114,7 @@ def build_docx(
     # Add the additional nested dichotomous plots
     if additionalNestedDichotomousPlots:
         report.document.add_paragraph(" ")
-        report.document.add_heading("Additional Nested Dichotomous Plots", 2)
+        report.document.add_heading("Variability Within Dose Groups", 2)
         for output in analysis.outputs["outputs"]:
             dataset_name = str(output["frequentist"]["dataset"]["metadata"]["name"])
             optionset_num = str(output["option_index"] + 1)
