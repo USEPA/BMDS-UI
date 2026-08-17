@@ -360,6 +360,11 @@ class DataStore {
         return this.rootStore.mainStore.model_type;
     }
 
+    @computed get expectedColumnNames() {
+        const dtype = this.selectedDataset.dtype;
+        return columns[dtype].map(col => dc.columnHeaders[col]);
+    }
+
     @computed get getEnabledDatasets() {
         return this.rootStore.dataOptionStore.options
             .filter(d => d.enabled === true)
@@ -399,6 +404,7 @@ class DataStore {
                             "\t"
                         );
                     }).join("\n");
+
                 return value;
             },
             willShow = !this.showTabularModal,

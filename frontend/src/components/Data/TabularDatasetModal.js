@@ -21,7 +21,9 @@ class TabularDatasetModal extends Component {
                     <div className="form-group">
                         <p className="text-muted">
                             Copy and paste data from Excel into the text area below. Data must be
-                            all numeric with no headers or descriptive columns.
+                            all numeric with no headers or descriptive columns, and columns must be
+                            pasted in the following order: <br></br>
+                            {dataStore.expectedColumnNames.join(", ")}
                         </p>
 
                         {dataStore.tabularModalError ? (
