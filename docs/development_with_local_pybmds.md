@@ -226,7 +226,7 @@ poe format-py
 yarn --cwd ./frontend run biome check --write .
 ```
 
-## Everyday Setup
+## EVERYDAY SETUP
 
 ```bash
 # Developer Command Prompt terminal #1
@@ -259,4 +259,14 @@ Access the app http://127.0.0.1:8100/
 cd "C:\Users\srizwan\PROJECTS\BMDS\bmds-ui"
 .venv\Scripts\activate
 uv run pytest tests
+```
+
+## Launch BMDS desktop:
+
+```bash
+cd "C:\Users\srizwan\BMDS\bmds-ui"
+.venv\Scripts\activate
+cd bmds-desktop
+bmds-desktop
+
 ```
