@@ -484,6 +484,7 @@ class MainStore {
         if (url === "wordUrl") {
             _.extend(params, toJS(this.wordReportOptions));
         }
+        this.showToast("Requesting report", "Sending your request to the server...");
         const fetchReport = () => {
                 fetch(apiUrl + "?" + new URLSearchParams(params).toString()).then(processResponse);
             },

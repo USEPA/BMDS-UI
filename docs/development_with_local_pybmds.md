@@ -217,6 +217,15 @@ python manage.py loaddata bmds_ui/analysis/fixtures/initial_data.json
 
 ```
 
+## RUN LINTING COMMANDS BEFORE COMMIT TO GITHUB:
+
+```bash
+cd "C:\Users\srizwan\PROJECTS\BMDS\bmds-ui"
+.venv\Scripts\activate
+poe format-py
+yarn --cwd ./frontend run biome check --write .
+```
+
 ## Everyday Setup
 
 ```bash

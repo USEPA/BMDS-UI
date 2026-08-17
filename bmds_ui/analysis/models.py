@@ -36,6 +36,8 @@ logger = logging.getLogger(__name__)
 
 # Debugging utility
 DEBUG = True
+
+
 def find_nonfinite(obj, path="outputs"):
     found = []
     if isinstance(obj, float) and (obj != obj or obj in (float("inf"), float("-inf"))):
@@ -46,7 +48,7 @@ def find_nonfinite(obj, path="outputs"):
     elif isinstance(obj, list):
         for i, v in enumerate(obj):
             found.extend(find_nonfinite(v, f"{path}[{i}]"))
-    return found   
+    return found
 
 
 def get_deletion_date(current_deletion_date: datetime | None = None) -> datetime | None:
@@ -395,11 +397,13 @@ class Analysis(models.Model):
         )
 
         self.outputs = analysis_output.model_dump(by_alias=True)
-            
-        if DEBUG: 
+
+        if DEBUG:
             nonfinite = find_nonfinite(self.outputs)
             if nonfinite:
-                logger.error(f"{self.id}: {len(nonfinite)} non-finite values found: {nonfinite[:20]}")
+                logger.error(
+                    f"{self.id}: {len(nonfinite)} non-finite values found: {nonfinite[:20]}"
+                )
 
         self.errors = [str(output.error) for output in outputs if getattr(output, "error", None)]
         self.ended = now()

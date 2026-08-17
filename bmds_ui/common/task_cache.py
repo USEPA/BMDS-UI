@@ -78,8 +78,8 @@ class ReportCache(abc.ABC):
         response = ReportResponse(
             status=ReportStatus.QUEUED,
             content=None,
-            header="Report being created",
-            message="Report requested... please wait until results are complete.",
+            header="Request received",
+            message="Report being created... please wait until results are complete.",
         )
         self.cache.set(key, response, 60 * 10)  # save a queued status for up to 10 minutes
         self.invoke_celery_task()
