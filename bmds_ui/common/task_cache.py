@@ -9,6 +9,7 @@ from pydantic import BaseModel
 class ReportStatus(IntEnum):
     QUEUED = 1
     COMPLETE = 2
+    FAILED = 3
 
 
 class ReportResponse(BaseModel):
@@ -87,10 +88,21 @@ class ReportCache(abc.ABC):
 
     def create_content(self) -> ReportResponse:
         """
-        Generate and cache the content.
+        Generate and cache the content. On failure, cache a FAILED response instead of leaving the stale QUEUED entry to expire silently. 
         """
         key = self.cache_key
-        content = self.create()
+        try: 
+            content = self.create()
+        except Exception as e: 
+            response = ReportResponse(
+                status=ReportStatus.FAILED,
+                content=None,
+                header="Report Failed",
+                message=str(e) or "An error occured while generating the report",
+                        
+            )
+            self.cache.set(key, response, timeout=60 * 10)
+            raise
         response = ReportResponse(
             status=ReportStatus.COMPLETE,
             content=content,
