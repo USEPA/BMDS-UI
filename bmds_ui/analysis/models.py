@@ -35,7 +35,7 @@ from .utils import re_hex_color
 logger = logging.getLogger(__name__)
 
 # Debugging utility
-DEBUG = True
+DEBUG = False
 
 
 def find_nonfinite(obj, path="outputs"):
@@ -49,6 +49,16 @@ def find_nonfinite(obj, path="outputs"):
         for i, v in enumerate(obj):
             found.extend(find_nonfinite(v, f"{path}[{i}]"))
     return found
+
+
+def sanitize_nonfinite(obj):
+    if isinstance(obj, float) and (obj != obj or obj in (float("inf"), float("-inf"))):
+        return None
+    elif isinstance(obj, dict):
+        return {k: sanitize_nonfinite(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [sanitize_nonfinite(v) for v in obj]
+    return obj
 
 
 def get_deletion_date(current_deletion_date: datetime | None = None) -> datetime | None:
@@ -396,14 +406,16 @@ class Analysis(models.Model):
             cochran_armitage_result=cochran_armitage_result or None,
         )
 
-        self.outputs = analysis_output.model_dump(by_alias=True)
-
         if DEBUG:
+            self.outputs = analysis_output.model_dump(by_alias=True)
             nonfinite = find_nonfinite(self.outputs)
             if nonfinite:
                 logger.error(
                     f"{self.id}: {len(nonfinite)} non-finite values found: {nonfinite[:20]}"
                 )
+            self.outputs = sanitize_nonfinite(analysis_output.model_dump(by_alias=True))
+        else:
+            self.outputs = analysis_output.model_dump(by_alias=True)
 
         self.errors = [str(output.error) for output in outputs if getattr(output, "error", None)]
         self.ended = now()
