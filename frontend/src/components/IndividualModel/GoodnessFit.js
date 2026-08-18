@@ -21,7 +21,7 @@ const getDichotomousData = function (dataset, model) {
             colWidths: [17, 16, 16, 17, 17, 17],
             rows: dataset.doses.map((dose, i) => {
                 return [
-                    dose,
+                    ff(dose),
                     dataset.ns[i],
                     dataset.incidences[i],
                     ff(gof.expected[i]),
@@ -48,7 +48,7 @@ const getDichotomousData = function (dataset, model) {
             colWidths: [1, 1, 1, 1, 1, 1, 1],
             rows: gof.dose.map((item, i) => {
                 return [
-                    item,
+                    ff(item),
                     gof.size[i],
                     useFF ? ff(gof.obs_mean[i]) : gof.obs_mean[i],
                     ff(gof.est_mean[i]),
@@ -78,7 +78,7 @@ const getDichotomousData = function (dataset, model) {
             colWidths: [10, 10, 10, 12, 12, 12, 10, 12, 12],
             rows: dataset.doses.map((dose, i) => {
                 return [
-                    dose,
+                    ff(dose),
                     dataset.ns[i],
                     useFF ? ff(gof.obs_mean[i]) : gof.obs_mean[i],
                     ff(gof.calc_mean[i]),
