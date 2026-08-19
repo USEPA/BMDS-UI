@@ -19,10 +19,20 @@ class LOUDBayesianResultTable extends Component {
         }
 
         const colWidths = [12, 11, 11, 11, 11, 11, 11, 11],
-            ma = selectedLOUDBayesian.model_average;
+            ma = selectedLOUDBayesian.model_average,
+            priorByModelIndex = {},
+            posteriorByModelIndex = {};
+
+        if (ma) {
+            ma.model_indexes.forEach((sessionIndex, i) => {
+                priorByModelIndex[sessionIndex] = ma.results.priors[i];
+                posteriorByModelIndex[sessionIndex] = ma.results.posteriors[i];
+            });
+        }
 
         return (
             <table id="loud-bayesian-model-result" className="table table-sm text-right col-l-1">
+                S
                 <colgroup>
                     {_.map(colWidths).map((value, idx) => (
                         <col key={idx} width={`${value}%`}></col>
@@ -58,9 +68,9 @@ class LOUDBayesianResultTable extends Component {
                                         {model.settings.verbose_name ?? model.name}
                                     </a>
                                 </td>
-                                <td>{ma ? fractionalFormatter(ma.results.priors[index]) : "-"}</td>
+                                <td>{ma ? fractionalFormatter(priorByModelIndex[index]) : "-"}</td>
                                 <td>
-                                    {ma ? fractionalFormatter(ma.results.posteriors[index]) : "-"}
+                                    {ma ? fractionalFormatter(posteriorByModelIndex[index]) : "-"}
                                 </td>
                                 <td>
                                     <FloatingPointHover value={model.results.bmdl} />
