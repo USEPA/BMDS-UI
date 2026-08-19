@@ -32,7 +32,6 @@ class LOUDBayesianResultTable extends Component {
 
         return (
             <table id="loud-bayesian-model-result" className="table table-sm text-right col-l-1">
-                S
                 <colgroup>
                     {_.map(colWidths).map((value, idx) => (
                         <col key={idx} width={`${value}%`}></col>
