@@ -167,6 +167,7 @@ run
 
 ```bash
 # Terminal #1
+uv pip install -e ".[pg,dev]"
 poe sync-dev
 poe run-py
 ```

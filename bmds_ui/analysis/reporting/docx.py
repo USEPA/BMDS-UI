@@ -4,10 +4,12 @@ from io import BytesIO
 from typing import TYPE_CHECKING
 
 import docx
+import pandas as pd
 from django.conf import settings
 from django.utils.timezone import now
 from pandas import DataFrame
 
+from pybmds.constants import ModelClass
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott
 from pybmds.reporting.styling import Report, df_to_table, write_setting_p
@@ -28,6 +30,53 @@ def write_version_p(report: Report, bmds_ui: str, pybmds: str, bmdscore):
     version_label = "BMDS Desktop Version: " if settings.IS_DESKTOP else "BMDS Online Version: "
     version_str = f"{bmds_ui} (pybmds {pybmds}; bmdscore {bmdscore})"
     write_setting_p(report, version_label, version_str)
+
+
+def _write_loud_diagnostics(report: Report, output: dict):
+    """Write LOUD model-averaging diagnostics from stored analysis output artifacts. 
+    Reads pre-rendered PNGs and tables from `output` (an AnalysisSessionSchema dict,
+    by_alias) rather than recomputing them, since LOUD draws are stripped from
+    `analysis.outputs` at storage time (Session.serialize(include_loud_draws=False)). 
+    """ 
+    static_plots = output.get("static_plots") or {}
+    bmd_summary = output.get("bmd_summary")
+    parameter_groups = output.get("loud_parameter_groups") or []
+
+    header_style = report.styles.get_header_style(2)
+    report.document.add_paragraph("Model Averaging Diagnostics (LOUD)", header_style)
+    report.document.add_paragraph( 
+        "The following diagnostics summarize the model-averaged posterior " 
+        "distribution of the benchmark dose (BMD) under the LOUD framework." 
+    ) 
+
+    posterior_png = static_plots.get("loud_posterior_plot_png")
+    if posterior_png: 
+        report.document.add_paragraph("Posterior distribution of model-averaged BMD") 
+        add_png_b64_to_docx(report.document, posterior_png, width_in=6) 
+
+    overlay_png = static_plots.get("loud_overlay_plot_png") 
+    if overlay_png: 
+        report.document.add_paragraph( 
+            "Overlay of model-specific and model-averaged BMD distributions" 
+        ) 
+        add_png_b64_to_docx(report.document, overlay_png, width_in=6) 
+
+    if bmd_summary: 
+        report.document.add_paragraph("Summary statistics for BMD and model-averaged BMD") 
+        df_to_table(report, pd.DataFrame(bmd_summary).reset_index().fillna("")) 
+
+    trace_pngs = static_plots.get("loud_parameter_trace_pngs") or {} 
+    for group in parameter_groups: 
+        name = group.get("name", "") 
+        columns = group.get("columns", []) 
+        rows = group.get("rows", []) 
+        if rows: 
+            report.document.add_paragraph(f"{name} model parameters") 
+            df_to_table(report, pd.DataFrame(rows, columns=columns)) 
+        trace_png = trace_pngs.get(name) 
+        if trace_png: 
+            report.document.add_paragraph(f"{name} model parameter visualizations") 
+            add_png_b64_to_docx(report.document, trace_png, width_in=7.0) 
 
 
 def build_docx(
@@ -99,17 +148,50 @@ def build_docx(
         report.document.add_paragraph("Execution is incomplete; no report could be generated")
     elif analysis.has_errors:
         report.document.add_paragraph("Execution generated errors; no report can be generated")
-    else:
+    elif analysis.model_class == ModelClass.MULTI_TUMOR:
+        # Multitumor has no LOUD model-averaging diagnostics path;
         batch = analysis.to_batch()
         batch.to_docx(
             report=report,
             header_level=1,
             citation=False,
-            dataset_format_long=dataset_format_long,
-            all_models=all_models,
-            bmd_cdf_table=bmd_cdf_table,
-            session_inputs_table=True,
         )
+    else:
+        sessions = analysis.get_sessions()
+        outputs = analysis.outputs["outputs"]
+        for session, output in zip(sessions, outputs, strict=True):
+            if session.frequentist:
+                session.frequentist.to_docx(
+                    report,
+                    header_level=1,
+                    citation=False,
+                    dataset_format_long=dataset_format_long,
+                    all_models=all_models,
+                    bmd_cdf_table=bmd_cdf_table,
+                    session_inputs_table=True
+                )
+            if session.toxicr_bayesian:
+                session.toxicr_bayesian.to_docx(
+                    report,
+                    header_level=1,
+                    citation=False,
+                    dataset_format_long=dataset_format_long,
+                    all_models=all_models,
+                    bmd_cdf_table=bmd_cdf_table,
+                    session_inputs_table=True,
+                )
+            if session.loud_bayesian:
+                session.loud_bayesian.to_docx(
+                    report, 
+                    header_level=1,
+                    citation=False,
+                    dataset_format_long=dataset_format_long,
+                    all_models=all_models,
+                    bmd_cdf_table=bmd_cdf_table,
+                    session_inputs_table=True,
+                    skip_loud_diagnostics=True,
+                )
+                _write_loud_diagnostics(report, output)
 
     # Add the additional nested dichotomous plots
     if additionalNestedDichotomousPlots:
