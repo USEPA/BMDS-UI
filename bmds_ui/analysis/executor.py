@@ -314,7 +314,9 @@ class AnalysisSession(NamedTuple):
             option_index=self.option_index,
             frequentist=self.frequentist.to_dict() if self.frequentist else None,
             toxicr_bayesian=self.toxicr_bayesian.to_dict() if self.toxicr_bayesian else None,
-            loud_bayesian=self.loud_bayesian.to_dict(include_loud_draws=False) if self.loud_bayesian else None, 
+            loud_bayesian=self.loud_bayesian.to_dict(include_loud_draws=False)
+            if self.loud_bayesian
+            else None,
             static_plots=static_plots,
             loud_parameter_groups=getattr(self.loud_bayesian, "_parameter_groups_data", None)
             if self.loud_bayesian

@@ -33,50 +33,50 @@ def write_version_p(report: Report, bmds_ui: str, pybmds: str, bmdscore):
 
 
 def _write_loud_diagnostics(report: Report, output: dict):
-    """Write LOUD model-averaging diagnostics from stored analysis output artifacts. 
+    """Write LOUD model-averaging diagnostics from stored analysis output artifacts.
     Reads pre-rendered PNGs and tables from `output` (an AnalysisSessionSchema dict,
     by_alias) rather than recomputing them, since LOUD draws are stripped from
-    `analysis.outputs` at storage time (Session.serialize(include_loud_draws=False)). 
-    """ 
+    `analysis.outputs` at storage time (Session.serialize(include_loud_draws=False)).
+    """
     static_plots = output.get("static_plots") or {}
     bmd_summary = output.get("bmd_summary")
     parameter_groups = output.get("loud_parameter_groups") or []
 
     header_style = report.styles.get_header_style(2)
     report.document.add_paragraph("Model Averaging Diagnostics (LOUD)", header_style)
-    report.document.add_paragraph( 
-        "The following diagnostics summarize the model-averaged posterior " 
-        "distribution of the benchmark dose (BMD) under the LOUD framework." 
-    ) 
+    report.document.add_paragraph(
+        "The following diagnostics summarize the model-averaged posterior "
+        "distribution of the benchmark dose (BMD) under the LOUD framework."
+    )
 
     posterior_png = static_plots.get("loud_posterior_plot_png")
-    if posterior_png: 
-        report.document.add_paragraph("Posterior distribution of model-averaged BMD") 
-        add_png_b64_to_docx(report.document, posterior_png, width_in=6) 
+    if posterior_png:
+        report.document.add_paragraph("Posterior distribution of model-averaged BMD")
+        add_png_b64_to_docx(report.document, posterior_png, width_in=6)
 
-    overlay_png = static_plots.get("loud_overlay_plot_png") 
-    if overlay_png: 
-        report.document.add_paragraph( 
-            "Overlay of model-specific and model-averaged BMD distributions" 
-        ) 
-        add_png_b64_to_docx(report.document, overlay_png, width_in=6) 
+    overlay_png = static_plots.get("loud_overlay_plot_png")
+    if overlay_png:
+        report.document.add_paragraph(
+            "Overlay of model-specific and model-averaged BMD distributions"
+        )
+        add_png_b64_to_docx(report.document, overlay_png, width_in=6)
 
-    if bmd_summary: 
-        report.document.add_paragraph("Summary statistics for BMD and model-averaged BMD") 
-        df_to_table(report, pd.DataFrame(bmd_summary).reset_index().fillna("")) 
+    if bmd_summary:
+        report.document.add_paragraph("Summary statistics for BMD and model-averaged BMD")
+        df_to_table(report, pd.DataFrame(bmd_summary).reset_index().fillna(""))
 
-    trace_pngs = static_plots.get("loud_parameter_trace_pngs") or {} 
-    for group in parameter_groups: 
-        name = group.get("name", "") 
-        columns = group.get("columns", []) 
-        rows = group.get("rows", []) 
-        if rows: 
-            report.document.add_paragraph(f"{name} model parameters") 
-            df_to_table(report, pd.DataFrame(rows, columns=columns)) 
-        trace_png = trace_pngs.get(name) 
-        if trace_png: 
-            report.document.add_paragraph(f"{name} model parameter visualizations") 
-            add_png_b64_to_docx(report.document, trace_png, width_in=7.0) 
+    trace_pngs = static_plots.get("loud_parameter_trace_pngs") or {}
+    for group in parameter_groups:
+        name = group.get("name", "")
+        columns = group.get("columns", [])
+        rows = group.get("rows", [])
+        if rows:
+            report.document.add_paragraph(f"{name} model parameters")
+            df_to_table(report, pd.DataFrame(rows, columns=columns))
+        trace_png = trace_pngs.get(name)
+        if trace_png:
+            report.document.add_paragraph(f"{name} model parameter visualizations")
+            add_png_b64_to_docx(report.document, trace_png, width_in=7.0)
 
 
 def build_docx(
@@ -168,7 +168,7 @@ def build_docx(
                     dataset_format_long=dataset_format_long,
                     all_models=all_models,
                     bmd_cdf_table=bmd_cdf_table,
-                    session_inputs_table=True
+                    session_inputs_table=True,
                 )
             if session.toxicr_bayesian:
                 session.toxicr_bayesian.to_docx(
@@ -182,7 +182,7 @@ def build_docx(
                 )
             if session.loud_bayesian:
                 session.loud_bayesian.to_docx(
-                    report, 
+                    report,
                     header_level=1,
                     citation=False,
                     dataset_format_long=dataset_format_long,
