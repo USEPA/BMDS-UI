@@ -25,8 +25,7 @@ requires-python = ">=3.11"
 dependencies = [
   # pybmds
   "pybmds==26.1a3",
-
-
+  
   # website
   "Django~=5.2.5",
   "django-anymail~=13.0.1",
@@ -49,6 +48,7 @@ dependencies = [
   "rich==13.7.1",
   "textual==1.0.0",
   "whitenoise~=6.9.0",
+  "netcdf4>=1.7.4",
 ]
 
 [project.optional-dependencies]
