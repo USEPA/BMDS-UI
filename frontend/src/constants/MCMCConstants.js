@@ -1,8 +1,8 @@
 export const options = {
         seed: 0,
-        n_chains: 1,
-        iterations_per_chain: 50000,
-        burnin: 5000,
+        n_chains: 4,
+        iterations_per_chain: 7500,
+        burnin: 1500,
     },
     chainOptions = [
         {value: 1, label: "1"},
