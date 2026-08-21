@@ -109,9 +109,8 @@ class Actions extends Component {
 
                             {mainStore.hasLOUDBayesianOutput ? (
                                 <a
-                                    className="dropdown-item disabled"
+                                    className="dropdown-item"
                                     href="#"
-                                    aria-disabled="true"
                                     onClick={e => {
                                         e.preventDefault();
                                         mainStore.saveLOUDInferenceData();

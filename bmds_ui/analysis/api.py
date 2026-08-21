@@ -1,4 +1,6 @@
+import logging
 import tempfile
+import traceback
 from io import BytesIO
 from pathlib import Path
 
@@ -11,6 +13,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 
+import pybmds
+from pybmds import bmdscore
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott
 from pybmds.plotting.LOUD import model_average_to_inferencedata
@@ -22,6 +26,7 @@ from ..common.task_cache import ReportStatus
 from ..common.utils import get_bool
 from ..common.validation import pydantic_validate
 from . import models, schema, serializers, validators
+from .executor import build_loud_bayesian_session
 from .reporting.cache import DocxReportCache, ExcelReportCache
 from .reporting.docx import (
     add_update_url,
@@ -29,6 +34,9 @@ from .reporting.docx import (
     build_polyk_docx,
     build_raoscott_docx,
 )
+from .transforms import build_dataset
+
+logger = logging.getLogger(__name__)
 
 
 class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -286,31 +294,75 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
                 "dataset_index and option_index must be integers"
             ) from err
 
+        if not instance.is_finished or instance.has_errors:
+            raise exceptions.NotFound("Analysis has not finished sucessfully")
+
         # Find the matching output
         outputs = instance.outputs.get("outputs", [])
-        output_index = next(
+        match = next(
             (
-                i
-                for i, o in enumerate(outputs)
+                o
+                for o in outputs
                 if o["dataset_index"] == dataset_index and o["option_index"] == option_index
             ),
             None,
         )
-        if output_index is None:
+        if match is None:
             raise exceptions.NotFound("No output found for given dataset_index and option_index")
+        if match.get("loud_bayesian") is None:
+            raise exceptions.notFound("No LOUD Bayesian sesison found for this output")
 
-        cache = ExcelReportCache(analysis=instance)
-        cache.request_content()
+        # Version guard
+        stored_version = instance.outputs.get("bmds_python_version")
+        current_version = {"python": pybmds.__version__, "dll": bmdscore.version()}
+        if stored_version != current_version:
+            stored_python = (stored_version or {}).get("python", "unknown")
+            stored_dll = (stored_version or {}).get("dll", "unknown")
+            raise exceptions.ValidationError(
+                "This analysis was run with pybmds "
+                f"{stored_python} /bmdscore {stored_dll}, but the server is currently "
+                f"running pybmds {current_version['python']} / bmdscore {current_version['dll']}. "
+                "Re-run the analysis to enable this download."
+            )
 
-        session = instance.get_session(output_index)
-        if not session.loud_bayesian:
-            raise exceptions.NotFound("No LOUD Bayesian session found for this output")
+        # Recompute only the LOUD branch in isolation, for this dataset/option.
+        try:
+            inputs = instance.inputs
+            dataset = build_dataset(inputs["datasets"][dataset_index])
+            options = inputs["options"][option_index]
+            dataset_options = inputs["dataset_options"][dataset_index]
+            mcmc_options = inputs.get("mcmc_options", {})
+            loud_session = build_loud_bayesian_session(
+                dataset, inputs, options, dataset_options, mcmc_options
+            )
+            if loud_session is None:
+                raise exceptions.NotFound(
+                    "No LOUD Bayesian models configured for this dataset/option"
+                )
+            loud_session.add_model_averaging()
+            loud_session.execute()
+
+            if loud_session.model_average is None or not loud_session.model_average.has_results:
+                raise exceptions.APIException("LOUD model averaging did not produce results")
+
+        except exceptions.APIException:
+            raise
+        except Exception:
+            err = traceback.format_exc()
+
+            logger.error(
+                f"{instance.id}: LOUD recompute failed "
+                f"(dataset_index={dataset_index}, option_index={option_index}): {err}",
+            )
+            raise exceptions.APIException(
+                "LOUD recompute failed; unable to generate inference data"
+            ) from None
 
         with tempfile.NamedTemporaryFile(suffix=".nc", delete=False) as tmp:
             tmp_path = Path(tmp.name)
 
         try:
-            model_average_to_inferencedata(session.loud_bayesian, path=tmp_path)
+            model_average_to_inferencedata(loud_session, path=tmp_path)
             with tmp_path.open("rb") as f:
                 data_bytes = BytesIO(f.read())
         finally:
