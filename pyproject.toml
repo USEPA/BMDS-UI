@@ -25,7 +25,6 @@ requires-python = ">=3.11"
 dependencies = [
   # pybmds
   "pybmds==26.1a3",
-  
   # website
   "Django~=5.2.5",
   "django-anymail~=13.0.1",
@@ -35,20 +34,19 @@ dependencies = [
   "uritemplate~=4.1.1",
   "django-reversion~=5.1.0",
   "PyYAML~=6.0.2",
-
   # tasks
   "celery~=5.5.3",
   "billiard~=4.2.1",
   "kombu~=5.5.4",
   "plotly~=6.3.0",
   "redis~=6.4.0",
-
   # desktop
   "packaging~=25.0",
   "rich==13.7.1",
   "textual==1.0.0",
   "whitenoise~=6.9.0",
   "netcdf4>=1.7.4",
+  "pillow>=12.3.0",
 ]
 
 [project.optional-dependencies]

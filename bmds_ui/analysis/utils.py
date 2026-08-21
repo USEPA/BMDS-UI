@@ -5,6 +5,7 @@ import re
 from django.conf import settings
 from django.utils.timezone import now
 from docx.shared import Inches
+from PIL import Image
 
 from pybmds.utils import get_version
 
@@ -26,14 +27,23 @@ def get_citation() -> str:
 re_hex_color = re.compile("^#(?:[0-9a-fA-F]{3}){1,2}$")
 
 
-def fig_to_png_b64(fig, dpi: int = 150, tight: bool = False) -> str:
+def fig_to_png_b64(fig, dpi: int = 100, tight: bool = False) -> str:
     buf = io.BytesIO()
     kwargs = {"format": "png", "dpi": dpi}
     if tight:
         kwargs["bbox_inches"] = "tight"
     fig.savefig(buf, **kwargs)
     buf.seek(0)
-    return base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    img = Image.open(buf)
+    # quantize to a palette if the image doesn't need full RGBA
+    if img.mode in ("RGBA", "RGB"):
+        img = img.convert("P", palette=Image.ADAPTIVE, colors=256)
+
+    out = io.BytesIO()
+    img.save(out, format="PNG", optimize=True, compress_level=9)
+    out.seek(0)
+    return base64.b64encode(out.getvalue()).decode("utf-8")
 
 
 def add_png_b64_to_docx(
