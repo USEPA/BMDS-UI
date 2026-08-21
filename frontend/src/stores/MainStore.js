@@ -388,10 +388,42 @@ class MainStore {
             option_index: output.option_index,
         });
         const url = `${this.config.loudUrl}?${params.toString()}`;
-        const response = await fetch(url, {method: "GET", mode: "cors"});
-        const blob = await response.blob();
-        const filename = response.headers.get("content-disposition").match(/filename="(.*)"/)[1];
-        saveAs(blob, filename);
+        this.showToast(
+            "Request received",
+            "LOUD inference data is being generated. Please wait..."
+        );
+
+        try {
+            const response = await fetch(url, {method: "GET", mode: "cors"});
+            const contentType = response.headers.get("content-type") || "";
+
+            if (contentType.includes("application/json")) {
+                const json = await response.json();
+                this.showToast(
+                    json.header || "Request received",
+                    json.message || "Inference data is still processing. Please wait..."
+                );
+                window.setTimeout(this.hideToast, 5000);
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error("Unable to download LOUD inference data.");
+            }
+
+            const blob = await response.blob();
+            const contentDisposition = response.headers.get("content-disposition") || "";
+            const match = contentDisposition.match(/filename="(.*)"/);
+            const filename = match ? match[1] : "loud-inference-data.nc";
+            saveAs(blob, filename);
+            this.hideToast();
+        } catch (err) {
+            this.showToast(
+                "Inference data download failed",
+                err?.message || "An unexpected error occurred while downloading inference data."
+            );
+            window.setTimeout(this.hideToast, 5000);
+        }
     }
 
     @computed get analysisSavedAndValidated() {
