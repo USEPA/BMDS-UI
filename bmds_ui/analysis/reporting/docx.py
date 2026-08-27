@@ -4,11 +4,11 @@ from io import BytesIO
 from typing import TYPE_CHECKING
 
 import docx
-from docx.shared import Pt
 import numpy as np
 import pandas as pd
 from django.conf import settings
 from django.utils.timezone import now
+from docx.shared import Pt
 from pandas import DataFrame
 
 from pybmds.constants import ModelClass
@@ -33,10 +33,12 @@ def write_version_p(report: Report, bmds_ui: str, pybmds: str, bmdscore):
     version_str = f"{bmds_ui} (pybmds {pybmds}; bmdscore {bmdscore})"
     write_setting_p(report, version_label, version_str)
 
+
 def _add_paragraph_with_space_before(document, text: str = "", style: str | None = None):
-                paragraph = document.add_paragraph(text, style)
-                paragraph.paragraph_format.space_before = Pt(6)
-                return paragraph
+    paragraph = document.add_paragraph(text, style)
+    paragraph.paragraph_format.space_before = Pt(6)
+    return paragraph
+
 
 def _write_loud_diagnostics(report: Report, output: dict):
     """Write LOUD model-averaging diagnostics from stored analysis output artifacts.
@@ -49,28 +51,35 @@ def _write_loud_diagnostics(report: Report, output: dict):
     parameter_groups = output.get("loud_parameter_groups") or []
 
     header_style = report.styles.get_header_style(2)
-    _add_paragraph_with_space_before(report.document, "Model Averaging Diagnostics (LOUD)", header_style)
-    _add_paragraph_with_space_before(report.document, 
+    _add_paragraph_with_space_before(
+        report.document, "Model Averaging Diagnostics (LOUD)", header_style
+    )
+    _add_paragraph_with_space_before(
+        report.document,
         "The following diagnostics summarize the model-averaged posterior "
-        "distribution of the benchmark dose (BMD) under the LOUD framework."
+        "distribution of the benchmark dose (BMD) under the LOUD framework.",
     )
 
     posterior_png = static_plots.get("loud_posterior_plot_png")
     if posterior_png:
-        _add_paragraph_with_space_before(report.document, "Posterior distribution of model-averaged BMD")
+        _add_paragraph_with_space_before(
+            report.document, "Posterior distribution of model-averaged BMD"
+        )
         add_png_b64_to_docx(report.document, posterior_png, width_in=6)
 
     overlay_png = static_plots.get("loud_overlay_plot_png")
     if overlay_png:
-        _add_paragraph_with_space_before(report.document,
-            "Overlay of model-specific and model-averaged BMD distributions"
+        _add_paragraph_with_space_before(
+            report.document, "Overlay of model-specific and model-averaged BMD distributions"
         )
         add_png_b64_to_docx(report.document, overlay_png, width_in=6)
 
     if bmd_summary:
-        _add_paragraph_with_space_before(report.document,"Summary statistics for BMD and model-averaged BMD")
+        _add_paragraph_with_space_before(
+            report.document, "Summary statistics for BMD and model-averaged BMD"
+        )
         df = pd.DataFrame(bmd_summary).reset_index()
-        df = df.rename(columns={df.columns[0] : "model"})
+        df = df.rename(columns={df.columns[0]: "model"})
         df_to_table(report, df.fillna(""))
 
     trace_pngs = static_plots.get("loud_parameter_trace_pngs") or {}
@@ -83,7 +92,9 @@ def _write_loud_diagnostics(report: Report, output: dict):
             df_to_table(report, pd.DataFrame(rows, columns=columns))
         trace_png = trace_pngs.get(name)
         if trace_png:
-            _add_paragraph_with_space_before(report.document, f"{name} model parameter visualizations")
+            _add_paragraph_with_space_before(
+                report.document, f"{name} model parameter visualizations"
+            )
             add_png_b64_to_docx(report.document, trace_png, width_in=7.0)
 
 
