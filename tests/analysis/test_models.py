@@ -208,3 +208,38 @@ class TestExecution:
         if rewrite_data_files:
             write_excel(df, data_path / "reports/multitumor.xlsx")
             (data_path / "reports/multitumor.docx").write_bytes(docx.getvalue())
+
+    def test_loud_model_order_stable_across_round_trip(self, complete_continuous_multi_loud):
+        """
+        Guards the assumption that Analysis.get_session()'s deserialized
+        session.loud_bayesian.models order matches the order execute() used
+        when building loud_model_bmd_dist_cdfs. build_docx's CDF-reconstruction
+        code zips these two lists positionally; if order isn't preserved,
+        CDF's get silently attached to the wrong model.
+        """
+        analysis = Analysis.objects.create(inputs=complete_continuous_multi_loud)
+        analysis.execute()
+
+        assert analysis.is_finished is True
+        assert analysis.has_errors is False
+
+        stored_models = analysis.outputs["outputs"][0]["loud_bayesian"]["models"]
+        assert len(stored_models) >= 3, "fixture must define multiple LOUD models to test order"
+
+        # names as stored at serialization time (execute() -> to_schema() -> to_dict())
+        stored_names = [m["name"] for m in stored_models]
+
+        # names after Analysis.get_sessions() deserializes the same stored JSON
+        session = analysis.get_sessions()[0]
+        assert session.loud_bayesian is not None
+        deserialized_names = [m.name() for m in session.loud_bayesian.models]
+
+        assert stored_names == deserialized_names, (
+            f"Model order changed across deserialization. \n"
+            f"  stored:       {stored_names}\n"
+            f"  deserialized: {deserialized_names}"
+        )
+
+        # cross-check count against the precomputed CDF array lsit, since that's what build_docx actually zips agains
+        cdf_count = len(analysis.outputs["outputs"][0]["loud_model_bmd_dist_cdfs"])
+        assert cdf_count == len(deserialized_names)

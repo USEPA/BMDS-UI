@@ -58,15 +58,6 @@ class CochranArmitageAboutModal extends Component {
                         dose variable; p-values less than the alpha level (normally 0.05) indicate
                         that a monotonic trend does exist in the data.
                     </p>
-                    <div className="alert alert-info my-3">
-                        <strong>Note:</strong> At this time, the Cochran-Armitage trend test is only
-                        available in pybmds (version 25.2). See{" "}
-                        {ExternalAnchor(
-                            "https://usepa.github.io/bmds-user-guide/dichotomous.html#trend-test-for-dichotomous-data",
-                            "pybmds Documentation"
-                        )}{" "}
-                        for examples of usage.
-                    </div>
                 </Modal.Body>
             </Modal>
         );

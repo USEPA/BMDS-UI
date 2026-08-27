@@ -85,6 +85,60 @@ def complete_continuous():
 
 
 @pytest.fixture
+def complete_continuous_multi_loud():
+    return {
+        "dataset_type": "C",
+        "models": {
+            "frequentist_restricted": ["Power"],
+            "loud_bayesian": [
+                {
+                    "model": "Power",
+                    "prior_weight": 0.3333,
+                    "dist_type": 1,
+                    "_displayName": "Power (CV)",
+                },
+                {
+                    "model": "Hill",
+                    "prior_weight": 0.3333,
+                    "dist_type": 1,
+                    "_displayName": "Hill (CV)",
+                },
+                {
+                    "model": "Exponential-M3",
+                    "prior_weight": 0.3333,
+                    "dist_type": 1,
+                    "_displayName": "Exponential-M3 (CV)",
+                },
+            ],
+        },
+        "datasets": [
+            {
+                "dtype": "C",
+                "metadata": {"id": 123},
+                "doses": [0, 50, 100, 150, 200],
+                "ns": [100, 100, 100, 100, 100],
+                "means": [10, 20, 30, 40, 50],
+                "stdevs": [3, 4, 5, 6, 7],
+            }
+        ],
+        "mcmc_options": {"burnin": 100, "iterations_per_chain": 2500, "n_chains": 1, "seed": 18},
+        "options": [
+            {
+                "bmr_type": 2,
+                "bmr_value": 1.0,
+                "tail_probability": 0.95,
+                "confidence_level": 0.95,
+                "dist_type": 1,
+            }
+        ],
+        "dataset_options": [
+            {"dataset_id": 123, "enabled": True, "degree": 0, "adverse_direction": -1}
+        ],
+        "recommender": RecommenderSettings.build_default().model_dump(),
+    }
+
+
+@pytest.fixture
 def complete_continuous_individual():
     # fmt: off
     return {

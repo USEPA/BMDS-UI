@@ -4,6 +4,8 @@ from io import BytesIO
 from typing import TYPE_CHECKING
 
 import docx
+from docx.shared import Pt
+import numpy as np
 import pandas as pd
 from django.conf import settings
 from django.utils.timezone import now
@@ -31,6 +33,10 @@ def write_version_p(report: Report, bmds_ui: str, pybmds: str, bmdscore):
     version_str = f"{bmds_ui} (pybmds {pybmds}; bmdscore {bmdscore})"
     write_setting_p(report, version_label, version_str)
 
+def _add_paragraph_with_space_before(document, text: str = "", style: str | None = None):
+                paragraph = document.add_paragraph(text, style)
+                paragraph.paragraph_format.space_before = Pt(6)
+                return paragraph
 
 def _write_loud_diagnostics(report: Report, output: dict):
     """Write LOUD model-averaging diagnostics from stored analysis output artifacts.
@@ -43,26 +49,26 @@ def _write_loud_diagnostics(report: Report, output: dict):
     parameter_groups = output.get("loud_parameter_groups") or []
 
     header_style = report.styles.get_header_style(2)
-    report.document.add_paragraph("Model Averaging Diagnostics (LOUD)", header_style)
-    report.document.add_paragraph(
+    _add_paragraph_with_space_before(report.document, "Model Averaging Diagnostics (LOUD)", header_style)
+    _add_paragraph_with_space_before(report.document, 
         "The following diagnostics summarize the model-averaged posterior "
         "distribution of the benchmark dose (BMD) under the LOUD framework."
     )
 
     posterior_png = static_plots.get("loud_posterior_plot_png")
     if posterior_png:
-        report.document.add_paragraph("Posterior distribution of model-averaged BMD")
+        _add_paragraph_with_space_before(report.document, "Posterior distribution of model-averaged BMD")
         add_png_b64_to_docx(report.document, posterior_png, width_in=6)
 
     overlay_png = static_plots.get("loud_overlay_plot_png")
     if overlay_png:
-        report.document.add_paragraph(
+        _add_paragraph_with_space_before(report.document,
             "Overlay of model-specific and model-averaged BMD distributions"
         )
         add_png_b64_to_docx(report.document, overlay_png, width_in=6)
 
     if bmd_summary:
-        report.document.add_paragraph("Summary statistics for BMD and model-averaged BMD")
+        _add_paragraph_with_space_before(report.document,"Summary statistics for BMD and model-averaged BMD")
         df_to_table(report, pd.DataFrame(bmd_summary).reset_index().fillna(""))
 
     trace_pngs = static_plots.get("loud_parameter_trace_pngs") or {}
@@ -71,11 +77,11 @@ def _write_loud_diagnostics(report: Report, output: dict):
         columns = group.get("columns", [])
         rows = group.get("rows", [])
         if rows:
-            report.document.add_paragraph(f"{name} model parameters")
+            _add_paragraph_with_space_before(report.document, f"{name} model parameters")
             df_to_table(report, pd.DataFrame(rows, columns=columns))
         trace_png = trace_pngs.get(name)
         if trace_png:
-            report.document.add_paragraph(f"{name} model parameter visualizations")
+            _add_paragraph_with_space_before(report.document, f"{name} model parameter visualizations")
             add_png_b64_to_docx(report.document, trace_png, width_in=7.0)
 
 
@@ -181,6 +187,28 @@ def build_docx(
                     session_inputs_table=True,
                 )
             if session.loud_bayesian:
+                if bmd_cdf_table:
+                    model_cdfs = output.get("loud_model_bmd_dist_cdfs")
+                    if model_cdfs:
+                        for model, arr in zip(
+                            session.loud_bayesian.models, model_cdfs, strict=True
+                        ):
+                            model.results = model.results.model_copy(
+                                update={
+                                    "fit": model.results.fit.model_copy(
+                                        update={"bmd_dist": np.array(arr)}
+                                    )
+                                }
+                            )
+
+                    ma_cdf = output.get("loud_ma_bmd_dist_cdf")
+                    if ma_cdf and session.loud_bayesian.model_average:
+                        session.loud_bayesian.model_average.results = (
+                            session.loud_bayesian.model_average.results.model_copy(
+                                update={"bmd_dist": np.array(ma_cdf)}
+                            )
+                        )
+
                 session.loud_bayesian.to_docx(
                     report,
                     header_level=1,
@@ -189,9 +217,8 @@ def build_docx(
                     all_models=all_models,
                     bmd_cdf_table=bmd_cdf_table,
                     session_inputs_table=True,
-                    skip_loud_diagnostics=True,
+                    skip_loud_diagnostics=lambda r: _write_loud_diagnostics(r, output),
                 )
-                _write_loud_diagnostics(report, output)
 
     # Add the additional nested dichotomous plots
     if additionalNestedDichotomousPlots:
