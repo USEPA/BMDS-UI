@@ -230,7 +230,9 @@ def build_docx(
                     all_models=all_models,
                     bmd_cdf_table=bmd_cdf_table,
                     session_inputs_table=True,
-                    skip_loud_diagnostics=lambda r: _write_loud_diagnostics(r, output),
+                    skip_loud_diagnostics=lambda r, output=output: _write_loud_diagnostics(
+                        r, output
+                    ),
                 )
 
     # Add the additional nested dichotomous plots
