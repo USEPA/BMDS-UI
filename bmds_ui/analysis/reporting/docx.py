@@ -69,7 +69,9 @@ def _write_loud_diagnostics(report: Report, output: dict):
 
     if bmd_summary:
         _add_paragraph_with_space_before(report.document,"Summary statistics for BMD and model-averaged BMD")
-        df_to_table(report, pd.DataFrame(bmd_summary).reset_index().fillna(""))
+        df = pd.DataFrame(bmd_summary).reset_index()
+        df = df.rename(columns={df.columns[0] : "model"})
+        df_to_table(report, df.fillna(""))
 
     trace_pngs = static_plots.get("loud_parameter_trace_pngs") or {}
     for group in parameter_groups:
