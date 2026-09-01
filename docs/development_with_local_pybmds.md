@@ -265,8 +265,10 @@ uv run pytest tests
 ## Launch BMDS desktop:
 
 ```bash
-cd "C:\Users\srizwan\BMDS\bmds-ui"
+cd "C:\Users\srizwan\PROJECTS\BMDS\bmds-ui"
 .venv\Scripts\activate
+npm --prefix ./frontend run build
+python manage.py collectstatic --settings=bmds_ui.main.settings.desktop --noinput
 cd bmds-desktop
 bmds-desktop
 
