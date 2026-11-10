@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 import docx
 from django.conf import settings
 from django.utils.timezone import now
+from docx.shared import RGBColor
 
 from pybmds.datasets.transforms.polyk import PolyKAdjustment
 from pybmds.datasets.transforms.rao_scott import RaoScott
@@ -122,7 +123,9 @@ def add_update_url(analysis: Analysis, data: BytesIO, uri: str) -> BytesIO:
             p.add_run(" / ")
             uri += analysis.get_edit_url()
             add_url_hyperlink(p, uri, "Update")
-            p.add_run("   WARNING: REMOVE THE 'Update' LINK BEFORE SHARING").bold = True
+            warning_run = p.add_run("   WARNING: REMOVE THE 'Update' LINK BEFORE SHARING")
+            warning_run.bold = True
+            warning_run.font.color.rgb = RGBColor(0xFF, 0x00, 0x00)
             break
 
     f = BytesIO()
