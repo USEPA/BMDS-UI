@@ -19,6 +19,7 @@ from django.views.generic import (
     TemplateView,
 )
 
+from ..common.utils import random_string
 from ..common.views import HtmxView, action, desktop_only, int_or_404, uuid_or_404
 from . import constants, forms, models
 from .reporting.analytics import get_cached_analytics
@@ -264,6 +265,8 @@ class AnalysisClone(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         analysis, _ = get_analysis_or_404(self.kwargs["pk"])
         analysis.id = None
+        analysis.password = random_string()
+        analysis.deletion_date = models.get_deletion_date()
         analysis.inputs["analysis_name"] = analysis.inputs.get("analysis_name", "") + " (clone)"
         analysis.inputs["analysis_description"] = (
             analysis.inputs.get("analysis_description", "") + f" (cloned from {kwargs['pk']})"
