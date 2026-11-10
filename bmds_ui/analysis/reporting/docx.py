@@ -293,6 +293,7 @@ def add_update_url(analysis: Analysis, data: BytesIO, uri: str) -> BytesIO:
             p.add_run(" / ")
             uri += analysis.get_edit_url()
             add_url_hyperlink(p, uri, "Update")
+            p.add_run("   WARNING: REMOVE THE 'Update' LINK BEFORE SHARING").bold = True
             break
 
     f = BytesIO()
