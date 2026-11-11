@@ -100,13 +100,25 @@ class TestAnalysisClone:
         client = Client()
         pk = "cc3ca355-a57a-4fba-9dc3-99657562df68"
         analysis = Analysis.objects.get(pk=pk)
+        original_password = analysis.password
         url = analysis.get_clone_url()
 
         response = client.get(url, follow=True)
 
-        analysis2 = response.context["object"]
-        assert str(analysis.id) != str(analysis2.id)
-        assert analysis2.inputs["analysis_name"] == f"{analysis.inputs['analysis_name']} (clone)"
+        clone = response.context["object"]
+        analysis.refresh_from_db()
+        assert clone.id != analysis.id
+        assert clone.inputs["analysis_name"] == f"{analysis.inputs['analysis_name']} (clone)"
+        assert analysis.password == original_password
+        assert clone.password != original_password
+
+        # Affirm that clone credentials don't grant access to the original.
+        response = client.patch(
+            analysis.get_api_patch_inputs_url(),
+            data={"editKey": clone.password, "data": {}},
+            content_type="application/json",
+        )
+        assert response.status_code == 403
 
 
 @pytest.mark.django_db

@@ -1,3 +1,4 @@
+import asyncio
 import os
 import secrets
 import tempfile
@@ -143,7 +144,11 @@ class TestApplication:
                 )
 
                 # make sure a new one appears on the list page
+                deadline = asyncio.get_running_loop().time() + 5.0
                 newly_created = list(app.query(".db-edit"))
+                while len(newly_created) < db_items + 1 and asyncio.get_running_loop().time() < deadline:
+                    await pilot.pause()
+                    newly_created = list(app.query(".db-edit"))
                 first = newly_created[0]
                 assert len(newly_created) == db_items + 1
 
@@ -185,8 +190,19 @@ class TestApplication:
                 assert len(list(app.query(".db-edit"))) == db_items
 
 
-async def assert_change_screen(pilot, app, btn: Button, current_screen: str, new_screen: str):
+async def assert_change_screen(
+    pilot,
+    app,
+    btn: Button,
+    current_screen: str,
+    new_screen: str,
+    timeout: float = 5.0,
+):
     assert app.screen.name == current_screen
     await pilot.click(btn)
-    await pilot.pause()
+    deadline = asyncio.get_running_loop().time() + timeout
+    while asyncio.get_running_loop().time() < deadline:
+        await pilot.pause()
+        if app.screen.name == new_screen:
+            return
     assert app.screen.name == new_screen
