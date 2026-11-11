@@ -146,7 +146,10 @@ class TestApplication:
                 # make sure a new one appears on the list page
                 deadline = asyncio.get_running_loop().time() + 5.0
                 newly_created = list(app.query(".db-edit"))
-                while len(newly_created) < db_items + 1 and asyncio.get_running_loop().time() < deadline:
+                while (
+                    len(newly_created) < db_items + 1
+                    and asyncio.get_running_loop().time() < deadline
+                ):
                     await pilot.pause()
                     newly_created = list(app.query(".db-edit"))
                 first = newly_created[0]
