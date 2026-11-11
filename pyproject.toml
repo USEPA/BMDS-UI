@@ -25,7 +25,7 @@ classifiers = [
 requires-python = ">=3.11"
 dependencies = [
   # pybmds
-  # "pybmds==26.1",
+  "pybmds==26.1",
   # website
   "Django~=5.2.5",
   "django-anymail~=13.0.1",
