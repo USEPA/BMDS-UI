@@ -80,7 +80,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         expect(page.locator("#rule-table tbody tr")).to_have_count(20)
 
         # Read-only
-        page.get_by_role("button", name="Share").click()
+        page.get_by_role("button", name="Share", exact=True).click()
         with page.expect_popup() as page2_info:
             page.get_by_role("link", name="Open").first.click()
         page2 = page2_info.value
@@ -172,7 +172,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         expect(page.locator("#rule-table tbody tr")).to_have_count(17)
 
         # Read-only
-        page.get_by_role("button", name="Share").click()
+        page.get_by_role("button", name="Share", exact=True).click()
         with page.expect_popup() as page2_info:
             page.get_by_role("link", name="Open").first.click()
         page2 = page2_info.value
@@ -224,7 +224,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         page.locator("#close-modal").click()
 
         # Read-only
-        page.get_by_role("button", name="Share").click()
+        page.get_by_role("button", name="Share", exact=True).click()
         with page.expect_popup() as page2_info:
             page.get_by_role("link", name="Open").first.click()
         page2 = page2_info.value
@@ -287,7 +287,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         page.locator("#close-modal").click()
 
         # Read-only
-        page.get_by_role("button", name="Share").click()
+        page.get_by_role("button", name="Share", exact=True).click()
         with page.expect_popup() as page2_info:
             page.get_by_role("link", name="Open").first.click()
         page2 = page2_info.value
