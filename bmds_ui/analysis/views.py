@@ -5,7 +5,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.middleware.csrf import get_token
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template import RequestContext, Template
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -209,6 +209,13 @@ def get_analysis_or_404(pk: str, password: str | None = "") -> tuple[models.Anal
 
 class AnalysisDetail(DetailView):
     model = models.Analysis
+
+    def get(self, request, *args, **kwargs):
+        pw = kwargs.get("password")
+        if pw and not models.Analysis.objects.filter(pk=kwargs["pk"], password=pw).exists():
+            analysis = get_object_or_404(models.Analysis, pk=kwargs["pk"])
+            return redirect(analysis.get_absolute_url())
+        return super().get(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
         analysis, can_edit = get_analysis_or_404(self.kwargs["pk"], self.kwargs.get("password"))
