@@ -52,7 +52,7 @@ class Command(BaseCommand):
 
         count = 0
         with transaction.atomic():
-            for analysis in Analysis.object.select_for_update().iterator(chunk_size=500):
+            for analysis in Analysis.objects.select_for_update().iterator(chunk_size=500):
                 old_password = analysis.password
                 new_password = random_string()
                 while new_password == old_password:
