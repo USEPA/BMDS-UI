@@ -31,9 +31,9 @@ class TestContinuousIntegration(PlaywrightTestCase):
     def _create_new_analysis(self) -> Page:
         self.page.goto(self.url("/"))
         self._wait_for_page_ready()
-        expect(
-            self.page.get_by_role("button", name="Create a new BMDS analysis")
-        ).to_be_visible(timeout=60_000)
+        expect(self.page.get_by_role("button", name="Create a new BMDS analysis")).to_be_visible(
+            timeout=60_000
+        )
         with self.page.expect_navigation():
             self.page.get_by_role("button", name="Create a new BMDS analysis").click()
         self._wait_for_page_ready()
