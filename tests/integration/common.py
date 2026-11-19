@@ -26,6 +26,12 @@ class PlaywrightTestCase(StaticLiveServerTestCase, TestCase):
     def set_fixtures(self, page: Page):
         self.page: Page = page
 
+    @pytest.fixture(autouse=True)
+    def force_online_mode(self, settings):
+        # Ensure integration tests always exercise the online homepage and routes,
+        # even if a previous test mutated this setting.
+        settings.IS_DESKTOP = False
+
     def url(self, path: str) -> str:
         """
         The live server URL path

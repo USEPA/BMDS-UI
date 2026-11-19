@@ -15,24 +15,24 @@
     "url": "https://github.com/USEPA/bmds-ui.git"
   },
   "devDependencies": {
-    "@babel/core": "^7.22.8",
+    "@babel/core": "^7.28.5",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-proposal-decorators": "^7.27.1",
     "@babel/preset-react": "^7.27.1",
     "@biomejs/biome": "1.9.4",
-    "@vitejs/plugin-react": "^4.5.1",
+    "@vitejs/plugin-react": "^5.1.0",
     "assert": "^2.0.0",
-    "jsdom": "^26.1.0",
-    "vite": "^4.0.0",
+    "jsdom": "^27.0.0",
+    "vite": "^8.3.8",
     "vite-plugin-externals": "^0.6.2",
-    "vitest": "^3.2.6"
+    "vitest": "4.1.12"
   },
   "dependencies": {
     "bootstrap": "^4.6.2",
     "clipboard": "^2.0.11",
     "file-saver": "^2.0.5",
     "jquery": "^3.6.1",
-    "lodash": "^4.17.21",
+    "lodash": "^4.18.0",
     "mobx": "^5.15.7",
     "mobx-react": "^6.3.1",
     "plotly.js": "^4.3.0",
@@ -44,5 +44,8 @@
     "react-plotly.js": "^2.6.0",
     "react-router-dom": "^5.2.0",
     "slugify": "^1.6.5"
+  },
+  "resolutions": {
+    "protocol-buffers-schema": "^3.6.1"
   }
 }

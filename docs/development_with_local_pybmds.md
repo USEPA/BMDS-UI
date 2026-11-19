@@ -90,7 +90,7 @@ Remove the pybmds dependency in bmds-ui/pyproject.toml
 
 ```bash
 dependencies = [
-  # "pybmds==25.2",
+  # "pybmds==26.1",
 ```
 
 In Developer Command Prompt, clone and bootstrap vcpkg

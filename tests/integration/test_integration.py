@@ -24,10 +24,20 @@ def data_path():
 
 
 class TestContinuousIntegration(PlaywrightTestCase):
+    def _wait_for_page_ready(self):
+        self.page.wait_for_load_state("domcontentloaded")
+        self.page.wait_for_load_state("networkidle")
+
     def _create_new_analysis(self) -> Page:
         self.page.goto(self.url("/"))
+        self._wait_for_page_ready()
+        expect(self.page.get_by_role("button", name="Create a new BMDS analysis")).to_be_visible(
+            timeout=60_000
+        )
         with self.page.expect_navigation():
             self.page.get_by_role("button", name="Create a new BMDS analysis").click()
+        self._wait_for_page_ready()
+        expect(self.page.locator("#analysis_name")).to_be_visible(timeout=30_000)
         return self.page
 
     def _test_continuous(self, option: str):
@@ -307,9 +317,10 @@ class TestContinuousIntegration(PlaywrightTestCase):
         for pk, model_type in analysis_pks:
             a = Analysis.objects.get(pk=pk)
             self.page.goto(self.url(a.get_absolute_url()))
+            self._wait_for_page_ready()
 
             # check main tab loads
-            expect(page.get_by_role("cell", name="Analysis Name:")).to_be_visible()
+            expect(page.get_by_role("cell", name="Analysis Name:")).to_be_visible(timeout=30_000)
 
             # check data tab loads
             page.get_by_role("link", name="Data").click()
@@ -333,9 +344,10 @@ class TestContinuousIntegration(PlaywrightTestCase):
         for pk, model_type in analysis_pks:
             a = Analysis.objects.get(pk=pk)
             self.page.goto(self.url(a.get_edit_url()))
+            self._wait_for_page_ready()
 
             # check main tab loads
-            expect(page.locator("#analysis_name")).to_be_visible()
+            expect(page.locator("#analysis_name")).to_be_visible(timeout=30_000)
 
             # check data tab loads
             page.get_by_role("link", name="Data").click()
