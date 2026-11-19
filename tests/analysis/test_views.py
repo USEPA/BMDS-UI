@@ -7,6 +7,7 @@ from pytest_django.asserts import assertTemplateNotUsed, assertTemplateUsed
 
 from bmds_ui.analysis.models import Analysis, Collection
 from bmds_ui.analysis.views import Analytics, DesktopHome, Home, get_analysis_or_404
+from bmds_ui.common.utils import random_string
 
 
 @pytest.mark.django_db
@@ -92,6 +93,47 @@ class TestAnalysisDetail:
         assert client.login(username="admin@bmdsonline.org", password="pw")
         response = client.get(url)
         assert response.context["config"]["future"] is True
+
+    def test_edit_redirect(self):
+        client = Client()
+        pk = "cc3ca355-a57a-4fba-9dc3-99657562df68"
+        analysis = Analysis.objects.get(pk=pk)
+        old_edit_url = analysis.get_edit_url()
+        old_renew_url = analysis.get_renew_url()
+        old_delete_url = analysis.get_delete_url()
+
+        # valid password: edit view renders
+        response = client.get(old_edit_url)
+        assert response.status_code == 200
+        assert "editSettings" in response.context["config"]
+
+        # rotate password: old edit link redirects to view-only
+        analysis.password = random_string()
+        analysis.save()
+        response = client.get(old_edit_url)
+        assert response.status_code == 302
+        assert response.url == analysis.get_absolute_url()
+
+        # redirect lands on view-only page with no edit settings
+        response = client.get(old_edit_url, follow=True)
+        assert response.status_code == 200
+        assert "editSettings" not in response.context["config"]
+
+        # new edit link works
+        response = client.get(analysis.get_edit_url())
+        assert response.status_code == 200
+        assert "editSettings" in response.context["config"]
+
+        # old renew/delete links must 404, not redirect
+        assert client.get(old_renew_url).status_code == 404
+        assert client.get(old_delete_url).status_code == 404
+
+    def test_edit_redirect_bad_pk(self):
+        client = Client()
+        bad_pk = "ec1af18c-e4e8-4e81-9a53-5b72a320eb52"
+        url = reverse("analysis_edit", args=(bad_pk, "invalid"))
+        response = client.get(url)
+        assert response.status_code == 404
 
 
 @pytest.mark.django_db
