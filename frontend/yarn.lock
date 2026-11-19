@@ -3505,7 +3505,7 @@ vite-plugin-externals@^0.6.2:
   optionalDependencies:
     fsevents "~2.3.3"
 
-vitest@4.1.12:
+vitest@^4.1.12:
   version "4.1.12"
   resolved "https://registry.yarnpkg.com/vitest/-/vitest-4.1.12.tgz#b372587e9c000f165f1757793178ea6b5631f82e"
   integrity sha512-5eWdz2yb3ajxWF3C8C4TjkXl7FGm3n2E/VlazALrQHzK7nYMSGFnCZto0bbPNl77AwkOZVLk0YnBAejUu0NiWA==
