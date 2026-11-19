@@ -46,6 +46,7 @@
     "slugify": "^1.6.5"
   },
   "resolutions": {
-    "protocol-buffers-schema": "^3.6.1"
+    "protocol-buffers-schema": "^3.6.1",
+    "browserslist": "^4.28.7"
   }
 }
