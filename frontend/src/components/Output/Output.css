@@ -3,3 +3,22 @@
     background-color: #0275d8;
     color: white;
 }
+
+.hash-compare-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-start;
+}
+
+.hash-compare-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.hash-compare-action-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}

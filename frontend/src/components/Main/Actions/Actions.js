@@ -87,6 +87,16 @@ class Actions extends Component {
                         <>
                             <Button
                                 className="dropdown-item"
+                                onClick={() =>
+                                    console.log(
+                                        "placeholder button for fingerprint generation function"
+                                    )
+                                }
+                                icon="hash"
+                                text="Generate analysis fingerprint"
+                            />
+                            <Button
+                                className="dropdown-item"
                                 onClick={() => mainStore.downloadReport("excelUrl")}
                                 icon="file-excel"
                                 text="Download results"

@@ -23,6 +23,60 @@ import OptionSetTable from "./OptionSetTable";
 import SelectModel from "./SelectModel";
 import ToxicRBayesianResultTable from "./ToxicRBayesianResultTable";
 
+const hashExists = true;
+const placeholderHash = "abcdefg";
+const HashCompareComponent = ({hash}) => {
+    const [pastedFingerprint, setPastedFingerprint] = React.useState("");
+    const [fingerprintsMatch, setFingerprintsMatch] = React.useState(null);
+
+    const compareFingerprints = () => {
+        const normalizedPasted = pastedFingerprint.replace(/\s+/g, "");
+        setFingerprintsMatch(normalizedPasted === hash);
+    };
+
+    return (
+        <div style={{marginLeft: 30, marginBottom: 25}}>
+            <strong className="d-block text-center">
+                Paste fingerprint from exported Word Report, Excel, or JSON to compare
+            </strong>
+            <div className={`mt-1 row well py-2 px-2`} style={{minWidth: 550}}>
+                <form
+                    className="hash-compare-rows"
+                    onSubmit={e => {
+                        e.preventDefault();
+                        compareFingerprints();
+                    }}>
+                    <div className="hash-compare-row">
+                        <span>Analysis fingerprint: </span>
+                        <span>{hash}</span>
+                    </div>
+                    <div className="hash-compare-row">
+                        <span>Paste fingerprint: </span>
+                        <input
+                            type="text"
+                            value={pastedFingerprint}
+                            onChange={e => {
+                                setPastedFingerprint(e.target.value);
+                                setFingerprintsMatch(null);
+                            }}></input>
+                    </div>
+                    <div className="hash-compare-action-row">
+                        <button type="submit" className="btn btn-sm btn-info">
+                            Compare
+                        </button>
+                        {fingerprintsMatch === true ? (
+                            <strong className="text-success">Fingerprints match!</strong>
+                        ) : null}
+                        {fingerprintsMatch === false ? (
+                            <strong className="text-danger">Fingerprints do not match</strong>
+                        ) : null}
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
 const OutputErrorComponent = ({title, children, alertClass}) => {
     return (
         <div className={`alert ${alertClass} offset-lg-2 col-lg-8 mt-4`}>
@@ -138,6 +192,11 @@ class Output extends Component {
                                 changes.
                             </p>
                         </OutputErrorComponent>
+                    </div>
+                ) : null}
+                {hashExists ? (
+                    <div className="row py-2">
+                        <HashCompareComponent hash={placeholderHash} />
                     </div>
                 ) : null}
                 <div className="row py-2">
