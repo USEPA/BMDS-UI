@@ -12,6 +12,7 @@ import Button from "../common/Button";
 import DoseResponsePlot from "../common/DoseResponsePlot";
 import Icon from "../common/Icon";
 import SelectInput from "../common/SelectInput";
+import AnalysisFingerprint from "./AnalysisFingerprint";
 import CochranArmitageTable from "./CochranArmitageTable";
 import FrequentistResultTable from "./FrequentistResultTable";
 import LOUDBayesianResultTable from "./LOUDBayesianResultTable";
@@ -24,19 +25,24 @@ import SelectModel from "./SelectModel";
 import ToxicRBayesianResultTable from "./ToxicRBayesianResultTable";
 
 const hashExists = true;
-const placeholderHash =
-    "BMDS-v1-sha256:2c690f6109ec55b889c4f504ceea4dcd7e48f4b06679d970850c378e968d4a8d";
-const HashCompareComponent = ({hash}) => {
+const HashCompareComponent = observer(({mainStore}) => {
     const [pastedFingerprint, setPastedFingerprint] = React.useState("");
     const [fingerprintsMatch, setFingerprintsMatch] = React.useState(null);
+    const savedFingerprint = mainStore.analysisFingerprint || "";
 
     const compareFingerprints = () => {
-        const normalizedPasted = pastedFingerprint.replace(/\s+/g, "");
-        setFingerprintsMatch(normalizedPasted === hash);
+        const normalizedPasted = pastedFingerprint.replace(/\s+/g, "").toLowerCase();
+        const normalizedSaved = savedFingerprint.replace(/\s+/g, "").toLowerCase();
+        setFingerprintsMatch(normalizedSaved.length > 0 && normalizedPasted === normalizedSaved);
     };
 
     return (
         <div style={{marginLeft: 30, marginBottom: 25}}>
+            <AnalysisFingerprint
+                fingerprint={mainStore.analysisFingerprint}
+                dirty={mainStore.fingerprintDirty}
+            />
+
             <strong className="d-block text-center">
                 Paste fingerprint from exported Word Report, Excel, or JSON to compare
             </strong>
@@ -49,7 +55,7 @@ const HashCompareComponent = ({hash}) => {
                     }}>
                     <div className="hash-compare-row">
                         <span>Analysis fingerprint: </span>
-                        <span>{hash}</span>
+                        <span>{savedFingerprint || "Not generated"}</span>
                     </div>
                     <div className="hash-compare-row">
                         <span style={{marginRight: 17}}>Paste fingerprint: </span>
@@ -63,7 +69,10 @@ const HashCompareComponent = ({hash}) => {
                             }}></input>
                     </div>
                     <div className="hash-compare-action-row">
-                        <button type="submit" className="btn btn-sm btn-info">
+                        <button
+                            type="submit"
+                            className="btn btn-sm btn-info"
+                            disabled={!savedFingerprint}>
                             Compare
                         </button>
                         {fingerprintsMatch === true ? (
@@ -77,7 +86,7 @@ const HashCompareComponent = ({hash}) => {
             </div>
         </div>
     );
-};
+});
 
 const OutputErrorComponent = ({title, children, alertClass}) => {
     return (
@@ -198,7 +207,7 @@ class Output extends Component {
                 ) : null}
                 {hashExists ? (
                     <div className="row py-2">
-                        <HashCompareComponent hash={placeholderHash} />
+                        <HashCompareComponent mainStore={outputStore.rootStore.mainStore} />
                     </div>
                 ) : null}
                 <div className="row py-2">

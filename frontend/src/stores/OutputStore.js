@@ -572,15 +572,18 @@ class OutputStore {
         this.selectedOutput.frequentist.selected.notes = noModel
             ? ""
             : "User selected best fitting model";
+        this.rootStore.mainStore.invalidateFingerprint();
     }
 
     @action.bound saveSelectedIndexNotes(value) {
         this.selectedOutput.frequentist.selected.notes = value.length > 0 ? value : null;
+        this.rootStore.mainStore.invalidateFingerprint();
     }
 
     @action.bound saveSelectedModel() {
         const output = this.selectedOutput,
             {csrfToken, editKey} = this.rootStore.mainStore.config.editSettings,
+            revision = this.rootStore.mainStore.fingerprintEditRevision,
             payload = toJS({
                 editKey,
                 data: {
@@ -601,18 +604,31 @@ class OutputStore {
             headers: getHeaders(csrfToken),
             body: JSON.stringify(payload),
         })
-            .then(response => {
+            .then(async response => {
                 if (!response.ok) {
-                    console.error(response.text());
-                } else {
-                    this.rootStore.mainStore.showToast(
-                        "Updated model selection",
-                        "Model selection updated."
-                    );
-                    setTimeout(this.rootStore.mainStore.hideToast, 3000);
+                    const errorText = await response.text();
+                    this.rootStore.mainStore.errorMessage =
+                        errorText || "Unable to save model selection.";
+                    console.error(errorText);
+                    return;
                 }
+
+                const data = await response.json();
+                if (revision !== this.rootStore.mainStore.fingerprintEditRevision) {
+                    return;
+                }
+
+                this.rootStore.mainStore.updateModelStateFromApi(data);
+                this.rootStore.mainStore.analysisFingerprint = null;
+                this.rootStore.mainStore.showToast(
+                    "Updated model selection",
+                    "Model selection updated."
+                );
+                setTimeout(this.rootStore.mainStore.hideToast, 3000);
             })
             .catch(error => {
+                this.rootStore.mainStore.errorMessage =
+                    error?.message || "Unable to save model selection.";
                 console.error(error);
             });
     }

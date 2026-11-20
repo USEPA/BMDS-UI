@@ -83,50 +83,52 @@ class Actions extends Component {
                     ) : null}
                     <div className="dropdown-divider"></div>
                     <span className="dropdown-header">Reporting</span>
-                    {mainStore.analysisSavedAndValidated && mainStore.hasOutputs ? (
-                        <>
-                            <Button
-                                className="dropdown-item"
-                                icon="hash"
-                                text="Generate analysis fingerprint"
-                            />
-                            <Button
-                                className="dropdown-item"
-                                onClick={() => mainStore.downloadReport("excelUrl")}
-                                icon="file-excel"
-                                text="Download results"
-                            />
-                            <Button
-                                className="dropdown-item"
-                                onClick={mainStore.showWordReportOptionModal}
-                                icon="file-word"
-                                text="Download report"
-                            />
+                    <>
+                        <Button
+                            className="dropdown-item"
+                            onClick={mainStore.generateAnalysisFingerprint}
+                            icon="hash"
+                            disabled={!mainStore.canGenerateFingerprint}
+                            text="Generate analysis fingerprint"
+                        />
+                        <Button
+                            className="dropdown-item"
+                            onClick={() => mainStore.downloadReport("excelUrl")}
+                            icon="file-excel"
+                            text="Download results"
+                            disabled={!mainStore.canExportCompletedAnalysis}
+                        />
+                        <Button
+                            className="dropdown-item"
+                            onClick={mainStore.showWordReportOptionModal}
+                            icon="file-word"
+                            text="Download report"
+                            disabled={!mainStore.canExportCompletedAnalysis}
+                        />
+                        <Button
+                            className="dropdown-item"
+                            onClick={mainStore.saveAnalysisToFile}
+                            icon="download"
+                            text="Download analysis"
+                            disabled={!mainStore.canExportCompletedAnalysis}
+                        />
+
+                        {mainStore.hasLOUDBayesianOutput ? (
                             <a
                                 className="dropdown-item"
                                 href="#"
                                 onClick={e => {
                                     e.preventDefault();
-                                    mainStore.saveAnalysisToFile();
+                                    mainStore.saveLOUDInferenceData();
                                 }}>
-                                <Icon name="download" text="Download analysis" />
+                                <Icon name="box-seam" text="Download inference data object" />
                             </a>
+                        ) : null}
 
-                            {mainStore.hasLOUDBayesianOutput ? (
-                                <a
-                                    className="dropdown-item"
-                                    href="#"
-                                    onClick={e => {
-                                        e.preventDefault();
-                                        mainStore.saveLOUDInferenceData();
-                                    }}>
-                                    <Icon name="box-seam" text="Download inference data object" />
-                                </a>
-                            ) : null}
-                        </>
-                    ) : (
-                        <p className="text-muted pl-4 mb-0">Please save and execute analysis.</p>
-                    )}
+                        {mainStore.exportBlockedMessage ? (
+                            <p className="text-muted pl-4 mb-0">{mainStore.exportBlockedMessage}</p>
+                        ) : null}
+                    </>
                     {mainStore.isDesktop && mainStore.canEdit ? (
                         <>
                             <div className="dropdown-divider"></div>

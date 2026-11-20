@@ -21,6 +21,8 @@ class MainStore {
         this.rootStore = rootStore;
     }
 
+    isHydratingFromApi = false;
+
     @observable config = {};
 
     @observable analysis_name = "";
@@ -30,6 +32,11 @@ class MainStore {
     @observable errorData = null;
     @observable executionOutputs = null;
     @observable analysisFingerprint = null;
+    @observable fingerprintEligible = false;
+    @observable fingerprintDirty = false;
+    @observable fingerprintBusy = false;
+    @observable fingerprintEditRevision = 0;
+    @observable acknowledgedFingerprint = null;
     @observable isUpdateComplete = false;
 
     @action.bound setConfig(config) {
@@ -107,7 +114,8 @@ class MainStore {
     async saveAnalysis() {
         this.rootStore.dataStore.cleanRows();
         const url = this.config.editSettings.patchInputUrl,
-            {csrfToken} = this.config.editSettings;
+            {csrfToken} = this.config.editSettings,
+            revision = this.fingerprintEditRevision;
         this.errorMessage = "";
         this.errorData = null;
         await fetch(url, {
@@ -118,7 +126,12 @@ class MainStore {
         })
             .then(response => {
                 if (response.ok) {
-                    response.json().then(data => this.updateModelStateFromApi(data));
+                    response.json().then(data => {
+                        if (revision !== this.fingerprintEditRevision) {
+                            return;
+                        }
+                        this.updateModelStateFromApi(data);
+                    });
                 } else {
                     response.json().then(errorText => {
                         const error = parseServerErrors(errorText);
@@ -147,6 +160,8 @@ class MainStore {
             return;
         }
         this.isExecuting = true;
+        this.invalidateFingerprint();
+        const revision = this.fingerprintEditRevision;
         this.errorMessage = "";
 
         const apiUrl = this.config.apiUrl,
@@ -174,6 +189,11 @@ class MainStore {
                         return response.json();
                     })
                     .then(data => {
+                        if (revision !== this.fingerprintEditRevision) {
+                            throw new Error(
+                                "The analysis changed while execution was in progress."
+                            );
+                        }
                         if (data.is_executing) {
                             setTimeout(pollForResults, pollInterval);
                         } else {
@@ -199,6 +219,9 @@ class MainStore {
                 return response.json();
             })
             .then(data => {
+                if (revision !== this.fingerprintEditRevision) {
+                    throw new Error("The analysis changed while execution was in progress.");
+                }
                 if (data.is_executing) {
                     setTimeout(pollForResults, pollInterval);
                 } else {
@@ -211,6 +234,8 @@ class MainStore {
     @action.bound
     async executeResetAnalysis() {
         const {csrfToken, executeResetUrl} = this.config.editSettings;
+        this.invalidateFingerprint();
+        const revision = this.fingerprintEditRevision;
         await fetch(executeResetUrl, {
             method: "POST",
             mode: "cors",
@@ -221,6 +246,9 @@ class MainStore {
         })
             .then(response => response.json())
             .then(data => {
+                if (revision !== this.fingerprintEditRevision) {
+                    return;
+                }
                 this.isExecuting = false;
                 this.errorMessage = "";
                 this.updateModelStateFromApi(data);
@@ -233,24 +261,105 @@ class MainStore {
     @action.bound
     async fetchSavedAnalysis() {
         const apiUrl = this.config.apiUrl;
+        const revision = this.fingerprintEditRevision;
         this.errorMessage = "";
         await fetch(apiUrl, {
             method: "GET",
             mode: "cors",
         })
             .then(response => response.json())
-            .then(data => this.updateModelStateFromApi(data))
+            .then(data => {
+                if (revision !== this.fingerprintEditRevision) {
+                    return;
+                }
+                this.updateModelStateFromApi(data);
+            })
             .catch(error => {
                 this.errorMessage = error.message ?? String(error);
                 console.error("error", error);
             });
     }
     @action.bound setInputsChangedFlag() {
+        if (this.isHydratingFromApi) {
+            return;
+        }
+
         // inputs have changed and have not yet been saved or validated; prevent execution
         this.analysisSaved = false;
         this.analysisValidated = false;
+        this.invalidateFingerprint();
     }
-    @action.bound updateModelStateFromApi(data) {
+
+    @action.bound invalidateFingerprint() {
+        this.analysisFingerprint = null;
+        this.fingerprintDirty = true;
+        this.fingerprintEditRevision += 1;
+    }
+
+    @computed get canGenerateFingerprint() {
+        return (
+            this.fingerprintEligible &&
+            !this.fingerprintDirty &&
+            !this.isExecuting &&
+            !this.fingerprintBusy
+        );
+    }
+
+    @computed get canExportCompletedAnalysis() {
+        return this.canGenerateFingerprint;
+    }
+
+    @computed get exportBlockedMessage() {
+        if (!this.analysisSavedAndValidated || !this.hasOutputs || !this.fingerprintEligible) {
+            return "Please save and execute analysis.";
+        }
+        if (this.isExecuting) {
+            return "Execution in progress. Wait for completion before exporting.";
+        }
+        if (this.fingerprintDirty) {
+            return "Analysis changed - save changes, then generate fingerprint or export.";
+        }
+        return "";
+    }
+
+    @action.bound async generateAnalysisFingerprint() {
+        if (!this.canGenerateFingerprint) {
+            this.errorMessage = "Save changes and complete the analysis first.";
+            return;
+        }
+
+        const revision = this.fingerprintEditRevision;
+        this.fingerprintBusy = true;
+        try {
+            const response = await fetch(`${this.config.apiUrl}fingerprint/`, {
+                method: "GET",
+                mode: "cors",
+                cache: "no-store",
+            });
+            if (!response.ok) {
+                throw new Error("Unable to generate the analysis fingerprint.");
+            }
+            const data = await response.json();
+            if (!/^BMDS-v1-sha256:[0-9a-f]{64}$/.test(data.analysis_fingerprint || "")) {
+                throw new Error("The server returned an invalid fingerprint.");
+            }
+            if (revision !== this.fingerprintEditRevision) {
+                throw new Error("The analysis changed. Generate its fingerprint again.");
+            }
+            if (data.analysis_fingerprint !== this.acknowledgedFingerprint) {
+                throw new Error("The saved analysis changed. Refresh before generating.");
+            }
+            this.analysisFingerprint = data.analysis_fingerprint;
+        } catch (error) {
+            this.errorMessage = error.message;
+            console.error(error);
+        } finally {
+            this.fingerprintBusy = false;
+        }
+    }
+
+    @action.bound updateModelStateFromApi(data, options = {}) {
+        const {markFingerprintClean = true} = options;
         const errors = parseServerErrors(data.errors);
         if (errors) {
             this.errorMessage = errors.message;
@@ -265,6 +374,9 @@ class MainStore {
             return;
         }
 
+        const previousAcknowledged = this.acknowledgedFingerprint;
+        const incomingAcknowledged = data.analysis_fingerprint ?? null;
+
         this.isExecuting = data.is_executing;
         if (data.outputs) {
             this.executionOutputs = data.outputs.outputs;
@@ -275,20 +387,49 @@ class MainStore {
         }
 
         // unpack general settings
-        this.analysis_name = inputs.analysis_name;
-        this.analysis_description = inputs.analysis_description;
-        this.model_type = inputs.dataset_type;
-        this.changeDatasetType(this.model_type);
-        this.rootStore.optionsStore.setOptions(inputs.options);
-        if (inputs.mcmc_options !== undefined || _.isEmpty(this.rootStore.mcmcStore.optionsDict)) {
-            this.rootStore.mcmcStore.setOptions(inputs.mcmc_options);
+        this.isHydratingFromApi = true;
+        try {
+            this.analysis_name = inputs.analysis_name;
+            this.analysis_description = inputs.analysis_description;
+            this.model_type = inputs.dataset_type;
+            this.changeDatasetType(this.model_type);
+            this.rootStore.optionsStore.setOptions(inputs.options);
+            if (
+                inputs.mcmc_options !== undefined ||
+                _.isEmpty(this.rootStore.mcmcStore.optionsDict)
+            ) {
+                this.rootStore.mcmcStore.setOptions(inputs.mcmc_options);
+            }
+            this.rootStore.dataStore.setDatasets(inputs.datasets);
+            this.rootStore.dataOptionStore.setDatasetOptions(inputs.dataset_options);
+            this.rootStore.modelsStore.setModels(inputs.models);
+            this.rootStore.logicStore.setLogic(inputs.recommender);
+        } finally {
+            this.isHydratingFromApi = false;
         }
-        this.rootStore.dataStore.setDatasets(inputs.datasets);
-        this.rootStore.dataOptionStore.setDatasetOptions(inputs.dataset_options);
-        this.rootStore.modelsStore.setModels(inputs.models);
-        this.rootStore.logicStore.setLogic(inputs.recommender);
+
         this.starred = data.starred;
         this.collections = data.collections;
+
+        this.fingerprintEligible = Boolean(incomingAcknowledged);
+        this.acknowledgedFingerprint = incomingAcknowledged;
+
+        if (this.analysisFingerprint && this.analysisFingerprint !== this.acknowledgedFingerprint) {
+            this.analysisFingerprint = null;
+        }
+
+        if (
+            previousAcknowledged &&
+            incomingAcknowledged &&
+            previousAcknowledged !== incomingAcknowledged
+        ) {
+            this.analysisFingerprint = null;
+        }
+
+        if (markFingerprintClean) {
+            this.fingerprintDirty = false;
+        }
+
         this.isUpdateComplete = true;
         this.analysisSaved = data.inputs_valid;
         this.analysisValidated = data.inputs_valid;
@@ -297,6 +438,9 @@ class MainStore {
     @action.bound loadAnalysisFromFile(file) {
         const {csrfToken, editKey, loadFileUrl} = this.config.editSettings,
             reader = new FileReader();
+
+        this.invalidateFingerprint();
+        const revision = this.fingerprintEditRevision;
 
         reader.onload = e => {
             let payload;
@@ -323,7 +467,10 @@ class MainStore {
                     return response.json();
                 })
                 .then(data => {
-                    this.updateModelStateFromApi(data);
+                    if (revision !== this.fingerprintEditRevision) {
+                        return;
+                    }
+                    this.updateModelStateFromApi(data, {markFingerprintClean: false});
                     this.analysisValidated = true;
                     this.analysisSaved = false;
                     this.showToast(
@@ -346,6 +493,7 @@ class MainStore {
 
     @action.bound async saveAnalysisToFile() {
         const apiUrl = this.config.apiUrl;
+        const revision = this.fingerprintEditRevision;
         try {
             const expectedFingerprint = await this.fetchExpectedFingerprint();
             const response = await fetch(
@@ -365,6 +513,9 @@ class MainStore {
             }
 
             const json = await response.json();
+            if (revision !== this.fingerprintEditRevision) {
+                throw new Error("The analysis changed during export. Refresh and export again.");
+            }
             if (json.analysis_fingerprint !== expectedFingerprint) {
                 throw new Error("The analysis changed during export. Refresh and export again.");
             }
@@ -383,6 +534,10 @@ class MainStore {
     }
 
     async fetchExpectedFingerprint() {
+        if (this.fingerprintDirty || this.isExecuting) {
+            throw new Error("Save changes and complete the analysis first.");
+        }
+
         const response = await fetch(`${this.config.apiUrl}fingerprint/`, {
             method: "GET",
             mode: "cors",
@@ -397,6 +552,9 @@ class MainStore {
         const fingerprint = data.analysis_fingerprint;
         if (!/^BMDS-v1-sha256:[0-9a-f]{64}$/.test(fingerprint || "")) {
             throw new Error("The server returned an invalid fingerprint.");
+        }
+        if (this.acknowledgedFingerprint && fingerprint !== this.acknowledgedFingerprint) {
+            throw new Error("The saved analysis changed. Refresh before exporting.");
         }
         return fingerprint;
     }
@@ -538,7 +696,8 @@ class MainStore {
     @action.bound async downloadReport(url) {
         let apiUrl = this.config[url],
             params = {},
-            pollInterval = this.pollInterval;
+            pollInterval = this.pollInterval,
+            revision = this.fingerprintEditRevision;
         if (this.canEdit) {
             params.editKey = this.config.editSettings.editKey;
         }
@@ -546,15 +705,21 @@ class MainStore {
             _.extend(params, toJS(this.wordReportOptions));
         }
 
+        if (this.fingerprintDirty || this.isExecuting) {
+            this.showToast("Report Failed", "Save changes and complete the analysis first.");
+            return;
+        }
+
         this.showToast("Requesting report", "Sending your request to the server...");
+
+        const handlePollingError = error => {
+            this.showToast("Report Failed", error.message || "Unable to generate report.");
+            console.error(error);
+        };
 
         try {
             const expectedFingerprint = await this.fetchExpectedFingerprint();
             params.expected_fingerprint = expectedFingerprint;
-            const handlePollingError = error => {
-                this.showToast("Report Failed", error.message || "Unable to generate report.");
-                console.error(error);
-            };
 
             const fetchReport = async () => {
                 const response = await fetch(
@@ -592,6 +757,12 @@ class MainStore {
                 if (!response.ok) {
                     throw new Error(
                         "An unexpected server error occurred while generating the report."
+                    );
+                }
+
+                if (revision !== this.fingerprintEditRevision) {
+                    throw new Error(
+                        "The analysis changed during export. Refresh and export again."
                     );
                 }
 
