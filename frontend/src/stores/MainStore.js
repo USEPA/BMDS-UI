@@ -306,7 +306,12 @@ class MainStore {
     }
 
     @computed get canExportCompletedAnalysis() {
-        return this.canGenerateFingerprint;
+        return (
+            this.canGenerateFingerprint &&
+            this.analysisSavedAndValidated &&
+            this.hasOutputs &&
+            this.executionOutputs.length > 0
+        );
     }
 
     @computed get exportBlockedMessage() {
@@ -494,8 +499,16 @@ class MainStore {
     @action.bound async saveAnalysisToFile() {
         const apiUrl = this.config.apiUrl;
         const revision = this.fingerprintEditRevision;
+
+        if (!this.canExportCompletedAnalysis) {
+            this.errorMessage =
+                this.exportBlockedMessage || "Save changes and complete the analysis first.";
+            return;
+        }
+
+        this.fingerprintBusy = true;
         try {
-            const expectedFingerprint = await this.fetchExpectedFingerprint();
+            const expectedFingerprint = await this.fetchExpectedFingerprint(revision);
             const response = await fetch(
                 `${apiUrl}?${new URLSearchParams({
                     expected_fingerprint: expectedFingerprint,
@@ -509,33 +522,51 @@ class MainStore {
 
             if (!response.ok) {
                 const body = await response.json().catch(() => ({}));
-                throw new Error(body.detail || "Unable to download analysis JSON.");
+                throw new Error(body.detail || body.message || "Unable to download analysis JSON.");
             }
 
-            const json = await response.json();
+            const serialized = await response.text();
+            const json = JSON.parse(serialized);
+            const responseFingerprint = json.analysis_fingerprint;
+
+            if (!/^BMDS-v1-sha256:[0-9a-f]{64}$/.test(responseFingerprint || "")) {
+                throw new Error("The server returned an invalid fingerprint.");
+            }
+            if (responseFingerprint !== expectedFingerprint) {
+                throw new Error("The analysis changed during export. Refresh and export again.");
+            }
+            if (
+                this.acknowledgedFingerprint &&
+                expectedFingerprint !== this.acknowledgedFingerprint
+            ) {
+                throw new Error("The saved analysis changed. Refresh before exporting.");
+            }
             if (revision !== this.fingerprintEditRevision) {
                 throw new Error("The analysis changed during export. Refresh and export again.");
             }
-            if (json.analysis_fingerprint !== expectedFingerprint) {
-                throw new Error("The analysis changed during export. Refresh and export again.");
-            }
-
-            this.analysisFingerprint = json.analysis_fingerprint;
 
             const fn = json?.inputs?.analysis_name ? slugify(json.inputs.analysis_name) : json.id;
-            const file = new File([JSON.stringify(json, null, 2)], `${fn}.json`, {
+            const file = new File([serialized], `${fn}.json`, {
                 type: "application/json",
             });
             saveAs(file);
+            this.analysisFingerprint = responseFingerprint;
         } catch (error) {
             this.errorMessage = error.message ?? String(error);
             console.error(error);
+        } finally {
+            this.fingerprintBusy = false;
         }
     }
 
-    async fetchExpectedFingerprint() {
-        if (this.fingerprintDirty || this.isExecuting) {
-            throw new Error("Save changes and complete the analysis first.");
+    async fetchExpectedFingerprint(revision = this.fingerprintEditRevision) {
+        if (!this.canExportCompletedAnalysis) {
+            throw new Error(
+                this.exportBlockedMessage || "Save changes and complete the analysis first."
+            );
+        }
+        if (revision !== this.fingerprintEditRevision) {
+            throw new Error("The analysis changed during export. Refresh and export again.");
         }
 
         const response = await fetch(`${this.config.apiUrl}fingerprint/`, {
@@ -552,6 +583,9 @@ class MainStore {
         const fingerprint = data.analysis_fingerprint;
         if (!/^BMDS-v1-sha256:[0-9a-f]{64}$/.test(fingerprint || "")) {
             throw new Error("The server returned an invalid fingerprint.");
+        }
+        if (revision !== this.fingerprintEditRevision) {
+            throw new Error("The analysis changed during export. Refresh and export again.");
         }
         if (this.acknowledgedFingerprint && fingerprint !== this.acknowledgedFingerprint) {
             throw new Error("The saved analysis changed. Refresh before exporting.");
@@ -705,12 +739,16 @@ class MainStore {
             _.extend(params, toJS(this.wordReportOptions));
         }
 
-        if (this.fingerprintDirty || this.isExecuting) {
-            this.showToast("Report Failed", "Save changes and complete the analysis first.");
+        if (!this.canExportCompletedAnalysis) {
+            this.showToast(
+                "Report Failed",
+                this.exportBlockedMessage || "Save changes and complete the analysis first."
+            );
             return;
         }
 
         this.showToast("Requesting report", "Sending your request to the server...");
+        this.fingerprintBusy = true;
 
         const handlePollingError = error => {
             this.showToast("Report Failed", error.message || "Unable to generate report.");
@@ -718,7 +756,7 @@ class MainStore {
         };
 
         try {
-            const expectedFingerprint = await this.fetchExpectedFingerprint();
+            const expectedFingerprint = await this.fetchExpectedFingerprint(revision);
             params.expected_fingerprint = expectedFingerprint;
 
             const fetchReport = async () => {
@@ -731,15 +769,20 @@ class MainStore {
                     }
                 );
 
+                if (!response.ok) {
+                    const json = await response.json().catch(() => ({}));
+                    throw new Error(
+                        json.detail ||
+                            json.message ||
+                            "An unexpected server error occurred while generating the report."
+                    );
+                }
+
                 const contentType = response.headers.get("content-type") || "";
                 if (contentType.includes("application/json")) {
                     const json = await response.json();
 
-                    if (!response.ok) {
-                        throw new Error(json.detail || "Unable to generate report.");
-                    }
-
-                    if (json.status === 1) {
+                    if (json.status === "QUEUED" || json.status === 1) {
                         this.showToast(json.header, json.message);
                         setTimeout(() => {
                             fetchReport().catch(handlePollingError);
@@ -747,17 +790,12 @@ class MainStore {
                         return;
                     }
 
-                    if (json.status === 3) {
+                    if (json.status === "FAILED" || json.status === 3) {
+                        console.error("Report generation failed", json);
                         throw new Error(json.message || "Report generation failed.");
                     }
 
                     throw new Error("Unexpected report status response.");
-                }
-
-                if (!response.ok) {
-                    throw new Error(
-                        "An unexpected server error occurred while generating the report."
-                    );
                 }
 
                 if (revision !== this.fingerprintEditRevision) {
@@ -772,11 +810,23 @@ class MainStore {
                         "The analysis changed during export. Refresh and export again."
                     );
                 }
+                if (
+                    this.acknowledgedFingerprint &&
+                    expectedFingerprint !== this.acknowledgedFingerprint
+                ) {
+                    throw new Error("The saved analysis changed. Refresh before exporting.");
+                }
 
-                const filename = response.headers
-                    .get("content-disposition")
-                    .match(/filename="(.*)"/)[1];
                 const blob = await response.blob();
+                if (revision !== this.fingerprintEditRevision) {
+                    throw new Error(
+                        "The analysis changed during export. Refresh and export again."
+                    );
+                }
+
+                const contentDisposition = response.headers.get("content-disposition") || "";
+                const match = contentDisposition.match(/filename="(.*)"/);
+                const filename = match ? match[1] : "report";
                 saveAs(blob, filename);
                 this.analysisFingerprint = responseFingerprint;
                 this.hideToast();
@@ -785,6 +835,8 @@ class MainStore {
             await fetchReport();
         } catch (error) {
             handlePollingError(error);
+        } finally {
+            this.fingerprintBusy = false;
         }
     }
     @action.bound showToast(header, message) {
