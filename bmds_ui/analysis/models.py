@@ -286,6 +286,13 @@ class Analysis(models.Model):
         with pd.ExcelWriter(f) as writer:
             for name, df in self.to_df().items():
                 df.to_excel(writer, sheet_name=name, index=False)
+
+            cochran_armitage_result = (self.outputs or {}).get("cochran_armitage_result")
+            if cochran_armitage_result:
+                pd.DataFrame(cochran_armitage_result).set_index("name").T.rename_axis(
+                    "Cochran-Armitage"
+                ).reset_index().to_excel(writer, index=False, sheet_name="Cochran Armitage")
+
             pd.DataFrame(
                 [
                     {

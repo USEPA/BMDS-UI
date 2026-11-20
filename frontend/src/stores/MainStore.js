@@ -29,6 +29,7 @@ class MainStore {
     @observable errorMessage = null;
     @observable errorData = null;
     @observable executionOutputs = null;
+    @observable analysisFingerprint = null;
     @observable isUpdateComplete = false;
 
     @action.bound setConfig(config) {
@@ -345,32 +346,59 @@ class MainStore {
 
     @action.bound async saveAnalysisToFile() {
         const apiUrl = this.config.apiUrl;
-        const response = await fetch(apiUrl, {method: "GET", mode: "cors"});
-        const json = await response.json();
-
-        const manifest = json?.outputs?.outputs ?? [];
-        const fullOutputs = await Promise.all(
-            manifest.map(async item => {
-                const params = new URLSearchParams({
-                    dataset_index: item.dataset_index,
-                    option_index: item.option_index,
-                });
-                const res = await fetch(`${apiUrl}output/?${params.toString()}`, {
+        try {
+            const expectedFingerprint = await this.fetchExpectedFingerprint();
+            const response = await fetch(
+                `${apiUrl}?${new URLSearchParams({
+                    expected_fingerprint: expectedFingerprint,
+                }).toString()}`,
+                {
                     method: "GET",
                     mode: "cors",
-                });
-                const full = await res.json();
-                delete full.static_plots;
-                return full;
-            })
-        );
-        json.outputs.outputs = fullOutputs;
+                    cache: "no-store",
+                }
+            );
 
-        const fn = json?.inputs?.analysis_name ? slugify(json.inputs.analysis_name) : json.id;
-        const file = new File([JSON.stringify(json, null, 2)], `${fn}.json`, {
-            type: "application/json",
+            if (!response.ok) {
+                const body = await response.json().catch(() => ({}));
+                throw new Error(body.detail || "Unable to download analysis JSON.");
+            }
+
+            const json = await response.json();
+            if (json.analysis_fingerprint !== expectedFingerprint) {
+                throw new Error("The analysis changed during export. Refresh and export again.");
+            }
+
+            this.analysisFingerprint = json.analysis_fingerprint;
+
+            const fn = json?.inputs?.analysis_name ? slugify(json.inputs.analysis_name) : json.id;
+            const file = new File([JSON.stringify(json, null, 2)], `${fn}.json`, {
+                type: "application/json",
+            });
+            saveAs(file);
+        } catch (error) {
+            this.errorMessage = error.message ?? String(error);
+            console.error(error);
+        }
+    }
+
+    async fetchExpectedFingerprint() {
+        const response = await fetch(`${this.config.apiUrl}fingerprint/`, {
+            method: "GET",
+            mode: "cors",
+            cache: "no-store",
         });
-        saveAs(file);
+        if (!response.ok) {
+            const body = await response.json().catch(() => ({}));
+            throw new Error(body.detail || "Save changes and complete the analysis first.");
+        }
+
+        const data = await response.json();
+        const fingerprint = data.analysis_fingerprint;
+        if (!/^BMDS-v1-sha256:[0-9a-f]{64}$/.test(fingerprint || "")) {
+            throw new Error("The server returned an invalid fingerprint.");
+        }
+        return fingerprint;
     }
 
     @computed get hasLOUDBayesianOutput() {
@@ -507,7 +535,7 @@ class MainStore {
     @observable toastVisible = false;
     @observable toastHeader = "";
     @observable toastMessage = "";
-    @action.bound downloadReport(url) {
+    @action.bound async downloadReport(url) {
         let apiUrl = this.config[url],
             params = {},
             pollInterval = this.pollInterval;
@@ -517,33 +545,76 @@ class MainStore {
         if (url === "wordUrl") {
             _.extend(params, toJS(this.wordReportOptions));
         }
+
         this.showToast("Requesting report", "Sending your request to the server...");
-        const fetchReport = () => {
-                fetch(apiUrl + "?" + new URLSearchParams(params).toString()).then(processResponse);
-            },
-            processResponse = response => {
-                let contentType = response.headers.get("content-type");
+
+        try {
+            const expectedFingerprint = await this.fetchExpectedFingerprint();
+            params.expected_fingerprint = expectedFingerprint;
+            const handlePollingError = error => {
+                this.showToast("Report Failed", error.message || "Unable to generate report.");
+                console.error(error);
+            };
+
+            const fetchReport = async () => {
+                const response = await fetch(
+                    apiUrl + "?" + new URLSearchParams(params).toString(),
+                    {
+                        method: "GET",
+                        mode: "cors",
+                        cache: "no-store",
+                    }
+                );
+
+                const contentType = response.headers.get("content-type") || "";
                 if (contentType.includes("application/json")) {
-                    response.json().then(json => {
+                    const json = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(json.detail || "Unable to generate report.");
+                    }
+
+                    if (json.status === 1) {
                         this.showToast(json.header, json.message);
-                    });
-                    setTimeout(fetchReport, pollInterval);
-                } else if (!response.ok) {
-                    this.showToast(
-                        "Report Failed",
+                        setTimeout(() => {
+                            fetchReport().catch(handlePollingError);
+                        }, pollInterval);
+                        return;
+                    }
+
+                    if (json.status === 3) {
+                        throw new Error(json.message || "Report generation failed.");
+                    }
+
+                    throw new Error("Unexpected report status response.");
+                }
+
+                if (!response.ok) {
+                    throw new Error(
                         "An unexpected server error occurred while generating the report."
                     );
-                } else {
-                    const filename = response.headers
-                        .get("content-disposition")
-                        .match(/filename="(.*)"/)[1];
-                    response.blob().then(blob => {
-                        saveAs(blob, filename);
-                        this.hideToast();
-                    });
                 }
+
+                const responseFingerprint = response.headers.get("X-BMDS-Analysis-Fingerprint");
+                if (!responseFingerprint || responseFingerprint !== expectedFingerprint) {
+                    throw new Error(
+                        "The analysis changed during export. Refresh and export again."
+                    );
+                }
+
+                const filename = response.headers
+                    .get("content-disposition")
+                    .match(/filename="(.*)"/)[1];
+                const blob = await response.blob();
+                saveAs(blob, filename);
+                this.analysisFingerprint = responseFingerprint;
+                this.hideToast();
             };
-        fetchReport();
+
+            await fetchReport();
+        } catch (error) {
+            handlePollingError(error);
+        }
     }
     @action.bound showToast(header, message) {
         this.toastHeader = header;
