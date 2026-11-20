@@ -278,11 +278,26 @@ class Analysis(models.Model):
         }
 
     def to_excel(self) -> BytesIO:
+        fingerprint = self.analysis_fingerprint
+        if fingerprint is None:
+            raise ValueError("A completed analysis fingerprint is required for this export")
+
         f = BytesIO()
         with pd.ExcelWriter(f) as writer:
-            data = self.to_df()
-            for name, df in data.items():
+            for name, df in self.to_df().items():
                 df.to_excel(writer, sheet_name=name, index=False)
+            pd.DataFrame(
+                [
+                    {
+                        "Field": "Analysis fingerprint",
+                        "Value": fingerprint,
+                    },
+                    {
+                        "Field": "Fingerprint scope",
+                        "Value": "Saved analysis snapshot; not file integrity",
+                    },
+                ]
+            ).to_excel(writer, sheet_name="provenance", index=False)
         return f
 
     def update_selection(self, selection: validators.AnalysisSelectedSchema):

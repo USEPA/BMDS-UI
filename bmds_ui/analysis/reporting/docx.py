@@ -157,7 +157,7 @@ def build_docx(
     )
     for run in provenance_paragraph.runs:
         run.italic = True
-    write_setting_p(report, "Fingerprint: ", " ")
+    write_setting_p(report, "Analysis Fingerprint: ", " ")
     report.document.add_paragraph(fingerprint)
 
     if cochran_armitage_df:

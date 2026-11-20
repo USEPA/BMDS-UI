@@ -52,10 +52,11 @@ const HashCompareComponent = ({hash}) => {
                         <span>{hash}</span>
                     </div>
                     <div className="hash-compare-row">
-                        <span>Paste fingerprint: </span>
+                        <span style={{marginRight: 17}}>Paste fingerprint: </span>
                         <input
                             type="text"
                             value={pastedFingerprint}
+                            style={{minWidth: 679}}
                             onChange={e => {
                                 setPastedFingerprint(e.target.value);
                                 setFingerprintsMatch(null);
