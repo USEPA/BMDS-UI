@@ -24,7 +24,8 @@ import SelectModel from "./SelectModel";
 import ToxicRBayesianResultTable from "./ToxicRBayesianResultTable";
 
 const hashExists = true;
-const placeholderHash = "abcdefg";
+const placeholderHash =
+    "BMDS-v1-sha256:2c690f6109ec55b889c4f504ceea4dcd7e48f4b06679d970850c378e968d4a8d";
 const HashCompareComponent = ({hash}) => {
     const [pastedFingerprint, setPastedFingerprint] = React.useState("");
     const [fingerprintsMatch, setFingerprintsMatch] = React.useState(null);

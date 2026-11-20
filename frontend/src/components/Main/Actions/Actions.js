@@ -87,11 +87,6 @@ class Actions extends Component {
                         <>
                             <Button
                                 className="dropdown-item"
-                                onClick={() =>
-                                    console.log(
-                                        "placeholder button for fingerprint generation function"
-                                    )
-                                }
                                 icon="hash"
                                 text="Generate analysis fingerprint"
                             />

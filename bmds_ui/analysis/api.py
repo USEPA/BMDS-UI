@@ -435,6 +435,18 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
+    @action(detail=True, methods=("get",), url_path="fingerprint")
+    def fingerprint(self, request, *args, **kwargs):
+        instance = self.get_object()
+        value = instance.analysis_fingerprint
+        if value is None:
+            raise exceptions.ValidationError(
+                "Save changes and successfully execute the analysis first."
+            )
+        response = Response({"analysis_fingerprint": value})
+        response["Cache-Control"] = "no-store"
+        return response
+
 
 class PolyKViewset(viewsets.GenericViewSet):
     queryset = models.Analysis.objects.none()

@@ -27,6 +27,7 @@ from ..common.utils import random_string, to_csv
 from ..common.validation import pydantic_validate
 from . import constants, tasks, validators
 from .executor import AnalysisSession, MultiTumorSession, Session, deserialize
+from .fingerprint import build_fingerprint
 from .reporting import excel
 from .reporting.cache import DocxReportCache, ExcelReportCache
 from .schema import AnalysisOutput, AnalysisSessionSchema, CochranArmitage
@@ -214,6 +215,13 @@ class Analysis(models.Model):
     @property
     def model_class_label(self) -> str:
         return constants.model_types[self.inputs["dataset_type"]]
+
+    @property
+    def analysis_fingerprint(self) -> str | None:
+        if self.is_executing or not self.is_finished or self.has_errors:
+            return None
+
+        return build_fingerprint(self.inputs, self.outputs)
 
     def get_session(self, index: int) -> Session:
         if not self.is_finished or self.has_errors:

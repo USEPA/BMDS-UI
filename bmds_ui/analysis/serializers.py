@@ -18,6 +18,10 @@ class AnalysisSerializer(serializers.ModelSerializer):
     api_url = serializers.URLField(source="get_api_url", read_only=True)
     excel_url = serializers.URLField(source="get_excel_url", read_only=True)
     word_url = serializers.URLField(source="get_word_url", read_only=True)
+    analysis_fingerprint = serializers.CharField(
+        read_only=True,
+        allow_null=True,
+    )
 
     class Meta:
         model = models.Analysis
@@ -38,6 +42,7 @@ class AnalysisSerializer(serializers.ModelSerializer):
             "started",
             "ended",
             "starred",
+            "analysis_fingerprint",
         )
         read_only_fields = (
             "id",
@@ -54,6 +59,7 @@ class AnalysisSerializer(serializers.ModelSerializer):
             "created",
             "started",
             "ended",
+            "analysis_fingerprint",
         )
 
     def to_representation(self, instance):
