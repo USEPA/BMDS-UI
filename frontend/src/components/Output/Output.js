@@ -1,5 +1,3 @@
-import "./Output.css";
-
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -23,70 +21,6 @@ import MultitumorResultTable from "./Multitumor/ResultTable";
 import OptionSetTable from "./OptionSetTable";
 import SelectModel from "./SelectModel";
 import ToxicRBayesianResultTable from "./ToxicRBayesianResultTable";
-
-const hashExists = true;
-const HashCompareComponent = observer(({mainStore}) => {
-    const [pastedFingerprint, setPastedFingerprint] = React.useState("");
-    const [fingerprintsMatch, setFingerprintsMatch] = React.useState(null);
-    const savedFingerprint = mainStore.analysisFingerprint || "";
-
-    const compareFingerprints = () => {
-        const normalizedPasted = pastedFingerprint.replace(/\s+/g, "").toLowerCase();
-        const normalizedSaved = savedFingerprint.replace(/\s+/g, "").toLowerCase();
-        setFingerprintsMatch(normalizedSaved.length > 0 && normalizedPasted === normalizedSaved);
-    };
-
-    return (
-        <div style={{marginLeft: 30, marginBottom: 25}}>
-            <AnalysisFingerprint
-                fingerprint={mainStore.analysisFingerprint}
-                dirty={mainStore.fingerprintDirty}
-            />
-
-            <strong className="d-block text-center">
-                Paste fingerprint from exported Word Report, Excel, or JSON to compare
-            </strong>
-            <div className={`mt-1 row well py-2 px-2`} style={{minWidth: 550}}>
-                <form
-                    className="hash-compare-rows"
-                    onSubmit={e => {
-                        e.preventDefault();
-                        compareFingerprints();
-                    }}>
-                    <div className="hash-compare-row">
-                        <span>Analysis fingerprint: </span>
-                        <span>{savedFingerprint || "Not generated"}</span>
-                    </div>
-                    <div className="hash-compare-row">
-                        <span style={{marginRight: 17}}>Paste fingerprint: </span>
-                        <input
-                            type="text"
-                            value={pastedFingerprint}
-                            style={{minWidth: 679}}
-                            onChange={e => {
-                                setPastedFingerprint(e.target.value);
-                                setFingerprintsMatch(null);
-                            }}></input>
-                    </div>
-                    <div className="hash-compare-action-row">
-                        <button
-                            type="submit"
-                            className="btn btn-sm btn-info"
-                            disabled={!savedFingerprint}>
-                            Compare
-                        </button>
-                        {fingerprintsMatch === true ? (
-                            <strong className="text-success">Fingerprints match!</strong>
-                        ) : null}
-                        {fingerprintsMatch === false ? (
-                            <strong className="text-danger">Fingerprints do not match</strong>
-                        ) : null}
-                    </div>
-                </form>
-            </div>
-        </div>
-    );
-});
 
 const OutputErrorComponent = ({title, children, alertClass}) => {
     return (
@@ -131,7 +65,7 @@ OutputLoadingComponent.defaultProps = {
     alertClass: "alert-info",
 };
 
-@inject("outputStore")
+@inject("outputStore", "mainStore")
 @observer
 class Output extends Component {
     renderDataset() {
@@ -151,7 +85,7 @@ class Output extends Component {
     }
 
     render() {
-        const {outputStore} = this.props,
+        const {outputStore, mainStore} = this.props,
             {
                 hasNoResults,
                 hasAnyError,
@@ -205,11 +139,12 @@ class Output extends Component {
                         </OutputErrorComponent>
                     </div>
                 ) : null}
-                {hashExists ? (
-                    <div className="row py-2">
-                        <HashCompareComponent mainStore={outputStore.rootStore.mainStore} />
-                    </div>
-                ) : null}
+                <div className={"row mt-2"} style={{marginBottom: 25, marginLeft: 20}}>
+                    <AnalysisFingerprint
+                        fingerprint={mainStore.analysisFingerprint}
+                        dirty={mainStore.fingerprintDirty}
+                    />
+                </div>
                 <div className="row py-2">
                     {outputStore.outputs.length > 1 ? (
                         <div className="col-lg-2">
