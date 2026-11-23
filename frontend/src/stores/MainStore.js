@@ -306,8 +306,14 @@ class MainStore {
     }
 
     @computed get canExportCompletedAnalysis() {
+        return this.canPrepareCompletedAnalysisExport && !this.fingerprintBusy;
+    }
+
+    @computed get canPrepareCompletedAnalysisExport() {
         return (
-            this.canGenerateFingerprint &&
+            this.fingerprintEligible &&
+            !this.fingerprintDirty &&
+            !this.isExecuting &&
             this.analysisSavedAndValidated &&
             this.hasOutputs &&
             this.executionOutputs.length > 0
@@ -560,7 +566,8 @@ class MainStore {
     }
 
     async fetchExpectedFingerprint(revision = this.fingerprintEditRevision) {
-        if (!this.canExportCompletedAnalysis) {
+        // Do not block while fingerprint is being fetched for this export request.
+        if (!this.canPrepareCompletedAnalysisExport) {
             throw new Error(
                 this.exportBlockedMessage || "Save changes and complete the analysis first."
             );
