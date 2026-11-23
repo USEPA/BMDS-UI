@@ -27,6 +27,7 @@ from ..common.utils import random_string, to_csv
 from ..common.validation import pydantic_validate
 from . import constants, tasks, validators
 from .executor import AnalysisSession, MultiTumorSession, Session, deserialize
+from .fingerprint import build_fingerprint
 from .reporting import excel
 from .reporting.cache import DocxReportCache, ExcelReportCache
 from .schema import AnalysisOutput, AnalysisSessionSchema, CochranArmitage
@@ -215,6 +216,13 @@ class Analysis(models.Model):
     def model_class_label(self) -> str:
         return constants.model_types[self.inputs["dataset_type"]]
 
+    @property
+    def analysis_fingerprint(self) -> str | None:
+        if self.is_executing or not self.is_finished or self.has_errors:
+            return None
+
+        return build_fingerprint(self.inputs, self.outputs)
+
     def get_session(self, index: int) -> Session:
         if not self.is_finished or self.has_errors:
             raise ValueError("Session cannot be returned")
@@ -270,11 +278,33 @@ class Analysis(models.Model):
         }
 
     def to_excel(self) -> BytesIO:
+        fingerprint = self.analysis_fingerprint
+        if fingerprint is None:
+            raise ValueError("A completed analysis fingerprint is required for this export")
+
         f = BytesIO()
         with pd.ExcelWriter(f) as writer:
-            data = self.to_df()
-            for name, df in data.items():
+            for name, df in self.to_df().items():
                 df.to_excel(writer, sheet_name=name, index=False)
+
+            cochran_armitage_result = (self.outputs or {}).get("cochran_armitage_result")
+            if cochran_armitage_result:
+                pd.DataFrame(cochran_armitage_result).set_index("name").T.rename_axis(
+                    "Cochran-Armitage"
+                ).reset_index().to_excel(writer, index=False, sheet_name="Cochran Armitage")
+
+            pd.DataFrame(
+                [
+                    {
+                        "Field": "Analysis fingerprint",
+                        "Value": fingerprint,
+                    },
+                    {
+                        "Field": "Fingerprint scope",
+                        "Value": "Saved analysis snapshot; not file integrity",
+                    },
+                ]
+            ).to_excel(writer, sheet_name="provenance", index=False)
         return f
 
     def update_selection(self, selection: validators.AnalysisSelectedSchema):

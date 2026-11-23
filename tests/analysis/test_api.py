@@ -303,16 +303,42 @@ class TestAnalysisViewSet:
     def test_excel(self, pk):
         client = APIClient()
         analysis = Analysis.objects.get(pk=pk)
+        fp_url = reverse("api:analysis-fingerprint", args=(analysis.id,))
+        fp_resp = client.get(fp_url)
+        assert fp_resp.status_code == 200
+        expected = fp_resp.json()["analysis_fingerprint"]
+
         url = reverse("api:analysis-excel", args=(analysis.id,))
-        resp = client.get(url)
+        resp = client.get(url, {"expected_fingerprint": expected})
         assert resp.status_code == 200
 
     @pytest.mark.parametrize("pk", analyses)
     def test_word(self, pk):
         client = APIClient()
         analysis = Analysis.objects.get(pk=pk)
+        fp_url = reverse("api:analysis-fingerprint", args=(analysis.id,))
+        fp_resp = client.get(fp_url)
+        assert fp_resp.status_code == 200
+        expected = fp_resp.json()["analysis_fingerprint"]
+
+        url = reverse("api:analysis-word", args=(analysis.id,))
+        resp = client.get(url, {"expected_fingerprint": expected})
+        assert resp.status_code == 200
+
+    def test_word_desktop_requires_expected_fingerprint(self, settings):
+        settings.IS_DESKTOP = True
+        client = APIClient()
+        analysis = Analysis.objects.get(pk=analyses[0])
         url = reverse("api:analysis-word", args=(analysis.id,))
         resp = client.get(url)
+        assert resp.status_code == 400
+
+        fp_url = reverse("api:analysis-fingerprint", args=(analysis.id,))
+        fp_resp = client.get(fp_url)
+        assert fp_resp.status_code == 200
+        expected = fp_resp.json()["analysis_fingerprint"]
+
+        resp = client.get(url, {"expected_fingerprint": expected})
         assert resp.status_code == 200
 
     def test_star(self):

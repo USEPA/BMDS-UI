@@ -1,5 +1,3 @@
-import "./Output.css";
-
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -12,6 +10,7 @@ import Button from "../common/Button";
 import DoseResponsePlot from "../common/DoseResponsePlot";
 import Icon from "../common/Icon";
 import SelectInput from "../common/SelectInput";
+import AnalysisFingerprint from "./AnalysisFingerprint";
 import CochranArmitageTable from "./CochranArmitageTable";
 import FrequentistResultTable from "./FrequentistResultTable";
 import LOUDBayesianResultTable from "./LOUDBayesianResultTable";
@@ -66,7 +65,7 @@ OutputLoadingComponent.defaultProps = {
     alertClass: "alert-info",
 };
 
-@inject("outputStore")
+@inject("outputStore", "mainStore")
 @observer
 class Output extends Component {
     renderDataset() {
@@ -86,7 +85,7 @@ class Output extends Component {
     }
 
     render() {
-        const {outputStore} = this.props,
+        const {outputStore, mainStore} = this.props,
             {
                 hasNoResults,
                 hasAnyError,
@@ -140,6 +139,12 @@ class Output extends Component {
                         </OutputErrorComponent>
                     </div>
                 ) : null}
+                <div className={"row mt-2"} style={{marginBottom: 25, marginLeft: 20}}>
+                    <AnalysisFingerprint
+                        fingerprint={mainStore.analysisFingerprint}
+                        dirty={mainStore.fingerprintDirty}
+                    />
+                </div>
                 <div className="row py-2">
                     {outputStore.outputs.length > 1 ? (
                         <div className="col-lg-2">

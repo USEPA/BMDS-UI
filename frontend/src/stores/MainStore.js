@@ -21,6 +21,8 @@ class MainStore {
         this.rootStore = rootStore;
     }
 
+    isHydratingFromApi = false;
+
     @observable config = {};
 
     @observable analysis_name = "";
@@ -29,6 +31,12 @@ class MainStore {
     @observable errorMessage = null;
     @observable errorData = null;
     @observable executionOutputs = null;
+    @observable analysisFingerprint = null;
+    @observable fingerprintEligible = false;
+    @observable fingerprintDirty = false;
+    @observable fingerprintBusy = false;
+    @observable fingerprintEditRevision = 0;
+    @observable acknowledgedFingerprint = null;
     @observable isUpdateComplete = false;
 
     @action.bound setConfig(config) {
@@ -106,7 +114,8 @@ class MainStore {
     async saveAnalysis() {
         this.rootStore.dataStore.cleanRows();
         const url = this.config.editSettings.patchInputUrl,
-            {csrfToken} = this.config.editSettings;
+            {csrfToken} = this.config.editSettings,
+            revision = this.fingerprintEditRevision;
         this.errorMessage = "";
         this.errorData = null;
         await fetch(url, {
@@ -117,7 +126,12 @@ class MainStore {
         })
             .then(response => {
                 if (response.ok) {
-                    response.json().then(data => this.updateModelStateFromApi(data));
+                    response.json().then(data => {
+                        if (revision !== this.fingerprintEditRevision) {
+                            return;
+                        }
+                        this.updateModelStateFromApi(data);
+                    });
                 } else {
                     response.json().then(errorText => {
                         const error = parseServerErrors(errorText);
@@ -146,6 +160,8 @@ class MainStore {
             return;
         }
         this.isExecuting = true;
+        this.invalidateFingerprint();
+        const revision = this.fingerprintEditRevision;
         this.errorMessage = "";
 
         const apiUrl = this.config.apiUrl,
@@ -173,6 +189,11 @@ class MainStore {
                         return response.json();
                     })
                     .then(data => {
+                        if (revision !== this.fingerprintEditRevision) {
+                            throw new Error(
+                                "The analysis changed while execution was in progress."
+                            );
+                        }
                         if (data.is_executing) {
                             setTimeout(pollForResults, pollInterval);
                         } else {
@@ -198,6 +219,9 @@ class MainStore {
                 return response.json();
             })
             .then(data => {
+                if (revision !== this.fingerprintEditRevision) {
+                    throw new Error("The analysis changed while execution was in progress.");
+                }
                 if (data.is_executing) {
                     setTimeout(pollForResults, pollInterval);
                 } else {
@@ -210,6 +234,8 @@ class MainStore {
     @action.bound
     async executeResetAnalysis() {
         const {csrfToken, executeResetUrl} = this.config.editSettings;
+        this.invalidateFingerprint();
+        const revision = this.fingerprintEditRevision;
         await fetch(executeResetUrl, {
             method: "POST",
             mode: "cors",
@@ -220,6 +246,9 @@ class MainStore {
         })
             .then(response => response.json())
             .then(data => {
+                if (revision !== this.fingerprintEditRevision) {
+                    return;
+                }
                 this.isExecuting = false;
                 this.errorMessage = "";
                 this.updateModelStateFromApi(data);
@@ -232,24 +261,116 @@ class MainStore {
     @action.bound
     async fetchSavedAnalysis() {
         const apiUrl = this.config.apiUrl;
+        const revision = this.fingerprintEditRevision;
         this.errorMessage = "";
         await fetch(apiUrl, {
             method: "GET",
             mode: "cors",
         })
             .then(response => response.json())
-            .then(data => this.updateModelStateFromApi(data))
+            .then(data => {
+                if (revision !== this.fingerprintEditRevision) {
+                    return;
+                }
+                this.updateModelStateFromApi(data);
+            })
             .catch(error => {
                 this.errorMessage = error.message ?? String(error);
                 console.error("error", error);
             });
     }
     @action.bound setInputsChangedFlag() {
+        if (this.isHydratingFromApi) {
+            return;
+        }
+
         // inputs have changed and have not yet been saved or validated; prevent execution
         this.analysisSaved = false;
         this.analysisValidated = false;
+        this.invalidateFingerprint();
     }
-    @action.bound updateModelStateFromApi(data) {
+
+    @action.bound invalidateFingerprint() {
+        this.analysisFingerprint = null;
+        this.fingerprintDirty = true;
+        this.fingerprintEditRevision += 1;
+    }
+
+    @computed get canGenerateFingerprint() {
+        return (
+            this.fingerprintEligible &&
+            !this.fingerprintDirty &&
+            !this.isExecuting &&
+            !this.fingerprintBusy
+        );
+    }
+
+    @computed get canExportCompletedAnalysis() {
+        return this.canPrepareCompletedAnalysisExport && !this.fingerprintBusy;
+    }
+
+    @computed get canPrepareCompletedAnalysisExport() {
+        return (
+            this.fingerprintEligible &&
+            !this.fingerprintDirty &&
+            !this.isExecuting &&
+            this.analysisSavedAndValidated &&
+            this.hasOutputs &&
+            this.executionOutputs.length > 0
+        );
+    }
+
+    @computed get exportBlockedMessage() {
+        if (!this.analysisSavedAndValidated || !this.hasOutputs || !this.fingerprintEligible) {
+            return "Please save and execute analysis.";
+        }
+        if (this.isExecuting) {
+            return "Execution in progress. Wait for completion before exporting.";
+        }
+        if (this.fingerprintDirty) {
+            return "Analysis changed - save changes, then generate fingerprint or export.";
+        }
+        return "";
+    }
+
+    @action.bound async generateAnalysisFingerprint() {
+        if (!this.canGenerateFingerprint) {
+            this.errorMessage = "Save changes and complete the analysis first.";
+            return;
+        }
+
+        const revision = this.fingerprintEditRevision;
+        this.fingerprintBusy = true;
+        try {
+            const response = await fetch(`${this.config.apiUrl}fingerprint/`, {
+                method: "GET",
+                mode: "cors",
+                cache: "no-store",
+            });
+            if (!response.ok) {
+                throw new Error("Unable to generate the analysis fingerprint.");
+            }
+            const data = await response.json();
+            if (!/^BMDS-v1-sha256:[0-9a-f]{64}$/.test(data.analysis_fingerprint || "")) {
+                throw new Error("The server returned an invalid fingerprint.");
+            }
+            if (revision !== this.fingerprintEditRevision) {
+                throw new Error("The analysis changed. Generate its fingerprint again.");
+            }
+            if (data.analysis_fingerprint !== this.acknowledgedFingerprint) {
+                throw new Error("The saved analysis changed. Refresh before generating.");
+            }
+            this.analysisFingerprint = data.analysis_fingerprint;
+        } catch (error) {
+            this.errorMessage = error.message;
+            console.error(error);
+        } finally {
+            this.fingerprintBusy = false;
+        }
+    }
+
+    @action.bound updateModelStateFromApi(data, options = {}) {
+        const {markFingerprintClean = true} = options;
         const errors = parseServerErrors(data.errors);
         if (errors) {
             this.errorMessage = errors.message;
@@ -264,6 +385,9 @@ class MainStore {
             return;
         }
 
+        const previousAcknowledged = this.acknowledgedFingerprint;
+        const incomingAcknowledged = data.analysis_fingerprint ?? null;
+
         this.isExecuting = data.is_executing;
         if (data.outputs) {
             this.executionOutputs = data.outputs.outputs;
@@ -274,20 +398,49 @@ class MainStore {
         }
 
         // unpack general settings
-        this.analysis_name = inputs.analysis_name;
-        this.analysis_description = inputs.analysis_description;
-        this.model_type = inputs.dataset_type;
-        this.changeDatasetType(this.model_type);
-        this.rootStore.optionsStore.setOptions(inputs.options);
-        if (inputs.mcmc_options !== undefined || _.isEmpty(this.rootStore.mcmcStore.optionsDict)) {
-            this.rootStore.mcmcStore.setOptions(inputs.mcmc_options);
+        this.isHydratingFromApi = true;
+        try {
+            this.analysis_name = inputs.analysis_name;
+            this.analysis_description = inputs.analysis_description;
+            this.model_type = inputs.dataset_type;
+            this.changeDatasetType(this.model_type);
+            this.rootStore.optionsStore.setOptions(inputs.options);
+            if (
+                inputs.mcmc_options !== undefined ||
+                _.isEmpty(this.rootStore.mcmcStore.optionsDict)
+            ) {
+                this.rootStore.mcmcStore.setOptions(inputs.mcmc_options);
+            }
+            this.rootStore.dataStore.setDatasets(inputs.datasets);
+            this.rootStore.dataOptionStore.setDatasetOptions(inputs.dataset_options);
+            this.rootStore.modelsStore.setModels(inputs.models);
+            this.rootStore.logicStore.setLogic(inputs.recommender);
+        } finally {
+            this.isHydratingFromApi = false;
         }
-        this.rootStore.dataStore.setDatasets(inputs.datasets);
-        this.rootStore.dataOptionStore.setDatasetOptions(inputs.dataset_options);
-        this.rootStore.modelsStore.setModels(inputs.models);
-        this.rootStore.logicStore.setLogic(inputs.recommender);
+
         this.starred = data.starred;
         this.collections = data.collections;
+
+        this.fingerprintEligible = Boolean(incomingAcknowledged);
+        this.acknowledgedFingerprint = incomingAcknowledged;
+
+        if (this.analysisFingerprint && this.analysisFingerprint !== this.acknowledgedFingerprint) {
+            this.analysisFingerprint = null;
+        }
+
+        if (
+            previousAcknowledged &&
+            incomingAcknowledged &&
+            previousAcknowledged !== incomingAcknowledged
+        ) {
+            this.analysisFingerprint = null;
+        }
+
+        if (markFingerprintClean) {
+            this.fingerprintDirty = false;
+        }
+
         this.isUpdateComplete = true;
         this.analysisSaved = data.inputs_valid;
         this.analysisValidated = data.inputs_valid;
@@ -296,6 +449,9 @@ class MainStore {
     @action.bound loadAnalysisFromFile(file) {
         const {csrfToken, editKey, loadFileUrl} = this.config.editSettings,
             reader = new FileReader();
+
+        this.invalidateFingerprint();
+        const revision = this.fingerprintEditRevision;
 
         reader.onload = e => {
             let payload;
@@ -322,7 +478,10 @@ class MainStore {
                     return response.json();
                 })
                 .then(data => {
-                    this.updateModelStateFromApi(data);
+                    if (revision !== this.fingerprintEditRevision) {
+                        return;
+                    }
+                    this.updateModelStateFromApi(data, {markFingerprintClean: false});
                     this.analysisValidated = true;
                     this.analysisSaved = false;
                     this.showToast(
@@ -345,32 +504,100 @@ class MainStore {
 
     @action.bound async saveAnalysisToFile() {
         const apiUrl = this.config.apiUrl;
-        const response = await fetch(apiUrl, {method: "GET", mode: "cors"});
-        const json = await response.json();
+        const revision = this.fingerprintEditRevision;
 
-        const manifest = json?.outputs?.outputs ?? [];
-        const fullOutputs = await Promise.all(
-            manifest.map(async item => {
-                const params = new URLSearchParams({
-                    dataset_index: item.dataset_index,
-                    option_index: item.option_index,
-                });
-                const res = await fetch(`${apiUrl}output/?${params.toString()}`, {
+        if (!this.canExportCompletedAnalysis) {
+            this.errorMessage =
+                this.exportBlockedMessage || "Save changes and complete the analysis first.";
+            return;
+        }
+
+        this.fingerprintBusy = true;
+        try {
+            const expectedFingerprint = await this.fetchExpectedFingerprint(revision);
+            const response = await fetch(
+                `${apiUrl}?${new URLSearchParams({
+                    expected_fingerprint: expectedFingerprint,
+                }).toString()}`,
+                {
                     method: "GET",
                     mode: "cors",
-                });
-                const full = await res.json();
-                delete full.static_plots;
-                return full;
-            })
-        );
-        json.outputs.outputs = fullOutputs;
+                    cache: "no-store",
+                }
+            );
 
-        const fn = json?.inputs?.analysis_name ? slugify(json.inputs.analysis_name) : json.id;
-        const file = new File([JSON.stringify(json, null, 2)], `${fn}.json`, {
-            type: "application/json",
+            if (!response.ok) {
+                const body = await response.json().catch(() => ({}));
+                throw new Error(body.detail || body.message || "Unable to download analysis JSON.");
+            }
+
+            const serialized = await response.text();
+            const json = JSON.parse(serialized);
+            const responseFingerprint = json.analysis_fingerprint;
+
+            if (!/^BMDS-v1-sha256:[0-9a-f]{64}$/.test(responseFingerprint || "")) {
+                throw new Error("The server returned an invalid fingerprint.");
+            }
+            if (responseFingerprint !== expectedFingerprint) {
+                throw new Error("The analysis changed during export. Refresh and export again.");
+            }
+            if (
+                this.acknowledgedFingerprint &&
+                expectedFingerprint !== this.acknowledgedFingerprint
+            ) {
+                throw new Error("The saved analysis changed. Refresh before exporting.");
+            }
+            if (revision !== this.fingerprintEditRevision) {
+                throw new Error("The analysis changed during export. Refresh and export again.");
+            }
+
+            const fn = json?.inputs?.analysis_name ? slugify(json.inputs.analysis_name) : json.id;
+            const file = new File([serialized], `${fn}.json`, {
+                type: "application/json",
+            });
+            saveAs(file);
+            this.analysisFingerprint = responseFingerprint;
+        } catch (error) {
+            this.errorMessage = error.message ?? String(error);
+            console.error(error);
+        } finally {
+            this.fingerprintBusy = false;
+        }
+    }
+
+    async fetchExpectedFingerprint(revision = this.fingerprintEditRevision) {
+        // Do not block while fingerprint is being fetched for this export request.
+        if (!this.canPrepareCompletedAnalysisExport) {
+            throw new Error(
+                this.exportBlockedMessage || "Save changes and complete the analysis first."
+            );
+        }
+        if (revision !== this.fingerprintEditRevision) {
+            throw new Error("The analysis changed during export. Refresh and export again.");
+        }
+
+        const response = await fetch(`${this.config.apiUrl}fingerprint/`, {
+            method: "GET",
+            mode: "cors",
+            cache: "no-store",
         });
-        saveAs(file);
+        if (!response.ok) {
+            const body = await response.json().catch(() => ({}));
+            throw new Error(body.detail || "Save changes and complete the analysis first.");
+        }
+
+        const data = await response.json();
+        const fingerprint = data.analysis_fingerprint;
+        if (!/^BMDS-v1-sha256:[0-9a-f]{64}$/.test(fingerprint || "")) {
+            throw new Error("The server returned an invalid fingerprint.");
+        }
+        if (revision !== this.fingerprintEditRevision) {
+            throw new Error("The analysis changed during export. Refresh and export again.");
+        }
+        if (this.acknowledgedFingerprint && fingerprint !== this.acknowledgedFingerprint) {
+            throw new Error("The saved analysis changed. Refresh before exporting.");
+        }
+        return fingerprint;
     }
 
     @computed get hasLOUDBayesianOutput() {
@@ -507,43 +734,117 @@ class MainStore {
     @observable toastVisible = false;
     @observable toastHeader = "";
     @observable toastMessage = "";
-    @action.bound downloadReport(url) {
+    @action.bound async downloadReport(url) {
         let apiUrl = this.config[url],
             params = {},
-            pollInterval = this.pollInterval;
+            pollInterval = this.pollInterval,
+            revision = this.fingerprintEditRevision;
         if (this.canEdit) {
             params.editKey = this.config.editSettings.editKey;
         }
         if (url === "wordUrl") {
             _.extend(params, toJS(this.wordReportOptions));
         }
+
+        if (!this.canExportCompletedAnalysis) {
+            this.showToast(
+                "Report Failed",
+                this.exportBlockedMessage || "Save changes and complete the analysis first."
+            );
+            return;
+        }
+
         this.showToast("Requesting report", "Sending your request to the server...");
-        const fetchReport = () => {
-                fetch(apiUrl + "?" + new URLSearchParams(params).toString()).then(processResponse);
-            },
-            processResponse = response => {
-                let contentType = response.headers.get("content-type");
-                if (contentType.includes("application/json")) {
-                    response.json().then(json => {
-                        this.showToast(json.header, json.message);
-                    });
-                    setTimeout(fetchReport, pollInterval);
-                } else if (!response.ok) {
-                    this.showToast(
-                        "Report Failed",
-                        "An unexpected server error occurred while generating the report."
+        this.fingerprintBusy = true;
+
+        const handlePollingError = error => {
+            this.showToast("Report Failed", error.message || "Unable to generate report.");
+            console.error(error);
+        };
+
+        try {
+            const expectedFingerprint = await this.fetchExpectedFingerprint(revision);
+            params.expected_fingerprint = expectedFingerprint;
+
+            const fetchReport = async () => {
+                const response = await fetch(
+                    apiUrl + "?" + new URLSearchParams(params).toString(),
+                    {
+                        method: "GET",
+                        mode: "cors",
+                        cache: "no-store",
+                    }
+                );
+
+                if (!response.ok) {
+                    const json = await response.json().catch(() => ({}));
+                    throw new Error(
+                        json.detail ||
+                            json.message ||
+                            "An unexpected server error occurred while generating the report."
                     );
-                } else {
-                    const filename = response.headers
-                        .get("content-disposition")
-                        .match(/filename="(.*)"/)[1];
-                    response.blob().then(blob => {
-                        saveAs(blob, filename);
-                        this.hideToast();
-                    });
                 }
+
+                const contentType = response.headers.get("content-type") || "";
+                if (contentType.includes("application/json")) {
+                    const json = await response.json();
+
+                    if (json.status === "QUEUED" || json.status === 1) {
+                        this.showToast(json.header, json.message);
+                        setTimeout(() => {
+                            fetchReport().catch(handlePollingError);
+                        }, pollInterval);
+                        return;
+                    }
+
+                    if (json.status === "FAILED" || json.status === 3) {
+                        console.error("Report generation failed", json);
+                        throw new Error(json.message || "Report generation failed.");
+                    }
+
+                    throw new Error("Unexpected report status response.");
+                }
+
+                if (revision !== this.fingerprintEditRevision) {
+                    throw new Error(
+                        "The analysis changed during export. Refresh and export again."
+                    );
+                }
+
+                const responseFingerprint = response.headers.get("X-BMDS-Analysis-Fingerprint");
+                if (!responseFingerprint || responseFingerprint !== expectedFingerprint) {
+                    throw new Error(
+                        "The analysis changed during export. Refresh and export again."
+                    );
+                }
+                if (
+                    this.acknowledgedFingerprint &&
+                    expectedFingerprint !== this.acknowledgedFingerprint
+                ) {
+                    throw new Error("The saved analysis changed. Refresh before exporting.");
+                }
+
+                const blob = await response.blob();
+                if (revision !== this.fingerprintEditRevision) {
+                    throw new Error(
+                        "The analysis changed during export. Refresh and export again."
+                    );
+                }
+
+                const contentDisposition = response.headers.get("content-disposition") || "";
+                const match = contentDisposition.match(/filename="(.*)"/);
+                const filename = match ? match[1] : "report";
+                saveAs(blob, filename);
+                this.analysisFingerprint = responseFingerprint;
+                this.hideToast();
             };
-        fetchReport();
+
+            await fetchReport();
+        } catch (error) {
+            handlePollingError(error);
+        } finally {
+            this.fingerprintBusy = false;
+        }
     }
     @action.bound showToast(header, message) {
         this.toastHeader = header;

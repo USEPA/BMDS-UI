@@ -39,10 +39,53 @@ from .transforms import build_dataset
 logger = logging.getLogger(__name__)
 
 
+class AnalysisSnapshotChanged(exceptions.APIException):
+    status_code = 409
+    default_detail = "The analysis changed during export. Refresh and export again."
+    default_code = "analysis_snapshot_changed"
+
+
+def require_expected_fingerprint(instance: models.Analysis, expected: str) -> str:
+    current = instance.analysis_fingerprint
+    if current is None:
+        raise exceptions.ValidationError(
+            "Save changes and successfully execute the analysis first."
+        )
+    if not expected:
+        raise exceptions.ValidationError("An expected fingerprint is required.")
+    if current != expected:
+        raise AnalysisSnapshotChanged()
+    return current
+
+
 class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = serializers.AnalysisSerializer
     queryset = models.Analysis.objects.prefetch_related("collections").all()
     schema = AutoSchema(operation_id_base="Analysis")
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+
+        expected = request.query_params.get("expected_fingerprint")
+        if expected is None:
+            return Response(data)
+
+        if not expected:
+            raise exceptions.ValidationError("An expected fingerprint is required.")
+
+        candidate = data.get("analysis_fingerprint")
+        if candidate is None:
+            raise exceptions.ValidationError(
+                "Save changes and successfully execute the analysis first."
+            )
+        if candidate != expected:
+            raise AnalysisSnapshotChanged()
+
+        response = Response(data)
+        response["Cache-Control"] = "no-store"
+        return response
 
     @action(detail=False, url_path="default")
     def default(self, request, *args, **kwargs):
@@ -198,33 +241,23 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     @action(detail=True, renderer_classes=(renderers.XlsxRenderer,))
     def excel(self, request, *args, **kwargs):
         instance = self.get_object()
-        cache = ExcelReportCache(analysis=instance)
+        expected = request.query_params.get("expected_fingerprint", "")
+        require_expected_fingerprint(instance, expected)
+
+        cache = ExcelReportCache(analysis=instance, expected_fingerprint=expected)
         response = cache.request_content()
 
         if response.status == ReportStatus.COMPLETE:
             cache.delete()
 
-            # Fetch persisted results
-            cochran_armitage_result = (instance.outputs or {}).get("cochran_armitage_result")
+            if response.analysis_fingerprint != expected:
+                raise AnalysisSnapshotChanged()
 
-            if cochran_armitage_result:
-                binary_stream = response.content  # should be a BytesIO-like object
-                binary_stream.seek(0)
-                with ExcelWriter(binary_stream, engine="openpyxl", mode="a") as writer:
-                    df = (
-                        DataFrame(cochran_armitage_result)
-                        .set_index("name")
-                        .T.rename_axis("Cochran-Armitage")
-                        .reset_index()
-                    )
-                    df.to_excel(writer, index=False, sheet_name="Cochran Armitage")
-
-                data = renderers.BinaryFile(data=binary_stream, filename=instance.slug)
-                return Response(data)
-
-            # return the base report
             data = renderers.BinaryFile(data=response.content, filename=instance.slug)
-            return Response(data)
+            binary_response = Response(data)
+            binary_response["X-BMDS-Analysis-Fingerprint"] = response.analysis_fingerprint
+            binary_response["Cache-Control"] = "no-store"
+            return binary_response
 
         return JsonResponse(response.model_dump())
 
@@ -257,17 +290,27 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             # Pass a JSON-serializable payload
             extra_kwargs["cochran_armitage_df"] = df.to_dict(orient="records")
 
-        cache = DocxReportCache(analysis=instance, uri=uri, **extra_kwargs)
+        expected = request.query_params.get("expected_fingerprint", "")
+        require_expected_fingerprint(instance, expected)
+
+        cache = DocxReportCache(
+            analysis=instance, expected_fingerprint=expected, uri=uri, **extra_kwargs
+        )
         response = cache.request_content()
         if response.status is ReportStatus.COMPLETE:
             cache.delete()  # destroy from cache; request is now complete
+            if response.analysis_fingerprint != expected:
+                raise AnalysisSnapshotChanged()
             edit = instance.password == request.query_params.get("editKey", "")
             data = (
                 add_update_url(instance, response.content, uri)
                 if edit and not settings.IS_DESKTOP
                 else response.content
             )
-            return Response(renderers.BinaryFile(data=data, filename=instance.slug))
+            binary_response = Response(renderers.BinaryFile(data=data, filename=instance.slug))
+            binary_response["X-BMDS-Analysis-Fingerprint"] = response.analysis_fingerprint
+            binary_response["Cache-Control"] = "no-store"
+            return binary_response
 
         return JsonResponse(response.model_dump())
 
@@ -434,6 +477,18 @@ class AnalysisViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+    @action(detail=True, methods=("get",), url_path="fingerprint")
+    def fingerprint(self, request, *args, **kwargs):
+        instance = self.get_object()
+        value = instance.analysis_fingerprint
+        if value is None:
+            raise exceptions.ValidationError(
+                "Save changes and successfully execute the analysis first."
+            )
+        response = Response({"analysis_fingerprint": value})
+        response["Cache-Control"] = "no-store"
+        return response
 
 
 class PolyKViewset(viewsets.GenericViewSet):

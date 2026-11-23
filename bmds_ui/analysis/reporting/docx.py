@@ -143,6 +143,23 @@ def build_docx(
         analysis.outputs["bmds_python_version"]["dll"],
     )
 
+    fingerprint = analysis.analysis_fingerprint
+    if fingerprint is None:
+        raise ValueError("A completed analysis fingerprint is required for this report")
+
+    report.document.add_paragraph("  ")
+    report.document.add_heading("Analysis provenance", 2)
+    provenance_paragraph = report.document.add_paragraph(
+        "Compare this fingerprint with the current saved analysis in "
+        "BMDS Online or Desktop. A match identifies the same saved "
+        "analysis snapshot; it does not verify subsequent edits to "
+        "this Word document."
+    )
+    for run in provenance_paragraph.runs:
+        run.italic = True
+    write_setting_p(report, "Analysis Fingerprint: ", " ")
+    report.document.add_paragraph(fingerprint)
+
     if cochran_armitage_df:
         df = DataFrame(cochran_armitage_df)
         report.document.add_paragraph("  ")

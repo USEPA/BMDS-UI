@@ -30,16 +30,16 @@ def delete_bot_analyses():
 
 
 @shared_task()
-def generate_report(id_: str, **kw):
+def generate_report(id_: str, expected_fingerprint: str, **kw):
     logger.info(f"starting report generation: {id_}")
     analysis = apps.get_model("analysis", "Analysis").objects.get(id=id_)
-    DocxReportCache(analysis, **kw).create_content()
+    DocxReportCache(analysis, expected_fingerprint=expected_fingerprint, **kw).create_content()
     logger.info(f"finishing report generation: {id_}")
 
 
 @shared_task()
-def generate_excel(id_: str):
+def generate_excel(id_: str, expected_fingerprint: str):
     logger.info(f"starting excel generation: {id_}")
     analysis = apps.get_model("analysis", "Analysis").objects.get(id=id_)
-    ExcelReportCache(analysis).create_content()
+    ExcelReportCache(analysis, expected_fingerprint=expected_fingerprint).create_content()
     logger.info(f"finishing excel generation: {id_}")

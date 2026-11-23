@@ -9,7 +9,9 @@ class ExcelReportCache(ReportCache):
     cache_prefix = "excel"
 
     def invoke_celery_task(self):
-        return tasks.generate_excel.delay(str(self.analysis.id))
+        return tasks.generate_excel.delay(
+            str(self.analysis.id), expected_fingerprint=self.expected_fingerprint
+        )
 
     def create(self) -> BytesIO:
         return self.analysis.to_excel()
@@ -19,7 +21,11 @@ class DocxReportCache(ReportCache):
     cache_prefix = "docx"
 
     def invoke_celery_task(self):
-        return tasks.generate_report.delay(str(self.analysis.id), **self.kw)
+        return tasks.generate_report.delay(
+            str(self.analysis.id),
+            expected_fingerprint=self.expected_fingerprint,
+            **self.kw,
+        )
 
     def create(self) -> BytesIO:
         return build_docx(self.analysis, **self.kw)
