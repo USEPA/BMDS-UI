@@ -48,10 +48,11 @@ function AnalysisFingerprint({fingerprint, dirty}) {
                     />
 
                     <label htmlFor="report-fingerprint" className="mt-3" style={{fontWeight: 500}}>
-                        paste the complete BMDS-v1-sha256 fingerprint to compare
+                        Paste the complete BMDS-v1-sha256 fingerprint to compare
                     </label>
-                    <textarea
+                    <input
                         id="report-fingerprint"
+                        type="text"
                         className="form-control"
                         rows={1}
                         value={reportFingerprint}
