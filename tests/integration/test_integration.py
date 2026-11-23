@@ -375,7 +375,7 @@ class TestContinuousIntegration(PlaywrightTestCase):
         page.locator("#analysis_name").fill("abc")
         page.get_by_role("button", name="Actions").click()
 
-        page.get_by_text("Load analysis").click()
+        page.get_by_text("Load analysis", exact=True).click()
         page.locator("#loadAnalysisFile").set_input_files(v1_schema)
 
         page.get_by_role("link", name="Output").click()
