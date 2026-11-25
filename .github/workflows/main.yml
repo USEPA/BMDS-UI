@@ -38,7 +38,7 @@ jobs:
       with:
         repository: USEPA/BMDS
         path: venv
-        ref: main
+        ref: 25.1
     - uses: actions/setup-python@v5
       with:
         python-version: "3.12"
