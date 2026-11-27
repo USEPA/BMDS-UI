@@ -45,6 +45,7 @@ dependencies = [
 
   # desktop
   "packaging~=24.2",
+  "rich==13.9.3",
   "textual==2.1.2",
   "whitenoise~=6.9.0",
 ]
