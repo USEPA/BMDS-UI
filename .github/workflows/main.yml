@@ -201,7 +201,7 @@ jobs:
       run: |
         export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
         manage.py set_git_commit
-        flit build --no-use-vcs --use-installed
+        python -m flit_core.wheel 
     - name: Upload webpack build
       uses: actions/upload-artifact@v4
       with:
